@@ -1,0 +1,22 @@
+framework module Batch {
+    
+    umbrella header "Batch.h"
+    
+    export *
+    module * { export * }
+    
+    explicit module Unlock {
+        header "BatchUnlock.h"
+        export *
+    }
+    
+    explicit module Push {
+        header "BatchPush.h"
+        export *
+    }
+    
+    explicit module Ads {
+        header "BatchAds.h"
+        export *
+    }
+}
