@@ -30,7 +30,7 @@ Place the dev API key in your sample app's AppDelegate didFinishStartingWithOpti
 
 At this point, feel free to launch your app. If you select `Unlock`, you should see that you haven't yet redeemed any *features* or *items*.
 
->Note: The app starts with 10 `Lives`, as shown below.
+> Note: The app starts with 10 `Lives`, as shown below.
 
 ![No Redeeemed Items](https://raw.github.com/BatchLabs/ios-sdk/master/readme_noredeem.png)
 
@@ -60,6 +60,8 @@ As long as the conditions (time, user targeting, URL scheme, capping) match when
 In this example, `No Ads` is given in the offer with *restore* enabled, `Pro Trial` is given with a 9 day trial set, and 5 `Lives` are given, adding to the previously-mentioned default of 10.
 
 ![Redeemed Items](https://raw.github.com/BatchLabs/ios-sdk/master/readme_redeem.png)
+
+> Note: If you set a campaign targeting only new users, ensure that you're running the app for the first time on the device, otherwise it will be considered an existing user. Delete and reinstall to be considered new.
 
 ### 7. Testing Restore
 
