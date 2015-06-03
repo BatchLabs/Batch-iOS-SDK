@@ -1,6 +1,15 @@
 CHANGELOG
 =========
 
+1.3
+----
+* Native Ads
+* Renamed ad methods to avoid confusion between interstitial ads and native ads. Old methods are deprecated but still work 
+* Faster interstitial ad display
+* "Batch" Objective-C module now imports everything. Base Batch functionality is in the new "Batch.Core" submodule.
+* Batch now logs starts for DEV API Keys
+
+
 1.2.6
 ----
 * iOS 6 Bugfixes

@@ -5,6 +5,11 @@ framework module Batch {
     export *
     module * { export * }
     
+    explicit module Core {
+        header "BatchCore.h"
+        export *
+    }
+    
     explicit module Unlock {
         header "BatchUnlock.h"
         export *
@@ -17,6 +22,8 @@ framework module Batch {
     
     explicit module Ads {
         header "BatchAds.h"
+        header "BatchAdsDeprecated.h"
+        header "BatchNativeAd.h"
         export *
     }
 }

@@ -11,7 +11,6 @@
 #import "BatchOffer.h"
 #import "BatchError.h"
 
-
 #pragma mark -
 #pragma mark BatchUnlock delegate
 
@@ -82,7 +81,7 @@ typedef void (^BatchRestoreSuccess) (NSArray *features);
  @abstract Completion block to use in your application.
  @param error       :   The error or NULL. @see BatchError
  */
-typedef void (^BatchFail) (BatchError *error);
+typedef void (^BatchFail) (BatchError * error);
 
 
 #pragma mark -
@@ -108,7 +107,7 @@ typedef void (^BatchFail) (BatchError *error);
  @param delegate    : The Batch unlock object implementing BatchUnlockDelegate.
  @warning The delegates methods are always called in the main thread!
  */
-+ (void)setupUnlockWithDelegate:(id<BatchUnlockDelegate>)delegate __attribute__((nonnull)) NS_AVAILABLE_IOS(6_0);
++ (void)setupUnlockWithDelegate:(id<BatchUnlockDelegate>)delegate NS_AVAILABLE_IOS(6_0);
 
 /*!
  @method redeemCode:success:failure:
@@ -119,7 +118,7 @@ typedef void (^BatchFail) (BatchError *error);
  @param failBlock       :   Callback when an error occured. @see BatchFail
  @warning The completion block is always called in the main thread!
  */
-+ (void)redeemCode:(NSString *)code success:(BatchSuccess)successBlock failure:(BatchFail)failBlock __attribute__((nonnull(1))) NS_AVAILABLE_IOS(6_0);
++ (void)redeemCode:(NSString *)code success:(BatchSuccess)successBlock failure:(BatchFail)failBlock NS_AVAILABLE_IOS(6_0);
 
 /*!
  @method restoreFeatures:failure:

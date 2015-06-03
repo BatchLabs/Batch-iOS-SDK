@@ -53,7 +53,12 @@ enum
     /*!
      @param NSInteger No Ad found for a placement.
      */
-    BatchFailReasonNoAdFound                = -80
+    BatchFailReasonNoAdFound                = -80,
+    
+    /*!
+     @param NSInteger Batch Ads module was not configured correctly.
+     */
+    BatchFailReasonAdsWrongSetup            = -90
 };
 /*!
  @typedef BatchFailReason
