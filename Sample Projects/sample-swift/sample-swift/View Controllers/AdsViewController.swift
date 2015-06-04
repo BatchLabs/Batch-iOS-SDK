@@ -31,7 +31,7 @@ class AdsViewController: UIViewController, BatchAdsDisplayDelegate {
     
     @IBAction func manuallyLoadInterstitialAction(sender: AnyObject) {
         println("Loading interstitial for default placement")
-        BatchAds.loadAdForPlacement(BatchPlacementDefault, completion: { (placement: String!, error: BatchError!) -> Void in
+        BatchAds.loadInterstitialForPlacement(BatchPlacementDefault, completion: { (placement: String!, error: BatchError!) -> Void in
             if let _error = error {
                 println("Failed to load interstitial for default placement: \(error.localizedDescription())")
             } else {
@@ -43,11 +43,11 @@ class AdsViewController: UIViewController, BatchAdsDisplayDelegate {
     
     @IBAction func displayInterstitialAction(sender: AnyObject) {
         println("Displaying interstitial")
-        BatchAds.displayAdForPlacement(BatchPlacementDefault, withDelegate: self)
+        BatchAds.displayInterstitialForPlacement(BatchPlacementDefault, withDelegate: self)
     }
     
     func refreshStatus() {
-        if (BatchAds.hasAdForPlacement(BatchPlacementDefault)) {
+        if (BatchAds.hasInterstitialForPlacement(BatchPlacementDefault)) {
             displayInterstitialButton.enabled = true
             interstitialStatusLabel.text = "Ad available."
         } else {
