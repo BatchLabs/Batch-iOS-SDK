@@ -40,7 +40,7 @@
     
     for (id<BatchResource> resource in [offer resources]) {
         if ([LIVES_REFERENCE isEqualToString:[resource reference]]) {
-            NSLog(@"Unlocking %d %@", [resource quantity], LIVES_REFERENCE);
+            NSLog(@"Unlocking %lu %@", (unsigned long)[resource quantity], LIVES_REFERENCE);
             [self writeUnsignedLong:([self lives] + [resource quantity]) forKey:LIVES_KEY];
         }
     }
@@ -56,7 +56,7 @@
                 NSLog(@"Unlocking %@ forever", PRO_TRIAL_REFERENCE);
                 [self writeLongLong:-1 forKey:PRO_TRIAL_KEY];
             } else {
-                NSLog(@"Unlocking %@ for %d seconds", PRO_TRIAL_REFERENCE, [feature ttl]);
+                NSLog(@"Unlocking %@ for %lu seconds", PRO_TRIAL_REFERENCE, (unsigned long)[feature ttl]);
                 // Store the timestamp of expiration
                 [self writeLongLong:([[NSDate date] timeIntervalSince1970] + [feature ttl]) forKey:PRO_TRIAL_KEY];
             }
