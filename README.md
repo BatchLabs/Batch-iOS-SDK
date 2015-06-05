@@ -69,7 +69,9 @@ To test the restore functionality, delete the app from your testing device and t
 
 ### 8. Testing Ads
 
-To test the ads functionality, select *Manually load an interstitial* under *Ads*. If an ad is available, it will be reflected in the status message and *Display interstitial* will become available. Select it to display a preview of a Batch interstitial ad.
+To test the ads functionality, select *Manually load an interstitial* under *Ads*. If an ad is available, it will be reflected in the status message and *Display interstitial* will become available. Select it to display a preview of a Batch interstitial ad.  
+
+You can also test in-feed Native Ads from there.
  
 ## Resources
 * [Full Batch documentation](https://dashboard.batch.com/doc)
