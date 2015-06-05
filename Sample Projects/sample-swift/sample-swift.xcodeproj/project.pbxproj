@@ -10,6 +10,7 @@
 		512E8B081AF786550061347E /* AdsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512E8B051AF786550061347E /* AdsViewController.swift */; };
 		512E8B091AF786550061347E /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512E8B061AF786550061347E /* MainViewController.swift */; };
 		512E8B0A1AF786550061347E /* UnlockViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512E8B071AF786550061347E /* UnlockViewController.swift */; };
+		515C56B91B20A3CF005DFB98 /* NativeAdsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515C56B81B20A3CF005DFB98 /* NativeAdsTableViewController.swift */; };
 		518567B81AE929C7006988FC /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 518567B71AE929C7006988FC /* AdSupport.framework */; };
 		51CF7F051AE0162900E83E0D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51CF7F041AE0162900E83E0D /* AppDelegate.swift */; };
 		51CF7F0A1AE0162900E83E0D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 51CF7F081AE0162900E83E0D /* Main.storyboard */; };
@@ -25,6 +26,7 @@
 		512E8B051AF786550061347E /* AdsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AdsViewController.swift; path = "View Controllers/AdsViewController.swift"; sourceTree = "<group>"; };
 		512E8B061AF786550061347E /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainViewController.swift; path = "View Controllers/MainViewController.swift"; sourceTree = "<group>"; };
 		512E8B071AF786550061347E /* UnlockViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UnlockViewController.swift; path = "View Controllers/UnlockViewController.swift"; sourceTree = "<group>"; };
+		515C56B81B20A3CF005DFB98 /* NativeAdsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NativeAdsTableViewController.swift; path = "View Controllers/NativeAdsTableViewController.swift"; sourceTree = "<group>"; };
 		518567B71AE929C7006988FC /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		51CF7EFF1AE0162900E83E0D /* sample-swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "sample-swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		51CF7F031AE0162900E83E0D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -55,6 +57,7 @@
 				512E8B051AF786550061347E /* AdsViewController.swift */,
 				512E8B061AF786550061347E /* MainViewController.swift */,
 				512E8B071AF786550061347E /* UnlockViewController.swift */,
+				515C56B81B20A3CF005DFB98 /* NativeAdsTableViewController.swift */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -239,6 +242,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				51FE8CDD1AEA830C006DD669 /* UnlockManager.swift in Sources */,
+				515C56B91B20A3CF005DFB98 /* NativeAdsTableViewController.swift in Sources */,
 				512E8B081AF786550061347E /* AdsViewController.swift in Sources */,
 				512E8B0A1AF786550061347E /* UnlockViewController.swift in Sources */,
 				51CF7F051AE0162900E83E0D /* AppDelegate.swift in Sources */,
