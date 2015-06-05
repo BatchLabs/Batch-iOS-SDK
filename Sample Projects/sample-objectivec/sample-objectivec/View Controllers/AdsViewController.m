@@ -30,7 +30,7 @@
 
 - (IBAction)manuallyLoadInterstitialAction:(id)sender {
     NSLog(@"Loading interstitial for default placement");
-    [BatchAds loadAdForPlacement:BatchPlacementDefault completion:^(NSString *placement, BatchError *error) {
+    [BatchAds loadInterstitialForPlacement:BatchPlacementDefault completion:^(NSString *placement, BatchError *error) {
         if (error) {
             NSLog(@"Failed to load interstitial for default placement: %@", [error localizedDescription]);
         } else {
@@ -42,11 +42,11 @@
 
 - (IBAction)displayInterstitialAction:(id)sender {
     NSLog(@"Displaying interstitial");
-    [BatchAds displayAdForPlacement:BatchPlacementDefault withDelegate:self];
+    [BatchAds displayInterstitialForPlacement:BatchPlacementDefault withDelegate:self];
 }
 
 - (void)refreshStatus {
-    if ([BatchAds hasAdForPlacement:BatchPlacementDefault]) {
+    if ([BatchAds hasInterstitialForPlacement:BatchPlacementDefault]) {
         self.displayInterstitialButton.enabled = true;
         self.interstitialStatusLabel.text = @"Ad available";
     } else {
