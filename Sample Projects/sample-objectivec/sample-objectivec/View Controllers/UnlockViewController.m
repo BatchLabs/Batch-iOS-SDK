@@ -69,7 +69,7 @@
                    message = @"No features restored";
                }
                
-               NSLog(@"%d features restored", [features count]);
+               NSLog(@"%lu features restored", (unsigned long)[features count]);
                
                UIAlertController *successAlert = [UIAlertController alertControllerWithTitle:nil message:message preferredStyle:UIAlertControllerStyleAlert];
                [successAlert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
