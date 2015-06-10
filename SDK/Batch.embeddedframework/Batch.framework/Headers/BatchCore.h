@@ -18,8 +18,8 @@
  @class Batch
  @abstract Call for all you need for Batch usage in your application.
  @discussion Actions you can perform in Batch.
- @version v1.3
- @updated on 2015-06-02
+ @version v1.3.1
+ @updated on 2015-06-10
  @availability from iOS 6.0
  */
 @interface Batch : NSObject

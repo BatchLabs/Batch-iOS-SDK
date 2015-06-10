@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+1.3.1
+----
+* Fix an issue that could cause a freeze if your application embedded custom fonts and was started in Airplane mode
+
+
 1.3
 ----
 * Native Ads
