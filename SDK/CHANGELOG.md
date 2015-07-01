@@ -1,6 +1,15 @@
 CHANGELOG
 =========
 
+1.3.2
+----
+* Improved Native Ads:
+    * Added properties on BatchNativeAd to get image paths on disk (icon and cover)
+    * Added a method to load Native Ads without preloading their UIImages
+    * Added a MoPub custom event for Native Ads: BatchMoPubCustomNative
+* Automatic deeplink handling can now be disabled
+* Added a method for getting the deeplink from Batch Push
+
 1.3.1
 ----
 * Fix an issue that could cause a freeze if your application embedded custom fonts and was started in Airplane mode
