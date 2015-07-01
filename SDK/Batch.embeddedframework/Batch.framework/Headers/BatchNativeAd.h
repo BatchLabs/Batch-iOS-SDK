@@ -94,10 +94,22 @@ typedef NS_OPTIONS(NSUInteger, BatchNativeAdContent)
 @property (readonly) UIImage *iconImage;
 
 /*!
+ @property iconImagePath
+ @abstract Icon resource to look for.
+ */
+@property (readonly) NSString *iconImagePath;
+
+/*!
  @property coverImage
  @abstract Big cover image (optional).
  */
 @property (readonly) UIImage *coverImage;
+
+/*!
+ @property coverImagePath
+ @abstract Big cover image (optional).
+ */
+@property (readonly) NSString *coverImagePath;
 
 /*!
  @method init

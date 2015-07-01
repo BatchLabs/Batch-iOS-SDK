@@ -189,6 +189,18 @@ typedef void (^BatchNativeAdLoaded) (BatchError *error);
  */
 + (void)loadNativeAd:(BatchNativeAd *)nativeAd withContent:(BatchNativeAdContent)content completion:(BatchNativeAdLoaded)block NS_AVAILABLE_IOS(6_0);
 
+/*!
+ @method loadNativeAd:completion:
+ @abstract Trigger native ad loading with a specific content and image preloading options.
+ @discussion You will be notified of the result in the BatchNativeAd you set
+ @param nativeAd        : Native Ad you wish to load. It must have been initialized with a placement.
+ @param content         : The content you will not use. @see BatchNativeAdContent
+ @param preloadUIImages : Whether you want Batch to preload the Ad's UIImages for you. Warning: if set to NO, the iconImage and coverImage properties will always be nil.
+ @param block           : Completion block called after excecution. @see BatchNativeAdLoaded
+ @discussion You can call this method from any thread.
+ */
++ (void)loadNativeAd:(BatchNativeAd *)nativeAd withContent:(BatchNativeAdContent)content preloadUIImages:(BOOL)preloadUIImages completion:(BatchNativeAdLoaded)block NS_AVAILABLE_IOS(6_0);
+
 @end
 
 #import "BatchAdsDeprecated.h"

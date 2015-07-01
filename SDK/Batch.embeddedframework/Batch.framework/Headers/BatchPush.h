@@ -80,4 +80,19 @@ typedef NS_OPTIONS(NSUInteger, BatchNotificationType)
  */
 + (void)dismissNotifications NS_AVAILABLE_IOS(6_0);
 
+/*!
+ @method enableAutomaticDeeplinkHandling:
+ @abstract Set whether Batch Push should automatically try to handle deeplinks
+ @discussion By default, this is set to YES. You need to call everytime your app is restarted, this option is not persisted.
+ @warning If Batch is set to handle your deeplinks, it will *automatically* call the fetch completion handler (if applicable) with UIBackgroundFetchResultNewData.
+ */
++ (void)enableAutomaticDeeplinkHandling:(BOOL)handleDeeplinks NS_AVAILABLE_IOS(6_0);
+
+/*!
+ @method deeplinkFromUserInfo:
+ @abstract Get Batch Push's deeplink from a notification's userInfo.
+ @return Batch's Deeplink, or nil if not found.
+ */
++ (NSString *)deeplinkFromUserInfo:(NSDictionary *)userData NS_AVAILABLE_IOS(6_0);
+
 @end

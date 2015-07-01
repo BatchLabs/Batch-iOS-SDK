@@ -23,11 +23,6 @@ typedef void (^BatchAdsLoaded) (NSString *placement, BatchError * error) __attri
 #pragma mark -
 #pragma mark BatchAds interface
 
-/*!
- @class BatchAds
- @abstract Call for all you need to display Ads.
- @discussion Actions you can perform in BatchAds.
- */
 @interface BatchAds ()
 
 
