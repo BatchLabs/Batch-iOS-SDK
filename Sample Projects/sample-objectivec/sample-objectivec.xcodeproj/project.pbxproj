@@ -11,7 +11,6 @@
 		5123EC3D1AF799AB009B6D4C /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5123EC3C1AF799AB009B6D4C /* MainViewController.m */; };
 		5123EC401AF79AD7009B6D4C /* UnlockManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5123EC3F1AF79AD7009B6D4C /* UnlockManager.m */; };
 		5123EC431AF8CA46009B6D4C /* UnlockViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5123EC421AF8CA46009B6D4C /* UnlockViewController.m */; };
-		5123EC461AF8CA54009B6D4C /* AdsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5123EC451AF8CA54009B6D4C /* AdsViewController.m */; };
 		5123EC481AF911BA009B6D4C /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5123EC471AF911BA009B6D4C /* AdSupport.framework */; };
 		512E8AE21AF7812E0061347E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 512E8AE11AF7812E0061347E /* main.m */; };
 		512E8AE51AF7812E0061347E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 512E8AE41AF7812E0061347E /* AppDelegate.m */; };
@@ -19,7 +18,6 @@
 		512E8AED1AF7812E0061347E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 512E8AEC1AF7812E0061347E /* Images.xcassets */; };
 		512E8AF01AF7812E0061347E /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 512E8AEE1AF7812E0061347E /* LaunchScreen.xib */; };
 		512E8AFC1AF7812E0061347E /* sample_objectivecTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 512E8AFB1AF7812E0061347E /* sample_objectivecTests.m */; };
-		51E2D1401B20578B002A3DD1 /* NativeAdsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 51E2D13F1B20578B002A3DD1 /* NativeAdsTableViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,8 +38,6 @@
 		5123EC3F1AF79AD7009B6D4C /* UnlockManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UnlockManager.m; sourceTree = "<group>"; };
 		5123EC411AF8CA46009B6D4C /* UnlockViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UnlockViewController.h; path = "View Controllers/UnlockViewController.h"; sourceTree = "<group>"; };
 		5123EC421AF8CA46009B6D4C /* UnlockViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UnlockViewController.m; path = "View Controllers/UnlockViewController.m"; sourceTree = "<group>"; };
-		5123EC441AF8CA54009B6D4C /* AdsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AdsViewController.h; path = "View Controllers/AdsViewController.h"; sourceTree = "<group>"; };
-		5123EC451AF8CA54009B6D4C /* AdsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AdsViewController.m; path = "View Controllers/AdsViewController.m"; sourceTree = "<group>"; };
 		5123EC471AF911BA009B6D4C /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		512E8ADC1AF7812E0061347E /* sample-objectivec.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "sample-objectivec.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		512E8AE01AF7812E0061347E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -54,8 +50,6 @@
 		512E8AF51AF7812E0061347E /* sample-objectivecTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "sample-objectivecTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		512E8AFA1AF7812E0061347E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		512E8AFB1AF7812E0061347E /* sample_objectivecTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = sample_objectivecTests.m; sourceTree = "<group>"; };
-		51E2D13E1B20578B002A3DD1 /* NativeAdsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NativeAdsTableViewController.h; path = "View Controllers/NativeAdsTableViewController.h"; sourceTree = "<group>"; };
-		51E2D13F1B20578B002A3DD1 /* NativeAdsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NativeAdsTableViewController.m; path = "View Controllers/NativeAdsTableViewController.m"; sourceTree = "<group>"; };
 		9B501303CC9CA37CD8138C17 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC3199DB70D045F859A1C068 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -149,10 +143,6 @@
 				5123EC3C1AF799AB009B6D4C /* MainViewController.m */,
 				5123EC411AF8CA46009B6D4C /* UnlockViewController.h */,
 				5123EC421AF8CA46009B6D4C /* UnlockViewController.m */,
-				5123EC441AF8CA54009B6D4C /* AdsViewController.h */,
-				5123EC451AF8CA54009B6D4C /* AdsViewController.m */,
-				51E2D13E1B20578B002A3DD1 /* NativeAdsTableViewController.h */,
-				51E2D13F1B20578B002A3DD1 /* NativeAdsTableViewController.m */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -327,9 +317,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				512E8AE51AF7812E0061347E /* AppDelegate.m in Sources */,
-				5123EC461AF8CA54009B6D4C /* AdsViewController.m in Sources */,
 				5123EC401AF79AD7009B6D4C /* UnlockManager.m in Sources */,
-				51E2D1401B20578B002A3DD1 /* NativeAdsTableViewController.m in Sources */,
 				5123EC431AF8CA46009B6D4C /* UnlockViewController.m in Sources */,
 				5123EC3D1AF799AB009B6D4C /* MainViewController.m in Sources */,
 				512E8AE21AF7812E0061347E /* main.m in Sources */,

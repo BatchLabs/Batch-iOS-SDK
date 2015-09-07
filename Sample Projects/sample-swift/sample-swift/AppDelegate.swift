@@ -7,7 +7,6 @@
 
 import UIKit
 import Batch.Unlock
-import Batch.Ads
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, BatchUnlockDelegate {
@@ -17,8 +16,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, BatchUnlockDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
         BatchUnlock.setupUnlockWithDelegate(self)
-        BatchAds.setAutoLoad(false)
-        BatchAds.setupAds()
         Batch.startWithAPIKey("YOUR API KEY")
         
         return true
