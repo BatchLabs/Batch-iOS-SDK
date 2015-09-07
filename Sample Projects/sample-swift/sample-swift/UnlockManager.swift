@@ -88,13 +88,13 @@ class UnlockManager {
      */
     func showRedeemAlert(offer: BatchOffer, viewController: UIViewController) {
         if let message = offer.offerAdditionalParameters()["reward_message"] as? String {
-            println("Displaying 'reward_message' additional parameter")
+            print("Displaying 'reward_message' additional parameter")
             
             let alert = UIAlertController(title: nil, message: message, preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Thanks!", style: .Default, handler: nil))
             viewController.presentViewController(alert, animated: true, completion: nil)
         } else {
-            println("Didn't find an additional parameter named 'reward_message' to display a reward confirmation message")
+            print("Didn't find an additional parameter named 'reward_message' to display a reward confirmation message")
         }
     }
     
@@ -109,7 +109,7 @@ class UnlockManager {
     
         for resource in offer.resources() {
             if LocalConstants.References.Lives == resource.reference() {
-                println("Unlocking \(resource.quantity()) \(LocalConstants.References.Lives)")
+                print("Unlocking \(resource.quantity()) \(LocalConstants.References.Lives)")
                 writeUInt(LocalConstants.Keys.Lives, value: self.lives + resource.quantity())
             }
         }
@@ -121,16 +121,16 @@ class UnlockManager {
     func unlockFeatures(features: [BatchFeature]) {
         for feature in features {
             if LocalConstants.References.NoAds == feature.reference() {
-                println("Unlocking \(LocalConstants.References.NoAds)")
+                print("Unlocking \(LocalConstants.References.NoAds)")
                 
                 writeBool(LocalConstants.Keys.NoAds, value: true)
             } else if LocalConstants.References.ProTrial == feature.reference() {
                 if feature.isLifetime() {
-                    println("Unlocking \(LocalConstants.References.ProTrial) forever")
+                    print("Unlocking \(LocalConstants.References.ProTrial) forever")
                     
                     writeInt64(LocalConstants.Keys.ProTrial, value: -1)
                 } else {
-                    println("Unlocking \(LocalConstants.References.ProTrial) for \(feature.ttl()) seconds")
+                    print("Unlocking \(LocalConstants.References.ProTrial) for \(feature.ttl()) seconds")
                     
                     // Store the timestamp of expiration
                     writeInt64(LocalConstants.Keys.ProTrial, value: Int64(NSDate().timeIntervalSince1970) + Int64(feature.ttl()))

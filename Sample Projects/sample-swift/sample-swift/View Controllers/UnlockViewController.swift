@@ -53,7 +53,7 @@ class UnlockViewController: UIViewController {
     }
     
     @IBAction func restoreAction(sender: AnyObject) {
-        println("Restoring features")
+        print("Restoring features")
         
         let alert = UIAlertController(title: nil, message: "Restoring features", preferredStyle: .Alert)
         self.presentViewController(alert, animated: false) { () -> Void in
@@ -72,14 +72,14 @@ class UnlockViewController: UIViewController {
                         message = "No features restored."
                     }
                     
-                    println("\(features.count) features restored.")
+                    print("\(features.count) features restored.")
                     
                     let alert = UIAlertController(title: "Restore successful.", message: message, preferredStyle: .Alert)
                     alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
                     self.presentViewController(alert, animated: true, completion: nil)
                 })
                 }, failure: { (failure: BatchError!) -> Void in
-                    println("Restore failed.")
+                    print("Restore failed.")
                     
                     alert.dismissViewControllerAnimated(true, completion: { () -> Void in
                         var message = "A unknown error occurred."
