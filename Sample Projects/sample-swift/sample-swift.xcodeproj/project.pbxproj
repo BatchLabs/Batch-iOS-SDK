@@ -352,6 +352,7 @@
 			baseConfigurationReference = 244E16C1645AE3205C32F9A9 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = "\"$(PODS_ROOT)/Batch/Batch.embeddedframework\"";
 				INFOPLIST_FILE = "sample-swift/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -363,6 +364,7 @@
 			baseConfigurationReference = 5D41FFA5751C5B0CE33A490A /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = "\"$(PODS_ROOT)/Batch/Batch.embeddedframework\"";
 				INFOPLIST_FILE = "sample-swift/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
