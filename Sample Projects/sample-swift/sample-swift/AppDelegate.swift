@@ -46,22 +46,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate, BatchUnlockDelegate {
     // MARK: BatchUnlockDelegate methods
     
     func automaticOfferRedeemed(offer: BatchOffer) {
-        println("Automatically redeemed an offer: \(offer.offerReference())")
+        print("Automatically redeemed an offer: \(offer.offerReference())")
         UnlockManager().unlockItemsFromOffer(offer)
         UnlockManager().showRedeemAlert(offer, viewController: (window?.rootViewController)!)
     }
     
     func URLWithCodeFound(code: String!) {
-        println("Redeeming Magic Link with code: \(code)")
+        print("Redeeming Magic Link with code: \(code)")
     }
     
     func URLWithCodeRedeemed(offer: BatchOffer) {
-        println("Redeemed Magic Link")
+        print("Redeemed Magic Link")
         UnlockManager().unlockItemsFromOffer(offer)
     }
     
     func URLWithCodeFailed(error: BatchError!) {
-        println("Failed to redeem Magic Link \(error.localizedDescription())")
+        print("Failed to redeem Magic Link \(error.localizedDescription())")
     }
 }
 
