@@ -18,8 +18,6 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     [BatchUnlock setupUnlockWithDelegate:self];
-    [BatchAds setAutoLoad:NO];
-    [BatchAds setupAds];
     [Batch startWithAPIKey:@"YOUR API KEY"];
     
     return YES;

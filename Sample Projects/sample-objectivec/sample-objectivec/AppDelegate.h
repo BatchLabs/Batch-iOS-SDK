@@ -8,7 +8,6 @@
 #import <UIKit/UIKit.h>
 @import Batch;
 @import Batch.Unlock;
-@import Batch.Ads;
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate, BatchUnlockDelegate>
 
