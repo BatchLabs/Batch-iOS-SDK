@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import Batch.Unlock
+import Batch
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, BatchUnlockDelegate {

@@ -1,6 +1,17 @@
 CHANGELOG
 =========
 
+1.4
+----
+* Deprecated Batch Ads
+* Added a method for getting the last known push token
+* Improved push registration logs in case of failure
+* Fixed Xcode 7 compatibility when integrated via CocoaPods
+	NOTE : If you previously integrated Batch, you may need to remove lines
+		   that look like "$(PODS_ROOT)/Batch/**" from "Framework Search Paths"
+		   in your Build settings for Batch to work with Xcode 7.
+* Added Bitcode support
+
 1.3.2
 ----
 * Improved Native Ads:
