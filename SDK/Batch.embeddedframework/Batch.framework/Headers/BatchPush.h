@@ -9,6 +9,12 @@
 #import <Foundation/Foundation.h>
 
 /*!
+ @const BatchPushReceivedNotification
+ @abstract Notification send by Batch Push when it gets a remote notification. This includes the one your app is started with (even though it is only sent when Batch starts)
+ */
+FOUNDATION_EXPORT NSString *const BatchPushReceivedNotification;
+
+/*!
  @enum BatchNotificationType
  @abstract Remote notification types wrapper.
  @discussion Wrap iOS 8 and inferior remote notification types.
@@ -94,5 +100,14 @@ typedef NS_OPTIONS(NSUInteger, BatchNotificationType)
  @return Batch's Deeplink, or nil if not found.
  */
 + (NSString *)deeplinkFromUserInfo:(NSDictionary *)userData NS_AVAILABLE_IOS(6_0);
+
+/*!
+ @method lastKnownPushToken
+ @abstract Get the last known push token.
+ @warning The returned token might be outdated and invalid if this method is called too early in your application lifecycle.
+ @discussion Your application should still register for remote notifications once per launch, in order to keep this value valid.
+ @return A push token, nil if unavailable.
+ */
++ (NSString *)lastKnownPushToken NS_AVAILABLE_IOS(6_0);
 
 @end

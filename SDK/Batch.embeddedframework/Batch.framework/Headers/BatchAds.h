@@ -20,13 +20,13 @@
  @param placement   : Unique placement string generated in your account.
  @param error       : The error or NULL. @see BatchError
  */
-typedef void (^BatchInterstitialLoaded) (NSString *placement, BatchError * error);
+typedef void (^BatchInterstitialLoaded) (NSString *placement, BatchError * error) __attribute__((deprecated(ADS_DEPRECATION_MESSAGE)));
 
 /*!
  @abstract Completion block to use in your application when loading a native ad.
  @param error       : The error or NULL. @see BatchError
  */
-typedef void (^BatchNativeAdLoaded) (BatchError *error);
+typedef void (^BatchNativeAdLoaded) (BatchError *error) __attribute__((deprecated(ADS_DEPRECATION_MESSAGE)));
 
 
 #pragma mark -
@@ -36,6 +36,7 @@ typedef void (^BatchNativeAdLoaded) (BatchError *error);
  @protocol BatchAdDisplayDelegate
  @abstract The delegate called when an Ad is display.
  */
+__attribute__((deprecated(ADS_DEPRECATION_MESSAGE)))
 @protocol BatchAdsDisplayDelegate <NSObject>
 
 @optional
@@ -92,6 +93,7 @@ typedef void (^BatchNativeAdLoaded) (BatchError *error);
  @abstract Call for all you need to display Ads.
  @discussion Actions you can perform in BatchAds.
  */
+__attribute__((deprecated(ADS_DEPRECATION_MESSAGE)))
 @interface BatchAds : NSObject
 
 /*!

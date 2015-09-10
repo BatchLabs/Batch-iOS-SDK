@@ -1,5 +1,5 @@
 platform :ios, '8.0'
 use_frameworks!
 
-pod 'Batch', '~>1.3'
+pod 'Batch', '~>1.4'
 

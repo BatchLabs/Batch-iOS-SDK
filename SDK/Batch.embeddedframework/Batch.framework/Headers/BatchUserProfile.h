@@ -17,8 +17,8 @@
 
 /*!
  @property customIdentifier
- @abstract Access a custom user identifier to Batch, you should use this method if you have your own login system.
- @warning Be careful: Do not use it if you don't know what you are doing, giving a bad custom user ID can result in failure of the offer delivery and restore.
+ @abstract Set a custom user identifier to Batch, you should use this method if you have your own login system.
+ @warning Be careful: Do not use it if you don't know what you are doing, giving a bad custom user ID can result in failure of targeted push notifications delivery or offer delivery and restore.
  */
 @property (strong, nonatomic) NSString *customIdentifier;
 

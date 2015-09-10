@@ -26,4 +26,9 @@ framework module Batch {
         header "BatchNativeAd.h"
         export *
     }
+    
+    explicit module Logger {
+        header "BatchLogger.h"
+        export *
+    }
 }

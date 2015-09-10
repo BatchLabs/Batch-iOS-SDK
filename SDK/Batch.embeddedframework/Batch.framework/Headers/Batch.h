@@ -10,3 +10,4 @@
 #import "BatchUnlock.h"
 #import "BatchPush.h"
 #import "BatchAds.h"
+#import "BatchLogger.h"

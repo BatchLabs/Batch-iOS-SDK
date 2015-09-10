@@ -17,7 +17,7 @@
  @param error       : The error or NULL. @see BatchError
  @deprecated in version 1.3
  */
-typedef void (^BatchAdsLoaded) (NSString *placement, BatchError * error) __attribute__((deprecated("use block 'BatchInterstitialLoaded' instead")));
+typedef void (^BatchAdsLoaded) (NSString *placement, BatchError * error) __attribute__((deprecated("Batch Ads is deprecated")));
 
 
 #pragma mark -
@@ -37,7 +37,7 @@ typedef void (^BatchAdsLoaded) (NSString *placement, BatchError * error) __attri
  @return YES if an Ad is available for the given placement, NO otherwise.
  @deprecated in version 1.3
  */
-+ (BOOL)hasAdForPlacement:(NSString *)placement __attribute__((warn_unused_result, deprecated("use method 'hasInterstitialForPlacement:' instead")));
++ (BOOL)hasAdForPlacement:(NSString *)placement __attribute__((warn_unused_result, deprecated("Batch Ads is deprecated")));
 
 /*!
  @method displayAdForPlacement:
@@ -47,7 +47,7 @@ typedef void (^BatchAdsLoaded) (NSString *placement, BatchError * error) __attri
  @return YES if no error found when displaying the Ad for the given placement, NO otherwise.
  @deprecated in version 1.3
  */
-+ (BOOL)displayAdForPlacement:(NSString *)placement __attribute__((warn_unused_result, deprecated("use method 'displayInterstitialForPlacement:' instead")));
++ (BOOL)displayAdForPlacement:(NSString *)placement __attribute__((warn_unused_result, deprecated("Batch Ads is deprecated")));
 
 /*!
  @method displayAdForPlacement:withDelegate:
@@ -58,7 +58,7 @@ typedef void (^BatchAdsLoaded) (NSString *placement, BatchError * error) __attri
  @deprecated in version 1.3
  */
 + (void)displayAdForPlacement:(NSString *)placement
-              withDelegate:(id<BatchAdsDisplayDelegate>)delegate __attribute__((deprecated("use method 'displayInterstitialForPlacement:withDelegate:' instead")));
+              withDelegate:(id<BatchAdsDisplayDelegate>)delegate __attribute__((deprecated("Batch Ads is deprecated")));
 
 /*!
  @method loadAdForPlacement:completion:

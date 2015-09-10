@@ -8,10 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+#define ADS_DEPRECATION_MESSAGE "Batch Ads has been discontinued"
+
 /*!
  @enum BatchNativeAdState
  @abstract The different BatchNativeAd states.
  */
+__attribute__((deprecated(ADS_DEPRECATION_MESSAGE)))
 typedef NS_ENUM(NSInteger, BatchNativeAdState)
 {
     // Ad is created but not loaded.
@@ -35,6 +38,7 @@ typedef NS_ENUM(NSInteger, BatchNativeAdState)
  @enum BatchNativeAdContent
  @abstract The optional ad content.
  */
+__attribute__((deprecated(ADS_DEPRECATION_MESSAGE)))
 typedef NS_OPTIONS(NSUInteger, BatchNativeAdContent)
 {
     // Remove all the optional content.
@@ -49,6 +53,7 @@ typedef NS_OPTIONS(NSUInteger, BatchNativeAdContent)
  @abstract Native ad object.
  @discussion Class that manage the lifecycle and the content of a native ad.
  */
+__attribute__((deprecated(ADS_DEPRECATION_MESSAGE)))
 @interface BatchNativeAd : NSObject <NSCoding>
 
 /*!
