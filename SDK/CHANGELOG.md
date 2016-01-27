@@ -1,6 +1,13 @@
 CHANGELOG
 =========
 
+1.5
+----
+* Custom user data (attributes, tags and events)
+* Added an API to retrieve Batch's unique installation identifier
+* Deprecated BatchUserProfile
+* HTTP/2 Support (NSURLSession replaces the NSURLConnection backend when available)
+
 1.4
 ----
 * Deprecated Batch Ads

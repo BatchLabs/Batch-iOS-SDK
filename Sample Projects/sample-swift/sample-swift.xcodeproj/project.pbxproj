@@ -15,7 +15,7 @@
 		51CF7F0C1AE0162900E83E0D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 51CF7F0B1AE0162900E83E0D /* Images.xcassets */; };
 		51CF7F0F1AE0162900E83E0D /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51CF7F0D1AE0162900E83E0D /* LaunchScreen.xib */; };
 		51FE8CDD1AEA830C006DD669 /* UnlockManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FE8CDC1AEA830C006DD669 /* UnlockManager.swift */; };
-		CAE36F4535F52D3AF072D449 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28140795A340293F38D59169 /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		CAE36F4535F52D3AF072D449 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28140795A340293F38D59169 /* Pods.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
