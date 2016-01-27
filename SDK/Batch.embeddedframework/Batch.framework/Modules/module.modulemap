@@ -31,4 +31,9 @@ framework module Batch {
         header "BatchLogger.h"
         export *
     }
+    
+    explicit module User {
+        header "BatchUser.h"
+        export *
+    }
 }

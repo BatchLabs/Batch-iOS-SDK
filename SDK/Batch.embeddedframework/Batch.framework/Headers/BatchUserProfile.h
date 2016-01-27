@@ -20,20 +20,20 @@
  @abstract Set a custom user identifier to Batch, you should use this method if you have your own login system.
  @warning Be careful: Do not use it if you don't know what you are doing, giving a bad custom user ID can result in failure of targeted push notifications delivery or offer delivery and restore.
  */
-@property (strong, nonatomic) NSString *customIdentifier;
+@property (strong, nonatomic) NSString *customIdentifier __attribute__((deprecated("Please use Batch User instead")));
 
 /*!
  @property language
  @abstract The application language, default value is the device language.
  @discussion Set to nil to reset to default value.
  */
-@property (strong, nonatomic) NSString *language;
+@property (strong, nonatomic) NSString *language __attribute__((deprecated("Please use Batch User instead")));
 
 /*!
  @property region
  @abstract The application region, default value is the device region.
  @discussion Set to nil to reset to default value.
  */
-@property (strong, nonatomic) NSString *region;
+@property (strong, nonatomic) NSString *region __attribute__((deprecated("Please use Batch User instead")));
 
 @end

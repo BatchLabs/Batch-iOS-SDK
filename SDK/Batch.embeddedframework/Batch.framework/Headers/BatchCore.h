@@ -19,8 +19,7 @@
  @class Batch
  @abstract Call for all you need for Batch usage in your application.
  @discussion Actions you can perform in Batch.
- @version v1.4
- @updated on 2015-09-09
+ @version v1.5
  @availability from iOS 6.0
  */
 @interface Batch : NSObject
@@ -65,7 +64,7 @@
  @discussion You can call this method from any thread.
  @return The unique instance of this object. @see BatchUserProfile
  */
-+ (BatchUserProfile *)defaultUserProfile __attribute__((warn_unused_result)) NS_AVAILABLE_IOS(6_0);
++ (BatchUserProfile *)defaultUserProfile __attribute__((warn_unused_result, deprecated("Please use Batch User instead"))) NS_AVAILABLE_IOS(6_0);
 
 /*!
  @method setUseIDFA:

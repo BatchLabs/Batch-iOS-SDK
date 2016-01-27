@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3A3F9955308082B425048550 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B501303CC9CA37CD8138C17 /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		3A3F9955308082B425048550 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B501303CC9CA37CD8138C17 /* Pods.framework */; };
 		5123EC3D1AF799AB009B6D4C /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5123EC3C1AF799AB009B6D4C /* MainViewController.m */; };
 		5123EC401AF79AD7009B6D4C /* UnlockManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5123EC3F1AF79AD7009B6D4C /* UnlockManager.m */; };
 		5123EC431AF8CA46009B6D4C /* UnlockViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5123EC421AF8CA46009B6D4C /* UnlockViewController.m */; };
