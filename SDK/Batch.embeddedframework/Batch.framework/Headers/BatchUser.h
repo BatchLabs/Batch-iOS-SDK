@@ -35,9 +35,9 @@
 /*!
  @method editor
  @abstract Get the user data editor
- @discussion Do not forget to call apply once you're done changing the attributes
+ @discussion Do not forget to call save once you're done changing the attributes
  @discussion You can call this method from any thread.
- @return Batch user data reader
+ @return Batch user data editor
  */
 + (nonnull BatchUserDataEditor*)editor;
 
@@ -85,6 +85,12 @@
  */
 + (void)trackTransactionWithAmount:(double)amount data:(nullable NSDictionary*)data;
 
+/*!
+ @method printDebugInformation
+ @abstract Print the currently known attributes and tags for a user to the logs (stderr/syslog).
+ */
++ (void)printDebugInformation;
+
 @end
 
 @interface BatchUserDataEditor : NSObject
@@ -131,7 +137,7 @@
  
         - NSString
  
-            Must not be longer than 300 characters. Can be empty.
+            Must not be longer than 64 characters. Can be empty.
  
             For better results, you should make them upper/lowercase and trim the whitespaces.
  
@@ -175,7 +181,7 @@
  @method addTag:inCollection:
  @abstract Add a tag to the specified collection. If empty, the collection will be created automatically.
  @discussion You can call this method from any thread.
- @param collection The tag to add. Cannot be nil. Must be a string of letters, numbers or underscores ([a-z0-9_]) and can't be longer than 300 characters.
+ @param tag The tag to add. Cannot be nil or empty. Must be a string no longer than 64 characters.
  @param collection The tag collection name. Cannot be nil. Must be a string of letters, numbers or underscores ([a-z0-9_]) and can't be longer than 30 characters.
  */
 - (void)addTag:(nonnull NSString*)tag inCollection:(nonnull NSString*)collection;

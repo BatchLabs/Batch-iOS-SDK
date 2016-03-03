@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+1.5.1
+----  
+* Fixed: push token environment detection failed in some rare cases
+
 1.5
 ----
 * Custom user data (attributes, tags and events)
