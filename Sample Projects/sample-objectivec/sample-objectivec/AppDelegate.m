@@ -20,6 +20,30 @@
     [BatchUnlock setupUnlockWithDelegate:self];
     [Batch startWithAPIKey:@"YOUR API KEY"];
     
+    // Register iOS 8+ actionable notifications
+    
+    UIMutableUserNotificationAction *thumbsUpAction = [UIMutableUserNotificationAction new];
+    thumbsUpAction.identifier = @"THUMBS_UP";
+    thumbsUpAction.title = @"👍";
+    thumbsUpAction.activationMode = UIUserNotificationActivationModeBackground;
+    
+    UIMutableUserNotificationAction *thumbsDownAction = [UIMutableUserNotificationAction new];
+    thumbsDownAction.identifier = @"THUMBS_DOWN";
+    thumbsDownAction.title = @"👎";
+    thumbsDownAction.activationMode = UIUserNotificationActivationModeForeground;
+    
+    UIMutableUserNotificationAction *openAction = [UIMutableUserNotificationAction new];
+    openAction.identifier = @"OPEN";
+    openAction.title = @"Open";
+    openAction.activationMode = UIUserNotificationActivationModeForeground;
+    
+    UIMutableUserNotificationCategory *thumbsCategory = [UIMutableUserNotificationCategory new];
+    thumbsCategory.identifier = @"THUMBS_CATEGORY";
+    [thumbsCategory setActions:@[thumbsUpAction, thumbsDownAction] forContext:UIUserNotificationActionContextDefault]; // Default = 4 actions max
+    [thumbsCategory setActions:@[thumbsUpAction, thumbsDownAction, openAction] forContext:UIUserNotificationActionContextMinimal]; // Minimal = 2 actions max
+    
+    [BatchPush registerForRemoteNotificationsWithCategories:[NSSet setWithObject:thumbsCategory]];
+    
     return YES;
 }
 
