@@ -18,6 +18,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate, BatchUnlockDelegate {
         BatchUnlock.setupUnlockWithDelegate(self)
         Batch.startWithAPIKey("YOUR API KEY")
         
+        // Register iOS 8+ actionable notificaitons
+        
+        let thumbsUpAction = UIMutableUserNotificationAction()
+        thumbsUpAction.identifier = "THUMBS_UP"
+        thumbsUpAction.title = "👍"
+        thumbsUpAction.activationMode = .Background
+        
+        let thumbsDownAction = UIMutableUserNotificationAction()
+        thumbsDownAction.identifier = "THUMBS_DOWN"
+        thumbsDownAction.title = "👎"
+        thumbsDownAction.activationMode = .Foreground
+        
+        let openAction = UIMutableUserNotificationAction()
+        thumbsDownAction.identifier = "OPEN"
+        thumbsDownAction.title = "Open"
+        thumbsDownAction.activationMode = .Foreground
+        
+        let thumbsCategory = UIMutableUserNotificationCategory()
+        thumbsCategory.identifier = "THUMBS_CATEGORY"
+        thumbsCategory.setActions([thumbsUpAction, thumbsDownAction], forContext: .Default) // Default = 4 actions max
+        thumbsCategory.setActions([thumbsUpAction, thumbsDownAction, openAction], forContext: .Minimal) // Default = 4 actions max
+        
+        BatchPush.registerForRemoteNotificationsWithCategories(Set([thumbsCategory]))
+ 
         return true
     }
 
