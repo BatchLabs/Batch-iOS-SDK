@@ -3,7 +3,7 @@
 //  Batch
 //
 //  https://batch.com
-//  Copyright (c) 2015 Batch SDK. All rights reserved.
+//  Copyright (c) 2016 Batch SDK. All rights reserved.
 //
 
 #import "BatchCore.h"

@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 /*!
  @const BatchPushReceivedNotification
@@ -45,7 +46,7 @@ typedef NS_OPTIONS(NSUInteger, BatchNotificationType)
  @abstract Activate Batch Push system.
  @discussion You can call this method from any thread.
  */
-+ (void)setupPush NS_AVAILABLE_IOS(6_0);
++ (void)setupPush NS_AVAILABLE_IOS(6_0) __attribute__((deprecated("setupPush is deprecated. You don't need to do anything else besides removing this call, Batch Push will still work as expected.")));;
 
 /*!
 @method setRemoteNotificationTypes:
@@ -109,5 +110,45 @@ typedef NS_OPTIONS(NSUInteger, BatchNotificationType)
  @return A push token, nil if unavailable.
  */
 + (NSString *)lastKnownPushToken NS_AVAILABLE_IOS(6_0);
+
+/*!
+ @method disableAutomaticIntegration
+ @abstract Disable the push's automatic integration. If you call this, you are responsible of forwarding your application's delegate calls to Batch. If you don't, some parts of the SDK and Dashboard will break.
+ @warning This must be called before you start Batch, or it will have no effect.
+ */
++ (void)disableAutomaticIntegration NS_AVAILABLE_IOS(6_0);
+
+/*!
+ @method handleDeviceToken:
+ @abstract Registers a device token to Batch. You should call this method in "application:didRegisterForRemoteNotificationsWithDeviceToken:".
+ @warning If you didn't call "disableAutomaticIntegration", this method will have no effect. If you called it but don't implement this method, Batch's push features will NOT work.
+ @param deviceToken : The untouched "deviceToken" NSData argument given to you in the application delegate method.
+ */
++ (void)handleDeviceToken:(NSData*)token NS_AVAILABLE_IOS(6_0);
+
+/*!
+ @method handleNotification:
+ @abstract Make Batch process a notification. You should call this method in "application:didReceiveRemoteNotification:" or "application:didReceiveRemoteNotification:fetchCompletionHandler:".
+ @warning If you didn't call "disableAutomaticIntegration", this method will have no effect. If you called it but don't implement this method, Batch's push features will NOT work.
+ @param userInfo : The untouched "userInfo" NSDictionary argument given to you in the application delegate method.
+ */
++ (void)handleNotification:(NSDictionary*)userInfo NS_AVAILABLE_IOS(6_0);
+
+/*!
+ @method handleNotification:actionIdentifier:
+ @abstract Make Batch process a notification action. You should call this method in "application:handleActionWithIdentifier:forRemoteNotification:completionHandler:" or "application:handleActionWithIdentifier:forRemoteNotification:withResponseInfo:completionHandler:".
+ @warning If you didn't call "disableAutomaticIntegration", this method will have no effect. If you called it but don't implement this method, Batch's push features will NOT work.
+ @param userInfo : The untouched "userInfo" NSDictionary argument given to you in the application delegate method.
+ @param actionIdentifier : The action's identifier. Used for tracking purposes: it can match your raw action name, or be a more user-friendly string;
+ */
++ (void)handleNotification:(NSDictionary*)userInfo actionIdentifier:(NSString*)identifier NS_AVAILABLE_IOS(6_0);
+
+/*!
+ @method handleNotification
+ @abstract Make Batch process the user notification settings change. You should call this method in "application:didRegisterUserNotificationSettings:".
+ @warning If you didn't call "disableAutomaticIntegration", this method will have no effect. If you called it but don't implement this method, Batch's push features will NOT work.
+ @param userInfo : The untouched "notificationSettings" UIUserNotificationSettings* argument given to you in the application delegate method.
+ */
++ (void)handleRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings NS_AVAILABLE_IOS(6_0);
 
 @end

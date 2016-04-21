@@ -1,6 +1,18 @@
 CHANGELOG
 =========
 
+1.5.3
+----
+* Removed most of the categories used by the SDK. -ObjC shouldn't be needed anymore, but it is encouraged to keep it
+* Added support for manual integrations: Application Delegate swizzling can now be disabled, but ALL Batch entry points should be implemented carefully. More info on https://batch.com/doc
+* Improved support for notifications containing "content-available":1
+* Added .gitignore in "Batch.bundle" to fix git issues for those who commited Batch itself
+* Deprecated [BatchPush setupPush]. It is now implied.
+
+1.5.2
+----
+* Minor bugfixes
+
 1.5.1
 ----  
 * Fixed: push token environment detection failed in some rare cases
