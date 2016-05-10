@@ -31,9 +31,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, BatchUnlockDelegate {
         thumbsDownAction.activationMode = .Foreground
         
         let openAction = UIMutableUserNotificationAction()
-        thumbsDownAction.identifier = "OPEN"
-        thumbsDownAction.title = "Open"
-        thumbsDownAction.activationMode = .Foreground
+        openAction.identifier = "OPEN"
+        openAction.title = "Open"
+        openAction.activationMode = .Foreground
         
         let thumbsCategory = UIMutableUserNotificationCategory()
         thumbsCategory.identifier = "THUMBS_CATEGORY"
@@ -66,7 +66,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, BatchUnlockDelegate {
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
+    
     // MARK: BatchUnlockDelegate methods
     
     func automaticOfferRedeemed(offer: BatchOffer) {
