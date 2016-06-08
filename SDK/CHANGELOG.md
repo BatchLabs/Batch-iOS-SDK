@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+1.5.4
+----
+* Fixed push token environment detection (Production/Sandbox) logging
+* Fixes a bug where +[BatchPush trackEvent:withLabel:] didn't track the event label correctly
+
 1.5.3
 ----
 * Removed most of the categories used by the SDK. -ObjC shouldn't be needed anymore, but it is encouraged to keep it
