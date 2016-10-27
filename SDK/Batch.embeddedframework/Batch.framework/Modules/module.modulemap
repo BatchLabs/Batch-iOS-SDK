@@ -27,6 +27,16 @@ framework module Batch {
         export *
     }
     
+    explicit module Actions {
+        header "BatchActions.h"
+        export *
+    }
+    
+    explicit module Messaging {
+        header "BatchMessaging.h"
+        export *
+    }
+    
     explicit module Logger {
         header "BatchLogger.h"
         export *

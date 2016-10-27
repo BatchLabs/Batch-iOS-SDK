@@ -29,7 +29,7 @@
  @param offer   :   Redeemed offer. @see BatchOffer
  @warning The delegate method is always called in the main thread!
  */
-- (void)automaticOfferRedeemed:(id<BatchOffer>)offer NS_AVAILABLE_IOS(6_0);
+- (void)automaticOfferRedeemed:(id<BatchOffer>)offer NS_AVAILABLE_IOS(8_0);
 
 @optional
 /*!
@@ -39,7 +39,7 @@
  @param code    :   The found code.
  @warning The delegate method is always called in the main thread!
  */
-- (void)URLWithCodeFound:(NSString *)code NS_AVAILABLE_IOS(6_0);
+- (void)URLWithCodeFound:(NSString *)code NS_AVAILABLE_IOS(8_0);
 
 /*!
  @method URLWithCodeRedeemed:
@@ -48,7 +48,7 @@
  @param offer   :   Redeemed offer or NULL. @see BatchOffer
  @warning The delegate method is always called in the main thread!
  */
-- (void)URLWithCodeRedeemed:(id<BatchOffer>)offer NS_AVAILABLE_IOS(6_0);
+- (void)URLWithCodeRedeemed:(id<BatchOffer>)offer NS_AVAILABLE_IOS(8_0);
 
 /*!
  @method URLWithCodeFailed:
@@ -57,7 +57,7 @@
  @param error   :   The encoutered error. @see BatchError
  @warning The delegate method is always called in the main thread!
  */
-- (void)URLWithCodeFailed:(BatchError *)error NS_AVAILABLE_IOS(6_0);
+- (void)URLWithCodeFailed:(BatchError *)error NS_AVAILABLE_IOS(8_0);
 
 @end
 
@@ -107,7 +107,7 @@ typedef void (^BatchFail) (BatchError * error);
  @param delegate    : The Batch unlock object implementing BatchUnlockDelegate.
  @warning The delegates methods are always called in the main thread!
  */
-+ (void)setupUnlockWithDelegate:(id<BatchUnlockDelegate>)delegate NS_AVAILABLE_IOS(6_0);
++ (void)setupUnlockWithDelegate:(id<BatchUnlockDelegate>)delegate NS_AVAILABLE_IOS(8_0);
 
 /*!
  @method redeemCode:success:failure:
@@ -118,7 +118,7 @@ typedef void (^BatchFail) (BatchError * error);
  @param failBlock       :   Callback when an error occured. @see BatchFail
  @warning The completion block is always called in the main thread!
  */
-+ (void)redeemCode:(NSString *)code success:(BatchSuccess)successBlock failure:(BatchFail)failBlock NS_AVAILABLE_IOS(6_0);
++ (void)redeemCode:(NSString *)code success:(BatchSuccess)successBlock failure:(BatchFail)failBlock NS_AVAILABLE_IOS(8_0);
 
 /*!
  @method restoreFeatures:failure:
@@ -128,6 +128,6 @@ typedef void (^BatchFail) (BatchError * error);
  @param fail        :   Callback when an error occured. @see BatchFail
  @warning The completion block is always called in the main thread!
  */
-+ (void)restoreFeatures:(BatchRestoreSuccess)success failure:(BatchFail)fail NS_AVAILABLE_IOS(6_0);
++ (void)restoreFeatures:(BatchRestoreSuccess)success failure:(BatchFail)fail NS_AVAILABLE_IOS(8_0);
 
 @end

@@ -134,26 +134,26 @@ __attribute__((deprecated(ADS_DEPRECATION_MESSAGE)))
  @param placement   : The placement for which you create this object.
  @return An instance of BatchNativeAdState or nil.
  */
-- (instancetype)initWithPlacement:(NSString *)placement __attribute__((warn_unused_result)) NS_AVAILABLE_IOS(6_0);
+- (instancetype)initWithPlacement:(NSString *)placement __attribute__((warn_unused_result)) NS_AVAILABLE_IOS(8_0);
 
 /*!
  @method registerView:
  @abstract Give the container view as soon as you have it.
  @param view    : The UIView in which you set the ad content.
  */
-- (void)registerView:(UIView *)view NS_AVAILABLE_IOS(6_0);
+- (void)registerView:(UIView *)view NS_AVAILABLE_IOS(8_0);
 
 /*!
  @method unregisterView
  @abstract Call this method when you unbind the ad content.
  */
-- (void)unregisterView NS_AVAILABLE_IOS(6_0);
+- (void)unregisterView NS_AVAILABLE_IOS(8_0);
 
 /*!
  @method performClickAction
  @abstract Call this method on your UIButton action or any clic action.
  @discussion This will trigger the action depending on the ad (open application store, open a web site…)
  */
-- (void)performClickAction NS_AVAILABLE_IOS(6_0);
+- (void)performClickAction NS_AVAILABLE_IOS(8_0);
 
 @end

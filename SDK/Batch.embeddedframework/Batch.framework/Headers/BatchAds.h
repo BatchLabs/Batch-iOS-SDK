@@ -46,7 +46,7 @@ __attribute__((deprecated(ADS_DEPRECATION_MESSAGE)))
  @param placement  :   Placement for which the Ad has been clicked.
  @warning The delegate method is always called in the main thread!
  */
-- (void)adDidAppear:(NSString *)placement NS_AVAILABLE_IOS(6_0);
+- (void)adDidAppear:(NSString *)placement NS_AVAILABLE_IOS(8_0);
 
 /*!
  @method adDidDisappear:
@@ -54,7 +54,7 @@ __attribute__((deprecated(ADS_DEPRECATION_MESSAGE)))
  @param placement  :   Placement for which the Ad has been clicked.
  @warning The delegate method is always called in the main thread!
  */
-- (void)adDidDisappear:(NSString *)placement NS_AVAILABLE_IOS(6_0);
+- (void)adDidDisappear:(NSString *)placement NS_AVAILABLE_IOS(8_0);
 
 /*!
  @method adClicked:
@@ -63,7 +63,7 @@ __attribute__((deprecated(ADS_DEPRECATION_MESSAGE)))
  @param placement  :   Placement for which the Ad has been clicked.
  @warning The delegate method is always called in the main thread!
  */
-- (void)adClicked:(NSString *)placement NS_AVAILABLE_IOS(6_0);
+- (void)adClicked:(NSString *)placement NS_AVAILABLE_IOS(8_0);
 
 /*!
  @method adCancelled:
@@ -72,7 +72,7 @@ __attribute__((deprecated(ADS_DEPRECATION_MESSAGE)))
  @param placement  :   Placement for which the Ad has been clicked.
  @warning The delegate method is always called in the main thread!
  */
-- (void)adCancelled:(NSString *)placement NS_AVAILABLE_IOS(6_0);
+- (void)adCancelled:(NSString *)placement NS_AVAILABLE_IOS(8_0);
 
 /*!
  @method adNotDisplayed:
@@ -80,7 +80,7 @@ __attribute__((deprecated(ADS_DEPRECATION_MESSAGE)))
  @param placement  :   Placement for which the Ad has been clicked.
  @warning The delegate method is always called in the main thread!
  */
-- (void)adNotDisplayed:(NSString *)placement NS_AVAILABLE_IOS(6_0);
+- (void)adNotDisplayed:(NSString *)placement NS_AVAILABLE_IOS(8_0);
 
 @end
 
@@ -113,7 +113,7 @@ __attribute__((deprecated(ADS_DEPRECATION_MESSAGE)))
  @abstract Activate Batch Ads system.
  @discussion You can call this method from any thread.
  */
-+ (void)setupAds NS_AVAILABLE_IOS(6_0);
++ (void)setupAds NS_AVAILABLE_IOS(8_0);
 
 
 #pragma mark -
@@ -126,7 +126,7 @@ __attribute__((deprecated(ADS_DEPRECATION_MESSAGE)))
  @param placement  : Placement for which you want to check the Ad availability.
  @return YES if an Ad is available for the given placement, NO otherwise.
  */
-+ (BOOL)hasInterstitialForPlacement:(NSString *)placement __attribute__((warn_unused_result)) NS_AVAILABLE_IOS(6_0);
++ (BOOL)hasInterstitialForPlacement:(NSString *)placement __attribute__((warn_unused_result)) NS_AVAILABLE_IOS(8_0);
 
 /*!
  @method displayAdForPlacement:
@@ -135,7 +135,7 @@ __attribute__((deprecated(ADS_DEPRECATION_MESSAGE)))
  @param placement  : Placement for which you want to display an ad.
  @return YES if no error found when displaying the Ad for the given placement, NO otherwise.
  */
-+ (BOOL)displayInterstitialForPlacement:(NSString *)placement __attribute__((warn_unused_result)) NS_AVAILABLE_IOS(6_0);
++ (BOOL)displayInterstitialForPlacement:(NSString *)placement __attribute__((warn_unused_result)) NS_AVAILABLE_IOS(8_0);
 
 /*!
  @method displayAdForPlacement:withDelegate:
@@ -145,7 +145,7 @@ __attribute__((deprecated(ADS_DEPRECATION_MESSAGE)))
  @param delegate    : Object that respond to BatchInterstitialDisplayDelegate for feedback.
  */
 + (void)displayInterstitialForPlacement:(NSString *)placement
-              withDelegate:(id<BatchAdsDisplayDelegate>)delegate NS_AVAILABLE_IOS(6_0);
+              withDelegate:(id<BatchAdsDisplayDelegate>)delegate NS_AVAILABLE_IOS(8_0);
 
 /*!
  @method setAutoLoad:
@@ -154,7 +154,7 @@ __attribute__((deprecated(ADS_DEPRECATION_MESSAGE)))
  @discussion You can call this method from any thread.
  @param load   : Set to NO to disable automatic loading.
  */
-+ (void)setAutoLoad:(BOOL)load NS_AVAILABLE_IOS(6_0);
++ (void)setAutoLoad:(BOOL)load NS_AVAILABLE_IOS(8_0);
 
 /*!
  @method loadAdForPlacement:completion:
@@ -164,7 +164,7 @@ __attribute__((deprecated(ADS_DEPRECATION_MESSAGE)))
  @param block       : Completion block called after excecution. @see BatchInterstitialLoaded
  @discussion You can call this method from any thread.
  */
-+ (void)loadInterstitialForPlacement:(NSString *)placement completion:(BatchInterstitialLoaded)block NS_AVAILABLE_IOS(6_0);
++ (void)loadInterstitialForPlacement:(NSString *)placement completion:(BatchInterstitialLoaded)block NS_AVAILABLE_IOS(8_0);
 
 
 #pragma mark -
@@ -178,7 +178,7 @@ __attribute__((deprecated(ADS_DEPRECATION_MESSAGE)))
  @param block       : Completion block called after excecution. @see BatchNativeAdLoaded
  @discussion You can call this method from any thread.
  */
-+ (void)loadNativeAd:(BatchNativeAd *)nativeAd completion:(BatchNativeAdLoaded)block NS_AVAILABLE_IOS(6_0);
++ (void)loadNativeAd:(BatchNativeAd *)nativeAd completion:(BatchNativeAdLoaded)block NS_AVAILABLE_IOS(8_0);
 
 /*!
  @method loadNativeAd:completion:
@@ -189,7 +189,7 @@ __attribute__((deprecated(ADS_DEPRECATION_MESSAGE)))
  @param block       : Completion block called after excecution. @see BatchNativeAdLoaded
  @discussion You can call this method from any thread.
  */
-+ (void)loadNativeAd:(BatchNativeAd *)nativeAd withContent:(BatchNativeAdContent)content completion:(BatchNativeAdLoaded)block NS_AVAILABLE_IOS(6_0);
++ (void)loadNativeAd:(BatchNativeAd *)nativeAd withContent:(BatchNativeAdContent)content completion:(BatchNativeAdLoaded)block NS_AVAILABLE_IOS(8_0);
 
 /*!
  @method loadNativeAd:completion:
@@ -201,7 +201,7 @@ __attribute__((deprecated(ADS_DEPRECATION_MESSAGE)))
  @param block           : Completion block called after excecution. @see BatchNativeAdLoaded
  @discussion You can call this method from any thread.
  */
-+ (void)loadNativeAd:(BatchNativeAd *)nativeAd withContent:(BatchNativeAdContent)content preloadUIImages:(BOOL)preloadUIImages completion:(BatchNativeAdLoaded)block NS_AVAILABLE_IOS(6_0);
++ (void)loadNativeAd:(BatchNativeAd *)nativeAd withContent:(BatchNativeAdContent)content preloadUIImages:(BOOL)preloadUIImages completion:(BatchNativeAdLoaded)block NS_AVAILABLE_IOS(8_0);
 
 @end
 
