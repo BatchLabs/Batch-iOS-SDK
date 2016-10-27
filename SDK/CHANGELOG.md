@@ -1,6 +1,22 @@
 CHANGELOG
 =========
 
+1.7.0
+----
+* Fix the handling of notifications opened while the app is on the screen when using UNUserNotificationCenter on iOS 10. The "bug" remains on iOS 9 because of framework limitations.
+* Introduced [Mobile Landings](https://batch.com/doc/ios/mobile-landings.html)
+
+1.6.0
+----
+* Batch now requires iOS 8 or greater due to Xcode 8 dropping support for earlier versions.
+* [Batch setUseAdvancedDeviceInformation:] has been introduced to reduce the quantity of device information Batch will use. Note that disabling this will limit several dashboard features.
+* Batch will now use the UserNotification framework when possible. UIUserNotificationCategory instances given to [BatchPush setNotificationsCategories:] are automatically converted to UNNotificationCategory on iOS 10.
+* BatchPush has new methods that allows it to be integrated into a UNUserNotificationCenterDelegate instance.
+* [BatchPush registerForRemoteNotificationsWithCategories:] has been split in two methods and is now deprecated
+* Introduced a new dynamic framework, `BatchExtension`. It is compatible with application extensions APIs, and will progressively bring more Batch features to your extensions. In this version, it is used to add support for [Rich Notifications](https://batch.com/doc/ios/sdk-integration/notification-service-setup.html).  
+
+Since iOS 10 changes quite a lot in how notifications work, it is strongly advised that you read our iOS 10 documentation: https://batch.com/doc/ios/advanced/ios10-migration.html . Upgrading to UNUserNotificationDelegate is recommended.
+
 1.5.4
 ----
 * Fixed push token environment detection (Production/Sandbox) logging
@@ -57,7 +73,7 @@ CHANGELOG
 1.3
 ----
 * Native Ads
-* Renamed ad methods to avoid confusion between interstitial ads and native ads. Old methods are deprecated but still work 
+* Renamed ad methods to avoid confusion between interstitial ads and native ads. Old methods are deprecated but still work
 * Faster interstitial ad display
 * "Batch" Objective-C module now imports everything. Base Batch functionality is in the new "Batch.Core" submodule.
 * Batch now logs starts for DEV API Keys
@@ -76,7 +92,7 @@ CHANGELOG
 
 1.2.4
 -----
-* Bug fix 
+* Bug fix
 * Better push implementation
 * Deeplink management improvement
 
