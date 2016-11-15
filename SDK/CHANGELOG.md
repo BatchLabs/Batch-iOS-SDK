@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+1.7.2
+----
+* Rebuild the SDK without debug symbols
+
 1.7.0
 ----
 * Fix the handling of notifications opened while the app is on the screen when using UNUserNotificationCenter on iOS 10. The "bug" remains on iOS 9 because of framework limitations.

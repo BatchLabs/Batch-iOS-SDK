@@ -19,7 +19,7 @@
  @class Batch
  @abstract Call for all you need for Batch usage in your application.
  @discussion Actions you can perform in Batch.
- @version v1.7.0
+ @version v1.7.2
  @availability from iOS 6.0
  */
 @interface Batch : NSObject
@@ -97,7 +97,7 @@
  @method setLoggerDelegate:
  @abstract Set if Batch should send its logs to a custom object of yours.
  @discussion Be careful with your implementation: setting this can impact stability and performance
- @param delegate : An object implementing BatchLoggerDelegate. Weakly retained.
+ @param loggerDelegate : An object implementing BatchLoggerDelegate. Weakly retained.
  @warning You should only use it if you know what you are doing.
  */
 + (void)setLoggerDelegate:(id<BatchLoggerDelegate>)loggerDelegate NS_AVAILABLE_IOS(8_0);

@@ -79,7 +79,7 @@ typedef void (^BatchUserActionBlock)(NSString* _Nonnull identifier, NSDictionary
  *
  * Trying to unregister an action that has not be unregistered will silently fail.
  * Note that trying to unregister an action that starts with "batch." will fail silently.
- * @param identifier The action's identifier. Not case-sensitive
+ * @param actionIdentifier The action's identifier. Not case-sensitive
  */
 + (void)unregisterActionIdentifier:(nonnull NSString*)actionIdentifier NS_SWIFT_NAME(unregister(actionIdentifier:));
 
@@ -103,17 +103,17 @@ typedef void (^BatchUserActionBlock)(NSString* _Nonnull identifier, NSDictionary
 enum
 {
     /*!
-     @param NSInteger Internal error
+     Internal error
      */
     BatchActionErrorUnknown = -1001,
     
     /*!
-     @param NSInteger Can be multiple things: nil action, nil or empty identifier string, nil action block
+     Can be multiple things: nil action, nil or empty identifier string, nil action block
      */
     BatchActionErrorInvalidArgument = -1002,
     
     /*!
-     @param NSInteger This action identifier is reserved and cannot be used. Note that actions cannot begin by "batch."
+     This action identifier is reserved and cannot be used. Note that actions cannot begin by "batch."
      */
     BatchActionErrorReservedIdentifier = -1003
 };

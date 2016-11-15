@@ -79,8 +79,8 @@
  Override the font used in message views.
  Not applicable for standard alerts.
  
- @param fontOverride UIFont to use for normal text. Use 'nil' to revert to the system font.
- @param fontOverride UIFont to use for bold text. Use 'nil' to revert to the system font.
+ @param font UIFont to use for normal text. Use 'nil' to revert to the system font.
+ @param boldFont UIFont to use for bold text. Use 'nil' to revert to the system font.
  */
 + (void)setFontOverride:(nullable UIFont*)font boldFont:(nullable UIFont*)boldFont;
 
@@ -101,7 +101,7 @@
  
  @warning This method should only be called on the UI thread
  
- @param userData The notification's payload. Typically the verbatim userData dictionary given to you in the app delegate.
+ @param message The notification's payload. Typically the verbatim userData dictionary given to you in the app delegate.
  @param error If there is an error creating the view controller, upon return contains an NSError object that describes the problem.
  @return The view controller you should modally present. nil if an error occurred.
  */
@@ -117,27 +117,27 @@
 enum
 {
     /*!
-     @param NSInteger The current iOS version is too old
+     The current iOS version is too old
      */
     BatchMessagingErrorIncompatibleIOSVersion = -1001,
     
     /*!
-     @param NSInteger Automatic mode hasn't been disabled
+     Automatic mode hasn't been disabled
      */
     BatchMessagingErrorAutomaticModeNotDisabled = -1002,
     
     /*!
-     @param NSInteger Internal error
+     Internal error
      */
     BatchMessagingErrorInternal = -1003,
     
     /*!
-     @param NSInteger No valid Batch message found
+     No valid Batch message found
      */
     BatchMessagingErrorNoValidBatchMessage = -1004,
     
     /*!
-     @param NSInteger The method was called from the wrong thread
+     The method was called from the wrong thread
      */
     BatchMessagingErrorNotOnMainThread = -1005
 };
