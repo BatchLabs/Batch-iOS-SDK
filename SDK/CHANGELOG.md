@@ -1,6 +1,12 @@
 CHANGELOG
 =========
 
+1.7.3
+----
+* A bug where landings and open rate tracking didn't work when coming form a cold start in some situations on iOS 10.1/10.2 was fixed. Apps implementing UNUserNotificationCenterDelegate or the "fetchCompletionHandler:" variant of the legacy app delegate callbacks are not concerned.
+* Applying changes with the user data before starting Batch doesn't fail silently anymore, but now logs an error.
+* Improved log clarity for some errors
+
 1.7.2
 ----
 * Rebuild the SDK without debug symbols
