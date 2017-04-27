@@ -1,6 +1,15 @@
 CHANGELOG
 =========
 
+1.8.0
+----
+* BREAKING CHANGE: Removed BatchAds and BatchUnlock methods and related classes.
+* Added BatchUser.trackLocation, allowing you to natively track user position updates
+* Deprecated Batch.isRunningInDevelopmentMode. It is useless, as DEV API Keys always start with "DEV"
+* Fix a temporary freeze when opening a push containing a deeplink when triggered by a UNUserNotification delegate
+* Fixed a memory leak with network requests
+* Rewrote documentation with a more modern syntax. Our API docs are now based on jazzy.
+
 1.7.4
 ----
 * Fix a bug where the delegate set on BatchMessaging was never called.

@@ -10,20 +10,8 @@ framework module Batch {
         export *
     }
     
-    explicit module Unlock {
-        header "BatchUnlock.h"
-        export *
-    }
-    
     explicit module Push {
         header "BatchPush.h"
-        export *
-    }
-    
-    explicit module Ads {
-        header "BatchAds.h"
-        header "BatchAdsDeprecated.h"
-        header "BatchNativeAd.h"
         export *
     }
     
