@@ -12,3 +12,4 @@
 #import "BatchUser.h"
 #import "BatchMessaging.h"
 #import "BatchActions.h"
+#import "BatchInbox.h"

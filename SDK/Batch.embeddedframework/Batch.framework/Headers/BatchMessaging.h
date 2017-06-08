@@ -99,7 +99,7 @@
 /**
  Try to load a messaging view controller for a given payload.
  
- Do not make assumptions about the return UIViewController subclass as it can change in a future release.
+ Do not make assumptions about the returned UIViewController subclass as it can change in a future release.
  
  @warning This method should only be called on the UI thread
  

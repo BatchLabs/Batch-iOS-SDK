@@ -20,6 +20,11 @@ framework module Batch {
         export *
     }
     
+    explicit module Inbox {
+        header "BatchInbox.h"
+        export *
+    }
+    
     explicit module Messaging {
         header "BatchMessaging.h"
         export *

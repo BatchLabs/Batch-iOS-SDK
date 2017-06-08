@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+1.9.0
+----
+* Added the Inbox module, allowing you to fetch previously received notifications from your code. More info: https://batch.com/doc/ios/inbox.html 
+
 1.8.0
 ----
 * BREAKING CHANGE: Removed BatchAds and BatchUnlock methods and related classes.

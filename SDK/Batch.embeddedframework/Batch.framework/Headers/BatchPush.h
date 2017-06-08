@@ -33,6 +33,16 @@ typedef NS_OPTIONS(NSUInteger, BatchNotificationType)
 };
 
 /**
+ Notification sources
+ A notification source represents how the push was sent from Batch: via the Transactional API, or using a Push Campaign
+ */
+typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
+    BatchNotificationSourceUnknown,
+    BatchNotificationSourceCampaign,
+    BatchNotificationSourceTransactional,
+};
+
+/**
  Provides Batch-related Push methods
  Actions you can perform in BatchPush.
  */
@@ -78,7 +88,7 @@ typedef NS_OPTIONS(NSUInteger, BatchNotificationType)
  */
 + (void)registerForRemoteNotificationsWithCategories:(NSSet *)categories NS_AVAILABLE_IOS(8_0) __attribute__((deprecated("Use setNotificationCategories and registerForRemoteNotifications separately.")));
 
-/*!
+/**
  Set the notification action categories to iOS.
  You should call this every time your app starts.
  
