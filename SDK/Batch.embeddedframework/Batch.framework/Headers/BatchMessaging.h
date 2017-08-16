@@ -13,7 +13,19 @@
 /**
  Represents a Batch Messaging message
  */
-@interface BatchMessage : NSObject <BatchUserActionSource>
+@interface BatchMessage : NSObject <NSCopying, BatchUserActionSource>
+
+@end
+
+/**
+ Represents a Batch Messaging message coming from an In-App campaign
+ */
+@interface BatchInAppMessage : BatchMessage
+
+/**
+ User defined custom payload
+ */
+@property (nullable, readonly) NSDictionary<NSString*, NSObject*>* customPayload;
 
 @end
 
@@ -22,6 +34,9 @@
  */
 @interface BatchPushMessage : BatchMessage
 
+/**
+ Original push payload
+ */
 @property (nonnull, readonly) NSDictionary<NSString*, NSObject*>* pushPayload;
 
 @end
@@ -46,6 +61,13 @@
  */
 - (void)batchMessageDidDisappear:(NSString* _Nullable)messageIdentifier;
 
+/**
+ Called when an In-App message should be presented to the user.
+
+ @param message In-App message to show.
+ */
+- (void)batchInAppMessageReady:(nonnull BatchInAppMessage*)message NS_SWIFT_NAME(batchInAppMessageReady(message:));
+
 @end
 
 /**
@@ -54,7 +76,8 @@
 @interface BatchMessaging : NSObject
 
 /**
- Sets Batch's messaging delegate. The delegate is used for optionaly informing your code about analytics event, and is required to implement custom actions.
+ Sets Batch's messaging delegate. The delegate is used for optionaly informing your code about analytics event, or handling In-App messages manually.
+ 
  
  @param delegate Your messaging delegate, weakly retained. Set it to nil to remove it.
  */
@@ -68,12 +91,50 @@
 + (void)setCanReconfigureAVAudioSession:(BOOL)canReconfigureAVAudioSession;
 
 /**
- Toggles whether Batch should display the messaging views automatically.
+ Toggles whether Batch should display the messaging views automatically when coming from a notification.
  Note that if automatic mode is enabled, manual integration methods will not work.
+ In-App messaging is not affected by this. If you want to manually display the In-App message, call setDelegate: with a delegate that implement batchInAppMessageReady:
  
  @param setAutomaticMode Whether to enable automatic mode or not
  */
 + (void)setAutomaticMode:(BOOL)setAutomaticMode;
+
+/**
+ Toogles whether BatchMessaging should enter its "do not disturb" (DnD) mode or exit it.
+ 
+ While in DnD, Batch will not display landings, not matter if they've been triggered by notifications or an In-App Campaign, even in automatic mode.
+ 
+ This mode is useful for times where you don't want Batch to interrupt your user, such as during a splashscreen, a video or an interstitial ad.
+ 
+ If a message should have been displayed during DnD, Batch will enqueue it, overwriting any previously enqueued message.
+ When exiting DnD, Batch will not display the message automatically: you'll have to call the queue management methods to display the message, if you want to.
+ 
+ See BatchMessaging.hasPendingMessage, popPendingMessage() or showPendingMessage() to manage enqueued messages.
+ 
+ Note: This is only supported if automatic mode is disabled. Messages will not be enqueued, as they will be delivered to your delegate.
+ */
+@property (class, nonatomic) BOOL doNotDisturb;
+
+/**
+ Returns whether Batch has an enqueued message from "do not disturb" mode.
+ */
+@property (class, readonly) BOOL hasPendingMessage;
+
+/**
+ Gets the pending message (if any), enqueued while Batch was (or still is) in "do not disturb" mode.
+ Note: Calling this will remove the pending message from Batch's queue: subsequent calls will return nil until a new message
+ has been enqueued.
+ 
+ @return A BatchMessage instance if there was a pending message.
+ */
++ (BatchMessage* _Nullable)popPendingMessage;
+
+/**
+ Shows the currently enqueued message, if any.
+ 
+ @return true if there was an enqueued message to show, false otherwise. Is a message was enqueued but failed to display, the return value will be true.
+ */
++ (BOOL)showPendingMessage;
 
 /**
  Override the font used in message views.
@@ -142,7 +203,12 @@ enum
     /**
      The method was called from the wrong thread
      */
-    BatchMessagingErrorNotOnMainThread = -1005
+    BatchMessagingErrorNotOnMainThread = -1005,
+    
+    /**
+     Could not find a VC to display the landing on
+     */
+    BatchMessagingErrorNoSuitableVCForDisplay = -1006
 };
 
 /**
