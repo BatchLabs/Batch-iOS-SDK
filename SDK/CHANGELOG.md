@@ -1,6 +1,19 @@
 CHANGELOG
 =========
 
+1.10.1
+---
+* Removed the one minute minimum delay between two In-App campaign triggers
+* Fixed a bug where In-App Campaigns were sometimes not refreshed when coming back in foreground
+* Fixed a bug where In-App Campaigns failed to trigger on "Next Session"
+* Other bugfixes
+
+1.10.0
+----
+* Fixed issues found by the Main Thread Checker in Xcode 9
+* Introduced In-App Campaigns
+* Added a Do Not Disturb mode on BatchMessaging, allowing easier control of when landings will be shown
+
 1.9.0
 ----
 * Added the Inbox module, allowing you to fetch previously received notifications from your code. More info: https://batch.com/doc/ios/inbox.html 

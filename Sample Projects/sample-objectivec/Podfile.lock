@@ -1,11 +1,11 @@
 PODS:
-  - Batch (1.10.0)
+  - Batch (1.10.1)
 
 DEPENDENCIES:
   - Batch (~> 1.10)
 
 SPEC CHECKSUMS:
-  Batch: b255916438ad2b3b3c353be9eb46ae99f8453e58
+  Batch: afa3aff44ce3ee6da4883f1f27923977443a1f19
 
 PODFILE CHECKSUM: f8e90c040f12bdc2002ae7d2d2a635ab8299ab73
 
