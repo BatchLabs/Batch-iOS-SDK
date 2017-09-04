@@ -13,7 +13,7 @@
 /**
  Batch's main entry point.
  
- @version v1.10.1
+ @version v1.10.2
  
  @availability iOS 8.0
  */
