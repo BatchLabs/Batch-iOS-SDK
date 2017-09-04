@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+1.10.2
+---
+* Fixed a bug where overriding a bold font would not work proper for mobile landings
+* Various bugfixes
+
 1.10.1
 ---
 * Removed the one minute minimum delay between two In-App campaign triggers
