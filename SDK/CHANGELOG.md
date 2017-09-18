@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+1.10.3
+---
+* Added a method on BatchInAppMessage, allowing you to fetch the visual content of the message. See BatchInAppMessage's content property for more info
+
 1.10.2
 ---
 * Fixed a bug where overriding a bold font would not work proper for mobile landings
