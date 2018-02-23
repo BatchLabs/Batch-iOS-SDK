@@ -70,6 +70,55 @@
 @end
 
 /**
+ Model describing a banner message's global tap action
+ */
+@interface BatchBannerMessageAction : NSObject
+
+@property (nullable, readonly) NSString* action;
+@property (nullable, readonly) NSDictionary* args;
+
+@end
+
+/**
+ Model describing a banner message's CTA
+ */
+@interface BatchBannerMessageCTA : NSObject
+
+@property (nullable, readonly) NSString* label;
+@property (nullable, readonly) NSString* action;
+@property (nullable, readonly) NSDictionary* args;
+
+@end
+
+/**
+ Model describing the content of a banner message
+ */
+@interface BatchBannerMessageContent : NSObject <BatchInAppMessageContent>
+
+@property (nullable, readonly) NSString* trackingIdentifier;
+@property (nullable, readonly) NSString* title;
+@property (nullable, readonly) NSString* body;
+@property (nullable, readonly) NSArray<BatchBannerMessageCTA*>* ctas;
+@property (nullable, readonly) BatchBannerMessageAction* globalTapAction;
+@property (nullable, readonly) NSString* mediaURL;
+@property (nullable, readonly) NSString* mediaAccessibilityDescription;
+@property (readonly) BOOL showCloseButton;
+
+// Expressed in seconds, 0 if should not automatically dismiss
+@property (readonly) NSTimeInterval automaticallyDismissAfter;
+
+@end
+
+/**
+ Protocol representing a Batch Messaging VC.
+ */
+@protocol BatchMessagingViewController <NSObject>
+
+@property (readonly) BOOL shouldDisplayInSeparateWindow;
+
+@end
+
+/**
  Represents a Batch Messaging message
  */
 @interface BatchMessage : NSObject <NSCopying, BatchUserActionSource>
@@ -114,7 +163,6 @@
 
 /**
  Implement this protocol if you want to be notified of what happens to the messaging view (for example, perform some analytics on show/hide).
- You're also required to implement this if you want to add actions with a "callback" type (as opposed to deeplinks)
  */
 @protocol BatchMessagingDelegate <NSObject>
 
@@ -233,16 +281,28 @@
  
  Do not make assumptions about the returned UIViewController subclass as it can change in a future release.
  
+ You can then display this view controller modally, or in a dedicated window. The view controller conforms to the BatchMessagingViewController
+ protocol, you can call "shouldDisplayInSeparateWindow" to know how this VC would like to be presented.
+ 
+ You can also use "presentMessagingViewController" to tell Batch to try to display it itself.
+ 
  @warning This method should only be called on the UI thread
  
  @param message The notification's payload. Typically the verbatim userData dictionary given to you in the app delegate.
  
  @param error If there is an error creating the view controller, upon return contains an NSError object that describes the problem.
  
- @return The view controller you should modally present. nil if an error occurred.
+ @return The view controller you should present. nil if an error occurred.
  */
 + (UIViewController* _Nullable)loadViewControllerForMessage:(BatchMessage* _Nonnull)message
                                                       error:(NSError * _Nullable * _Nullable)error;
+
+/**
+ Try to automatically present the given Batch Messaging View Controller, in the most appropriate way.
+ 
+ This method will do nothing if you don't give it a UIViewController loaded by [BatchMessaging loadViewControllerForMessage:error:]
+ */
++ (void)presentMessagingViewController:(nonnull UIViewController*)vc;
 
 @end
 

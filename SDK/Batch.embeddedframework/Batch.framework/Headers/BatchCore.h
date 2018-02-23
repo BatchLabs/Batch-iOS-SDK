@@ -7,13 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import "BatchUserProfile.h"
 #import "BatchLogger.h"
 
 /**
  Batch's main entry point.
  
- @version v1.10.3
+ @version v1.11.0
  
  @availability iOS 8.0
  */
@@ -107,5 +108,14 @@
  @warning You should only use it if you know what you are doing.
  */
 + (void)setLoggerDelegate:(id<BatchLoggerDelegate>)loggerDelegate NS_AVAILABLE_IOS(8_0);
+
+/**
+ Get the debug view controller.
+ For development purposes only, this contains UI with multiple debug features allowing you to debug your Batch implementation more easily.
+ If you want to make it accessible in production, you should hide it in a hard to reproduce sequence.
+ 
+ Should be presented modally.
+ */
++ (UIViewController*)debugViewController;
 
 @end

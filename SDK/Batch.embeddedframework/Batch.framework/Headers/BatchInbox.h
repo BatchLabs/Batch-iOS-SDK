@@ -17,6 +17,11 @@
 @interface BatchInboxNotificationContent : NSObject
 
 /**
+ Unique notification identifier. Do not make assumptions about its format: it can change at any time.
+ */
+@property (nonatomic, readonly, nonnull) NSString *identifier;
+
+/**
  Notification title (if present)
  */
 @property (nonatomic, readonly, nullable) NSString *title;
