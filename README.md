@@ -26,7 +26,7 @@ Add a new app on the [dashboard](https://dashboard.batch.com/app/new) using the 
 ### 3. Retrieve the dev API key
 Within your newly-created app, find the dev API key either here on step 1 of the wizard screen under `API KEY`, or in the settings menu under *API Keys*. 
 
-Place the dev API key in your sample app's AppDelegate didFinishStartingWithOptions function, in the startWithAPIKey method call.
+Place the dev API key in your sample app's AppDelegate didFinishLaunchingWithOptions function, in the startWithAPIKey method call.
 
 At this point, feel free to launch your app. If you select `Unlock`, you should see that you haven't yet redeemed any *features* or *items*.
 
