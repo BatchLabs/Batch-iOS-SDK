@@ -14,7 +14,7 @@
 /**
  Batch's main entry point.
  
- @version v1.11.0
+ @version v1.12.0
  
  @availability iOS 8.0
  */
@@ -117,5 +117,47 @@
  Should be presented modally.
  */
 + (UIViewController*)debugViewController;
+
+/**
+ Opt-out from Batch SDK usage.
+ 
+ Your app should be prepared to handle these cases. Some modules might behave unexpectedly
+ when the SDK is opted out from.
+ 
+ Opting out will:
+  - Prevent [Batch startWithAPIKey:] from starting the SDK
+  - Disable any network capability from the SDK
+  - Disable all In-App campaigns
+  - Make the Inbox module return an error immediatly
+  - Make any call to -[BatchUserDataEditor save] do nothing
+  - Make any "track" methods from BatchUser ineffective
+ 
+ Even if you opt-in afterwards, data generated (such as user data or tracked events) while opted out WILL be lost.
+ 
+ If you also want to delete user data, please see [Batch optOutAndWipeData].
+ */
++ (void)optOut;
+
+/**
+ Opt-out to Batch SDK and wipe data.
+ 
+ See [Batch optOut] documentation for details
+ Note that once opted out, [Batch startWithAPIKey:] will essentially be a no-op
+ Your app should be prepared to handle these cases.
+ */
++ (void)optOutAndWipeData;
+
+/**
+ Opt-in to Batch SDK.
+ 
+ Useful if you called [Batch optOut], [Batch optOutAndWipeData] or opted out by default in your Info.plist
+ Some features might not fully work until the next app restart. You will need to call [Batch startWithAPIKey:@""] after this.
+ */
++ (void)optIn;
+
+/**
+ Returns whether Batch has been opted out from or not
+ */
++ (BOOL)isOptedOut;
 
 @end

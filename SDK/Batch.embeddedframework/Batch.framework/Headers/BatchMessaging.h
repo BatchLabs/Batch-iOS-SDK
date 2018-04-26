@@ -147,6 +147,12 @@
  */
 @property (nullable, readonly) id<BatchInAppMessageContent> content;
 
+/**
+ Get the campaign token. This is the same token as you see when opening the In-App Campaign in your browser, when on the dashboard.
+ Can be nil.
+ */
+ @property (nullable, readonly) NSString *campaignToken;
+
 @end
 
 /**
@@ -230,7 +236,7 @@
  
  See BatchMessaging.hasPendingMessage, popPendingMessage() or showPendingMessage() to manage enqueued messages.
  
- Note: This is only supported if automatic mode is disabled. Messages will not be enqueued, as they will be delivered to your delegate.
+ Note: This is only supported if automatic mode is enabled. Messages will not be enqueued, as they will be delivered to your delegate.
  */
 @property (class, nonatomic) BOOL doNotDisturb;
 
@@ -339,7 +345,12 @@ enum
     /**
      Could not find a VC to display the landing on
      */
-    BatchMessagingErrorNoSuitableVCForDisplay = -1006
+    BatchMessagingErrorNoSuitableVCForDisplay = -1006,
+    
+    /**
+     Batch is opted-out from
+     */
+    BatchMessagingErrorOptedOut = -1007
 };
 
 /**
