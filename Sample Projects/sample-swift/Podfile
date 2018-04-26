@@ -6,5 +6,5 @@ target 'sample-swift' do
   use_frameworks!
 
   # Pods for sample-swift
-  pod 'Batch', '~>1.11'
+  pod 'Batch', '~>1.12'
 end

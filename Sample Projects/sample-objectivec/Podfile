@@ -6,7 +6,7 @@ target 'sample-objectivec' do
   # use_frameworks!
 
   # Pods for sample-objectivec
-  pod 'Batch', '~>1.11'
+  pod 'Batch', '~>1.12'
 
   target 'sample-objectivecTests' do
     inherit! :search_paths

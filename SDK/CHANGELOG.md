@@ -1,6 +1,49 @@
 CHANGELOG
 =========
 
+1.12.0
+---
+
+* Added methods to handle opting-out from Batch, and wiping user data.
+  Please see `[Batch optOut]`, `[Batch optOutAndWipeData]` and `[Batch optIn]`.
+  You can control whether Batch is opted out from by default setting a boolean TRUE in your Info.plist for the key:  
+  `BATCH_OPTED_OUT_BY_DEFAULT`
+  For compatibility reasons, Batch will be enabled by default.
+  More info in our documentation.
+
+* Fixed a bug where an In-App Campaign might not trigger for a certain configuration if a tracked event had a label
+
+1.11.0
+---
+
+* Added support for Banners in In-App Messaging
+
+  If your app uses the Mobile Landing/In-App Messaging manual mode, and especially `[BatchMessaging loadViewControllerForMessage:error:]` you need to change the way you present the view controllers manually: please check the [updated manual mode documentation](https://batch.com/doc/ios/mobile-landings.html) for more information.
+  A helper has been added on BatchMessaging, which is especially useful if you don't feel like making your own UIWindow: `[BatchMessaging presentMessagingViewController:]`
+
+* Fix In-App Campaigns not honoring the grace period
+* Fix an issue where on iOS 11, the fullscreen Messaging template may not be displayed correctly for themes with no CTA
+* The SDK will now log the current Installation ID on start
+
+1.10.4
+---
+
+* Added [BatchMessaging presentViewController:], which takes care of showing a previously loaded BatchMessagingViewController in the most appropriate way.
+
+  If you used [BatchMessaging loadViewControllerForMessage:error:] to display messages in manual mode, you should go to the messaging documentation to follow updated instructions: failure to do so will result in incorrect banner behaviour.
+
+* Added support for Smart Invert in Mobile Landings/In-App Messaging. Images won't be inverted anymore.
+
+* Added iPhone X support for Mobile Landings/In-App Messaging.
+
+* [BatchMessaging loadViewControllerForMessage:error:] is now allowed in automatic mode.
+
+* Delay button handling in messaging views to until animations are over. This may have prevented deeplinks or custom actions from working properly, as UIKit does not support presenting a view controller while one is already animating.
+
+* Fix In-App Campaigns accidentally performing too much work on the main thread.
+
+* Fix a concurrency issue with In-App Campaigns which could very rarely cause a crash
+
 1.10.3
 ---
 * Added a method on BatchInAppMessage, allowing you to fetch the visual content of the message. See BatchInAppMessage's content property for more info
