@@ -5,6 +5,8 @@ Batch.com iOS SDK
 
 ![Header](http://batch-doc.s3.amazonaws.com/General/BatchHeader.png)
 
+*Looking for sample code? Please see [BatchLabs/batchcast-ios](https://github.com/batchlabs/batchcast-ios)*
+
 # About
 
 Batch is the leading mobile engagement & push notification suite engineered for the mobile era.
