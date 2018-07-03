@@ -23,7 +23,7 @@ pod 'Batch'
 ```
 
 Manual  
- - [Download the SDK](https://batch.com/download#/Android)
+ - [Download the SDK](https://batch.com/download/ios)
  - Drag and drop the framework into your project
  - Add `libsqlite3` and Batch to `Linked Frameworks and Libraries` in your project settings
  - Add `-ObjC` in `Other Build Flags`
