@@ -11,8 +11,6 @@
 /**
  Describe a complete user profile.
  Use this object to access all user info.
- 
- @deprecated
  */
 @interface BatchUserProfile : NSObject
 

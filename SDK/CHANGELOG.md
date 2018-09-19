@@ -1,6 +1,41 @@
 CHANGELOG
 =========
 
+1.13.0
+---
+
+**Core**  
+
+* Fixed a rare crash that could happen when Batch's internal database failed to initialize in `[BAUserDataManager startAttributesSendWSWithDelay:]`.
+* Opting-out from the SDK now sends an event notifying the server of this. If a data wipe has been asked, the request will also be forwarded to the server.
+  New methods have been introduced to be informed of the status of the request to update your UI accordingly, and possibly revert the opt-out if the network is unreachable.
+
+* Added the `BatchDeeplinkDelegate` protocol. Adopting it allows you to manually process deeplink open requests from Batch, rather than having to implement `openURL`. See `Batch.deeplinkDelegate` for more information.
+
+**Push**
+
+* The SDK will report whether notifications are allowed, denied, or undecided more accurately on iOS 10 or higher
+* Added a method to easily open iOS' settings for the current application's notification settings
+* Split `+[BatchPush registerForRemoteNotifications]` into more explicit methods.
+  - `+[BatchPush requestNotificationAuthorization]` shows the system notification authorization prompt, and then fetches the push token. Equivalent to calling `+[BatchPush registerForRemoteNotifications]`.
+  - `+[BatchPush refreshToken]` will *only* ask iOS for a new token. This needs to be called on every application start to handle upgrades from versions without Batch, or if iOS changes the push token.
+* Added support for iOS 12's notification changes:
+  - You can now ask for provisional notification authorization using `+[BatchPush requestProvisionalNotificationAuthorization]`. This method does nothing on versions lower than iOS 12.
+  - You can now ask Batch to tell iOS that your app supports opening an in-app notification settings from the system settings by calling `[BatchPush setsetSupportsAppNotificationSettings:true]`
+    Note that this still requires you to implement a UNUserNotificationCenterDelegate, and the appropriate method to open the settings.
+
+**Events**
+
+Event data support has been overhauled. As a result:  
+
+* Introduced `BatchEventData`. Use this class to attach attributes and tags to an event. See this class' documentation for more information about limits.
+* `+[BatchUser trackEvent:withLabel:data:]` has been deprecated
+ - Calls to this method will log deprecation warnings in the console
+ - Legacy data (NSDictionary) will be converted to `BatchEventData`. Same data format restrictions apply: Any key/value entry that can't be converted will be ignored, and logged. Tags are not supported
+* Introduced `+[BatchUser trackEvent:withLabel:associatedData:]` which uses `BatchEventData`, replacing the deprecated method.
+ - Swift users: Since Swift allows methods to be overloaded by type, the method and arguments name **do not** change: simply replace your data dictionary with a `BatchEventData` instance
+   Example: `BatchUser.trackEvent("event_name", withLabel: "label", data: BatchEventData())`
+
 1.12.0
 ---
 

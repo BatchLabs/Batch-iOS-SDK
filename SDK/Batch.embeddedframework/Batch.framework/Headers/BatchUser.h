@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
+#import "BatchEventData.h"
 
 @class BatchUserDataEditor;
 
@@ -55,13 +56,27 @@
  Track an event
  You can call this method from any thread. Batch must be started at some point, or events won't be sent to the server.
  
+ @deprecated See [BatchUser trackEvent:withLabel:associatedData:]. Data sent using this method might be truncated if it can't be converted to a BatchEventData instance.
+ 
  @param event The event name. It should be made of letters, numbers or underscores ([a-z0-9_]) and can't be longer than 30 characters.
  
  @param label The event label (optional). Must be a string.
  
  @param data  The event data (optional). Must a serializable JSON Foundation dictionary (meaning that it must pass +[NSJSONSerialization isValidJSONObject]'s check). See NSJSONSerialization documentation for supported types, with the only difference that the top level object MUST BE a NSDictionary and not a NSArray.
  */
-+ (void)trackEvent:(nonnull NSString*)event withLabel:(nullable NSString*)label data:(nullable NSDictionary*)data;
++ (void)trackEvent:(nonnull NSString*)event withLabel:(nullable NSString*)label data:(nullable NSDictionary*)data __attribute__((deprecated("Please migrate to [BatchUser trackEvent:withLabel:associatedData:]. Data sent using this method might be truncated if it can't be converted to a BatchEventData instance.")));
+
+/**
+ Track an event
+ You can call this method from any thread. Batch must be started at some point, or events won't be sent to the server.
+ 
+ @param event The event name. It should be made of letters, numbers or underscores ([a-z0-9_]) and can't be longer than 30 characters.
+ 
+ @param label The event label (optional). Must be a string.
+ 
+ @param data  The event data (optional).
+ */
++ (void)trackEvent:(nonnull NSString*)event withLabel:(nullable NSString*)label associatedData:(nullable BatchEventData*)data NS_SWIFT_NAME(trackEvent(_:withLabel:data:));
 
 /**
  Track a transaction

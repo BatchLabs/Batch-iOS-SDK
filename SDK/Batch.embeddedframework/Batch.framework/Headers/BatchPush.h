@@ -30,6 +30,8 @@ typedef NS_OPTIONS(NSUInteger, BatchNotificationType)
     BatchNotificationTypeBadge   = 1 << 0,
     BatchNotificationTypeSound   = 1 << 1,
     BatchNotificationTypeAlert   = 1 << 2,
+    BatchNotificationTypeCarPlay = 1 << 3,
+    BatchNotificationTypeCritical = 1 << 4,
 };
 
 /**
@@ -47,6 +49,12 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
  Actions you can perform in BatchPush.
  */
 @interface BatchPush : NSObject
+
+/**
+ Controls whether Batch should tell iOS 12+ that your application supports opening in-app notification settings from the system.
+ Supporting this also requires implementing the corresponding method in UNUserNotificationCenterDelegate.
+ */
+@property (class) BOOL supportsAppNotificationSettings;
 
 /**
  Do not call this method, as BatchPush only consists of static methods.
@@ -71,14 +79,48 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 + (void)setRemoteNotificationTypes:(BatchNotificationType)type NS_AVAILABLE_IOS(8_0);
 
 /**
- Call this method to trigger the iOS popup that asks the user if he wants to allow Push Notifications and register to APNS.
+ Call this method to trigger the iOS popup that asks the user if they wants to allow notifications to be displayed, then get a Push token.
  The default registration is made with Badge, Sound and Alert. If you want another configuration: call `setRemoteNotificationTypes:`.
  You should call this at a strategic moment, like at the end of your welcome.
+ 
+ Batch will automatically ask for a push token when the user replies.
  */
-+ (void)registerForRemoteNotifications NS_AVAILABLE_IOS(8_0);
++ (void)requestNotificationAuthorization NS_AVAILABLE_IOS(8_0);
 
 /**
- Call this method to trigger the iOS popup that asks the user if he wants to allow Push Notifications and register to APNS.
+ Call this method to ask iOS for a provisional notification authorization.
+ Batch will then automatically ask for a push token.
+ 
+ Provisional authorization will NOT show a popup asking for user authorization,
+ but notifications will NOT be displayed on the lock screen, or as a banner when the phone is unlocked.
+ They will directly be sent to the notification center, accessible when the user swipes up on the lockscreen, or down from the statusbar when unlocked.
+ 
+ This method does nothing on iOS 11 or lower.
+ */
++ (void)requestProvisionalNotificationAuthorization NS_AVAILABLE_IOS(8_0);
+
+/**
+ Ask iOS to refresh the push token. If the app didn't prompt the user for consent yet, this will not be done.
+ You should call this at the start of your app, to make sure Batch always gets a valid token after app updates.
+ */
++ (void)refreshToken NS_AVAILABLE_IOS(8_0);
+
+/**
+ Open the system settings on your applications' notification settings.
+ */
++ (void)openSystemNotificationSettings NS_AVAILABLE_IOS(8_0);
+
+/**
+ Call this method to trigger the iOS popup that asks the user if they wants to allow Push Notifications, then get a Push token.
+ The default registration is made with Badge, Sound and Alert. If you want another configuration: call `setRemoteNotificationTypes:`.
+ You should call this at a strategic moment, like at the end of your welcome.
+ 
+ Equivalent to calling +[BatchPush promptForSystemNotificationConsent]
+ */
++ (void)registerForRemoteNotifications NS_AVAILABLE_IOS(8_0) __attribute__((deprecated("Use promptForSystemNotificationConsent and refreshToken separately. More info in our documentation.")));
+
+/**
+ Call this method to trigger the iOS popup that asks the user if they want to allow Push Notifications and register to APNS.
  Default registration is made with Badge, Sound and Alert. If you want another configuration: call `setRemoteNotificationTypes:`.
  You should call this at a strategic moment, like at the end of your welcome.
  
@@ -115,6 +157,9 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 /**
  Set whether Batch Push should automatically try to handle deeplinks
  By default, this is set to YES. You need to call everytime your app is restarted, this option is not persisted.
+ 
+ If your goal is to implement a custom deeplink format, you should see Batch.deeplinkDelegate which allows you to manually handle the deeplink string, but doesn't
+ put the burden of parsing the notification payload on you.
  
  @warning If Batch is set to handle your deeplinks, it will *automatically* call the fetch completion handler (if applicable) with UIBackgroundFetchResultNewData.
  */

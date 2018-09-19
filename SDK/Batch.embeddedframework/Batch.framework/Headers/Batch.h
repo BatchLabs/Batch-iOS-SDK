@@ -13,3 +13,4 @@
 #import "BatchMessaging.h"
 #import "BatchActions.h"
 #import "BatchInbox.h"
+#import "BatchEventData.h"

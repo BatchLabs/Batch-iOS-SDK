@@ -11,37 +11,54 @@
 #import "BatchUserProfile.h"
 #import "BatchLogger.h"
 
+@protocol BatchDeeplinkDelegate;
+
+typedef NS_ENUM(NSUInteger, BatchOptOutNetworkErrorPolicy) {
+    /**
+     Ignore the error and proceed with the opt-out.
+     */
+    BatchOptOutNetworkErrorPolicyIgnore,
+    
+    /**
+     Cancel the opt-out: please call the opt-out method again to retry.
+     */
+    BatchOptOutNetworkErrorPolicyCancel,
+};
+
 /**
  Batch's main entry point.
  
- @version v1.12.0
+ @version v1.13.0
  
  @availability iOS 8.0
  */
 @interface Batch : NSObject
 
 /**
+ Use the deeplink delegate object to process deeplink open requests from Batch.
+ 
+ Setting a delegate will disable Batch's default behaviour, which is to call [[UIApplication sharedApplication] openURL:].
+ This works for notifications and mobile landings/in-app messages, as opposed to disabling automatic deeplink handling.
+ It is weakly retained: make sure you retain your delegate in some place, like your application delegate.
+ 
+ */
+@property (class, weak, nullable, nonatomic) id<BatchDeeplinkDelegate> deeplinkDelegate;
+
+/**
  @warning Never call this method: Batch only uses static methods.
  */
-- (instancetype)init NS_UNAVAILABLE;
+- (nonnull instancetype)init NS_UNAVAILABLE;
 
 /**
  Start Batch.
  You should call this method in application:didFinishLaunchingWithOptions: of your UIApplicationDelegate
- @discussion You can call this method from any thread, the start process is execute in background.
- @param key    :   Your API private key.
- */
-
-
-/**
- Start Batch SDK.
  
  Note: This is the method that triggers the hooking or your Application to automatically handle some lifecycle events.
  If you run into issues, you can try moving this method before other SDK initializations, or call [BatchPush disableAutomaticIntegration] before this method, and follow the "Manual Integration" advanced documentation.
  
  @param key Your APP's API Key, LIVE or DEV. You can find it on your dashboard.
  */
-+ (void)startWithAPIKey:(NSString *)key NS_AVAILABLE_IOS(8_0);
++ (void)startWithAPIKey:(NSString *_Nonnull)key NS_AVAILABLE_IOS(8_0);
 
 /**
  Handles a URL, if applicable.
@@ -51,7 +68,7 @@
  
  @return YES if Batch performed an action with this URL, NO otherwise.
  */
-+ (BOOL)handleURL:(NSURL *)url __attribute__((warn_unused_result)) NS_AVAILABLE_IOS(8_0);
++ (BOOL)handleURL:(NSURL * _Nonnull)url __attribute__((warn_unused_result)) NS_AVAILABLE_IOS(8_0);
 
 /**
  Check if Batch is running in development mode.
@@ -65,7 +82,7 @@
  
  @return An instance of BatchUserProfile, or nil
  */
-+ (BatchUserProfile *)defaultUserProfile __attribute__((warn_unused_result, deprecated("Please use Batch User instead"))) NS_AVAILABLE_IOS(8_0);
++ (BatchUserProfile * _Nullable)defaultUserProfile __attribute__((warn_unused_result, deprecated("Please use Batch User instead"))) NS_AVAILABLE_IOS(8_0);
 
 /**
  Control whether Batch should try to use the IDFA or if you forbid it to. (default = YES)
@@ -107,7 +124,7 @@
  
  @warning You should only use it if you know what you are doing.
  */
-+ (void)setLoggerDelegate:(id<BatchLoggerDelegate>)loggerDelegate NS_AVAILABLE_IOS(8_0);
++ (void)setLoggerDelegate:(id<BatchLoggerDelegate> _Nullable)loggerDelegate NS_AVAILABLE_IOS(8_0);
 
 /**
  Get the debug view controller.
@@ -116,10 +133,13 @@
  
  Should be presented modally.
  */
-+ (UIViewController*)debugViewController;
++ (UIViewController* _Nullable)debugViewController;
 
 /**
  Opt-out from Batch SDK usage.
+ A push opt-out command will be sent to Batch's servers if the user is connected to the internet.
+ If disconnected, notifications might not be disabled properly. Please use [Batch optOutWithCompletionHandler:] to handle
+ these cases more gracefully.
  
  Your app should be prepared to handle these cases. Some modules might behave unexpectedly
  when the SDK is opted out from.
@@ -139,13 +159,40 @@
 + (void)optOut;
 
 /**
- Opt-out to Batch SDK and wipe data.
+ Opt-out from Batch SDK and wipe data.
+ An installation data wipe command will be sent to Batch's servers if the user is connected to the internet.
+ If disconnected, notifications might not be disabled properly. Please use [Batch optOutAndWipeDataWithCompletionHandler:] to handle
+ these cases more gracefully.
  
  See [Batch optOut] documentation for details
  Note that once opted out, [Batch startWithAPIKey:] will essentially be a no-op
  Your app should be prepared to handle these cases.
  */
 + (void)optOutAndWipeData;
+
+/**
+ Opt-out from Batch SDK.
+ 
+ See [Batch optOut] documentation for details.
+
+ Use the completion handler to be informed about whether the opt-out request has been successfully sent to the server or not.
+ You'll also be able to control what to do in case of failure.
+ 
+ Note: if the SDK has already been opted-out from, this method will instantly call the completion handler with a *failure* state.
+ */
++ (void)optOutWithCompletionHandler:(BatchOptOutNetworkErrorPolicy(^ _Nonnull)(BOOL success))handler;
+
+/**
+ Opt-out from Batch SDK and wipe data.
+ 
+ See [Batch optOutAndWipeData] documentation for details.
+ 
+ Use the completion handler to be informed about whether the opt-out request has been successfully sent to the server or not.
+ You'll also be able to control what to do in case of failure.
+ 
+ Note: if the SDK has already been opted-out from, this method will instantly call the completion handler with a *failure* state.
+ */
++ (void)optOutAndWipeDataWithCompletionHandler:(BatchOptOutNetworkErrorPolicy(^ _Nonnull)(BOOL success))handler;
 
 /**
  Opt-in to Batch SDK.
@@ -159,5 +206,21 @@
  Returns whether Batch has been opted out from or not
  */
 + (BOOL)isOptedOut;
+
+@end
+
+/**
+ BatchDeeplinkDelegate is the protocol to adopt when you want to set a deeplink delegate on the SDK.
+ 
+ See Batch.deeplinkDelegate for more info.
+ */
+@protocol BatchDeeplinkDelegate <NSObject>
+
+/**
+ Method called when Batch needs to open a deeplink.
+ 
+ This will be called on the main thread.
+ */
+- (void)openBatchDeeplink:(nonnull NSString*)deeplink;
 
 @end

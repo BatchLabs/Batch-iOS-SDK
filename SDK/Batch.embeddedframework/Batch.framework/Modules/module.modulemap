@@ -37,6 +37,7 @@ framework module Batch {
     
     explicit module User {
         header "BatchUser.h"
+        header "BatchEventData.h"
         export *
     }
 }
