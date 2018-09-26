@@ -115,9 +115,9 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
  The default registration is made with Badge, Sound and Alert. If you want another configuration: call `setRemoteNotificationTypes:`.
  You should call this at a strategic moment, like at the end of your welcome.
  
- Equivalent to calling +[BatchPush promptForSystemNotificationConsent]
+ Equivalent to calling +[BatchPush requestNotificationAuthorization]
  */
-+ (void)registerForRemoteNotifications NS_AVAILABLE_IOS(8_0) __attribute__((deprecated("Use promptForSystemNotificationConsent and refreshToken separately. More info in our documentation.")));
++ (void)registerForRemoteNotifications NS_AVAILABLE_IOS(8_0) __attribute__((deprecated("Use requestNotificationAuthorization and refreshToken separately. More info in our documentation.")));
 
 /**
  Call this method to trigger the iOS popup that asks the user if they want to allow Push Notifications and register to APNS.
