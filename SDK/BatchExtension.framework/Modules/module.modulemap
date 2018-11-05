@@ -1,6 +1,12 @@
 framework module BatchExtension {
-  umbrella header "BatchExtension.h"
-
-  export *
-  module * { export * }
+    
+    umbrella header "BatchExtension.h"
+    
+    export *
+    module * { export * }
+    
+    explicit module RichNotification {
+        header "BAERichNotificationHelper.h"
+        export *
+    }
 }

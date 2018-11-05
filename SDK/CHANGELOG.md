@@ -1,6 +1,14 @@
 CHANGELOG
 =========
 
+1.13.1
+---
+
+Re-release of 1.13.0, compiled with Xcode 10.1.
+Batch now includes an arm64e slice.
+
+**Note:** This release comes with an update to the included BatchExtension framework.
+
 1.13.0
 ---
 
