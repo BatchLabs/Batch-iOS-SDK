@@ -11,9 +11,16 @@ individual_slices_paths=()
 # Split the fat framework into one file per valid slice
 
 for arch in $VALID_ARCHS; do
+    # Temporary arm64e patch, remove once a bitcode-enabled arm64e slice can be generated
+    if [[ $arch == "arm64e" ]]; then
+      continue
+    fi
+
     slice_path="$FRAMEWORK_BINARY_PATH-$arch"
     lipo -extract "$arch" "$FRAMEWORK_BINARY_PATH" -o "$slice_path"
-    individual_slices+=("$slice_path")
+    if [ $? -eq 0 ]; then
+      individual_slices+=("$slice_path")
+    fi
 done
 
 # Delete the fat framework and merge everything back, then clean up

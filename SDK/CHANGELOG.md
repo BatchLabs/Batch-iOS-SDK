@@ -5,9 +5,9 @@ CHANGELOG
 ---
 
 Re-release of 1.13.0, compiled with Xcode 10.1.
-Batch now includes an arm64e slice.
+Batch now includes an arm64e slice. **arm64e bitcode isn't present**
 
-**Note:** This release comes with an update to the included BatchExtension framework.
+**Note:** This release comes with an update to the included BatchExtension framework. Its strip-frameworks script will strip the arm64e slice to prevent bitcode-related submission errors: we strongly **discourage** from enabling `arm64e` in your extension's Architectures
 
 1.13.0
 ---
