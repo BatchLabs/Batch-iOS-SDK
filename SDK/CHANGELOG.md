@@ -1,6 +1,17 @@
 CHANGELOG
 =========
 
+1.13.2
+---
+
+**Core**
+
+* Fixed a rare race condition crash that could happen when tracking an event while In-App campaigns are fetched from the server.
+
+**User**
+
+* Fixed an issue where adding tags would not work with 1.13.1
+
 1.13.1
 ---
 
