@@ -1,6 +1,31 @@
 CHANGELOG
 =========
 
+1.14.0
+---
+
+**Core**
+
+* Bug fix: deeplinks from actions are properly sent to Deeplink delegate method
+
+**User**
+
+* High level data (language/region/custom user id) can now be read back.
+* User data (attributes and tags) can now be read back. [Documentation](https://batch.com/doc/ios/custom-data/custom-attributes.html#_reading-attributes-and-tag-collections)
+
+**Messaging**
+* Added support for two new UI formats: Modal, and Image. See the documentation for more information.
+* Added support for GIFs in Mobile Landings and In-App messages
+* Added support for rich text.
+* Added support for text scrolling in all formats. Banners will now have a maximum body height of ~160pt, and their text will scroll.
+
+* Deeplinks can now be open directly in the app using a SFSafariViewController for Push Notifications, Mobile Landings and In-App Mesasges  
+* Added new methods on the messaging delegate allowing you to track more information such as close/autoclose and button presses. More info in the Mobile Landings documentation.
+* In swift, `BatchMessaging.setAutomaticMode` has been renamed to `BatchMessaging.setAutomaticMode(on:)`
+
+**Push**
+* BatchPushAlertDidResignNotification is sent when user dismissed the Remote notification authorization alert. Notification's userInfo dict contains user's choice in BatchPushNotificationDidAcceptKey
+
 1.13.2
 ---
 
