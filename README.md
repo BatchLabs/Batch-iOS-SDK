@@ -26,7 +26,7 @@ Manual
  - [Download the SDK](https://batch.com/download/ios)
  - Drag and drop the framework into your project
  - Add `libsqlite3` and Batch to `Linked Frameworks and Libraries` in your project settings
- - Add `-ObjC` in `Other Build Flags`
+ - Add `-ObjC` in `Other Linker Flags`
  - Enjoy
 
 Note: If you can't add `-ObjC`, you can use `-force_load`:  
