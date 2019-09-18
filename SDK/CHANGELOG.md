@@ -1,6 +1,21 @@
 CHANGELOG
 =========
 
+1.14.1
+---
+
+This release officially supports iOS 13.
+It has been built using **and requires** Xcode 11.0 GM 2.
+
+**This is the LAST release that support iOS 8 and 9. Apple has already removed their simulators form Xcode 11.**  
+
+**Future releases of the SDK will be distributed as a dynamic framework, as opposed to the current static framework, and will require the Swift runtime in your app.**  
+It will be distributed in the XCFramework format for supported package managers and manual downloads.
+
+**Messaging**
+* Add UIScene support
+* Add an analytics event for iOS 13's modal swipe-to-dismiss
+
 1.14.0
 ---
 
