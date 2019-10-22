@@ -1,13 +1,23 @@
 CHANGELOG
 =========
 
+1.14.2
+---
+This release has been built using Xcode 11.1.
+
+**Messaging**
+
+* Fix an issue where mobile landings might fail to be shown after opening a push for a backgrounded app on iOS 13
+* Fix an issue where BatchDeeplinkDelegate does not fire  in certain conditions when opening a push from the lockscreen
+* Fix an issue where banners would move more than expected when swiping on them on iOS 13
+
 1.14.1
 ---
 
 This release officially supports iOS 13.
 It has been built using **and requires** Xcode 11.0 GM 2.
 
-**This is the LAST release that support iOS 8 and 9. Apple has already removed their simulators form Xcode 11.**  
+**This is the LAST release that support iOS 8 and 9. Apple has already removed their simulators from Xcode 11.**  
 
 **Future releases of the SDK will be distributed as a dynamic framework, as opposed to the current static framework, and will require the Swift runtime in your app.**  
 It will be distributed in the XCFramework format for supported package managers and manual downloads.
