@@ -1,6 +1,31 @@
 CHANGELOG
 =========
 
+1.15.0
+---
+
+Compiled with Xcode 11.3.1
+
+**This is the LAST release that support iOS 8 and 9. Future releases will require iOS 10+**
+
+**Core**
+
+* Changed how notification status is reported: The SDK will now tell Batch's servers that notifications are enabled if :
+ - The app has requested and holds a provisional authorization.
+ - The user has disabled banners but kept lockscreen or notification center delivery enabled.
+* Added support for external analytics using `BatchEventDispatcher`. See the documentation for more details.
+
+**Messaging**
+
+* New enum property `BatchMessagingContentType contentType` on class `BatchInAppMessage` to help cast to the right content class.
+* A new optional delegate method `BatchMessagingDelegate.presentingViewControllerForBatchUI` allows to specify which view controller to display Batch messages on.
+* Fixed an issue where the last line of a label could be cut.
+* Improved accessibility of all message formats
+
+**Inbox**
+
+* Added the `markNotificationAsDeleted:` method on `BatchInboxFetcher`, allowing the deletion of notifications
+
 1.14.2
 ---
 This release has been built using Xcode 11.1.
@@ -19,9 +44,6 @@ It has been built using **and requires** Xcode 11.0 GM 2.
 
 **This is the LAST release that support iOS 8 and 9. Apple has already removed their simulators from Xcode 11.**  
 
-**Future releases of the SDK will be distributed as a dynamic framework, as opposed to the current static framework, and will require the Swift runtime in your app.**  
-It will be distributed in the XCFramework format for supported package managers and manual downloads.
-
 **Messaging**
 * Add UIScene support
 * Add an analytics event for iOS 13's modal swipe-to-dismiss
@@ -32,6 +54,8 @@ It will be distributed in the XCFramework format for supported package managers 
 **Core**
 
 * Bug fix: deeplinks from actions are properly sent to Deeplink delegate method
+* Fixed an issue where the server-side GDPR wipe event was not sent properly
+* Fixed an issue where the Installation ID may not be wiped properly after a GDPR wipe
 
 **User**
 
