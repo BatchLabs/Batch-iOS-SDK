@@ -1,6 +1,16 @@
 CHANGELOG
 =========
 
+1.15.1
+---
+
+Compiled with Xcode 11.5
+
+**User**
+
+* Added support for Date in BatchEventData.
+* BatchEventData now supports up to 15 attributes (from 10).
+
 1.15.0
 ---
 
