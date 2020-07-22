@@ -1,6 +1,20 @@
 CHANGELOG
 =========
 
+1.15.2
+---
+
+Compiled with Xcode 11.5
+
+**Event Dispatcher**
+
+* Fix an issue where event dispatchers might not be called.
+
+**User**
+
+* Fix an issue where events that had not been sent to the server would be lost when the app's process was killed.
+
+
 1.15.1
 ---
 
