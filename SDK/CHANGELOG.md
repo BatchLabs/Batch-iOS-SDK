@@ -1,10 +1,84 @@
 CHANGELOG
 =========
 
+1.16.0
+---
+
+A migration guide from Batch 1.15 and lower is [available here](https://doc.batch.com/ios/advanced/1_16-migration).
+
+**BREAKING:**
+**This version drops support for iOS 8 and 9**
+**Batch requires Xcode 12 and iOS 10.0 or higher**
+
+Batch now depends on libz. This might require a change in your project:  
+* Cocoapods:
+  The podspec has been updated to add the required linker flag. No action is needed.
+* Carthage/Manual integration:
+  When building, Xcode should automatically link your project with libz. If you get a compilation error, add `-lz` to your linker flags, or add `libz` to "Frameworks and Libraries" in your app's target.
+
+**Batch and Apple Silicon**  
+In order to support Apple Silicon, Batch will adopt the XCFramework format: it is not possible to support the iOS Simulator on Apple Silicon macs in a "fat" framework.
+What it means for you:
+ - Cocoapods users will be migrated to the XCFramework automatically
+ - Carthage users will stay on the old distribution style until Carthage supports XCFrameworks.
+ - Manual integrations should update to XCFramework as soon as possible. Batch will be distributed in both formats for a couple of versions.
+
+Note that the `armv7s` slice is not included in the XCFramework distribution.
+
+**BatchExtension**
+
+BatchExtension isn't distributed with the SDK zip anymore. It will be released on github soon after this release.
+
+**Core**
+
+* Batch is now compatible with iOS 14's tracking consent and IDFA changes.
+* Added UIScene support. If your application uses it, you must add an `UNUserNotificationCenterDelegate`, otherwise Direct Opens, Deeplinks and Mobile Landings will not work: UIScene disables legacy push application delegate methods.
+* eSIMs are now supported. Phones that only have an eSIM will now properly report back their carrier, if the feature hasn't been disabled.
+* More nullability annotations have been added. As those annotations match Apple's own, we do not expect source compatibility to break.
+* Support for TLS versions older than 1.2 has been removed.
+* Added a new builtin action named `batch.ios_tracking_consent`, which requests tracking consent via AppTrackingTransparency. More info in the documentation. 
+
+**Event Dispatchers**
+
+* `BatchEventDispatcherTypeNotificationOpen` is no longer broadcasted when the application is processing a background push.
+
+**Inbox**
+
+* Enhanced the way the SDK fetchs notifications from the servers to greatly reduce bandwidth usage. No public API change.
+
+**Push**
+
+* Add a new method `BatchPush.isBatchPush` to check if a received push comes from Batch.
+* Added `BatchUNUserNotificationCenterDelegate`, an UNUserNotificationCenterDelegate implementation that forwards events for Batch. Call `BatchUNUserNotificationCenterDelegate.register()` to automatically set it as your delegate.
+  BatchUNUserNotificationCenterDelegate can display notifications when your app is in the foreground using the `showForegroundNotifications` property.
+* Batch will now emit a warning in the console when your app does not register an `UNUserNotificationCenterDelegate` by the time `application:didFinishLaunchingWithOptions:` returns. Implementing this delegate improves Batch's handling of various features that rely on notification interaction feedback, such as analytics or deeplinks: it is strongly recommended that you implement it if you don't already.
+* Batch now emits the `BatchPushOpenedNotification` NSNotification when a notification has been opened by the user. This deprecates BatchPushReceivedNotification: see `BatchPush.h` for more info.
+* In automatic mode, `application:didReceiveRemoteNotification:fetchCompletionHandler:`'s completion handler is no longer called on your behalf when a deeplink is opened.
+
+**Messaging**
+
+* The "modal" format now correctly triggers actions after it has been dismissed. This will have an impact on when the custom actions are executed, making them more consistent with the Fullscreen format.
+* This fixes an issue where deeplinks could not be opened in the application using SFSafariViewController with modal formats.
+* The image format is now properly sized when in a freeform window (iPad in Split View, Catalyst)
+* Fix a rare race condition with the interstitial format where it would fail to layout properly when the image server could not be reached.
+* Modally presented messages will not be allowed to be dismissed unless they're the frontmost view controller. This fix an issue where a message with an autodismiss might dismiss a view controller presented on top of it.
+* Improved dismissal logic. While automatic dismissal may fail in some rare occasions due to iOS refusing to dismiss a modal view controller when one is animating, it will not prevent the user from manually dismissing the view anymore.
+
+**User**
+
+* Added new strongly typed methods for setting attributes on BatchUserDataEditor. They greatly enhance Swift usage of the API. See `setBooleanAttribute:forKey:error` and similar methods (`set(attribute: Bool, forKey: String)` in Swift).
+ - Those new methods return validation errors: you can now know if your attribute key/value does not pass validation and will be discarded.
+ - nil values are not supported in the new methods. Use `removeAttributeForKey:` explicitly.
+
+**Debug**
+
+* Clicking the "share" buttons in the debug views no longer crash on iPads.
+
 1.15.2
 ---
 
 Compiled with Xcode 11.5
+This minor release is the last one to support iOS 8 and 9.
 
 **Event Dispatcher**
 

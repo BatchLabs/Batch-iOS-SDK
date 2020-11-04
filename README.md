@@ -5,18 +5,17 @@ Batch.com iOS SDK
 
 ![Header](http://batch-doc.s3.amazonaws.com/General/BatchHeader.png)
 
-*Looking for sample code? Please see [BatchLabs/batchcast-ios](https://github.com/batchlabs/batchcast-ios)*
-
 # About
 
 Batch is the leading mobile engagement & push notification suite engineered for the mobile era.
 
-# Requirements
- - iOS 8+
- - Xcode 9.2+
-
 # Installation
-CocoaPods (recommended)
+Carthage
+```
+github "BatchLabs/ios-sdk"
+```
+
+CocoaPods
 
 ```
 pod 'Batch'
@@ -24,9 +23,9 @@ pod 'Batch'
 
 Manual  
  - [Download the SDK](https://batch.com/download/ios)
- - Drag and drop the framework into your project
- - Add `libsqlite3` and Batch to `Linked Frameworks and Libraries` in your project settings
- - Add `-ObjC` in `Other Linker Flags`
+ - Drag and drop the xcframework into your project
+ - Add `libsqlite3`, `lz` and Batch to `Linked Frameworks and Libraries` in your project settings
+ - Add `-ObjC` in `Other Build Flags`
  - Enjoy
 
 Note: If you can't add `-ObjC`, you can use `-force_load`:  
