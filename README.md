@@ -56,9 +56,8 @@ Read our [setup documentation](https://batch.com/doc/ios/sdk-integration/initial
 
 # Documentation
 
- - [Technical](https://batch.com/doc)
- - [API Reference](https://batch.com/ios-api-reference/index.html)
+ - [Technical](https://doc.batch.com/)
+ - [API Reference](https://doc.batch.com/ios-api-reference/index.html)
  - [FAQ](https://batch.com/doc/faq/general.html)
- - [Developer FAQ](https://batch.com/developers)
 
-Copyright 2016 - Batch.com
+Copyright Batch.com
