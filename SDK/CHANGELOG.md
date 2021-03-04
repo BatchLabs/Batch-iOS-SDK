@@ -1,6 +1,44 @@
 CHANGELOG
 =========
 
+1.17.0
+---
+
+*Compiled with Xcode 12.4*  
+**Batch requires Xcode 12 and iOS 10.0 or higher**  
+
+**Core**
+
+* Added the ability to enable Batch's internal logging using `[Batch setInternalLogsEnabled:true]`. They can also be enabled using the `-BatchSDKEnableInternalLogs` process argument.  
+  Internal logs should be disabled when submitting your app to the App Store.
+* Added nullability annotations to `BatchLoggerDelegate`. This might trigger a warning in your Swift code.
+
+**Actions**
+
+* Add a "copy to clipboard" builtin action (`batch.clipboard`).
+* Add a "rate app" builtin action (`batch.rating`). Requires iOS 10.3 or higher.
+
+**Messaging**
+
+* Added support for a new UI format: WebView. See documentation for more info.
+* Added `batchMessageWasCancelledByError:` to `BatchMessagingDelegate`, called when a message could not be loaded due to an error when loading the message's content.
+* Added `batchWebViewMessageDidTriggerAction:messageIdentifier:analyticsIdentifier:` to `BatchMessagingDelegate`, called when a message could not be loaded due to an error when loading the message's content.
+* Modal formats can now be closed with the escape key
+* Fix a bug where cached in-app campaigns might not be deleted when all campaigns were disabled
+* In-App campaign cache is now cleared on server errors
+* Fix an issue where the statusbar color would not be applied
+
+**Event Dispatchers**
+* Added the new event types `BatchEventDispatcherTypeMessagingCloseError` and `BatchEventDispatcherTypeMessagingWebViewClick`.
+
+**Push**
+
+* Notification opens, deeplinks and mobile landings are now working when notifications aren't displayed in the foreground (`willShowSystemForegroundAlert: false`).
+
+**Inbox**
+
+* `[BatchInbox fetcherForUserIdentifier:authenticationKey:]` now returns a nil instance if "userIdentifier" is nil.
+
 1.16.0
 ---
 
