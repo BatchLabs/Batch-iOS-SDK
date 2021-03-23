@@ -1,0 +1,61 @@
+framework module Batch {
+    
+    umbrella header "Batch.h"
+    
+    export *
+    module * { export * }
+    
+    explicit module Core {
+        header "BatchCore.h"
+        header "BatchUserProfile.h"
+        export *
+    }
+    
+    explicit module Push {
+        header "BatchPush.h"
+        export *
+    }
+    
+    explicit module Actions {
+        header "BatchActions.h"
+        export *
+    }
+    
+    explicit module Inbox {
+        header "BatchInbox.h"
+        export *
+    }
+    
+    explicit module Messaging {
+        header "BatchMessaging.h"
+        header "BatchMessagingModels.h"
+        export *
+    }
+    
+    explicit module Logger {
+        header "BatchLogger.h"
+        export *
+    }
+    
+    explicit module User {
+        header "BatchUser.h"
+        header "BatchEventData.h"
+        header "BatchUserAttribute.h"
+        export *
+    }
+    
+    explicit module EventDispatcher {
+        header "BatchEventDispatcher.h"
+        export *
+    }
+}
+
+//#start-remove-prod
+// Do not remove the # comments are they're essential for sed to remove this easily
+explicit module Batch.Batch_Private {
+    umbrella header "PrivateUmbrellaHeader.h"
+    
+    link "Batch"
+    export *
+}
+//#end-remove-prod

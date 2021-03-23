@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "InstantMock",
+        "repositoryURL": "https://github.com/pirishd/InstantMock",
+        "state": {
+          "branch": null,
+          "revision": "5172aedc823dcefd9a3e2d0aedf9b51b000dabb2",
+          "version": "2.5.5"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

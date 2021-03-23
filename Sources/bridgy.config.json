@@ -1,0 +1,12 @@
+{
+    "output_directory": "Batch/",
+    "base_search_path": ".",
+    "headers": {
+        "PrivateUmbrellaHeader.h": {
+            "path": "Batch",
+            "recursive": true,
+            "ignoredNames": "^(?!.*Private)Batch.*\\.h$",
+            "frameworkName": "Batch"
+        }
+    }
+}

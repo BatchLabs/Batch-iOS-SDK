@@ -1,0 +1,16 @@
+framework module OCMock {
+  header "OCMock.h"
+  header "OCMockObject.h"
+  header "OCMArg.h"
+  header "OCMConstraint.h"
+  header "OCMLocation.h"
+  header "OCMMacroState.h"
+  header "OCMRecorder.h"
+  header "OCMStubRecorder.h"
+  header "NSNotificationCenter+OCMAdditions.h"
+  header "OCMFunctions.h"
+  header "OCMVerifier.h"
+  header "OCMQuantifier.h"
+  header "OCMockMacros.h"
+  export *
+}

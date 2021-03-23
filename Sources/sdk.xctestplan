@@ -1,0 +1,27 @@
+{
+  "configurations" : [
+    {
+      "id" : "BDAE40BC-F176-40A4-A920-19B111E3069F",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true,
+    "threadSanitizerEnabled" : true,
+    "uiTestingScreenshotsLifetime" : "keepAlways",
+    "userAttachmentLifetime" : "keepAlways"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Batch.xcodeproj",
+        "identifier" : "02F7846A19B9EF5A0006FF07",
+        "name" : "BatchTests"
+      }
+    }
+  ],
+  "version" : 1
+}
