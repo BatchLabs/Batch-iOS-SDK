@@ -25,7 +25,7 @@ If you think you've discovered a bug in our SDK, our support team is available a
 - Describe your environment 
 - Provide detailed reproduction steps
 - Provide a minimal reproduction project: this isn’t compulsory but will reduce greatly the resolution time 
-- Include detailed logs: Please don’t try filter the logs here, it’s best to provide here the rawest logs as possible
+- Include detailed logs: It’s best to provide the rawest logs possible, please don’t try filter them
 - Includes a Stack Trace: If your issue involves a crash, this is absolutely compulsory, and should be as raw as possible
  
 You can also open an issue for it, using the appropriate template and respecting the same rules. However, we do have a longer response time here than by email or the Live Chat. 

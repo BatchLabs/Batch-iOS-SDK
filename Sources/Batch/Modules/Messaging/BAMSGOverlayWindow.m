@@ -12,8 +12,10 @@
 }
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
-    UIView *hitView = [super hitTest:point withEvent:event];
-    if (hitView == self) {
+    // Do not call [super hitTest] as Apple may slip some UIViews between our view controller's view
+    // and the window that don't return nil when hit tested, which beaks touch passthrough
+    UIView *hitView = [self.rootViewController.view hitTest:point withEvent:event];
+    if (hitView == nil) {
         return nil;
     }
     return hitView;

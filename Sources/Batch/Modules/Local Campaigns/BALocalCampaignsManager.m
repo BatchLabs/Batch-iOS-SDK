@@ -29,6 +29,7 @@
 
     NSMutableArray<BALocalCampaign*> * _campaignList;
     NSSet *_watchedEventNames;
+    NSObject *_watchedEventsLock;
 }
 
 @end
@@ -59,6 +60,7 @@
 
 - (void)setup {
     _campaignList = [NSMutableArray new];
+    _watchedEventsLock = [NSObject new];
 }
 
 #pragma mark Public methods
@@ -81,8 +83,14 @@
 - (BOOL)isEventWatched:(NSString*)name {
     // Store the set in a strong variable to prevent a race condition where _watchedEventNames would be freed
     // while we sent a selector to it
-    NSSet<NSString*>* watchedEventNames = _watchedEventNames;
-    return [watchedEventNames containsObject:[name uppercaseString]];
+    NSSet<NSString*>* watchedEvents;
+    
+    @synchronized (_watchedEventsLock) {
+        watchedEvents = [_watchedEventNames copy];
+    }
+    
+    NSString *uppercaseName = [name uppercaseString];
+    return [watchedEvents containsObject:uppercaseName];
 }
 
 - (BALocalCampaign*)campaignToDisplayForSignal:(id<BALocalCampaignSignalProtocol>)signal {
@@ -262,7 +270,9 @@
         }
     }
 
-    _watchedEventNames = updatedEventNames;
+    @synchronized (_watchedEventsLock) {
+        _watchedEventNames = updatedEventNames;
+    }
 }
 
 @end
