@@ -100,8 +100,6 @@ typedef NS_ENUM(NSUInteger, BatchOptOutNetworkErrorPolicy) {
  - Device brand
  
  - Carrier name
- 
- - IDFV
 
  Setting this to false have a negative impact on core Batch features
  You should only use it if you know what you are doing.
@@ -164,7 +162,7 @@ typedef NS_ENUM(NSUInteger, BatchOptOutNetworkErrorPolicy) {
  
  If you also want to delete user data, please see [Batch optOutAndWipeData].
 
- Calling this method when Batch hasn't started is unsupported.
+ Calling this method when Batch hasn't started does nothing: Please call [Batch startWithAPIKey:] beforehand.
  */
 + (void)optOut;
 
@@ -178,7 +176,7 @@ typedef NS_ENUM(NSUInteger, BatchOptOutNetworkErrorPolicy) {
  Note that once opted out, [Batch startWithAPIKey:] will essentially be a no-op
  Your app should be prepared to handle these cases.
 
- Calling this method when Batch hasn't started is unsupported.
+ Calling this method when Batch hasn't started does nothing: Please call [Batch startWithAPIKey:] beforehand.
  */
 + (void)optOutAndWipeData;
 
@@ -192,7 +190,7 @@ typedef NS_ENUM(NSUInteger, BatchOptOutNetworkErrorPolicy) {
  
  Note: if the SDK has already been opted-out from, this method will instantly call the completion handler with a *failure* state.
 
- Calling this method when Batch hasn't started is unsupported.
+ Calling this method when Batch hasn't started does nothing: Please call [Batch startWithAPIKey:] beforehand.
  */
 + (void)optOutWithCompletionHandler:(BatchOptOutNetworkErrorPolicy(^ _Nonnull)(BOOL success))handler;
 
@@ -206,7 +204,7 @@ typedef NS_ENUM(NSUInteger, BatchOptOutNetworkErrorPolicy) {
  
  Note: if the SDK has already been opted-out from, this method will instantly call the completion handler with a *failure* state.
 
- Calling this method when Batch hasn't started is unsupported.
+ Calling this method when Batch hasn't started does nothing: Please call [Batch startWithAPIKey:] beforehand.
  */
 + (void)optOutAndWipeDataWithCompletionHandler:(BatchOptOutNetworkErrorPolicy(^ _Nonnull)(BOOL success))handler;
 
@@ -214,9 +212,7 @@ typedef NS_ENUM(NSUInteger, BatchOptOutNetworkErrorPolicy) {
  Opt-in to Batch SDK.
  
  Useful if you called [Batch optOut], [Batch optOutAndWipeData] or opted out by default in your Info.plist
- Some features might not fully work until the next app restart. You will need to call [Batch startWithAPIKey:@""] after this.
-
- Calling this method when Batch hasn't started is unsupported.
+ You will need to call [Batch startWithAPIKey:@""] after this.
  */
 + (void)optIn;
 

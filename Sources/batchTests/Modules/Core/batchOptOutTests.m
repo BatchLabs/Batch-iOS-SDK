@@ -64,13 +64,13 @@
     OCMStub([optOutMock instance]).andReturn(optOutMock);
     
     [Batch optOut];
-    OCMVerify([optOutMock setOptedOut:true wipeData:false completionHandler:nil]);
+    OCMVerify([optOutMock setOptedOut:true wipeData:false completionHandler:[OCMArg any]]);
     
     [Batch optIn];
-    OCMVerify([optOutMock setOptedOut:false wipeData:false completionHandler:nil]);
+    OCMVerify([optOutMock setOptedOut:false wipeData:false completionHandler:[OCMArg any]]);
     
     [Batch optOutAndWipeData];
-    OCMVerify([optOutMock setOptedOut:true wipeData:true completionHandler:nil]);
+    OCMVerify([optOutMock setOptedOut:true wipeData:true completionHandler:[OCMArg any]]);
     
     [Batch optOutWithCompletionHandler:^BatchOptOutNetworkErrorPolicy(BOOL success) {
         return BatchOptOutNetworkErrorPolicyCancel;

@@ -74,17 +74,23 @@
 
 + (void)optOut
 {
-    [[BAOptOut instance] setOptedOut:true wipeData:false completionHandler:nil];
+    [[BAOptOut instance] setOptedOut:true wipeData:false completionHandler:^BatchOptOutNetworkErrorPolicy(BOOL success) {
+        return BatchOptOutNetworkErrorPolicyIgnore;
+    }];
 }
 
 + (void)optOutAndWipeData
 {
-    [[BAOptOut instance] setOptedOut:true wipeData:true completionHandler:nil];
+    [[BAOptOut instance] setOptedOut:true wipeData:true completionHandler:^BatchOptOutNetworkErrorPolicy(BOOL success) {
+        return BatchOptOutNetworkErrorPolicyIgnore;
+    }];
 }
 
 + (void)optOutWithCompletionHandler:(BatchOptOutNetworkErrorPolicy(^ _Nonnull)(BOOL success))handler
 {
-    [[BAOptOut instance] setOptedOut:true wipeData:false completionHandler:handler];
+    [[BAOptOut instance] setOptedOut:true wipeData:false completionHandler:^BatchOptOutNetworkErrorPolicy(BOOL success) {
+        return BatchOptOutNetworkErrorPolicyIgnore;
+    }];
 }
 
 + (void)optOutAndWipeDataWithCompletionHandler:(BatchOptOutNetworkErrorPolicy(^ _Nonnull)(BOOL success))handler
@@ -94,7 +100,9 @@
 
 + (void)optIn
 {
-    [[BAOptOut instance] setOptedOut:false wipeData:false completionHandler:nil];
+    [[BAOptOut instance] setOptedOut:false wipeData:false completionHandler:^BatchOptOutNetworkErrorPolicy(BOOL success) {
+        return BatchOptOutNetworkErrorPolicyIgnore;
+    }];
 }
 
 + (BOOL)isOptedOut

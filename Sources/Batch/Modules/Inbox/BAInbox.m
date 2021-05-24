@@ -338,7 +338,7 @@
     if (_fetcherId != -1) {
         NSArray<BAInboxCandidateNotification*> *candidates = [[BAInjection injectProtocol:@protocol(BAInboxDatasourceProtocol)] candidateNotificationsFromCursor:cursor limit:self.maxPageSize fetcherId:_fetcherId];
         if ([candidates count] > 0) {
-            [self syncFromWSForCursor:self->_cursor candidates:candidates callback:callback];
+            [self syncFromWSForCursor:cursor candidates:candidates callback:callback];
             return;
         }
     }

@@ -269,7 +269,7 @@ static const NSString *kBatchWebserviceIdentifierInboxSync = @"inbox_sync";
     NSNumber *cacheMarkAllAsRead = [cache objectForKey:@"lastMarkAllAsRead"];
     if (![BANullHelper isNumberEmpty:cacheMarkAllAsRead])
     {
-        [[BAInjection injectProtocol:@protocol(BAInboxDatasourceProtocol)] markAllAsRead:[cacheMarkAllAsRead longLongValue] withFetcherId:_fetcherId];
+        [[BAInjection injectProtocol:@protocol(BAInboxDatasourceProtocol)] markAllAsRead:([cacheMarkAllAsRead longLongValue] / 1000) withFetcherId:_fetcherId];
     }
     
     NSArray *delete = [cache objectForKey:@"delete"];

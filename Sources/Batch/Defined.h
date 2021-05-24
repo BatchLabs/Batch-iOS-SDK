@@ -70,7 +70,7 @@ if (error == NULL) {\
 #define kParametersIDsPatternValue                  @"s,da,ada,did,cus,tath,dla,dre,dtz,osv,de,apv,apc,bid,pl,lvl,mlvl,pid,plv,brv,attid_e"
 
 #define kParametersAdvancedIDsPatternKey            @"app.ids.pattern_advanced"
-#define kParametersAdvancedIDsPatternValue          @"dty,sop,idfv"
+#define kParametersAdvancedIDsPatternValue          @"dty,sop"
 
 #define kParametersCustomUserIDKey                  @"app.id.custom"
 #define kParametersAppLanguageKey                   @"app.language"

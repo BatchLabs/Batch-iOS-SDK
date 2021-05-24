@@ -79,10 +79,6 @@
     [temporaryIdentifiers addObject:[BADBGNameValueListItem itemWithName:@"Push Token" value:(pushToken != nil ? pushToken : @"none")]];
     [temporaryIdentifiers addObject:[BADBGNameValueListItem itemWithName:@"APNS Environment" value:([BABundleInfo usesAPNSandbox] ? @"Sandbox" : @"Production")]];
     
-#if BATCH_ENABLE_IDFA
-    [temporaryIdentifiers addObject:[BADBGNameValueListItem itemWithName:@"IDFA" value:[BAPropertiesCenter valueForShortName:@"idfa"]]];
-#endif
-    
     _identifiers = temporaryIdentifiers;
     
     /* Todo: add application info, such as bundle id and version*/

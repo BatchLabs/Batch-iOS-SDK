@@ -86,6 +86,15 @@
         return nil;
     }
     
+#if !TARGET_OS_MACCATALYST
+    if (@available(iOS 14.5, *)) {
+        if (ATTrackingManager.trackingAuthorizationStatus != ATTrackingManagerAuthorizationStatusAuthorized) {
+            [BALogger debugForDomain:@"TAth" message:@"Skipping attribution identifier, disallowed by ATT."];
+            return nil;
+        }
+    }
+#endif
+    
     SEL selector = NSSelectorFromString([NSString stringWithFormat:@"%@Id%@",@"advertising",@"entifier"]);
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"

@@ -79,7 +79,6 @@
 #endif
              @"attid_e": @"isAttributionIdEnabled",
              @"tath": @"trackingAuthorizationStatus",
-             @"idfv": @"identifierForVendor",
              @"dre": @"deviceRegion",
              @"dla": @"deviceLanguage",
              @"dtz": @"deviceTimezone",
@@ -201,16 +200,6 @@
 {
     BATrackingAuthorizationStatus status = [BACoreCenter instance].status.trackingAuthorization.trackingAuthorizationStatus;
     return [NSString stringWithFormat:@"%lu", (unsigned long)status];
-}
-
-- (NSString *)identifierForVendor
-{
-    if ([[UIDevice currentDevice] respondsToSelector:@selector(identifierForVendor)])
-    {
-        return [[[UIDevice currentDevice] performSelector:@selector(identifierForVendor)] performSelector:@selector(UUIDString)];
-    }
-    
-    return nil;
 }
 
 // MCC+MNC
@@ -357,7 +346,7 @@
     const char *pluginVersion = getenv("BATCH_PLUGIN_VERSION");
     if (pluginVersion != nil)
     {
-        return [NSString stringWithFormat:@"%@ ",[NSString stringWithCString:pluginVersion encoding:NSUTF8StringEncoding]];
+        return [NSString stringWithFormat:@"%@",[NSString stringWithCString:pluginVersion encoding:NSUTF8StringEncoding]];
     }
 
     return nil;
@@ -368,7 +357,7 @@
     const char *bridgeVersion = getenv("BATCH_BRIDGE_VERSION");
     if (bridgeVersion != nil)
     {
-        return [NSString stringWithFormat:@"%@ ",[NSString stringWithCString:bridgeVersion encoding:NSUTF8StringEncoding]];
+        return [NSString stringWithFormat:@"%@",[NSString stringWithCString:bridgeVersion encoding:NSUTF8StringEncoding]];
     }
  
     return nil;

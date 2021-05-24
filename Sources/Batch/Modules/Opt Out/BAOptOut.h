@@ -16,7 +16,7 @@ extern NSString * _Nonnull const kBATOptOutWipeDataKey;
 
 + (nonnull BAOptOut *)instance;
 
-- (void)setOptedOut:(BOOL)newVal wipeData:(BOOL)wipeData completionHandler:(BatchOptOutNetworkErrorPolicy(^ _Nullable)(BOOL success))handler;
+- (void)setOptedOut:(BOOL)newVal wipeData:(BOOL)wipeData completionHandler:(BatchOptOutNetworkErrorPolicy(^ _Nonnull)(BOOL success))handler;
 
 - (BOOL)isOptedOut;
 

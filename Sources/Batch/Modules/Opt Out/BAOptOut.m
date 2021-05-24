@@ -70,7 +70,7 @@ NSString * const kBATOptOutWipeDataKey = @"wipe_data";
     _eventTracker = eventTracker;
 }
 
-- (void)setOptedOut:(BOOL)shouldOptOut wipeData:(BOOL)wipeData completionHandler:(BatchOptOutNetworkErrorPolicy(^)(BOOL success))completionHandler
+- (void)setOptedOut:(BOOL)shouldOptOut wipeData:(BOOL)wipeData completionHandler:(BatchOptOutNetworkErrorPolicy(^ _Nonnull)(BOOL success))completionHandler
 {
     [self initEventTrackerIfNeeded];
     

@@ -95,7 +95,6 @@
  - Device model
  - Device brand
  - Carrier name
- - IDFV
  
  Setting this to false have a negative impact on core Batch features
  You should only use it if you know what you are doing.
