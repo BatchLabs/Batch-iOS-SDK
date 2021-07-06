@@ -151,6 +151,7 @@
 
 /**
  Shows the currently enqueued message, if any.
+ Removes the pending message from the queue (like if popPendingMessage was called).
  
  @return true if there was an enqueued message to show, false otherwise. Is a message was enqueued but failed to display, the return value will be true.
  */

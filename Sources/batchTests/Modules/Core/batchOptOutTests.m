@@ -64,23 +64,23 @@
     OCMStub([optOutMock instance]).andReturn(optOutMock);
     
     [Batch optOut];
-    OCMVerify([optOutMock setOptedOut:true wipeData:false completionHandler:[OCMArg any]]);
+    OCMVerify([optOutMock setOptedOut:true wipeData:false completionHandler:[OCMArg isNotNil]]);
     
     [Batch optIn];
-    OCMVerify([optOutMock setOptedOut:false wipeData:false completionHandler:[OCMArg any]]);
+    OCMVerify([optOutMock setOptedOut:false wipeData:false completionHandler:[OCMArg isNotNil]]);
     
     [Batch optOutAndWipeData];
-    OCMVerify([optOutMock setOptedOut:true wipeData:true completionHandler:[OCMArg any]]);
+    OCMVerify([optOutMock setOptedOut:true wipeData:true completionHandler:[OCMArg isNotNil]]);
     
-    [Batch optOutWithCompletionHandler:^BatchOptOutNetworkErrorPolicy(BOOL success) {
+    id userCompletionHandler = ^BatchOptOutNetworkErrorPolicy(BOOL success) {
         return BatchOptOutNetworkErrorPolicyCancel;
-    }];
-    OCMVerify([optOutMock setOptedOut:true wipeData:false completionHandler:[OCMArg any]]);
+    };
     
-    [Batch optOutAndWipeDataWithCompletionHandler:^BatchOptOutNetworkErrorPolicy(BOOL success) {
-        return BatchOptOutNetworkErrorPolicyCancel;
-    }];
-    OCMVerify([optOutMock setOptedOut:true wipeData:true completionHandler:[OCMArg any]]);
+    [Batch optOutWithCompletionHandler:userCompletionHandler];
+    OCMVerify([optOutMock setOptedOut:true wipeData:false completionHandler:userCompletionHandler]);
+    
+    [Batch optOutAndWipeDataWithCompletionHandler:userCompletionHandler];
+    OCMVerify([optOutMock setOptedOut:true wipeData:true completionHandler:userCompletionHandler]);
     
 }
 

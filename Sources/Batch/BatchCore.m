@@ -88,9 +88,7 @@
 
 + (void)optOutWithCompletionHandler:(BatchOptOutNetworkErrorPolicy(^ _Nonnull)(BOOL success))handler
 {
-    [[BAOptOut instance] setOptedOut:true wipeData:false completionHandler:^BatchOptOutNetworkErrorPolicy(BOOL success) {
-        return BatchOptOutNetworkErrorPolicyIgnore;
-    }];
+    [[BAOptOut instance] setOptedOut:true wipeData:false completionHandler:handler];
 }
 
 + (void)optOutAndWipeDataWithCompletionHandler:(BatchOptOutNetworkErrorPolicy(^ _Nonnull)(BOOL success))handler
