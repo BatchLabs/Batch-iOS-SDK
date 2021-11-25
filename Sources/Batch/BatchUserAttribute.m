@@ -44,4 +44,12 @@
     return nil;
 }
 
+- (NSURL *)urlValue
+{
+    if (self.type == BatchUserAttributeTypeURL) {
+        return _value;
+    }
+    return nil;
+}
+
 @end

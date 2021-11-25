@@ -16,7 +16,7 @@
     self = [super init];
     if (self) {
         self.applicationSetting = -1;
-        self.status = BANotificationAuthorizationStatusNotRequested;
+        self.status = BANotificationAuthorizationStatusWaitingForValue;
         self.types = BANotificationAuthorizationTypesNone;
     }
     return self;

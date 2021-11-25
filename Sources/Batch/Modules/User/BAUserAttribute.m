@@ -34,6 +34,12 @@
             value = @(floor([value timeIntervalSince1970] * 1000));
         }
         
+        // Convert the urls!
+        if ([value isKindOfClass:[NSURL class]])
+        {
+            value = ((NSURL *) value).absoluteString;
+        }
+
         [result setObject:value forKey:[NSString stringWithFormat:@"%@.%@", [name substringFromIndex:2], [BAUserAttribute stringForType:attribute.type]]];
     }
     
@@ -54,8 +60,10 @@
             return @"s";
         case BAUserAttributeTypeDate:
             return @"t";
-        default:
+        case BAUserAttributeTypeURL:
             return @"u";
+        default:
+            return @"x";
     }
 }
 

@@ -14,6 +14,8 @@
 
 #import <Batch/BAEventTrackerService.h>
 
+#import <Batch/BatchUser.h>
+
 @interface BATrackerSender ()
 {
     BOOL _isSending;
@@ -85,6 +87,10 @@
     {
         return;
     }
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:BatchEventTrackerFinishedNotification
+                                                        object:nil
+                                                      userInfo:@{BatchEventTrackerFinishedWithSuccessKey: [NSNumber numberWithBool:success]}];
     
     if (success)
     {

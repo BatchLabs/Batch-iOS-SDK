@@ -19,6 +19,7 @@ class BatchEventDataTests: XCTestCase
         data.add(tag: "baz")
         
         let now = Date(timeIntervalSince1970: 1589466748.930)
+        let url = URL(string: "https://batch.com")
         data.put(1, forKey: "int")
         data.put(1.0 as Float, forKey: "float")
         data.put(1.0 as Double, forKey: "double")
@@ -26,6 +27,7 @@ class BatchEventDataTests: XCTestCase
         data.put("foobar", forKey: "string")
         data.put(" 456 ", forKey: "123")
         data.put(now, forKey: "now")
+        data.put(url!, forKey: "url")
         
         let internalRepresentation = data._internalDictionaryRepresentation()
         let tags = internalRepresentation["tags"] as! [String]
@@ -42,6 +44,7 @@ class BatchEventDataTests: XCTestCase
         XCTAssertEqual("foobar", attributes["string.s"] as! String)
         XCTAssertEqual(" 456 ", attributes["123.s"] as! String)
         XCTAssertEqual(1589466748930, attributes["now.t"] as! Int64)
+        XCTAssertEqual("https://batch.com", attributes["url.u"] as! String)
         
         XCTAssertNil(internalRepresentation["converted"])
     }
@@ -93,7 +96,7 @@ class BatchEventDataTests: XCTestCase
             + "Lorem ipsum dolor and other various stuff.", forKey:"string");
         data.put("foobar", forKey:"invalid_key%%%");
         data.put("foobar", forKey:"key_that_is_too_long_really_it_should_be_more_than_thirty_chars");
-        
+        data.put(URL(string: "batch.com")!, forKey: "url_without_scheme")
         let internalRepresentation = data._internalDictionaryRepresentation()
         let tags = internalRepresentation["tags"] as! [String]
         let attributes = internalRepresentation["attributes"] as! [String: AnyObject]

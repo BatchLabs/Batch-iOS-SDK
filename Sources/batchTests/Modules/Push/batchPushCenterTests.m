@@ -57,7 +57,11 @@
     // Force a bad cast to silence the warnings, we still want to test those cases
     XCTAssertFalse([BatchPush isBatchPush:(NSDictionary*)@(2)]);
     XCTAssertFalse([BatchPush isBatchPush:(NSDictionary*)[NSNull null]]);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
     XCTAssertFalse([BatchPush isBatchPush:nil]);
+#pragma clang diagnostic pop
+    
 }
 
 @end

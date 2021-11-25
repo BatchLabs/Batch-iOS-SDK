@@ -51,7 +51,7 @@
             [expectation fulfill];
         });
         
-        [self waitForExpectations:@[expectation] timeout:5];
+        [self waitForExpectations:@[expectation] timeout:10];
         OCMVerifyAll(mockPersistence);
     }
 }

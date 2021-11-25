@@ -259,6 +259,7 @@
             for (NSDictionary *eventData in eventDatas) {
                 [BATrackerCenter trackPrivateEvent:@"_INBOX_MARK_READ" parameters:eventData];
             }
+            [[BAInjection injectProtocol:@protocol(BAInboxDatasourceProtocol)] markAsRead: internalNotification.identifiers.identifier];
             internalNotification.isUnread = false;
             [notification _markAsRead];
         } else {
@@ -275,6 +276,8 @@
             for (NSDictionary *eventData in eventDatas) {
                 [BATrackerCenter trackPrivateEvent:@"_INBOX_MARK_ALL_READ" parameters:eventData];
             }
+            NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
+            [[BAInjection injectProtocol:@protocol(BAInboxDatasourceProtocol)] markAllAsRead:(long long)now withFetcherId:_fetcherId];
             for (BAInboxNotificationContent* msg in _fetchedMessages) {
                 msg.isUnread = false;
             }
@@ -304,6 +307,8 @@
             }
             internalNotification.isDeleted = true;
             [notification _markAsDeleted];
+            [[BAInjection injectProtocol:@protocol(BAInboxDatasourceProtocol)] markAsDeleted: internalNotification.identifiers.identifier];
+            [_fetchedMessages removeObject: internalNotification];
         } else {
             [BALogger debugForDomain:DEBUG_DOMAIN message:@"Could not find the specified notification (%@) to be marked as deleted", notification.identifier];
         }
@@ -446,9 +451,6 @@
     NSMutableArray<BatchInboxNotificationContent*> *models = [NSMutableArray new];
 
     for (BAInboxNotificationContent *privateModel in privateModels) {
-        if (privateModel.isDeleted) {
-            continue;
-        }
         
         BatchInboxNotificationContent *model = [[BatchInboxNotificationContent alloc] initWithInternalIdentifier:privateModel.identifiers.identifier
                                                                                                       rawPayload:privateModel.payload

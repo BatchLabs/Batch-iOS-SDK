@@ -42,6 +42,7 @@
     XCTAssertTrue([_datasource setDoubleAttribute:2.5234f forKey:@"double"]);
     XCTAssertTrue([_datasource setDateAttribute:[NSDate date] forKey:@"date"]);
     XCTAssertTrue([_datasource setBoolAttribute:YES forKey:@"bool"]);
+    XCTAssertTrue([_datasource setURLAttribute:[NSURL URLWithString:@"https://batch.com"] forKey:@"url"]);
 }
 
 - (void)testAttributeUpdate {

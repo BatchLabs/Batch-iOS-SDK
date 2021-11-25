@@ -29,6 +29,8 @@
 
 @interface dummyOptOutEventTracker : BAOptOutEventTracker
 
+@property (assign) BOOL automaticallyResolvePromises;
+
 @property (strong) BAEvent *lastTrackedEvent;
 
 @property (strong) BAPromise *lastTrackPromise;
@@ -53,6 +55,7 @@
 }
 
 - (void)tearDown {
+    [[BAOptOut instance] setEventTracker:nil];
     [_coreCenterStatusMock stopMocking];
     _coreCenterStatusMock = nil;
 
@@ -91,13 +94,17 @@
     id parameterMock = OCMClassMock([BAParameter class]);
     id installIDMock = OCMClassMock([BAInstallationID class]);
 
-    id optOutMock = OCMClassMock([BAOptOut class]);
-    OCMStub([optOutMock initEventTrackerIfNeeded]);
+    dummyOptOutEventTracker *tracker = [dummyOptOutEventTracker new];
+    tracker.automaticallyResolvePromises = true;
+    BAOptOut *optOut = [BAOptOut instance];
+    [optOut setEventTracker:tracker];
     
     OCMReject(ClassMethod([parameterMock removeAllObjects]));
     OCMReject(ClassMethod([installIDMock delete]));
     
-    [[BAOptOut instance] setOptedOut:true wipeData:false completionHandler:nil];
+    [[BAOptOut instance] setOptedOut:true wipeData:false completionHandler:^BatchOptOutNetworkErrorPolicy(BOOL success) {
+        return BatchOptOutNetworkErrorPolicyIgnore;
+    }];
     
     [installIDMock stopMocking];
     
@@ -120,8 +127,10 @@
     id parameterMock = OCMClassMock([BAParameter class]);
     id installIDMock = OCMClassMock([BAInstallationID class]);
     
-    id optOutMock = OCMClassMock([BAOptOut class]);
-    OCMStub([optOutMock initEventTrackerIfNeeded]);
+    dummyOptOutEventTracker *tracker = [dummyOptOutEventTracker new];
+    tracker.automaticallyResolvePromises = true;
+    BAOptOut *optOut = [BAOptOut instance];
+    [optOut setEventTracker:tracker];
     
     OCMExpect(ClassMethod([parameterMock removeAllObjects])).andForwardToRealObject();
     OCMExpect(ClassMethod([installIDMock delete])).andForwardToRealObject();
@@ -137,7 +146,9 @@
     NSString *filePath = ((BALocalCampaignsFilePersistence*)[campaignsCenter campaignPersister]).filePath.path;
     XCTAssertTrue([[NSFileManager defaultManager] fileExistsAtPath:filePath]);
 
-    [[BAOptOut instance] setOptedOut:true wipeData:true completionHandler:nil];
+    [[BAOptOut instance] setOptedOut:true wipeData:true completionHandler:^BatchOptOutNetworkErrorPolicy(BOOL success) {
+        return BatchOptOutNetworkErrorPolicyIgnore;
+    }];
     
     OCMVerifyAll(parameterMock);
     OCMVerifyAll(installIDMock);
@@ -172,7 +183,9 @@
     BAOptOut *optOut = [BAOptOut instance];
     [optOut setEventTracker:tracker];
     
-    [[BAOptOut instance] setOptedOut:true wipeData:false completionHandler:nil];
+    [[BAOptOut instance] setOptedOut:true wipeData:false completionHandler:^BatchOptOutNetworkErrorPolicy(BOOL success) {
+        return BatchOptOutNetworkErrorPolicyIgnore;
+    }];
     [batchOptOutTests clearOptOutStatus];
     
     BAEvent *event = [tracker lastTrackedEvent];
@@ -180,7 +193,9 @@
     XCTAssertEqualObjects(@"_OPTOUT", event.name);
     XCTAssertEqualObjects(installID, [self dictionaryFromEventParameters:event][@"di"]);
     
-    [[BAOptOut instance] setOptedOut:true wipeData:true completionHandler:nil];
+    [[BAOptOut instance] setOptedOut:true wipeData:true completionHandler:^BatchOptOutNetworkErrorPolicy(BOOL success) {
+        return BatchOptOutNetworkErrorPolicyIgnore;
+    }];
     [batchOptOutTests clearOptOutStatus];
 
     event = [tracker lastTrackedEvent];
@@ -268,14 +283,19 @@
     [self waitForExpectations:@[latestExpectation] timeout:1];
     
     OCMVerifyAll(stubbedOptOut);
+    [stubbedOptOut stopMocking];
 }
 
 - (void)testAlreadyOptedOutCallback
 {
-    id optOutMock = OCMClassMock([BAOptOut class]);
-    OCMStub([optOutMock initEventTrackerIfNeeded]);
+    dummyOptOutEventTracker *tracker = [dummyOptOutEventTracker new];
+    tracker.automaticallyResolvePromises = true;
+    BAOptOut *optOut = [BAOptOut instance];
+    [optOut setEventTracker:tracker];
     
-    [[BAOptOut instance] setOptedOut:true wipeData:false completionHandler:nil];
+    [[BAOptOut instance] setOptedOut:true wipeData:false completionHandler:^BatchOptOutNetworkErrorPolicy(BOOL success) {
+        return BatchOptOutNetworkErrorPolicyIgnore;
+    }];
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"Batch opt-out callback"];
     [[BAOptOut instance] setOptedOut:true wipeData:false completionHandler:^BatchOptOutNetworkErrorPolicy(BOOL success) {
@@ -308,11 +328,23 @@
 
 @implementation dummyOptOutEventTracker
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        _automaticallyResolvePromises = false;
+    }
+    return self;
+}
+
 - (BAPromise*)track:(BAEvent *)event
 {
     self.lastTrackedEvent = event;
     BAPromise *promise = [BAPromise new];
     self.lastTrackPromise = promise;
+    if (_automaticallyResolvePromises) {
+        [promise resolve:nil];
+    }
     return promise;
 }
 

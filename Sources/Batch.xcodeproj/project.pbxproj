@@ -49,6 +49,9 @@
 		029B335E1A39A1F7006B9DC6 /* batchParametersTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 029B334E1A39A1F7006B9DC6 /* batchParametersTests.m */; };
 		029B335F1A39A1F7006B9DC6 /* batchPropertiesCenterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 029B334F1A39A1F7006B9DC6 /* batchPropertiesCenterTests.m */; };
 		029B33601A39A1F7006B9DC6 /* batchUserDefaultsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 029B33501A39A1F7006B9DC6 /* batchUserDefaultsTests.m */; };
+		1EA42DFA26A85D7D004CC618 /* BADBGFindMyInstallationHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EA42DF726A84C71004CC618 /* BADBGFindMyInstallationHelper.m */; };
+		1EA42DFB26A85DF9004CC618 /* BADBGFindMyInstallationHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EA42DF926A84C99004CC618 /* BADBGFindMyInstallationHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1EA42E0426A9A736004CC618 /* FindMyInstallationHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EA42E0226A9A716004CC618 /* FindMyInstallationHelperTests.m */; };
 		5105747D21358C2A00789F86 /* batchLispTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5105747C21358C2A00789F86 /* batchLispTests.swift */; };
 		510BD5C522E0B4BA00D8CBA1 /* BAWSResponseAttributesCheck.m in Sources */ = {isa = PBXBuildFile; fileRef = 510BD5BD22E0B4BA00D8CBA1 /* BAWSResponseAttributesCheck.m */; };
 		510BD5C622E0B4BA00D8CBA1 /* BAWSResponseAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = 510BD5BE22E0B4BA00D8CBA1 /* BAWSResponseAttributes.m */; };
@@ -92,6 +95,7 @@
 		5145C78B24C1FFC6004A89FE /* BATWebserviceHMAC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5145C78924C1FFC6004A89FE /* BATWebserviceHMAC.m */; };
 		5145C78E24C587EA004A89FE /* BASHA.h in Headers */ = {isa = PBXBuildFile; fileRef = 5145C78C24C587EA004A89FE /* BASHA.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5145C78F24C587EA004A89FE /* BASHA.m in Sources */ = {isa = PBXBuildFile; fileRef = 5145C78D24C587EA004A89FE /* BASHA.m */; };
+		51496A2F25110D930051B8A4 /* BAPartialApplicationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 51496A2E25110D680051B8A4 /* BAPartialApplicationDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514CD72B1BFE2A2C00F79110 /* batchUserDataSQLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 514CD72A1BFE2A2B00F79110 /* batchUserDataSQLTests.m */; };
 		514FE72A2209F5C0003C3426 /* batchOptOutTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 514FE7292209F5C0003C3426 /* batchOptOutTests.m */; };
 		514FFCCE250903F3009D6A20 /* batchUNUserNotificationCenterDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 514FFCCD250903F3009D6A20 /* batchUNUserNotificationCenterDelegateTests.m */; };
@@ -101,7 +105,10 @@
 		5158BB7D22F1EFF200ED0C6C /* BAWebserviceClientExecutor.m in Sources */ = {isa = PBXBuildFile; fileRef = 5158BB7B22F1EFF100ED0C6C /* BAWebserviceClientExecutor.m */; };
 		5159B4DF25E0044C008082FA /* internalLoggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5159B4DE25E0044C008082FA /* internalLoggerTests.swift */; };
 		5159B4ED25E01BA9008082FA /* loggerSetupTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5159B4EC25E01BA9008082FA /* loggerSetupTests.m */; };
+		515A74952510BE2200F05E80 /* swizzlingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 515A74942510BE2200F05E80 /* swizzlingTests.m */; };
+		515A74972510C17800F05E80 /* swiftSwizzling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A74962510C17800F05E80 /* swiftSwizzling.swift */; };
 		515CA89023981A7B002CBDAC /* groupActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515CA88F23981A7B002CBDAC /* groupActionTest.swift */; };
+		515E45AC251358C300B05B57 /* InvocationRecorders.m in Sources */ = {isa = PBXBuildFile; fileRef = 515E45AB251358C300B05B57 /* InvocationRecorders.m */; };
 		5161B0A824C71195003F36E7 /* webserviceHMACTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5161B0A724C71195003F36E7 /* webserviceHMACTests.swift */; };
 		5162B2F42571561900607780 /* BAMSGWebviewViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 5162B2F22571561900607780 /* BAMSGWebviewViewController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5162B2F52571561900607780 /* BAMSGWebviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5162B2F32571561900607780 /* BAMSGWebviewViewController.m */; };
@@ -340,7 +347,7 @@
 		517D70B822BBC45900E374FB /* BALoggerUnified.m in Sources */ = {isa = PBXBuildFile; fileRef = 512466461DAD1C2700B14F1E /* BALoggerUnified.m */; };
 		517D70B922BBC45900E374FB /* BANullHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 516186F71C84B0C9009304A6 /* BANullHelper.m */; };
 		517D70BA22BBC45900E374FB /* BAThreading.m in Sources */ = {isa = PBXBuildFile; fileRef = 516186FE1C84B66C009304A6 /* BAThreading.m */; };
-		517D70BB22BBC45900E374FB /* NSObject+BASwizzled.m in Sources */ = {isa = PBXBuildFile; fileRef = 5127A62B1CABDF2200BA44DE /* NSObject+BASwizzled.m */; };
+		517D70BB22BBC45900E374FB /* BADelegatedApplicationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5127A62B1CABDF2200BA44DE /* BADelegatedApplicationDelegate.m */; };
 		517D70BC22BBC45900E374FB /* BAJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 518E38601EAF8C43009AB274 /* BAJson.m */; };
 		517D70BD22BBC45900E374FB /* BATJsonDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 51D3A8B51EB8DA4800C77463 /* BATJsonDictionary.m */; };
 		517D70BE22BBC45900E374FB /* BARandom.m in Sources */ = {isa = PBXBuildFile; fileRef = 516187101C84BA53009304A6 /* BARandom.m */; };
@@ -523,7 +530,7 @@
 		517D718F22BBC50E00E374FB /* BALoggerUnified.h in Headers */ = {isa = PBXBuildFile; fileRef = 512466451DAD1C2700B14F1E /* BALoggerUnified.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517D719022BBC50E00E374FB /* BANullHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 516186F61C84B0C9009304A6 /* BANullHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517D719122BBC50E00E374FB /* BAThreading.h in Headers */ = {isa = PBXBuildFile; fileRef = 516186FD1C84B66C009304A6 /* BAThreading.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		517D719222BBC50E00E374FB /* NSObject+BASwizzled.h in Headers */ = {isa = PBXBuildFile; fileRef = 5127A62A1CABDF2200BA44DE /* NSObject+BASwizzled.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		517D719222BBC50E00E374FB /* BADelegatedApplicationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5127A62A1CABDF2200BA44DE /* BADelegatedApplicationDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517D719322BBC50E00E374FB /* BAJson.h in Headers */ = {isa = PBXBuildFile; fileRef = 518E385F1EAF8C43009AB274 /* BAJson.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517D719422BBC50E00E374FB /* BATJsonDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D3A8B41EB8DA4800C77463 /* BATJsonDictionary.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517D719522BBC50E00E374FB /* BARandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 5161870F1C84BA53009304A6 /* BARandom.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -769,6 +776,9 @@
 		02F7846419B9EF5A0006FF07 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		02F7846B19B9EF5A0006FF07 /* BatchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BatchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		02F7846E19B9EF5A0006FF07 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1EA42DF726A84C71004CC618 /* BADBGFindMyInstallationHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BADBGFindMyInstallationHelper.m; sourceTree = "<group>"; };
+		1EA42DF926A84C99004CC618 /* BADBGFindMyInstallationHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BADBGFindMyInstallationHelper.h; sourceTree = "<group>"; };
+		1EA42E0226A9A716004CC618 /* FindMyInstallationHelperTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FindMyInstallationHelperTests.m; sourceTree = "<group>"; };
 		510134181E9D433E0053EF52 /* BAEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAEvent.h; path = Batch/Modules/Tracker/BAEvent.h; sourceTree = SOURCE_ROOT; };
 		510134191E9D433E0053EF52 /* BAEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BAEvent.m; path = Batch/Modules/Tracker/BAEvent.m; sourceTree = SOURCE_ROOT; };
 		5101341A1E9D433E0053EF52 /* BAEventDatasourceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAEventDatasourceProtocol.h; path = Batch/Modules/Tracker/BAEventDatasourceProtocol.h; sourceTree = SOURCE_ROOT; };
@@ -861,8 +871,8 @@
 		512596E81CDCDA5500AC934B /* BAMSGCTA.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BAMSGCTA.m; path = Batch/Modules/Messaging/BAMSGCTA.m; sourceTree = SOURCE_ROOT; };
 		5127299C23FD720E00999505 /* BATMessagePackWriter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BATMessagePackWriter.h; sourceTree = "<group>"; };
 		5127299D23FD720E00999505 /* BATMessagePackWriter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BATMessagePackWriter.m; sourceTree = "<group>"; };
-		5127A62A1CABDF2200BA44DE /* NSObject+BASwizzled.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+BASwizzled.h"; path = "Batch/Kernel/Helpers/NSObject+BASwizzled.h"; sourceTree = SOURCE_ROOT; };
-		5127A62B1CABDF2200BA44DE /* NSObject+BASwizzled.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSObject+BASwizzled.m"; path = "Batch/Kernel/Helpers/NSObject+BASwizzled.m"; sourceTree = SOURCE_ROOT; };
+		5127A62A1CABDF2200BA44DE /* BADelegatedApplicationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BADelegatedApplicationDelegate.h; path = Batch/Kernel/Helpers/BADelegatedApplicationDelegate.h; sourceTree = SOURCE_ROOT; };
+		5127A62B1CABDF2200BA44DE /* BADelegatedApplicationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BADelegatedApplicationDelegate.m; path = Batch/Kernel/Helpers/BADelegatedApplicationDelegate.m; sourceTree = SOURCE_ROOT; };
 		512EA4E423BE37F300B7DBB1 /* pushTokenServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pushTokenServiceTests.swift; sourceTree = "<group>"; };
 		5130B5EA1DBA6F5300874EFF /* BACSSImportProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BACSSImportProvider.h; path = Batch/Modules/Messaging/CSS/BACSSImportProvider.h; sourceTree = SOURCE_ROOT; };
 		5130B5EC1DBA6FA600874EFF /* BACSSBuiltinImportProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BACSSBuiltinImportProvider.h; path = Batch/Modules/Messaging/CSS/BACSSBuiltinImportProvider.h; sourceTree = SOURCE_ROOT; };
@@ -884,6 +894,7 @@
 		514671BB1D646F7200C50113 /* BatchActions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BatchActions.m; path = Batch/BatchActions.m; sourceTree = SOURCE_ROOT; };
 		514671C11D647AFE00C50113 /* BAActionsCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAActionsCenter.h; path = Batch/Modules/Actions/BAActionsCenter.h; sourceTree = SOURCE_ROOT; };
 		514671C21D647AFE00C50113 /* BAActionsCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BAActionsCenter.m; path = Batch/Modules/Actions/BAActionsCenter.m; sourceTree = SOURCE_ROOT; };
+		51496A2E25110D680051B8A4 /* BAPartialApplicationDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAPartialApplicationDelegate.h; sourceTree = "<group>"; };
 		514CD72A1BFE2A2B00F79110 /* batchUserDataSQLTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = batchUserDataSQLTests.m; path = batchTests/Modules/User/batchUserDataSQLTests.m; sourceTree = SOURCE_ROOT; };
 		514FCA7325121DDF00CAF31A /* OCMock.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = OCMock.modulemap; sourceTree = "<group>"; };
 		514FCA7425121DED00CAF31A /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -981,7 +992,11 @@
 		5158BB7B22F1EFF100ED0C6C /* BAWebserviceClientExecutor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BAWebserviceClientExecutor.m; sourceTree = "<group>"; };
 		5159B4DE25E0044C008082FA /* internalLoggerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = internalLoggerTests.swift; sourceTree = "<group>"; };
 		5159B4EC25E01BA9008082FA /* loggerSetupTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = loggerSetupTests.m; sourceTree = "<group>"; };
+		515A74942510BE2200F05E80 /* swizzlingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = swizzlingTests.m; sourceTree = "<group>"; };
+		515A74962510C17800F05E80 /* swiftSwizzling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = swiftSwizzling.swift; sourceTree = "<group>"; };
 		515CA88F23981A7B002CBDAC /* groupActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = groupActionTest.swift; sourceTree = "<group>"; };
+		515E45AA251358C300B05B57 /* InvocationRecorders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InvocationRecorders.h; sourceTree = "<group>"; };
+		515E45AB251358C300B05B57 /* InvocationRecorders.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = InvocationRecorders.m; sourceTree = "<group>"; };
 		516186F61C84B0C9009304A6 /* BANullHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BANullHelper.h; path = Batch/Kernel/Helpers/BANullHelper.h; sourceTree = SOURCE_ROOT; };
 		516186F71C84B0C9009304A6 /* BANullHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BANullHelper.m; path = Batch/Kernel/Helpers/BANullHelper.m; sourceTree = SOURCE_ROOT; };
 		516186FD1C84B66C009304A6 /* BAThreading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAThreading.h; path = Batch/Kernel/Helpers/BAThreading.h; sourceTree = SOURCE_ROOT; };
@@ -1587,6 +1602,7 @@
 		02849BDA19B9FA2D0013408B /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				1EA42E0126A9A5D8004CC618 /* Debug */,
 				626D8552240032F600C24F19 /* Display Receipt */,
 				629EF3BB243E2590006A47CC /* Inbox */,
 				62579A0E235DBBA30018B26C /* EventDispatcher */,
@@ -1789,6 +1805,8 @@
 				9323C51D2225A1960097645F /* htmlParserTests.m */,
 				51B4F50525D3FA3B0077E948 /* OperatingSystemVersion+Equatable.swift */,
 				5192784F25D17B80005C43B4 /* XCTest+BAPromise.swift */,
+				515E45AA251358C300B05B57 /* InvocationRecorders.h */,
+				515E45AB251358C300B05B57 /* InvocationRecorders.m */,
 				9373ECDE2211CA5200FA00A3 /* Stubs */,
 				02849BDA19B9FA2D0013408B /* Modules */,
 				02849BF119B9FA2D0013408B /* Response */,
@@ -1806,6 +1824,14 @@
 				02F7846E19B9EF5A0006FF07 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1EA42E0126A9A5D8004CC618 /* Debug */ = {
+			isa = PBXGroup;
+			children = (
+				1EA42E0226A9A716004CC618 /* FindMyInstallationHelperTests.m */,
+			);
+			path = Debug;
 			sourceTree = "<group>";
 		};
 		5101539B1BEA52AD009E8B16 /* User */ = {
@@ -1977,6 +2003,8 @@
 			children = (
 				5133478F2507D7DB005A89AB /* jsonTests.m */,
 				51B4F4FF25D3F76F0077E948 /* osHelperTests.swift */,
+				515A74942510BE2200F05E80 /* swizzlingTests.m */,
+				515A74962510C17800F05E80 /* swiftSwizzling.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -2216,8 +2244,9 @@
 				516186F71C84B0C9009304A6 /* BANullHelper.m */,
 				516186FD1C84B66C009304A6 /* BAThreading.h */,
 				516186FE1C84B66C009304A6 /* BAThreading.m */,
-				5127A62A1CABDF2200BA44DE /* NSObject+BASwizzled.h */,
-				5127A62B1CABDF2200BA44DE /* NSObject+BASwizzled.m */,
+				51496A2E25110D680051B8A4 /* BAPartialApplicationDelegate.h */,
+				5127A62A1CABDF2200BA44DE /* BADelegatedApplicationDelegate.h */,
+				5127A62B1CABDF2200BA44DE /* BADelegatedApplicationDelegate.m */,
 				518E385F1EAF8C43009AB274 /* BAJson.h */,
 				518E38601EAF8C43009AB274 /* BAJson.m */,
 				51D3A8B41EB8DA4800C77463 /* BATJsonDictionary.h */,
@@ -2502,6 +2531,8 @@
 				51E042AE200CF85A00B30D49 /* BADBGCustomDataViewController.m */,
 				51E042B1200D000800B30D49 /* BADBGCustomDataModels.h */,
 				51E042B2200D000800B30D49 /* BADBGCustomDataModels.m */,
+				1EA42DF926A84C99004CC618 /* BADBGFindMyInstallationHelper.h */,
+				1EA42DF726A84C71004CC618 /* BADBGFindMyInstallationHelper.m */,
 			);
 			path = Debug;
 			sourceTree = "<group>";
@@ -2837,7 +2868,7 @@
 				517D718F22BBC50E00E374FB /* BALoggerUnified.h in Headers */,
 				517D719022BBC50E00E374FB /* BANullHelper.h in Headers */,
 				517D719122BBC50E00E374FB /* BAThreading.h in Headers */,
-				517D719222BBC50E00E374FB /* NSObject+BASwizzled.h in Headers */,
+				517D719222BBC50E00E374FB /* BADelegatedApplicationDelegate.h in Headers */,
 				517D719322BBC50E00E374FB /* BAJson.h in Headers */,
 				517D719422BBC50E00E374FB /* BATJsonDictionary.h in Headers */,
 				517D719522BBC50E00E374FB /* BARandom.h in Headers */,
@@ -2912,6 +2943,8 @@
 				517CC28725B6DAC200A3F380 /* BATWebviewBridgeLegacyWKHandler.h in Headers */,
 				51F58E36257FAA65000DE3E0 /* BAMessagingAnalyticsDelegate.h in Headers */,
 				5166D7D525ED3EEE00F36A5E /* BATMessagingCloseErrorCause.h in Headers */,
+				51496A2F25110D930051B8A4 /* BAPartialApplicationDelegate.h in Headers */,
+				1EA42DFB26A85DF9004CC618 /* BADBGFindMyInstallationHelper.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3108,6 +3141,7 @@
 				51B4F50025D3F76F0077E948 /* osHelperTests.swift in Sources */,
 				62579A11235DBF7C0018B26C /* pushEventPayloadTests.m in Sources */,
 				51ACA05D2166193D006FAD04 /* batchUserDiffTests.swift in Sources */,
+				515A74972510C17800F05E80 /* swiftSwizzling.swift in Sources */,
 				51EB8A3723A3D97000879584 /* queryTestHelpers.swift in Sources */,
 				51A214E625CC09D0003FD6A6 /* webviewUtilsTests.swift in Sources */,
 				51DD79BC25D2BE0F005E8D62 /* webviewBridgeLegacyTests.swift in Sources */,
@@ -3124,11 +3158,13 @@
 				515CA89023981A7B002CBDAC /* groupActionTest.swift in Sources */,
 				516BE209214819160057D937 /* deeplinkDelegateTests.m in Sources */,
 				51ECC06D22D4F8C800F1C5EC /* webserviceAESGCMCryptorTests.m in Sources */,
+				1EA42E0426A9A736004CC618 /* FindMyInstallationHelperTests.m in Sources */,
 				628C158F24AB8E990026C4EC /* inboxSyncWebserviceClientTests.m in Sources */,
 				5192785025D17B80005C43B4 /* XCTest+BAPromise.swift in Sources */,
 				5159B4ED25E01BA9008082FA /* loggerSetupTests.m in Sources */,
 				02849C2C19B9FA2D0013408B /* batchWebserviceResponseTests.m in Sources */,
 				02849C1819B9FA2D0013408B /* batchStatusTests.m in Sources */,
+				515E45AC251358C300B05B57 /* InvocationRecorders.m in Sources */,
 				629B42AE249119860025411E /* gzipTests.m in Sources */,
 				02849BFD19B9FA2D0013408B /* batchCoreTests.m in Sources */,
 				518D887023560C79007BF341 /* messagingAnalyticsDeduplicatingDelegateTests.swift in Sources */,
@@ -3168,6 +3204,7 @@
 				5159B4DF25E0044C008082FA /* internalLoggerTests.swift in Sources */,
 				02849BFC19B9FA2D0013408B /* batchErrorTests.m in Sources */,
 				514FFCCE250903F3009D6A20 /* batchUNUserNotificationCenterDelegateTests.m in Sources */,
+				515A74952510BE2200F05E80 /* swizzlingTests.m in Sources */,
 				02849C1619B9FA2D0013408B /* batchConfigurationTests.m in Sources */,
 				029B335A1A39A1F7006B9DC6 /* batchNSURLREquest+BAHeadersTests.m in Sources */,
 				51DD79C225D2C5BE005E8D62 /* webviewTestHelpers.swift in Sources */,
@@ -3260,6 +3297,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1EA42DFA26A85D7D004CC618 /* BADBGFindMyInstallationHelper.m in Sources */,
 				517D702022BBC45900E374FB /* BatchCore.m in Sources */,
 				5145C78B24C1FFC6004A89FE /* BATWebserviceHMAC.m in Sources */,
 				517D702122BBC45900E374FB /* BatchEventData.m in Sources */,
@@ -3439,7 +3477,7 @@
 				517D70B822BBC45900E374FB /* BALoggerUnified.m in Sources */,
 				517D70B922BBC45900E374FB /* BANullHelper.m in Sources */,
 				517D70BA22BBC45900E374FB /* BAThreading.m in Sources */,
-				517D70BB22BBC45900E374FB /* NSObject+BASwizzled.m in Sources */,
+				517D70BB22BBC45900E374FB /* BADelegatedApplicationDelegate.m in Sources */,
 				517D70BC22BBC45900E374FB /* BAJson.m in Sources */,
 				517D70BD22BBC45900E374FB /* BATJsonDictionary.m in Sources */,
 				517D70BE22BBC45900E374FB /* BARandom.m in Sources */,
@@ -3638,8 +3676,8 @@
 				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Batch/** $(PROJECT_DIR)/batchTests/Bridging\\ Headers/**";
 				SWIFT_OBJC_BRIDGING_HEADER = "batchTests/batchTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 5.0;
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_TEMP_ROOT)/Variant-TSan/Batch.build/$(CONFIGURATION)-$(PLATFORM_NAME)/BatchTests.build/DerivedSources";
 			};
 			name = Debug;
 		};
@@ -3669,8 +3707,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Batch/** $(PROJECT_DIR)/batchTests/Bridging\\ Headers/**";
 				SWIFT_OBJC_BRIDGING_HEADER = "batchTests/batchTests-Bridging-Header.h";
-				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 5.0;
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_TEMP_ROOT)/Variant-TSan/Batch.build/$(CONFIGURATION)-$(PLATFORM_NAME)/BatchTests.build/DerivedSources";
 			};
 			name = Release;
 		};

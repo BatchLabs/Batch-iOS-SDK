@@ -6,6 +6,7 @@
 #define MAXIMUM_VALUES 15
 #define MAXIMUM_TAGS 10
 #define MAXIMUM_STRING_LENGTH 64
+#define MAXIMUM_URL_LENGTH 2048
 #define ATTRIBUTE_KEY_RULE @"^[a-zA-Z0-9_]{1,30}$"
 
 #define PUBLIC_DOMAIN @"BatchUser - Event Data"
@@ -100,6 +101,14 @@
     }
 }
 
+- (void)putURL:(NSURL*)value forKey:(NSString*)key
+{
+    if ([self _enforceURLValue:value])
+    {
+        [self _putTypedAttribute:[BATTypedEventAttribute attributeWithValue:value.absoluteString type:BAEventAttributeTypeURL] forKey:key];
+    }
+}
+
 - (void)_putTypedAttribute:(BATTypedEventAttribute*)attribute forKey:(NSString*)key
 {
     key = key.lowercaseString;
@@ -135,6 +144,33 @@
     {
         [BALogger publicForDomain:PUBLIC_DOMAIN
                           message:@"Cannot add a null or non NSDate date attribute. Ignoring."];
+        return false;
+    }
+    
+    return true;
+}
+
+- (BOOL)_enforceURLValue:(NSURL*)value
+{
+    if (![value isKindOfClass:[NSURL class]])
+    {
+        [BALogger publicForDomain:PUBLIC_DOMAIN
+                          message:@"Cannot add a null or non NSURL url attribute. Ignoring."];
+        return false;
+    }
+
+    if ([(value.absoluteString) length] > MAXIMUM_URL_LENGTH)
+    {
+        [BALogger publicForDomain:PUBLIC_DOMAIN
+                          message:@"URL attributes can't be longer than %d characters. Ignoring.", MAXIMUM_URL_LENGTH];
+
+        return false;
+    }
+    
+    if (value.scheme == nil || value.host == nil )
+    {
+        [BALogger publicForDomain:PUBLIC_DOMAIN
+                          message:@"URL attributes must follow the format 'scheme://[authority][path][?query][#fragment]'. Ignoring."];
         return false;
     }
     
@@ -292,7 +328,6 @@
     for (NSString *key in _attributes.keyEnumerator) {
         typedAttr = _attributes[key];
         formattedKey = [[[key lowercaseString] stringByAppendingString:@"."] stringByAppendingString:[typedAttr typeSuffix]];
-        
         [outAttributes setObject:typedAttr.value forKey:formattedKey];
     }
     
@@ -333,8 +368,10 @@
             return @"s";
         case BAEventAttributeTypeDate:
             return @"t";
-        default:
+        case BAEventAttributeTypeURL:
             return @"u";
+        default:
+            return @"x";
     }
 }
 

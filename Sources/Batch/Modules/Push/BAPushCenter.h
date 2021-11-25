@@ -11,6 +11,7 @@
 
 #import <Batch/BatchPush.h>
 #import <Batch/BACenterMulticastDelegate.h>
+#import <Batch/BAPartialApplicationDelegate.h>
 
 // Is the push open coming from UNUserNotificationCenterDelegate's didResponse callback?
 extern NSString * const kBATPushOpenedNotificationOriginatesFromUNResponseKey;
@@ -23,7 +24,7 @@ extern NSString * const kBATPushOpenedNotificationOriginatesFromAppDelegate;
  @abstract Central control point of Batch push services.
  @discussion Used for managing all push features.
  */
-@interface BAPushCenter : NSObject <BACenterProtocol, UIApplicationDelegate>
+@interface BAPushCenter : NSObject <BACenterProtocol, BAPartialApplicationDelegate>
 
 /*!
  @property shouldAutomaticallyRetreivePushToken

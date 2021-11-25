@@ -200,6 +200,7 @@
 #import <Batch/BAOptOutEventTracker.h>
 #import <Batch/BAOptOutWebserviceClient.h>
 #import <Batch/BADBGLCListViewController.h>
+#import <Batch/BADBGFindMyInstallationHelper.h>
 #import <Batch/BADBGLCDetailsViewController.h>
 #import <Batch/BADBGCustomDataViewController.h>
 #import <Batch/BADBGCustomDataModels.h>
@@ -248,7 +249,8 @@
 #import <Batch/BADateFormatting.h>
 #import <Batch/BAOSHelper.h>
 #import <Batch/BADirectories.h>
-#import <Batch/NSObject+BASwizzled.h>
 #import <Batch/BATJsonDictionary.h>
+#import <Batch/BADelegatedApplicationDelegate.h>
 #import <Batch/BAHTTPHeaders.h>
 #import <Batch/BAStringUtils.h>
+#import <Batch/BAPartialApplicationDelegate.h>

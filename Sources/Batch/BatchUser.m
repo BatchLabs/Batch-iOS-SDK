@@ -20,6 +20,10 @@
 
 #define EVENT_NAME_REGEXP @"^[a-zA-Z0-9_]{1,30}$"
 
+NSString *const BatchEventTrackerFinishedNotification = @"BatchEventTrackerFinishedNotification";
+
+NSString *const BatchEventTrackerFinishedWithSuccessKey = @"BatchEventTrackerFinishedWithSuccessKey";
+
 NSErrorDomain const BatchUserDataEditorErrorDomain = @"com.batch.ios.userdataeditor";
 
 @implementation BatchUser
@@ -76,6 +80,9 @@ NSErrorDomain const BatchUserDataEditorErrorDomain = @"com.batch.ios.userdataedi
                     break;
                 case BAUserAttributeTypeDouble:
                     publicType = BatchUserAttributeTypeDouble;
+                    break;
+                case BAUserAttributeTypeURL:
+                    publicType = BatchUserAttributeTypeURL;
                     break;
                 default:
                     continue; // We skip attributes whose type is not dealt with above.
@@ -289,6 +296,10 @@ NSErrorDomain const BatchUserDataEditorErrorDomain = @"com.batch.ios.userdataedi
 
 - (BOOL)setDoubleAttribute:(double)attribute forKey:(NSString *)key error:(NSError **)error {
     return [_backingImpl setDoubleAttribute:attribute forKey:key error:error];
+}
+
+- (BOOL)setURLAttribute:(nonnull NSURL *)attribute forKey:(NSString *)key error:(NSError **)error {
+    return [_backingImpl setURLAttribute:attribute forKey:key error:error];
 }
 
 - (void)removeAttributeForKey:(nonnull NSString*)key

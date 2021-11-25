@@ -39,6 +39,7 @@ typedef NS_ENUM(NSUInteger, BAEventAttributeType) {
     BAEventAttributeTypeDouble,
     BAEventAttributeTypeBool,
     BAEventAttributeTypeDate,
+    BAEventAttributeTypeURL,
 };
 
 

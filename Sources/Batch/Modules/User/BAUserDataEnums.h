@@ -11,5 +11,6 @@ typedef NS_ENUM(int, BAUserAttributeType) {
     BAUserAttributeTypeLongLong = 2,
     BAUserAttributeTypeDouble = 3,
     BAUserAttributeTypeBool = 4,
-    BAUserAttributeTypeDate = 5
+    BAUserAttributeTypeDate = 5,
+    BAUserAttributeTypeURL = 6
 };

@@ -214,6 +214,8 @@
         postParameters[@"nath"] = notificationAuthorization;
     }
     
+    //NSLog(@"DebugOptin: ts: %@ dty: %@ nath: %@", [NSDate new], [BAPropertiesCenter valueForShortName:@"nty"], [[notificationAuthorization description] stringByReplacingOccurrencesOfString:@"\n" withString:@""]);
+    
     @try
     {
         // Add the webservice metrics

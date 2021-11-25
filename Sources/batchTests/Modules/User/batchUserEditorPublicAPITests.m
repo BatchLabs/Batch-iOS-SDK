@@ -16,6 +16,7 @@
 
     NSError *fakeErr = nil;
     NSDate *date = [NSDate date];
+    NSURL *url = [NSURL URLWithString:@"https://batch.com"];
     // OCMock doesn't deal with NSError** well
     // Unfortunately this doesn't test that the error is not nil, but
     // I coudldn't manage to fix it.
@@ -35,6 +36,7 @@
     [editor setLongLongAttribute:2 forKey:@"bar" error:&fakeErr];
     [editor setFloatAttribute:1.234F forKey:@"bar" error:&fakeErr];
     [editor setDoubleAttribute:1.234L forKey:@"bar" error:&fakeErr];
+    [editor setURLAttribute:url forKey:@"bar" error:&fakeErr];
     [editor removeAttributeForKey:@"bar"];
     [editor clearAttributes];
     [editor addTag:@"foo" inCollection:@"bar"];
@@ -55,6 +57,7 @@
     OCMVerify([mockBackingEditor setLongLongAttribute:2 forKey:@"bar" error:anyError]);
     OCMVerify([mockBackingEditor setFloatAttribute:1.234F forKey:@"bar" error:anyError]);
     OCMVerify([mockBackingEditor setDoubleAttribute:1.234L forKey:@"bar" error:anyError]);
+    OCMVerify([mockBackingEditor setURLAttribute:url forKey:@"bar" error:anyError]);
     OCMVerify([mockBackingEditor removeAttributeForKey:@"bar"]);
     OCMVerify([(BAUserDataEditor*)mockBackingEditor clearAttributes]);
     OCMVerify([mockBackingEditor addTag:@"foo" inCollection:@"bar"]);

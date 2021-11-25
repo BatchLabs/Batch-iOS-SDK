@@ -109,6 +109,15 @@
     }
 }
 
++ (nullable instancetype)valueWithURL:(NSURL*)value
+{
+    if ([value isKindOfClass:[NSURL class]]) {
+        return [[BALPrimitiveValue alloc] initWithValue:value type:BALPrimitiveValueTypeURL];
+    } else {
+        return nil;
+    }
+}
+
 - (BOOL)isEqual:(id)other
 {
     if (other == self) {

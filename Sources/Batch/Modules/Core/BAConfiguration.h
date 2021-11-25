@@ -85,6 +85,18 @@ extern NSString * _Nonnull const kBATConfigurationChangedNotification;
  */
 - (nullable id<BatchLoggerDelegate>)loggerDelegate __attribute__((warn_unused_result));
 
+/*!
+ @method setAssociatedDomains
+ @abstract Set the associated domains
+ */
+- (void)setAssociatedDomains:(nonnull NSArray<NSString*> *)domains;
+
+/*!
+ @method associatedDomains
+ @abstract Get the associated domains
+ */
+- (nullable NSArray<NSString*> *)associatedDomains;
+
 /**
  Developer's deeplink delegate
  */

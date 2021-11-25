@@ -13,7 +13,8 @@ typedef NS_ENUM(NSUInteger, BatchUserAttributeType) {
     BatchUserAttributeTypeLongLong,
     BatchUserAttributeTypeDouble,
     BatchUserAttributeTypeBool,
-    BatchUserAttributeTypeDate
+    BatchUserAttributeTypeDate,
+    BatchUserAttributeTypeURL
 };
 
 @interface BatchUserAttribute: NSObject
@@ -48,5 +49,12 @@ typedef NS_ENUM(NSUInteger, BatchUserAttributeType) {
  @return A string value or nil if the attribute is not a number.
  */
 - (nullable NSNumber *)numberValue;
+
+/**
+ Get the url value for url type attributes.
+ 
+ @return An url value or nil if the attribute is not an url.
+ */
+- (nullable NSURL *)urlValue;
 
 @end

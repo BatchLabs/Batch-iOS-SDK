@@ -12,6 +12,20 @@
 
 @class BatchUserDataEditor, BatchUserAttribute;
 
+/**
+ Notification sent by Batch when the event tracker has finished sending notifications to the server.
+ Multiple events of this kind can occur in a short period of time.
+ 
+ Note: If Batch isn't started or if it is opted-out from, this notification will NOT be emitted.
+ */
+FOUNDATION_EXPORT NSString * _Nonnull const BatchEventTrackerFinishedNotification;
+
+/**
+ Key of BatchEventTrackerFinishedNotification's userInfo, indicating whether the event tracker has successfully sent
+ events to the server or not.
+ */
+FOUNDATION_EXPORT NSString * _Nonnull const BatchEventTrackerFinishedWithSuccessKey;
+
 FOUNDATION_EXPORT NSErrorDomain const _Nonnull BatchUserDataEditorErrorDomain;
 /**
  User data editor error codes
@@ -210,6 +224,11 @@ typedef NS_ERROR_ENUM(BatchUserDataEditorErrorDomain, BatchUserDataEditorError) 
     Note that since timezones are not supported, this will typically represent UTC dates.
     Using any unsupported type as a value (NSNull, NSObject, NSArray, NSDictionary for example) will **NOT** work.
  
+ - NSURL
+ 
+     Must not be longer than 2048 characters. Can't be empty.
+     Must follow the format 'scheme://[authority][path][?query][#fragment]'.
+ 
  @param attribute The attribute value. If nil, the attribute will be removed. See method description for more info about what's allowed.
  
  @param key The attribute key. Can't be nil. It should be made of letters, numbers or underscores ([a-z0-9_]) and can't be longer than 30 characters.
@@ -278,6 +297,15 @@ typedef NS_ERROR_ENUM(BatchUserDataEditorErrorDomain, BatchUserDataEditorError) 
 /// @param error Pointer to an error describing. Note that the error is only about key/value validation, and doesn't mean the value has been sent to the server yet.
 /// @returns A boolean indicating whether the attribute passed validation or not.
 - (BOOL)setDoubleAttribute:(double)attribute forKey:(nonnull NSString*)key error:(NSError * _Nullable * _Nullable)error NS_SWIFT_NAME(set(attribute:forKey:));
+
+/// Set an url custom user attribute for a key.
+/// Must not be longer than 2048 characters. Can't be empty or nil.
+/// Must follow the format 'scheme://[authority][path][?query][#fragment]'
+/// @param attribute The attribute value.
+/// @param key The attribute key. Can't be nil. It should be made of letters, numbers or underscores ([a-z0-9_]) and can't be longer than 30 characters.
+/// @param error Pointer to an error describing. Note that the error is only about key/value validation, and doesn't mean the value has been sent to the server yet.
+/// @returns A boolean indicating whether the attribute passed validation or not.
+- (BOOL)setURLAttribute:(nonnull NSURL*)attribute forKey:(nonnull NSString*)key error:(NSError * _Nullable * _Nullable)error NS_SWIFT_NAME(set(attribute:forKey:));
 
 /**
  Removes an attribute for the specified key.

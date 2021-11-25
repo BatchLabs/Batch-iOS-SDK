@@ -65,8 +65,20 @@
 -(nullable NSString *)updateNotification:(nonnull NSDictionary *)dictionary withFetcherId:(long long)fetcherId;
 
 /*!
+@method markAsDeleted
+@abstract Mark a notification as deleted
+*/
+-(BOOL)markAsDeleted:(nonnull NSString*)notificationId;
+
+/*!
+@method markAsRead
+@abstract Mark a notification as read
+*/
+-(BOOL)markAsRead:(nonnull NSString*)notificationId;
+
+/*!
 @method markAllAsRead:withFetcherId
-@abstract Mark asll notification before a specified time as read
+@abstract Mark all notifications before a specified time as read
 */
 -(BOOL)markAllAsRead:(long long)time withFetcherId:(long long)fetcherId;
 

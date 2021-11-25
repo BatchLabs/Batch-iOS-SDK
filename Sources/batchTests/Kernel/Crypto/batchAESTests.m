@@ -32,9 +32,14 @@
 {
     BAAESB64Cryptor *aes;
     
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+    
     // Test NULL key case.
     aes = [[BAAESB64Cryptor alloc] initWithKey:nil];
     XCTAssertNil(aes, @"An AES cryptor must not generage an object from a NULL key.");
+    
+#pragma clang diagnostic pop
     
     // Test empty key case.
     aes = [[BAAESB64Cryptor alloc] initWithKey:@""];

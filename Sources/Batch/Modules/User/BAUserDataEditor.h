@@ -34,6 +34,8 @@
 
 - (BOOL)setDoubleAttribute:(double)attribute forKey:(nonnull NSString*)key error:(NSError * _Nullable * _Nullable)error NS_SWIFT_NAME(setAttribute(_:forKey:));
 
+- (BOOL)setURLAttribute:(nonnull NSURL*)attribute forKey:(nonnull NSString*)key error:(NSError * _Nullable * _Nullable)error NS_SWIFT_NAME(setAttribute(_:forKey:));
+
 - (void)removeAttributeForKey:(nonnull NSString*)key;
 
 - (void)clearAttributes;

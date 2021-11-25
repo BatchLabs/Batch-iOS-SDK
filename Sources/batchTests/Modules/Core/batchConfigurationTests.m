@@ -80,4 +80,17 @@
     XCTAssertTrue(mode, @"Dev key is supposed to give a dev mode at YES.");
 }
 
+- (void)testAssociatedDomains
+{
+    BAConfiguration *config = [[BAConfiguration alloc] init];
+    XCTAssertNil([config associatedDomains], @"Associated domains should be nil");
+    
+    NSArray* domains = [NSArray arrayWithObjects: @"Batch.com", @"www.batch.com ", nil];
+    NSArray* expected = [NSArray arrayWithObjects: @"batch.com", @"www.batch.com", nil];
+
+    [config setAssociatedDomains:domains];
+    XCTAssertNotNil([config associatedDomains], @"Associated domains should NOT be nil");
+    XCTAssertTrue([expected isEqualToArray: [config associatedDomains]]);
+}
+
 @end

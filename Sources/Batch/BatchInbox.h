@@ -55,8 +55,9 @@
  Flag indicating whether this notification is deleted or not.
  
  This might change if you hold a pointer to a notification that you asked to be deleted
+ @deprecated
  */
-@property (nonatomic, readonly) BOOL isDeleted;
+@property (nonatomic, readonly) BOOL isDeleted  __attribute__((deprecated("You should refresh your copy of the data with allFetchedNotifications after using markNotificationAsDeleted.")));
 
 /**
  The push notification's source, indicating what made Batch send it. It can come from a push campaign via the API or the dashboard, or from the transactional API, for example.

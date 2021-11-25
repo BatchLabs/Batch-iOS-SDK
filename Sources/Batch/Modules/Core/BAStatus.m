@@ -14,9 +14,9 @@
 #import <Batch/BABundleInfo.h>
 #import <Batch/BANotificationAuthorization.h>
 #import <Batch/BATrackingAuthorization.h>
+#import <Batch/BADBGFindMyInstallationHelper.h>
 
-// Internal methods and parameters.
-@interface BAStatus ()
+@implementation BAStatus
 {
     // Initialization.
     BOOL    _init;
@@ -28,11 +28,10 @@
     
     // Start webservice status.
     BOOL    _startWebservice;
+    
+    // Installation Id Helper (to copy the install id into the clipboard)
+    BADBGFindMyInstallationHelper *_installationIdHelper;
 }
-
-@end
-
-@implementation BAStatus
 
 // Set the library in an initialise state.
 - (NSError *)initialization
@@ -47,10 +46,12 @@
     _production = ![BABundleInfo usesAPNSandbox];
     
     _sessionManager = [BASessionManager new];
-    
+        
     _notificationAuthorization = [BANotificationAuthorization new];
     
     _trackingAuthorization = [BATrackingAuthorization new];
+    
+    _installationIdHelper = [BADBGFindMyInstallationHelper new];
     
     return nil;
 }

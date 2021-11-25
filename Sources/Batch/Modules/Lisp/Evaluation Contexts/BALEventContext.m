@@ -139,6 +139,11 @@
                         // Multiply by 1000 to get milliseconds, in order to conform to its Java counterpart.
                         return [BALPrimitiveValue valueWithDouble:floor(((NSDate*)value).timeIntervalSince1970 * (double)1000)];
                     }
+                case BAEventAttributeTypeURL:
+                    if ([value isKindOfClass:[NSURL class]]) {
+                        return [BALPrimitiveValue valueWithURL:(NSURL*)value];
+                    }
+                    break;
             }
         }
     }

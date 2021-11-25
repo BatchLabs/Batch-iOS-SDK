@@ -31,6 +31,9 @@ NSString *const kBATConfigurationChangedNotification = @"ConfigurationChangedNot
     
     // Logger delegate.
     __weak id<BatchLoggerDelegate> _loggerDelegate;
+    
+    // Universal links associated domains
+    NSMutableArray<NSString*> *_associatedDomains;
 }
 
 @end
@@ -128,6 +131,23 @@ NSString *const kBATConfigurationChangedNotification = @"ConfigurationChangedNot
 - (id<BatchLoggerDelegate>)loggerDelegate
 {
     return _loggerDelegate;
+}
+
+- (void)setAssociatedDomains:(NSArray<NSString*> *)domains
+{
+    _associatedDomains = [NSMutableArray array];
+    
+    for(NSString *domain in domains){
+        NSString *domainTrimmed = [domain stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        [_associatedDomains addObject:[domainTrimmed lowercaseString] ];
+    }
+    
+    [[BANotificationCenter defaultCenter] postNotificationName:kBATConfigurationChangedNotification object:nil];
+}
+
+-(NSArray<NSString*> *)associatedDomains
+{
+    return _associatedDomains;
 }
 
 #pragma mark -

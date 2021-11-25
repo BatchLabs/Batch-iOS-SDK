@@ -72,6 +72,14 @@ Add a date attribute for the specified key.
 */
 - (void)putDate:(NSDate*)value forKey:(NSString*)key;
 
+/**
+Add an URL attribute for the specified key.
+
+@param value URL value to add. Can't be longer than 2048 characters, and can't be empty or nil. Must follow the format 'scheme://[authority][path][?query][#fragment]'.
+@param key Attribute key. Should be made of letters, numbers or underscores ([a-z0-9_]) and can't be longer than 30 characters.
+*/
+- (void)putURL:(NSURL*)value forKey:(NSString*)key;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -44,6 +44,8 @@
 
 - (BOOL)setDateAttribute:(nonnull NSDate*)attribute forKey:(nonnull NSString*)key;
 
+- (BOOL)setURLAttribute:(nonnull NSURL*)attribute forKey:(nonnull NSString*)key;
+
 - (BOOL)removeAttributeNamed:(nonnull NSString*)attribute;
 
 #pragma mark Tags methods

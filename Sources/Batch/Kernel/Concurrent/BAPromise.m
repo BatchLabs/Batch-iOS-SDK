@@ -4,9 +4,8 @@
 #import <Batch/BAPromise.h>
 
 /**
- A simple Promise-like implementation that can only be resolved and is not thread-safe.
+ A simple Promise-like implementation that is not thread-safe.
  then can't mutate the value
- catch does not exist
  */
 @implementation BAPromise
 {

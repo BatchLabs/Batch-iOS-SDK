@@ -14,6 +14,7 @@
 #import <Batch/BATrackerCenter.h>
 #import <Batch/BADBGModule.h>
 #import <Batch/BAOptOut.h>
+#import <Batch/BADBGFindMyInstallationHelper.h>
 
 @implementation Batch
 
@@ -108,6 +109,11 @@
     return [[BAOptOut instance] isOptedOut];
 }
 
++ (void)setAssociatedDomains:(NSArray<NSString*> * _Nonnull) domains
+{
+    [[[BACoreCenter instance] configuration] setAssociatedDomains:domains];
+}
+
 + (id<BatchDeeplinkDelegate>)deeplinkDelegate
 {
     return [[BACoreCenter instance] configuration].deeplinkDelegate;
@@ -116,6 +122,16 @@
 + (void)setDeeplinkDelegate:(id<BatchDeeplinkDelegate>)deeplinkDelegate
 {
     [[BACoreCenter instance] configuration].deeplinkDelegate = deeplinkDelegate;
+}
+
++ (BOOL)enablesFindMyInstallation
+{
+    return [BADBGFindMyInstallationHelper enablesFindMyInstallation];
+}
+
++ (void)setEnablesFindMyInstallation:(BOOL)enablesFindMyInstallation
+{
+    [BADBGFindMyInstallationHelper setEnablesFindMyInstallation:enablesFindMyInstallation];
 }
 
 @end

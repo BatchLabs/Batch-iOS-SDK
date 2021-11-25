@@ -14,6 +14,7 @@ class UserDataEditorTests: XCTestCase {
     
     func testModernAttributeMethods() throws {
         let datasource = MockUserDatasource()
+        let url = URL(string:"https://batch.com")
         
         let _ = BAInjection.overlayProtocol(BAUserDatasourceProtocol.self, returnedInstance: datasource)
         
@@ -38,6 +39,9 @@ class UserDataEditorTests: XCTestCase {
         datasource.expect().call(
             datasource.setStringAttribute(Arg.eq("foo"), forKey: Arg.eq("stringattr"))
         )
+        datasource.expect().call(
+            datasource.setURLAttribute(Arg.eq(url!), forKey: Arg.eq("urlattr"))
+        )
         
         let editor = BAUserDataEditor()
         try editor.setAttribute(true, forKey: "boolattr")
@@ -47,6 +51,7 @@ class UserDataEditorTests: XCTestCase {
         try editor.setAttribute(1.234 as Double, forKey: "doubleattr")
         try editor.setAttribute(1.234 as Float, forKey: "floatattr")
         try editor.setAttribute("foo", forKey: "stringattr")
+        try editor.setAttribute(url!, forKey: "urlattr")
 
         editor.writeToDatasource(changes: editor.operationQueue(), changeset: 1)
         
@@ -123,6 +128,9 @@ class UserDataEditorTests: XCTestCase {
     }
     
     func testModernAttributeMethodErrors() {
+        
+        let url = URL(string:"https://batch.com")
+        
         let datasource = MockUserDatasource()
         let _ = BAInjection.overlayProtocol(BAUserDatasourceProtocol.self, returnedInstance: datasource)
         
@@ -154,6 +162,10 @@ class UserDataEditorTests: XCTestCase {
             datasource.setStringAttribute(Arg.any(), forKey: Arg.any()),
             count: 0
         )
+        datasource.expect().call(
+            datasource.setURLAttribute(Arg.eq(url!), forKey: Arg.any()),
+            count: 0
+        )
         
         let editor = BAUserDataEditor()
         for key in invalidKeys {
@@ -164,6 +176,8 @@ class UserDataEditorTests: XCTestCase {
             assertThrowsError(code: .invalidKey, try editor.setAttribute(1.234 as Double, forKey: key))
             assertThrowsError(code: .invalidKey, try editor.setAttribute(1.234 as Float, forKey: key))
             assertThrowsError(code: .invalidKey, try editor.setAttribute("foo", forKey: key))
+            assertThrowsError(code: .invalidKey, try editor.setAttribute(url!, forKey: key))
+            
         }
         assertThrowsError(code: .invalidValue, try editor.setAttribute("lorem ipsum dolor blalblablalbalblalbalbalb alblalbalbla lbal bla blablalbalblalbalbla balba", forKey: "stringattr"))
 
@@ -281,6 +295,11 @@ class MockUserDatasource: Mock, BAUserDatasourceProtocol {
     }
 
     func setDateAttribute(_ attribute: Date, forKey key: String) -> Bool {
+        super.call(attribute, key)
+        return true
+    }
+    
+    func setURLAttribute(_ attribute: URL, forKey key: String) -> Bool {
         super.call(attribute, key)
         return true
     }

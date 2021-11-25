@@ -31,10 +31,11 @@
 #define COLUMN_NOTIFICATION_ID          @"notification_id"
 #define COLUMN_SEND_ID                  @"send_id"
 #define COLUMN_UNREAD                   @"unread"
+#define COLUMN_DELETED                  @"deleted"
 #define COLUMN_DATE                     @"date"
 #define COLUMN_PAYLOAD                  @"payload"
 
-#define DB_VERSION                      @1
+#define DB_VERSION                      @2
 
 @implementation BAInboxSQLiteDatasource
 
@@ -67,7 +68,23 @@
     if ([[NSFileManager defaultManager] fileExistsAtPath:dbPath])
     {
         NSNumber *oldDbVesion = [BAParameter objectForKey:kParametersInboxDBVersion fallback:@-1];
-        if (![oldDbVesion isEqualToNumber:DB_VERSION])
+        if( [oldDbVesion isEqualToNumber:@1] )
+        {
+            @try
+            {
+                [self executeUpgradeQueries: @[[NSString stringWithFormat: @"alter table %@ add column %@ integer not null default 0 check(%@ IN (0,1))",TABLE_NOTIFICATIONS, COLUMN_DELETED, COLUMN_DELETED]] onDatabase:dbPath];
+            }
+            @catch (NSException *exception)
+            {
+                // The update strategy for the time being is to wipe the SQLite file and recreate it. Safest way.
+                if( ![[NSFileManager defaultManager] removeItemAtPath:dbPath error:nil] )
+                {
+                    [BALogger errorForDomain:@"Event" message:@"Error while upgrading sqlite database, not persisting notifications."];
+                    return nil;
+                }
+            }
+        }
+        else if (![oldDbVesion isEqualToNumber:DB_VERSION])
         {
             // Wipe the SQLite file and recreate it if no old version (or too new) found. Safest way.
             if (![[NSFileManager defaultManager] removeItemAtPath:dbPath error:nil])
@@ -101,9 +118,9 @@
     /*** Table notifications  ***/
     NSString *notificationsUniquenessStatement = [NSString stringWithFormat:@"unique(%@, %@)", COLUMN_NOTIFICATION_ID, COLUMN_SEND_ID];
     NSString *createNotificationsStatement = [NSString stringWithFormat:
-                                         @"create table if not exists %@ (%@ integer primary key autoincrement, %@ text not null, %@ text not null, %@ integer not null default 0 check(%@ IN (0,1)), %@ integer not null, %@ text, %@);",
+                                         @"create table if not exists %@ (%@ integer primary key autoincrement, %@ text not null, %@ text not null, %@ integer not null default 0 check(%@ IN (0,1)), %@ integer not null default 0 check(%@ IN (0,1)), %@ integer not null, %@ text, %@);",
                                          TABLE_NOTIFICATIONS, COLUMN_DB_ID, COLUMN_NOTIFICATION_ID, COLUMN_SEND_ID,
-                                         COLUMN_UNREAD, COLUMN_UNREAD, COLUMN_DATE, COLUMN_PAYLOAD, notificationsUniquenessStatement];
+                                         COLUMN_UNREAD, COLUMN_UNREAD, COLUMN_DELETED, COLUMN_DELETED, COLUMN_DATE, COLUMN_PAYLOAD, notificationsUniquenessStatement];
     
     if( sqlite3_exec(_database, [createNotificationsStatement cStringUsingEncoding:NSUTF8StringEncoding], NULL, NULL, NULL) != SQLITE_OK )
     {
@@ -476,12 +493,13 @@
         }
         
         sqlite3_stmt *statement;
-        NSString *selectSQL = [NSString stringWithFormat:@"SELECT * FROM %@ INNER JOIN %@ ON %@.%@ = %@.%@ WHERE %@ = ? AND %@.%@ IN(%@) ORDER BY %@ DESC",
+        NSString *selectSQL = [NSString stringWithFormat:@"SELECT * FROM %@ INNER JOIN %@ ON %@.%@ = %@.%@ WHERE %@ = ? AND %@.%@ = ? AND %@.%@ IN(%@) ORDER BY %@ DESC",
                                TABLE_FETCHERS_NOTIFICATIONS,
                                TABLE_NOTIFICATIONS,
                                TABLE_FETCHERS_NOTIFICATIONS, COLUMN_NOTIFICATION_ID,
                                TABLE_NOTIFICATIONS, COLUMN_NOTIFICATION_ID,
                                COLUMN_FETCHER_ID,
+                               TABLE_NOTIFICATIONS, COLUMN_DELETED,
                                TABLE_FETCHERS_NOTIFICATIONS, COLUMN_NOTIFICATION_ID,
                                valuesString,
                                COLUMN_DATE];
@@ -489,9 +507,10 @@
         if (sqlite3_prepare_v2(self->_database, [selectSQL cStringUsingEncoding:NSUTF8StringEncoding], -1, &statement, NULL) == SQLITE_OK)
         {
             sqlite3_bind_int64(statement, 1, fetcherId);
+            sqlite3_bind_int(statement, 2, 0);
             for (int i = 0; i < [notificaitonIds count]; i++)
             {
-                sqlite3_bind_text(statement, i + 2, [[notificaitonIds objectAtIndex:i] cStringUsingEncoding:NSUTF8StringEncoding], -1, NULL);
+                sqlite3_bind_text(statement, i + 3, [[notificaitonIds objectAtIndex:i] cStringUsingEncoding:NSUTF8StringEncoding], -1, NULL);
             }
             
             while (sqlite3_step(statement) == SQLITE_ROW)
@@ -708,6 +727,52 @@
     }
 }
 
+-(BOOL)markAsDeleted:(nonnull NSString*)notificationId
+{
+    @synchronized(self.lock)
+    {
+        NSString *updateSQL = [NSString stringWithFormat:@"UPDATE %@ SET %@ = ? WHERE %@ = ?;",
+                               TABLE_NOTIFICATIONS,
+                               COLUMN_DELETED,
+                               COLUMN_NOTIFICATION_ID];
+        
+        sqlite3_stmt *statement;
+        if (sqlite3_prepare_v2(self->_database, [updateSQL cStringUsingEncoding:NSUTF8StringEncoding], -1, &statement, NULL) == SQLITE_OK)
+        {
+            sqlite3_bind_int(statement, 1, 1);
+            sqlite3_bind_text(statement, 2, [notificationId cStringUsingEncoding:NSUTF8StringEncoding], -1, NULL);
+            int stepResult = sqlite3_step(statement);
+            sqlite3_finalize(statement);
+            return stepResult == SQLITE_DONE;
+        } else {
+            return NO;
+        }
+    }
+}
+
+-(BOOL)markAsRead:(nonnull NSString*)notificationId
+{
+    @synchronized(self.lock)
+    {
+        NSString *updateSQL = [NSString stringWithFormat:@"UPDATE %@ SET %@ = ? WHERE %@ = ?;",
+                               TABLE_NOTIFICATIONS,
+                               COLUMN_UNREAD,
+                               COLUMN_NOTIFICATION_ID];
+        
+        sqlite3_stmt *statement;
+        if (sqlite3_prepare_v2(self->_database, [updateSQL cStringUsingEncoding:NSUTF8StringEncoding], -1, &statement, NULL) == SQLITE_OK)
+        {
+            sqlite3_bind_int(statement, 1, 0);
+            sqlite3_bind_text(statement, 2, [notificationId cStringUsingEncoding:NSUTF8StringEncoding], -1, NULL);
+            int stepResult = sqlite3_step(statement);
+            sqlite3_finalize(statement);
+            return stepResult == SQLITE_DONE;
+        } else {
+            return NO;
+        }
+    }
+}
+
 -(BOOL)markAllAsRead:(long long)time withFetcherId:(long long)fetcherId
 {
     @synchronized(self.lock)
@@ -875,7 +940,7 @@
 {
     BAInboxNotificationContent *content = [BAInboxNotificationContent new];
     
-    const char *payloadChar = (const char*) sqlite3_column_text(statement, 10);
+    const char *payloadChar = (const char*) sqlite3_column_text(statement, 11);
     if (payloadChar == NULL) {
         // TODO error handling
         return nil;
@@ -888,7 +953,7 @@
     
     content.payload = (NSDictionary *)json;
     content.isUnread = sqlite3_column_int(statement, 8) == 1;
-    long long time = sqlite3_column_int64(statement, 9);
+    long long time = sqlite3_column_int64(statement, 10);
     content.date = [NSDate dateWithTimeIntervalSince1970:time];
     
     content.identifiers = [BAInboxNotificationContentIdentifiers new];

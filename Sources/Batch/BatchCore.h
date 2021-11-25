@@ -41,6 +41,12 @@ typedef NS_ENUM(NSUInteger, BatchOptOutNetworkErrorPolicy) {
 @property (class, weak, nullable, nonatomic) id<BatchDeeplinkDelegate> deeplinkDelegate;
 
 /**
+ Control whether Batch should enables the FindMyInstallation feature (default = YES)
+ If enabled Batch will copy the current installation id in the clipboard when the application is foregrounded 5 times within 12 seconds.
+ */
+@property (class) BOOL enablesFindMyInstallation;
+
+/**
  @warning Never call this method: Batch only uses static methods.
  */
 - (nonnull instancetype)init NS_UNAVAILABLE;
@@ -220,6 +226,18 @@ typedef NS_ENUM(NSUInteger, BatchOptOutNetworkErrorPolicy) {
  Returns whether Batch has been opted out from or not
  */
 + (BOOL)isOptedOut;
+
+/**
+ If your app handle universal links, set your list of associated domains.
+ 
+ If your site uses multiple subdomains (such as example.com, www.example.com, or support.example.com),
+ each requires its own entry like in the Associated Domains Entitlement,
+ 
+ Make sure to only include the desired subdomain and the top-level domain. Don’t include path and query components or a trailing slash (/)
+ 
+ @param domains An array of your supported associated domains.
+ */
++ (void)setAssociatedDomains:(NSArray<NSString*> * _Nonnull) domains NS_AVAILABLE_IOS(8_0);
 
 @end
 

@@ -89,7 +89,7 @@
     
     BAMSGAction *action2 = [[BAMSGAction alloc] init];
     action2.actionIdentifier = nil;
-    action2.actionArguments = nil;
+    action2.actionArguments = @{};
     
     BAMessageEventPayload *payload3 = [[BAMessageEventPayload alloc] initWithMessage:message action:action2];
     XCTAssertNotNil(payload3);

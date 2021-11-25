@@ -129,7 +129,8 @@
                 XCTAssertEqualObjects(@"test-id-2.5", [NSString stringWithUTF8String: (const char *) sqlite3_column_text(selectStatement, 1)]);
                 XCTAssertEqualObjects(@"test-send-id-2.5", [NSString stringWithUTF8String: (const char *) sqlite3_column_text(selectStatement, 2)]);
                 XCTAssertEqual(1, sqlite3_column_int(selectStatement, 3));
-                XCTAssertEqual(10900, sqlite3_column_int64(selectStatement, 4));
+                XCTAssertEqual(0, sqlite3_column_int(selectStatement, 4));
+                XCTAssertEqual(10900, sqlite3_column_int64(selectStatement, 5));
             }
             
             if (count == 0) {
@@ -258,7 +259,8 @@
                 XCTAssertEqualObjects(@"test-id-2", [NSString stringWithUTF8String: (const char *) sqlite3_column_text(selectStatement, 1)]);
                 XCTAssertEqualObjects(@"test-send-id-2", [NSString stringWithUTF8String: (const char *) sqlite3_column_text(selectStatement, 2)]);
                 XCTAssertEqual(0, sqlite3_column_int(selectStatement, 3));
-                XCTAssertEqual(10800, sqlite3_column_int64(selectStatement, 4));
+                XCTAssertEqual(0, sqlite3_column_int(selectStatement, 3));
+                XCTAssertEqual(10800, sqlite3_column_int64(selectStatement, 5));
             }
             
             if (count == 0) {
@@ -283,7 +285,8 @@
                 XCTAssertEqualObjects(@"test-id-1", [NSString stringWithUTF8String: (const char *) sqlite3_column_text(selectStatement, 1)]);
                 XCTAssertEqualObjects(@"test-send-id-1-updated", [NSString stringWithUTF8String: (const char *) sqlite3_column_text(selectStatement, 2)]);
                 XCTAssertEqual(1, sqlite3_column_int(selectStatement, 3));
-                XCTAssertEqual(7300, sqlite3_column_int64(selectStatement, 4));
+                XCTAssertEqual(0, sqlite3_column_int(selectStatement, 4));
+                XCTAssertEqual(7300, sqlite3_column_int64(selectStatement, 5));
             }
             
             if (count == 0) {

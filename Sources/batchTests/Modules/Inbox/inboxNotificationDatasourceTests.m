@@ -58,8 +58,12 @@
 
 - (void)testInsertFetcherIds
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
     XCTAssertEqual(-1, [_datasource createFetcherIdWith:BAInboxWebserviceClientTypeInstallation identifier:nil]);
     XCTAssertEqual(-1, [_datasource createFetcherIdWith:BAInboxWebserviceClientTypeInstallation identifier:@""]);
+#pragma clang diagnostic pop
+
     
     long long fetcherId = [_datasource createFetcherIdWith:BAInboxWebserviceClientTypeUserIdentifier identifier:@"test-custom-id"];
     XCTAssertTrue(fetcherId > 0);
@@ -198,8 +202,9 @@
             XCTAssertEqualObjects(@"test-id", [NSString stringWithUTF8String: (const char *) sqlite3_column_text(selectStatement, 1)]);
             XCTAssertEqualObjects(@"test-send-id", [NSString stringWithUTF8String: (const char *) sqlite3_column_text(selectStatement, 2)]);
             XCTAssertEqual(1, sqlite3_column_int(selectStatement, 3));
-            XCTAssertEqual((long long) [now timeIntervalSince1970], sqlite3_column_int64(selectStatement, 4));
-            XCTAssertEqualObjects(PUSH_PAYLOAD, [NSString stringWithUTF8String: (const char *) sqlite3_column_text(selectStatement, 5)]);
+            XCTAssertEqual(0, sqlite3_column_int(selectStatement, 4));
+            XCTAssertEqual((long long) [now timeIntervalSince1970], sqlite3_column_int64(selectStatement, 5));
+            XCTAssertEqualObjects(PUSH_PAYLOAD, [NSString stringWithUTF8String: (const char *) sqlite3_column_text(selectStatement, 6)]);
         }
         
         if (count == 0) {
@@ -313,10 +318,10 @@
             
             if (count == 1) {
                 XCTAssertEqualObjects(@"test-id-1", [NSString stringWithUTF8String: (const char *) sqlite3_column_text(selectStatement, 1)]);
-                XCTAssertEqual(times[1], sqlite3_column_int64(selectStatement, 4));
+                XCTAssertEqual(times[1], sqlite3_column_int64(selectStatement, 5));
             } else if (count == 2) {
                 XCTAssertEqualObjects(@"test-id-3", [NSString stringWithUTF8String: (const char *) sqlite3_column_text(selectStatement, 1)]);
-                XCTAssertEqual(times[3], sqlite3_column_int64(selectStatement, 4));
+                XCTAssertEqual(times[3], sqlite3_column_int64(selectStatement, 5));
             } else {
                 XCTFail();
             }
@@ -439,6 +444,87 @@
     XCTAssertEqualObjects(@"test-id-2", [candidates objectAtIndex:2].identifier);
     XCTAssertEqualObjects(@"test-id-3", [candidates objectAtIndex:3].identifier);
 }
+
+-(void)testMarkAsDeleted {
+    long long fetcherId = [_datasource createFetcherIdWith:BAInboxWebserviceClientTypeUserIdentifier identifier:@"test-custom-id"];
+    XCTAssertTrue(fetcherId > 0);
+    BAInboxNotificationContent *content = [BAInboxNotificationContent new];
+    content.identifiers = [BAInboxNotificationContentIdentifiers new];
+    content.identifiers.identifier = @"test-id-1";
+    content.identifiers.sendID = @"test-send-id-1";
+    content.identifiers.installID = @"test-install-id-1";
+    content.identifiers.customID = @"test-custom-id-1";
+    content.date = [NSDate date];
+    content.payload = [BAJson deserializeAsDictionary:PUSH_PAYLOAD error:nil];
+    content.isUnread = YES;
+    
+    XCTAssertTrue([_datasource insertNotification:content withFetcherId:fetcherId]);
+    
+    XCTAssertTrue([_datasource markAsDeleted:@"test-id-1"]);
+    
+    NSString *selectQuery = @"SELECT * FROM notifications WHERE notification_id = 'test-id-1';";
+    sqlite3_stmt *selectStatement;
+    
+    if (sqlite3_prepare_v2(self->_database, [selectQuery cStringUsingEncoding:NSUTF8StringEncoding], -1, &selectStatement, NULL) == SQLITE_OK)
+    {
+        int count = 0;
+        while (sqlite3_step(selectStatement) == SQLITE_ROW) {
+            count += 1;
+            if (count > 1) {
+                XCTFail();
+            }
+            XCTAssertEqual(1, sqlite3_column_int(selectStatement, 4));
+        }
+        
+        if (count != 1) {
+            XCTFail();
+        }
+        sqlite3_finalize(selectStatement);
+    } else {
+        XCTFail();
+    }
+}
+
+-(void)testMarkAsRead {
+    long long fetcherId = [_datasource createFetcherIdWith:BAInboxWebserviceClientTypeUserIdentifier identifier:@"test-custom-id"];
+    XCTAssertTrue(fetcherId > 0);
+    BAInboxNotificationContent *content = [BAInboxNotificationContent new];
+    content.identifiers = [BAInboxNotificationContentIdentifiers new];
+    content.identifiers.identifier = @"test-id-1";
+    content.identifiers.sendID = @"test-send-id-1";
+    content.identifiers.installID = @"test-install-id-1";
+    content.identifiers.customID = @"test-custom-id-1";
+    content.date = [NSDate date];
+    content.payload = [BAJson deserializeAsDictionary:PUSH_PAYLOAD error:nil];
+    content.isUnread = YES;
+    
+    XCTAssertTrue([_datasource insertNotification:content withFetcherId:fetcherId]);
+    
+    XCTAssertTrue([_datasource markAsRead:@"test-id-1"]);
+    
+    NSString *selectQuery = @"SELECT * FROM notifications WHERE notification_id = 'test-id-1';";
+    sqlite3_stmt *selectStatement;
+    
+    if (sqlite3_prepare_v2(self->_database, [selectQuery cStringUsingEncoding:NSUTF8StringEncoding], -1, &selectStatement, NULL) == SQLITE_OK)
+    {
+        int count = 0;
+        while (sqlite3_step(selectStatement) == SQLITE_ROW) {
+            count += 1;
+            if (count > 1) {
+                XCTFail();
+            }
+            XCTAssertEqual(0, sqlite3_column_int(selectStatement, 3));
+        }
+        
+        if (count != 1) {
+            XCTFail();
+        }
+        sqlite3_finalize(selectStatement);
+    } else {
+        XCTFail();
+    }
+}
+
 
 -(void)testMarkAllAsRead
 {
@@ -594,8 +680,9 @@
             XCTAssertEqualObjects(@"test-id", [NSString stringWithUTF8String: (const char *) sqlite3_column_text(selectStatement, 1)]);
             XCTAssertEqualObjects(@"test-send-id", [NSString stringWithUTF8String: (const char *) sqlite3_column_text(selectStatement, 2)]);
             XCTAssertEqual(0, sqlite3_column_int(selectStatement, 3));
-            XCTAssertEqual((long long) [now timeIntervalSince1970], sqlite3_column_int64(selectStatement, 4));
-            XCTAssertEqualObjects(PUSH_PAYLOAD, [NSString stringWithUTF8String: (const char *) sqlite3_column_text(selectStatement, 5)]);
+            XCTAssertEqual(0, sqlite3_column_int(selectStatement, 4));
+            XCTAssertEqual((long long) [now timeIntervalSince1970], sqlite3_column_int64(selectStatement, 5));
+            XCTAssertEqualObjects(PUSH_PAYLOAD, [NSString stringWithUTF8String: (const char *) sqlite3_column_text(selectStatement, 6)]);
         }
         
         if (count == 0) {
@@ -624,8 +711,9 @@
             XCTAssertEqualObjects(@"test-id", [NSString stringWithUTF8String: (const char *) sqlite3_column_text(selectStatement, 1)]);
             XCTAssertEqualObjects(@"updated-send-id", [NSString stringWithUTF8String: (const char *) sqlite3_column_text(selectStatement, 2)]);
             XCTAssertEqual(0, sqlite3_column_int(selectStatement, 3));
-            XCTAssertEqual(123456, sqlite3_column_int64(selectStatement, 4));
-            XCTAssertEqualObjects(PUSH_PAYLOAD, [NSString stringWithUTF8String: (const char *) sqlite3_column_text(selectStatement, 5)]);
+            XCTAssertEqual(0, sqlite3_column_int(selectStatement, 4));
+            XCTAssertEqual(123456, sqlite3_column_int64(selectStatement, 5));
+            XCTAssertEqualObjects(PUSH_PAYLOAD, [NSString stringWithUTF8String: (const char *) sqlite3_column_text(selectStatement, 6)]);
         }
         
         if (count == 0) {

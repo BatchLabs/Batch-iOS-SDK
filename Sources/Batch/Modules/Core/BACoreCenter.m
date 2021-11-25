@@ -120,6 +120,10 @@
     } else {
         NSURL *deeplinkURL = [NSURL URLWithString:deeplink];
         if (deeplinkURL != nil) {
+            if ([self openUniversalLinkIfPossible:deeplinkURL]) {
+                // We successfully opened universal link
+                return;
+            }
             if (!inApp || ![self openDeeplinkURLInAppIfPossible:deeplinkURL]) { // don't open in app OR tried to open in app but failed
                 // then open with UIApplication
                 [BACoreCenter openURLWithUIApplication:deeplinkURL];
@@ -404,6 +408,43 @@
     
     UIApplication *sharedApplication = [UIApplication sharedApplication];
     [sharedApplication openURL:URL options:@{} completionHandler:nil];
+}
+
+/**
+ Try to open an url as a universal link.
+ Ensure the associated domains are declared and matching and then transfert the deeplink url to application:continueUserActivity:restorationHandler
+ 
+ @param URL URL to transfer.
+ @return YES if the URL was opened, NO if it couldn't.
+ */
+- (BOOL)openUniversalLinkIfPossible:(NSURL *)URL
+{
+    // Ensure associated domains are declared
+    NSArray* associatedDomains = [_configuration associatedDomains];
+    if (associatedDomains == nil) {
+        return NO;
+    }
+    
+    // Checking the url match with the associated domains
+    NSString *domain = [URL host];
+    if (![associatedDomains containsObject:domain]) {
+        [BALogger debugForDomain:LOGGER_DOMAIN message:@"Domain '%@' NOT found.", domain];
+        return NO;
+    }
+    
+    [BALogger debugForDomain:LOGGER_DOMAIN message:@"Transferring universal link '%@' to UIApplication", URL.absoluteString];
+    
+    // Transferring url to application:continueUserActivity:restorationHandler
+    NSUserActivity* userActivity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
+    userActivity.webpageURL = URL;
+    id<UIApplicationDelegate> appDelegate = [UIApplication sharedApplication].delegate;
+    if( [appDelegate respondsToSelector:@selector(application:continueUserActivity:restorationHandler:)] ) {
+        [appDelegate application:[UIApplication sharedApplication] continueUserActivity:userActivity restorationHandler:nil];
+        return YES;
+    } else {
+        [BALogger debugForDomain:LOGGER_DOMAIN message:@"It looks like application:continueUserActivity:restorationHandler is not implemented, did you correctly add it to your AppDelegate ?"];
+        return NO;
+    }
 }
 
 // Check for potential incompatibilities/misconfigurations, and warn the developer

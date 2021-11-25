@@ -68,6 +68,7 @@ typedef NS_ENUM(NSUInteger, BALPrimitiveValueType) {
     BALPrimitiveValueTypeDouble,
     BALPrimitiveValueTypeBool,
     BALPrimitiveValueTypeStringSet,
+    BALPrimitiveValueTypeURL
 };
 
 @interface BALPrimitiveValue : BALValue
@@ -85,6 +86,8 @@ typedef NS_ENUM(NSUInteger, BALPrimitiveValueType) {
 + (instancetype)valueWithBoolean:(BOOL)value;
 
 + (nullable instancetype)valueWithStringSet:(NSSet<NSString*>*)value;
+
++ (nullable instancetype)valueWithURL:(NSURL*)value;
 
 @end
 

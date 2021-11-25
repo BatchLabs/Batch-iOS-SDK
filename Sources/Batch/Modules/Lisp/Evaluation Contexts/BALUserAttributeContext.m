@@ -115,6 +115,13 @@
                 return [BALPrimitiveValue valueWithString:str];
             }
         }
+        case BAUserAttributeTypeURL:
+        {
+            NSURL *url = attribute.value;
+            if ([url isKindOfClass:[NSURL class]]) {
+                return [BALPrimitiveValue valueWithURL:url];
+            }
+        }
         case BAUserAttributeTypeDeleted:
         default:
             return [BALPrimitiveValue nilValue];

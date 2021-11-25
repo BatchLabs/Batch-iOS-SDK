@@ -205,6 +205,8 @@ class batchContextTests: XCTestCase {
     
     func setDateAttribute(_ attribute: Date, forKey key: String) -> Bool { return false }
     
+    func setURLAttribute(_ attribute: URL, forKey key: String) -> Bool { return false }
+    
     func removeAttributeNamed(_ attribute: String) -> Bool { return false }
     
     func addTag(_ tag: String, toCollection collection: String) -> Bool { return false }

@@ -29,6 +29,7 @@
 #define ATTRIBUTE_NAME_RULE @"^[a-zA-Z0-9_]{1,30}$"
 //#define TAG_VALUE_RULE @"^[a-zA-Z0-9_]{1,255}$"
 #define ATTR_STRING_MAX_LENGTH 64
+#define ATTR_URL_MAX_LENGTH 2048
 
 #define VALIDATE_ATTRIBUTE_KEY_OR_BAIL() \
 key = [self validateAndNormalizeKey:key error:error]; \
@@ -161,6 +162,7 @@ bainjection_injectable_initializer bai_user_data_editor_init() {
     //    - NSNumber
     //    - NSString
     //    - NSDate
+    //    - NSURL
     if ([attribute isKindOfClass:[NSString class]])
     {
         [self setStringAttribute:(NSString*)attribute forKey:key error:nil];
@@ -174,6 +176,11 @@ bainjection_injectable_initializer bai_user_data_editor_init() {
     else if ([attribute isKindOfClass:[NSNumber class]])
     {
         [self setNumberAttribute:(NSNumber*)attribute forKey:key error:nil];
+        return;
+    }
+    else if ([attribute isKindOfClass:[NSURL class]])
+    {
+        [self setURLAttribute:(NSURL*)attribute forKey:key error:nil];
         return;
     }
     
@@ -224,6 +231,34 @@ bainjection_injectable_initializer bai_user_data_editor_init() {
     __unsafe_unretained typeof(self) weakSelf = self;
     [self addToQueueSynchronized:^BOOL () {
         return [weakSelf->_datasource setStringAttribute:(NSString*)attribute forKey:key];
+    }];
+    
+    return true;
+}
+
+- (BOOL)setURLAttribute:(nonnull NSURL*)attribute forKey:(nonnull NSString*)key error:(NSError * _Nullable * _Nullable)error
+{
+    INIT_AND_BLANK_ERROR_IF_NEEDED(error)
+    VALIDATE_ATTRIBUTE_KEY_OR_BAIL()
+    ENSURE_ATTRIBUTE_VALUE_CLASS(attribute, [NSURL class])
+    
+    if ([(attribute.absoluteString) length] > ATTR_URL_MAX_LENGTH)
+    {
+        *error = [self logAndMakeSaveErrorWithCode:BatchUserDataEditorErrorInvalidValue
+                                            reason:@"URL attributes can't be longer than %d characters. Ignoring attribute '%@'.", ATTR_URL_MAX_LENGTH, key];
+        return false;
+    }
+    
+    if (attribute.scheme == nil || attribute.host == nil )
+    {
+        *error = [self logAndMakeSaveErrorWithCode:BatchUserDataEditorErrorInvalidValue
+                                            reason:@"URL attributes must respect format 'scheme://[authority][path][?query][#fragment]'. Ignoring attribute '%@'.", key];
+        return false;
+    }
+    
+    __unsafe_unretained typeof(self) weakSelf = self;
+    [self addToQueueSynchronized:^BOOL () {
+        return [weakSelf->_datasource setURLAttribute:(NSURL*)attribute forKey:key];
     }];
     
     return true;

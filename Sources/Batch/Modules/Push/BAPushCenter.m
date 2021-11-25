@@ -25,7 +25,7 @@
 #import <Batch/BAEventDispatcherCenter.h>
 
 #import <Batch/BAOSHelper.h>
-#import "NSObject+BASwizzled.h"
+#import <Batch/BADelegatedApplicationDelegate.h>
 #import <Batch/BAStringUtils.h>
 
 #import <Batch/BAPushSystemHelperProtocol.h>
@@ -262,24 +262,17 @@ NSString * const kBATPushOpenedNotificationOriginatesFromAppDelegate = @"is_from
         // Don't swizzle twice
         if (self.swizzled)
         {
-            [[NSException exceptionWithName:@"Application delegate already registered" reason:@"Application delegate already set" userInfo:nil] raise];
-        }
-        
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-variable"
-        // Load our UIResponder category by using a class defined in the same file
-        id tmp = [BASwizzledObject new];
-#pragma clang diagnostic pop
-        
-        // Bind self to be a UIApplicationDelegate.
-        id responder = [UIResponder swizzleForDelegate:self];
-        if ([BANullHelper isNull:responder])
-        {
-            [BALogger errorForDomain:ERROR_DOMAIN message:@"No Application delegate found: Application delegate is nil"];
+            [BALogger debugForDomain:@"Push" message:@"Application delegate is already swizzled, skipping."];
             return;
         }
         
-        [self setSwizzled:YES];
+        BADelegatedApplicationDelegate *delegatedApplicationDelegate = [BADelegatedApplicationDelegate sharedInstance];
+        delegatedApplicationDelegate.batchDelegate = self;
+        
+        BOOL swizzleSuccess = [delegatedApplicationDelegate swizzleAppDelegate];
+        [BALogger debugForDomain:NSStringFromClass([self class]) message:swizzleSuccess ? @"Swizzing successful" : @"Swizzling errored"];
+        
+        self.swizzled = true;
         
         [BALogger debugForDomain:NSStringFromClass([self class]) message:@"IS IN PRODUCTION: %@",[[BACoreCenter instance].status isLikeProduction]?@"YES":@"NO"];
     }

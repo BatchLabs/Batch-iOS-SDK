@@ -273,6 +273,16 @@ bainjection_injectable_initializer bai_user_datasource_init() {
     } forKey:key withType:BAUserAttributeTypeDate isNative:NO];
 }
 
+- (BOOL)setURLAttribute:(nonnull NSURL *)attribute forKey:(nonnull NSString *)key {
+    if (!attribute)
+        return NO;
+    
+    return [self setAttributeUsingBlock:^(sqlite3_stmt *statement, int columnNumber) {
+        sqlite3_bind_text(statement, columnNumber, [attribute.absoluteString cStringUsingEncoding:NSUTF8StringEncoding], -1, NULL);
+    } forKey:key withType:BAUserAttributeTypeURL isNative:NO];
+}
+
+
 - (BOOL)removeAttributeNamed:(NSString*)attribute
 {
     if (!_transactionOccuring)
@@ -366,6 +376,9 @@ bainjection_injectable_initializer bai_user_datasource_init() {
                     break;
                 case BAUserAttributeTypeString:
                     objcValue = [NSString stringWithCString:(const char*)sqlite3_column_text(statement, 2) encoding:NSUTF8StringEncoding];
+                    break;
+                case BAUserAttributeTypeURL:
+                    objcValue = [NSURL URLWithString:[NSString stringWithCString:(const char*)sqlite3_column_text(statement, 2) encoding:NSUTF8StringEncoding]];
                     break;
                 default:
                     continue;

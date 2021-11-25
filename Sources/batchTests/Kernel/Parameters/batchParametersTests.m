@@ -35,6 +35,9 @@
     
     NSError *e = nil;
     
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+    
     // Test empty fields.
     e = [BAParameter setValue:nil forKey:nil saved:NO];
     XCTAssertNotNil(e, @"An error must be found when all fields are NULL.");
@@ -50,6 +53,9 @@
     // Test storing a specific value.
     e = [BAParameter setValue:@"specific-value" forKey:@"specific-key" saved:NO];
     XCTAssertNil(e, @"An error has been found storing a value key-value: %@",e);
+    
+#pragma clang diagnostic pop
+    
 }
 
 - (void)testOthers
