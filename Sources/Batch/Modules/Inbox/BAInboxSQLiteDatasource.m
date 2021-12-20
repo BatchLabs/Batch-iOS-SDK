@@ -493,7 +493,14 @@
         }
         
         sqlite3_stmt *statement;
-        NSString *selectSQL = [NSString stringWithFormat:@"SELECT * FROM %@ INNER JOIN %@ ON %@.%@ = %@.%@ WHERE %@ = ? AND %@.%@ = ? AND %@.%@ IN(%@) ORDER BY %@ DESC",
+        NSString *selectSQL = [NSString stringWithFormat:@"SELECT %@.%@, %@, %@, %@, %@, %@, %@ FROM %@ INNER JOIN %@ ON %@.%@ = %@.%@ WHERE %@ = ? AND %@.%@ = ? AND %@.%@ IN(%@) ORDER BY %@ DESC",
+                               TABLE_NOTIFICATIONS, COLUMN_NOTIFICATION_ID,
+                               COLUMN_INSTALL_ID,
+                               COLUMN_CUSTOM_ID,
+                               COLUMN_SEND_ID,
+                               COLUMN_UNREAD,
+                               COLUMN_DATE,
+                               COLUMN_PAYLOAD,
                                TABLE_FETCHERS_NOTIFICATIONS,
                                TABLE_NOTIFICATIONS,
                                TABLE_FETCHERS_NOTIFICATIONS, COLUMN_NOTIFICATION_ID,
@@ -940,7 +947,7 @@
 {
     BAInboxNotificationContent *content = [BAInboxNotificationContent new];
     
-    const char *payloadChar = (const char*) sqlite3_column_text(statement, 11);
+    const char *payloadChar = (const char*) sqlite3_column_text(statement, 6);
     if (payloadChar == NULL) {
         // TODO error handling
         return nil;
@@ -950,22 +957,21 @@
     if (!json) {
         return nil;
     }
-    
     content.payload = (NSDictionary *)json;
-    content.isUnread = sqlite3_column_int(statement, 8) == 1;
-    long long time = sqlite3_column_int64(statement, 10);
+    content.isUnread = sqlite3_column_int(statement, 4) == 1;
+    long long time = sqlite3_column_int64(statement, 5);
     content.date = [NSDate dateWithTimeIntervalSince1970:time];
     
     content.identifiers = [BAInboxNotificationContentIdentifiers new];
-    content.identifiers.identifier = [NSString stringWithUTF8String:(const char *) sqlite3_column_text(statement, 2)];
-    content.identifiers.sendID = [NSString stringWithUTF8String:(const char *) sqlite3_column_text(statement, 7)];
+    content.identifiers.identifier = [NSString stringWithUTF8String:(const char *) sqlite3_column_text(statement, 0)];
+    content.identifiers.sendID = [NSString stringWithUTF8String:(const char *) sqlite3_column_text(statement, 3)];
     
-    const char *installIdChar = (const char*) sqlite3_column_text(statement, 3);
+    const char *installIdChar = (const char*) sqlite3_column_text(statement, 1);
     if (installIdChar != NULL) {
         content.identifiers.installID = [NSString stringWithUTF8String:installIdChar];
     }
     
-    const char *customIdChar = (const char*) sqlite3_column_text(statement, 4);
+    const char *customIdChar = (const char*) sqlite3_column_text(statement, 2);
     if (customIdChar != NULL) {
         content.identifiers.customID = [NSString stringWithUTF8String:customIdChar];
     }
