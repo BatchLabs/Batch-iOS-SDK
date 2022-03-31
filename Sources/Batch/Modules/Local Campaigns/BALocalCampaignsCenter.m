@@ -25,10 +25,8 @@
 #import <Batch/BALocalCampaignsPersisting.h>
 #import <Batch/BALocalCampaignsFilePersistence.h>
 
-#import <Batch/BACampaignsLoadedSignal.h>
 #import <Batch/BAEventTrackedSignal.h>
 #import <Batch/BAPublicEventTrackedSignal.h>
-#import <Batch/BACampaignsRefreshedSignal.h>
 #import <Batch/BANewSessionSignal.h>
 
 #import <Batch/BAQueryWebserviceClient.h>
@@ -39,22 +37,28 @@
 
 #define LOGGER_DOMAIN @"BALocalCampaignsCenter"
 
+#define CACHE_EXPIRATION_DELAY 15 * 86400 // 15 Days
+
+
 @interface BALocalCampaignsCenter ()
 {
     NSMutableArray<id<BALocalCampaignSignalProtocol>> *_signalQueue;
     BALocalCampaignsManager *_campaignManager;
-    id<BALocalCampaignTrackerProtocol> _viewTracker;
+    BALocalCampaignsTracker *_viewTracker;
     id<BALocalCampaignsPersisting> _campaignPersister;
+    id<BADateProviderProtocol> _dateProvider;
     
     // Did we already load (or are currently loading) the campaign cache?
     BOOL _didLoadCampaignCache;
     
-    // Are we ready to process signals? Meaning, did we load the campaign cache so that we don't waste
-    // signals on an empty list?
+    // Are we ready to process signals? Meaning, local campaigns have been synchronized from server.
     BOOL _isReady;
     
-    // Is it the first time we're loading the campaigns from the server?
-    BOOL _isFirstRemoteLoad;
+    // Whether we are waiting for the end of JIT sync.
+    BOOL _isWaitingJITSync;
+
+    // Dispatch queue to process signals (serial queue)
+    dispatch_queue_t _dispatchSignalQueue;
 }
 
 @end
@@ -90,14 +94,21 @@
 
 - (void)setup
 {
-    _viewTracker = [BALocalCampaignsSQLTracker new];
-    _campaignManager = [[BALocalCampaignsManager alloc] initWithDateProvider:[BASecureDateProvider new] viewTracker:_viewTracker];
+    _viewTracker = [BALocalCampaignsTracker new];
+    _dateProvider = [BASecureDateProvider new];
+    _campaignManager = [[BALocalCampaignsManager alloc] initWithDateProvider:_dateProvider viewTracker:_viewTracker];
     _campaignPersister = [BAInjection injectProtocol:@protocol(BALocalCampaignsPersisting)];
     _signalQueue = [NSMutableArray new];
     _isReady = false;
     _didLoadCampaignCache = false;
-    _isFirstRemoteLoad = true;
     _globalMinimumDisplayInterval = 60;
+    
+    _dispatchSignalQueue = dispatch_queue_create("com.batch.localcampaigns.signals", DISPATCH_QUEUE_SERIAL);
+    
+    // Setting serial queue with high priority
+    dispatch_set_target_queue(_dispatchSignalQueue, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0));
+
+    _persistenceQueue = dispatch_queue_create_with_target("com.batch.localcampaigns.persistence", DISPATCH_QUEUE_SERIAL, dispatch_get_global_queue(QOS_CLASS_UTILITY, 0));
     
     // New session is used to load the campaign cache, scheduling server refreshs
     // and emitting BANewSessionSignal
@@ -115,6 +126,10 @@
     return _campaignPersister;
 }
 
+- (BALocalCampaignsTracker*)viewTracker {
+    return _viewTracker;
+}
+
 - (void)emitSignal:(id<BALocalCampaignSignalProtocol>)signal {
     if ([[BAOptOut instance] isOptedOut]) {
         [BALogger debugForDomain:LOGGER_DOMAIN message:@"Batch is opted-out from, not bubbling local campaigns signal"];
@@ -130,34 +145,124 @@
         [self enqueueSignal:signal];
         return;
     }
+
+    // Skip processing the signal if the event is not watched to avoid useless work
+    if([signal isKindOfClass:BAEventTrackedSignal.class]) {
+        BAEventTrackedSignal *eventTrackedSignal = (BAEventTrackedSignal*) signal;
+        if (![_campaignManager isEventWatched:eventTrackedSignal.name]) {
+            return;
+        }
+    }
+    if([signal isKindOfClass:BAPublicEventTrackedSignal.class]) {
+        BAPublicEventTrackedSignal *eventTrackedSignal = (BAPublicEventTrackedSignal*) signal;
+        if (![_campaignManager isEventWatched:eventTrackedSignal.name]) {
+            return;
+        }
+    }
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        BALocalCampaign *campaign = [self->_campaignManager campaignToDisplayForSignal:signal];
-        if (campaign != nil) {
-            [BALogger debugForDomain:LOGGER_DOMAIN message:@"Campaign %@ found for signal %@", campaign, signal];
-            if (campaign.output) {
-                [campaign generateOccurrenceIdentifier];
-                [campaign.output performForCampaign:campaign];
-            } else {
-                [BALogger debugForDomain:LOGGER_DOMAIN message:@"No output for this campaign. This should not be happening."];
-            }
+    if ([self->_campaignManager isOverGlobalCappings]) {
+        return;
+    }
+    
+    dispatch_async(_dispatchSignalQueue, ^{
+        if(self->_isWaitingJITSync) {
+            [BALogger debugForDomain:LOGGER_DOMAIN message:@"JIT sync in progress, enqueueing signal: %@", signal];
+            [self enqueueSignal:signal];
+        } else {
+            [self electCampaignForSignal:signal];
         }
     });
 }
 
-- (void)processTrackerPrivateEventNamed:(nonnull NSString*)name{
-    if (![_campaignManager isEventWatched:name]) {
-        return;
+/**
+ * Elect the right campaign for a given signal and display it.
+ *
+ *  Election process is the following :
+ *  - Get all eligible campaigns sorted by priority for a signal:
+ *      - If no eligible campaigns found:
+ *          Do nothing
+ *      - Else: Look if the first one is requiring a JIT sync :
+ *          - Yes: Check if we need to make a new JIT sync (meaning last call older than  MIN_DELAY_BETWEEN_JIT_SYNC)
+ *              - Yes: Check if JIT service is available :
+ *                  - Yes: Sync all campaigns requiring a JIT sync limited by MAX_CAMPAIGNS_JIT_THRESHOLD and stopping at the first campaign that not requiring JIT:
+ *                      - If server respond with no eligible campaigns :
+ *                          - Display the first campaign not requiring a JIT sync (if there's one else do noting)
+ *                      - else :
+ *                          - Display the first campaign verified by the server
+ *                  - No: Display the first campaign not requiring a JIT sync (if there's one else do noting)
+ *              -No: Display it
+ *          - No: Display it
+ */
+- (void)electCampaignForSignal:(id<BALocalCampaignSignalProtocol>)signal
+{
+    // Get all eligible campaigns (sorted by priority) regardless of the JIT sync
+    NSArray *eligibleCampaigns = [self->_campaignManager eligibleCampaignsSortedByPriority:signal];
+   
+    if ([eligibleCampaigns count] > 0) {
+        
+        // Get the first elected campaign
+        BALocalCampaign *firstElectedCampaign = eligibleCampaigns[0];
+        if (firstElectedCampaign.requiresJustInTimeSync && ![signal isKindOfClass:BANewSessionSignal.class]) {
+            BATSyncedJITCampaignState syncedCampaignState = [self->_campaignManager syncedJITCampaignState:firstElectedCampaign];
+            if (syncedCampaignState == BATSyncedJITCampaignStateEligible) {
+                // Last succeed JIT sync for this campaign is NOT older than 30 sec, considering eligibility up to date.
+                [BALogger debugForDomain:LOGGER_DOMAIN message:@"Skipping JIT sync since this campaign has been already synced recently."];
+                [self displayInAppMessage:firstElectedCampaign];
+                
+            } else if (syncedCampaignState == BATSyncedJITCampaignStateRequiresSync && [self->_campaignManager isJITServiceAvailable]) {
+                // JIT available, getting all campaigns to sync
+                NSArray *eligibleCampaignsRequiringJIT = [self->_campaignManager firstEligibleCampaignsRequiringSync:eligibleCampaigns];
+                BALocalCampaign *offlineCampaignFallback =  [self->_campaignManager firstCampaignNotRequiringJITSync:eligibleCampaigns];
+                self->_isWaitingJITSync = true;
+                [self->_campaignManager verifyCampaignsEligibilityFromServer:eligibleCampaignsRequiringJIT withCompletion:^(BALocalCampaign * _Nullable electedCampaign) {
+                    if (electedCampaign != nil) {
+                        [BALogger debugForDomain:LOGGER_DOMAIN message:@"Elected campaign has been synchronized with JIT."];
+                        [self displayInAppMessage:electedCampaign];
+                    } else if (offlineCampaignFallback != nil) {
+                        [BALogger debugForDomain:LOGGER_DOMAIN message:@"JIT respond with no eligible campaigns or with error. Fallback on offline campaign."];
+                        [self displayInAppMessage:offlineCampaignFallback];
+
+                    } else {
+                        [BALogger debugForDomain:LOGGER_DOMAIN message:@"Ne eligible campaigns found after the JIT sync."];
+                    }
+                    self->_isWaitingJITSync = false;
+                    [self dequeueSignals];
+                }];
+                
+            } else {
+                // JIT not available or campaign is cached and not eligible. Fallback on offline campaign
+                BALocalCampaign *firstEligibleCampaignNotRequiringJITSync =  [self->_campaignManager firstCampaignNotRequiringJITSync:eligibleCampaigns];
+                if (firstEligibleCampaignNotRequiringJITSync != nil) {
+                    [BALogger debugForDomain:LOGGER_DOMAIN message:@"JIT not available or campaign already in cached and not eligible, fallback on offline campaign."];
+                    [self displayInAppMessage:firstEligibleCampaignNotRequiringJITSync];
+                }
+            }
+        } else {
+            [BALogger debugForDomain:LOGGER_DOMAIN message:@"Elected campaign not requiring a sync, display it."];
+            [self displayInAppMessage:firstElectedCampaign];
+        }
+
+    } else {
+        [BALogger debugForDomain:LOGGER_DOMAIN message:@"No eligible campaigns found."];
     }
-    
+}
+
+-(void)displayInAppMessage:(nonnull BALocalCampaign*)campaign
+{
+    //[BALogger debugForDomain:LOGGER_DOMAIN message:@"Campaign %@ found for signal %@", campaign, signal];
+    if (campaign.output) {
+        [campaign generateOccurrenceIdentifier];
+        [campaign.output performForCampaign:campaign];
+    } else {
+        [BALogger debugForDomain:LOGGER_DOMAIN message:@"No output for this campaign. This should not be happening."];
+    }
+}
+
+- (void)processTrackerPrivateEventNamed:(nonnull NSString*)name{
     [self emitSignal:[[BAEventTrackedSignal alloc] initWithName:name]];
 }
 
 - (void)processTrackerPublicEventNamed:(nonnull NSString*)name label:(nullable NSString*)label data:(nullable BatchEventData*)data {
-    if (![_campaignManager isEventWatched:name]) {
-        return;
-    }
-
     [self emitSignal:[[BAPublicEventTrackedSignal alloc] initWithName:name label:label data:data]];
 }
 
@@ -185,12 +290,12 @@
 - (void)enqueueSignal:(id<BALocalCampaignSignalProtocol>)signal {
     // This check should be made before calling this method, but we need to ensure it
     // so that we don't end up in an infinite loop
-    if (_isReady) {
+    if (_isReady && !_isWaitingJITSync) {
         [BALogger debugForDomain:LOGGER_DOMAIN message:@"Cannot enqueue a signal when the SDK is ready."];
         return;
     }
     @synchronized (_signalQueue) {
-        if (_isReady) {
+        if (_isReady && !_isWaitingJITSync) {
             // We became ready while waiting for the lock
             // This means that the events have probably been dequeued in the meantime
             [BALogger debugForDomain:LOGGER_DOMAIN message:@"SDK ready state changed while enqueueing signal: replaying immediatly."];
@@ -226,7 +331,6 @@
             return;
         }
         _isReady = true;
-        
         [self dequeueSignals];
     }
 }
@@ -235,7 +339,7 @@
     if (!_didLoadCampaignCache) {
         [self loadCampaignCache];
     } else {
-        [self scheduleCampaignRefreshFromServer];
+        [self refreshCampaignsFromServer];
     }
 }
 
@@ -246,11 +350,23 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         NSError *err;
         NSArray<BALocalCampaign*> *campaigns;
+        BALocalCampaignsGlobalCappings *cappings;
         NSDictionary *rawCampaigns = [self->_campaignPersister loadCampaignsWithError:&err];
         if (rawCampaigns == nil) {
             [BALogger debugForDomain:LOGGER_DOMAIN message:@"Could not load local campaigns from disk. Reason: %@", err ? err.localizedDescription : @"Unknown error"];
         } else {
+            
+            // Ensure cache is not too old
+            NSNumber *campaignsCacheTimestamp = [rawCampaigns objectForKey:@"cache_date"];
+            if (campaignsCacheTimestamp != nil) {
+                if ([campaignsCacheTimestamp doubleValue] + CACHE_EXPIRATION_DELAY <= [[self->_dateProvider currentDate] timeIntervalSince1970]) {
+                    [BALogger debugForDomain:LOGGER_DOMAIN message:@"Local campaigns cache is too old, deleting it."];
+                    [self->_campaignPersister deleteCampaigns];
+                    return;
+                }
+            }
             campaigns = [BALocalCampaignsParser parseCampaigns:rawCampaigns outPersistable:nil error:&err];
+            cappings = [BALocalCampaignsParser parseCappings:rawCampaigns outPersistable:nil];
             if (campaigns == nil) {
                 [BALogger errorForDomain:LOGGER_DOMAIN message:@"Could not parse local campaigns loaded from disk: %@", err ? err.localizedDescription : @"Unknown error"];
             } else {
@@ -258,36 +374,19 @@
             }
         }
         [self->_campaignManager loadCampaigns:campaigns];
+        [self->_campaignManager setCappings:cappings];
         [self campaignCacheReady];
     });
 }
 
 - (void)campaignCacheReady {
-    // When the cache has been loaded (or attempted to), consider that we're ready
-    [self makeReady];
-    [self scheduleCampaignRefreshFromServer];
-    [self emitSignal:[BACampaignsLoadedSignal new]];
-}
-
-- (void)scheduleCampaignRefreshFromServer {
-    BOOL didScheduleRefreshInTheFuture = false;
-    if (_isFirstRemoteLoad) {
-        _isFirstRemoteLoad = false;
-        int initialWSDelay = [[BAParameter objectForKey:kParametersLocalCampaignsInitialWSDelayKey fallback:kParametersLocalCampaignsInitialWSDelayValue] intValue];
-        if (initialWSDelay > 0) {
-            didScheduleRefreshInTheFuture = true;
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(initialWSDelay * NSEC_PER_SEC)), dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                [self refreshCampaignsFromServer];
-            });
-        }
-    }
-    
-    if (!didScheduleRefreshInTheFuture) {
-        [self refreshCampaignsFromServer];
-    }
+    // When the cache has been loaded (or attempted to), we can run synchro from server.
+    [self refreshCampaignsFromServer];
 }
 
 - (void)refreshCampaignsFromServer {
+    // Disable signal queue while we are synchronizing local campaigns
+    _isReady = false;
     dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [BALogger debugForDomain:LOGGER_DOMAIN message:@"Refreshing local campaigns"];
         
@@ -310,11 +409,18 @@
     [self setup];
 }
 
+- (void)localCampaignsWebserviceDidFinish {
+    [self makeReady];
+}
+
 - (void)handleWebserviceResponsePayload:(nonnull NSDictionary*)payload {
     NSError *err = nil;
-    NSDictionary *persistPayload = nil;
     
-    NSArray<BALocalCampaign*> *campaigns = [BALocalCampaignsParser parseCampaigns:payload outPersistable:&persistPayload error:&err];
+    NSMutableDictionary *persistPayload = [NSMutableDictionary dictionary];
+    NSDictionary *campaignsPayload = nil;
+    NSDictionary *cappingsPayload = nil;
+
+    NSArray<BALocalCampaign*> *campaigns = [BALocalCampaignsParser parseCampaigns:payload outPersistable:&campaignsPayload error:&err];
     if (campaigns == nil) {
         [BALogger errorForDomain:LOGGER_DOMAIN message:@"Could not parse local campaigns webservice response payload: %@", err ? err.localizedDescription : @"Unknown error"];
         persistPayload = nil;
@@ -322,8 +428,18 @@
         [BALogger debugForDomain:LOGGER_DOMAIN message:@"Loaded %ld campaigns from the WS", campaigns.count];
     }
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-        if (persistPayload != nil) {
+    BALocalCampaignsGlobalCappings *cappings = [BALocalCampaignsParser parseCappings:payload outPersistable:&cappingsPayload];
+    if ( cappings == nil || (cappings.session == nil && cappings.timeBasedCappings == nil)) {
+        cappingsPayload = nil;
+    }
+    
+    dispatch_async(_persistenceQueue, ^{
+        if (campaignsPayload != nil) {
+            [persistPayload addEntriesFromDictionary:campaignsPayload];
+            if (cappingsPayload != nil) {
+                [persistPayload addEntriesFromDictionary:cappingsPayload];
+            }
+            [persistPayload setObject:[NSNumber numberWithDouble:[[self->_dateProvider currentDate] timeIntervalSince1970]] forKey:@"cache_date"];
             [self->_campaignPersister persistCampaigns:persistPayload];
         } else {
             [self->_campaignPersister deleteCampaigns];
@@ -331,15 +447,16 @@
     });
     
     [_campaignManager loadCampaigns:campaigns];
-    [self makeReady];
-    [[BALocalCampaignsCenter instance] emitSignal:[BACampaignsRefreshedSignal new]];
+    [_campaignManager setCappings:cappings];
 }
 
 - (void)newSessionStartedNotification
 {
+    // Start loading campaigns (from cache or server)
+    [self loadCampaigns];
+
     // No need to wait for loadCampaigns to finish: the signal will be enqueued
     [self emitSignal:[BANewSessionSignal new]];
-    [self loadCampaigns];
 }
 
 @end

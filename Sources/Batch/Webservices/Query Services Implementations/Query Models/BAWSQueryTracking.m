@@ -46,6 +46,12 @@
                                                                                          @"date": [event date],
                                                                                          @"name": [event name],
                                                                                          @"ts": @([event tick])}];
+        
+        if ([event session] != nil)
+        {
+            [eventDict setObject:event.session forKey:@"session"];
+        }
+        
         if ([event parameters] != nil)
         {          
             NSDictionary *jsonParameters = [BAJson deserializeAsDictionary:[event parameters] error:nil];

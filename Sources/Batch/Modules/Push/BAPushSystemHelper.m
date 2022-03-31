@@ -10,7 +10,6 @@
 
 #import <UserNotifications/UserNotifications.h>
 
-#import <Batch/BAInjection.h>
 #import <Batch/BACoreCenter.h>
 #import <Batch/BALogger.h>
 #import <Batch/BAThreading.h>
@@ -18,10 +17,6 @@
 
 @implementation BAPushSystemHelper
 
-bainjection_injectable_initializer bai_push_system_helper_init() {
-    [BAInjection registerInjectable:[BAInjectable injectableWithInstance:[BAPushSystemHelper new]]
-                        forProtocol:@protocol(BAPushSystemHelperProtocol)];
-}
 
 - (void)registerForRemoteNotificationsTypes:(BatchNotificationType)notifType providesNotificationSettings:(BOOL)providesSettings
 {

@@ -35,6 +35,7 @@ class eventTrackerServiceTests: XCTestCase {
             "name": "test",
             "date": "\(id)234",
             "ts": Int64(990+id),
+            "session": "s\(id)",
             "params": ["foo": "bar\(id)"],
             "sDate": "\(id)2345"
         ]
@@ -71,6 +72,26 @@ class eventTrackerServiceTests: XCTestCase {
             XCTAssertTrue((new[0] as NSDictionary).isEqual(to: eventTrackerServiceTests.makeSerializedEvent(id: 1)))
             XCTAssertTrue((old[0] as NSDictionary).isEqual(to:eventTrackerServiceTests.makeSerializedEvent(id: 2)))
         }
+    }
+    
+    // Regression test for a prerelease 1.19.0 crash where objectToSend() crashed when serializing an event with no session
+    func testCanSerializeEventWithNoSession() throws {
+        let events = [BAEvent(identifier:"foobar",
+                              name: "test",
+                              date: "234",
+                              secureDate: "2345",
+                              parameters: """
+                              {"foo": "bar"}
+                              """,
+                              state: BAEventStateOld,
+                              session: nil,
+                              andTick: Int64(990))]
+        let service = BAEventTrackerService(events: events as [Any])
+        // The bug made "objectToSend" crash: simply calling it was enough to trigger it, no need to test any value
+        let queries = service.queriesToSend
+        let query = try XCTUnwrap(queries[0] as? BAWSQueryTracking)
+        
+        query.objectToSend()
     }
     
     func testResponse() {

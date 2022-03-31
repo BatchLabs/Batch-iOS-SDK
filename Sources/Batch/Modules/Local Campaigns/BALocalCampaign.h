@@ -118,9 +118,33 @@
 @property (nonnull, copy) NSDictionary *customPayload;
 
 /**
+ Requires Just In Time Sync
+ Optional (default = false)
+ 
+ Whether this campaign should be verified by the server before being displayed.
+ */
+@property (assign) BOOL requiresJustInTimeSync;
+
+/**
  Generate a new occurrence identifier.
  It is saved in "eventData", in the "i" key (simulating a sendID)
  */
 - (void)generateOccurrenceIdentifier;
+
+@end
+
+/**
+ * Class used to cache the result of a LocalCampaign after a JIT sync.
+ * Keep the timestamp of the sync and whether the campaign was eligible or not.
+ */
+@interface BATSyncedJITResult : NSObject
+
+/// Timestamp of the sync
+@property NSTimeInterval timestamp;
+
+/// Whether the campaign was eligible or not after the sync
+@property BOOL eligible;
+
+- (nonnull instancetype)initWithTimestamp:(NSTimeInterval)timestamp;
 
 @end

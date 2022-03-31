@@ -4,7 +4,6 @@
 //
 
 #import <Batch/BAMessagingAnalyticsDeduplicatingDelegate.h>
-#import <Batch/BAInjection.h>
 #import <Batch/BAMessagingCenter.h>
 
 #define ENSURE_ONCE if ([self ensureMethodCalledOnce:NSStringFromSelector(_cmd)]) { return; }
@@ -13,15 +12,7 @@
 {
     id<BAMessagingAnalyticsDelegate> _wrappedDelegate;
     NSMutableSet<NSString*>* _calledMethods;
-}
-
-bainjection_injectable_initializer bai_messaging_analytics_init() {
-    BAInjectable *injectable = [BAInjectable injectableWithInitializer:^id () {
-        return [[BAMessagingAnalyticsDeduplicatingDelegate alloc] initWithWrappedDelegate:[BAInjection injectClass:BAMessagingCenter.class]];
-    }];
-                             
-    [BAInjection registerInjectable:injectable
-                        forProtocol:@protocol(BAMessagingAnalyticsDelegate)];
+    NSObject *_lock;
 }
 
 - (instancetype)initWithWrappedDelegate:(nonnull id<BAMessagingAnalyticsDelegate>)delegate
@@ -30,13 +21,14 @@ bainjection_injectable_initializer bai_messaging_analytics_init() {
     if (self) {
         _wrappedDelegate = delegate;
         _calledMethods = [[NSMutableSet alloc] initWithCapacity:6];
+        _lock = [NSObject new];
     }
     return self;
 }
 
 - (BOOL)ensureMethodCalledOnce:(NSString*)method
 {
-    @synchronized (self) {
+    @synchronized (_lock) {
         if ([_calledMethods containsObject:method]) {
             return true;
         } else {

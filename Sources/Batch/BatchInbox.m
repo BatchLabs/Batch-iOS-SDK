@@ -73,6 +73,14 @@
     [_backingImpl markNotificationAsDeleted:notification];
 }
 
+- (BOOL)filterSilentNotifications {
+    return _backingImpl.filterSilentNotifications;
+}
+
+- (void)setFilterSilentNotifications:(BOOL)filterSilentNotifications {
+    _backingImpl.filterSilentNotifications = filterSilentNotifications;
+}
+
 - (BOOL)endReached
 {
     return [_backingImpl endReached];
@@ -105,12 +113,35 @@
 
 @end
 
+@implementation BatchInboxNotificationContentMessage
+
+- (nonnull instancetype)initWithBody:(nonnull NSString *)body
+                               title:(nullable NSString *)title
+                            subtitle:(nullable NSString *)subtitle
+{
+    self = [super init];
+    
+    if (self) {
+        _body = body;
+        _title = title;
+        _subtitle = subtitle;
+    }
+    
+    return self;
+}
+
+@end
+
 @implementation BatchInboxNotificationContent
+{
+    BOOL _failOnSilentNotification;
+}
 
 - (nullable instancetype)initWithInternalIdentifier:(nonnull NSString *)identifier
                                          rawPayload:(nonnull NSDictionary *)rawPayload
                                            isUnread:(BOOL)isUnread
                                                date:(nonnull NSDate *)date
+                           failOnSilentNotification:(BOOL)failOnSilentNotification
 {
     self = [super init];
 
@@ -120,6 +151,7 @@
         _date = date;
         _isUnread = isUnread;
         _isDeleted = false;
+        _failOnSilentNotification = failOnSilentNotification;
 
         if ([BANullHelper isStringEmpty:_identifier]) {
             [BALogger errorForDomain:DEBUG_DOMAIN message:@"Empty identifier while instanciating BatchInboxNotificationContent, returning nil"];
@@ -139,6 +171,10 @@
     return self;
 }
 
+- (BOOL)isSilent {
+    return _message == nil;
+}
+
 - (BOOL)parseRawPayload
 {
     if (![_payload isKindOfClass:[NSDictionary class]]) {
@@ -147,41 +183,79 @@
 
     _source = [self parseSource];
     _attachmentURL = [self parseAttachment];
+    
+    _message = [self parseMessage];
+    
+    if (_message == nil && _failOnSilentNotification) {
+        [BALogger errorForDomain:DEBUG_DOMAIN message:@"BatchInboxNotificationContent: No message found, filtering of silent notifications is enabled: skipping."];
+        return false;
+    }
+    
+    _title = [_message title];
+    
+    // "body" can't be nil as we would break the API. For compatibility, a nil body is represented as the empty string.
+    NSString *messageBody = [_message body];
+    _body = messageBody != nil ? messageBody : @"";
+    
+    return true;
+}
 
+- (nullable BatchInboxNotificationContentMessage*)parseMessage
+{
+    NSString *msgBody = nil;
+    NSString *msgTitle = nil;
+    NSString *msgSubtitle = nil;
+    
     NSDictionary *aps = _payload[@"aps"];
     if ([BANullHelper isDictionaryEmpty:aps]) {
-        [BALogger errorForDomain:DEBUG_DOMAIN message:@"BatchInboxNotificationContent: missing 'aps'"];
-        return false;
+        if (_failOnSilentNotification) {
+            [BALogger debugForDomain:DEBUG_DOMAIN message:@"BatchInboxNotificationContent: missing 'aps'"];
+        }
+        return nil;
     }
 
     NSObject *alert = aps[@"alert"];
 
     if ([alert isKindOfClass:[NSString class]]) {
         if ([BANullHelper isStringEmpty:alert]) {
-            [BALogger errorForDomain:DEBUG_DOMAIN message:@"BatchInboxNotificationContent: 'aps:alert' is a string but is empty"];
-            return false;
+            if (_failOnSilentNotification) {
+                [BALogger debugForDomain:DEBUG_DOMAIN message:@"BatchInboxNotificationContent: 'aps:alert' is a string but is empty"];
+            }
+            return nil;
         }
-        _body = (NSString*)alert;
-        _title = nil;
+        
+        msgBody = (NSString*)alert;
     } else if ([alert isKindOfClass:[NSDictionary class]]) {
         NSDictionary *alertDict = (NSDictionary*)alert;
         NSObject *body = alertDict[@"body"];
         if ([BANullHelper isStringEmpty:body]) {
-            [BALogger errorForDomain:DEBUG_DOMAIN message:@"BatchInboxNotificationContent: 'aps:alert:body' is missing or empty"];
-            return false;
+            if (_failOnSilentNotification) {
+                [BALogger debugForDomain:DEBUG_DOMAIN message:@"BatchInboxNotificationContent: 'aps:alert:body' is missing or empty"];
+            }
+            return nil;
         }
-        _body = (NSString*)body;
+        
+        msgBody = (NSString*)body;
 
         NSObject *title = alertDict[@"title"];
         if (![BANullHelper isStringEmpty:title]) {
-            _title = (NSString*)title;
+            msgTitle = (NSString*)title;
+        }
+        
+        NSObject *subtitle = alertDict[@"subtitle"];
+        if (![BANullHelper isStringEmpty:subtitle]) {
+            msgSubtitle = (NSString*)subtitle;
         }
     } else {
-        [BALogger errorForDomain:DEBUG_DOMAIN message:@"BatchInboxNotificationContent: missing 'aps:alert'"];
-        return false;
+        if (_failOnSilentNotification) {
+            [BALogger debugForDomain:DEBUG_DOMAIN message:@"BatchInboxNotificationContent: missing 'aps:alert'"];
+        }
+        return nil;
     }
 
-    return true;
+    return [[BatchInboxNotificationContentMessage alloc] initWithBody:msgBody
+                                                                title:msgTitle
+                                                             subtitle:msgSubtitle];
 }
 
 - (BatchNotificationSource)parseSource

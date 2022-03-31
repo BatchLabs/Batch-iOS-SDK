@@ -11,7 +11,7 @@
 #import <Batch/BAParameter.h>
 #import <Batch/BAStringUtils.h>
 
-#define DEFAULT_GET_TIMEOUT 15
+#define DEFAULT_GET_TIMEOUT 15 // Seconds
 
 @interface BAGETWebserviceClient()
 {

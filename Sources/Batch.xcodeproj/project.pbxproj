@@ -49,9 +49,39 @@
 		029B335E1A39A1F7006B9DC6 /* batchParametersTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 029B334E1A39A1F7006B9DC6 /* batchParametersTests.m */; };
 		029B335F1A39A1F7006B9DC6 /* batchPropertiesCenterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 029B334F1A39A1F7006B9DC6 /* batchPropertiesCenterTests.m */; };
 		029B33601A39A1F7006B9DC6 /* batchUserDefaultsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 029B33501A39A1F7006B9DC6 /* batchUserDefaultsTests.m */; };
+		1E2C31B527CF740E00A4CB6E /* BAMetricRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E2C31B327CF740E00A4CB6E /* BAMetricRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1E2C31B627CF740E00A4CB6E /* BAMetricRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E2C31B427CF740E00A4CB6E /* BAMetricRegistry.m */; };
+		1E45578527CE1B510048D3A8 /* BALocalCampaignsJITService.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E45578327CE1B510048D3A8 /* BALocalCampaignsJITService.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1E45578627CE1B510048D3A8 /* BALocalCampaignsJITService.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E45578427CE1B510048D3A8 /* BALocalCampaignsJITService.m */; };
+		1EA32C5827B2C9BE0085D133 /* BALocalCampaignsTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EA32C5627B2C9BE0085D133 /* BALocalCampaignsTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1EA32C5927B2C9BE0085D133 /* BALocalCampaignsTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EA32C5727B2C9BE0085D133 /* BALocalCampaignsTracker.m */; };
+		1EA32C5E27B3A4140085D133 /* localCampaignsTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EA32C5D27B3A4140085D133 /* localCampaignsTrackerTests.swift */; };
+		1EA32C6027B524600085D133 /* localCampaignsSQLTrackerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EA32C5F27B524600085D133 /* localCampaignsSQLTrackerTests.m */; };
+		1EA32C6527B587620085D133 /* BAMutableDateProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EA32C6327B587620085D133 /* BAMutableDateProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1EA32C6627B587620085D133 /* BAMutableDateProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EA32C6427B587620085D133 /* BAMutableDateProvider.m */; };
 		1EA42DFA26A85D7D004CC618 /* BADBGFindMyInstallationHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EA42DF726A84C71004CC618 /* BADBGFindMyInstallationHelper.m */; };
 		1EA42DFB26A85DF9004CC618 /* BADBGFindMyInstallationHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EA42DF926A84C99004CC618 /* BADBGFindMyInstallationHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1EA42E0426A9A736004CC618 /* FindMyInstallationHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EA42E0226A9A716004CC618 /* FindMyInstallationHelperTests.m */; };
+		1EC9657127AD7879007D66AD /* BALocalCampaignsGlobalCappings.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EC9656F27AD7879007D66AD /* BALocalCampaignsGlobalCappings.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1EC9657227AD7879007D66AD /* BALocalCampaignsGlobalCappings.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EC9657027AD7879007D66AD /* BALocalCampaignsGlobalCappings.m */; };
+		1EF1974427673BBE00386DF0 /* BAInjectionRegistrar.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EF1974227673BBE00386DF0 /* BAInjectionRegistrar.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1EF1974527673BBE00386DF0 /* BAInjectionRegistrar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EF1974327673BBE00386DF0 /* BAInjectionRegistrar.m */; };
+		1EBDBC5F27146B8B006DC662 /* BAMetric.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EF8BA98271462D90063E117 /* BAMetric.m */; };
+		1EBDBC6027146C97006DC662 /* BAMetric.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EF8BA9A271462F80063E117 /* BAMetric.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1EBDBC6327157A3A006DC662 /* BACounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EBDBC6127157A3A006DC662 /* BACounter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1EBDBC6427157A3A006DC662 /* BACounter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EBDBC6227157A3A006DC662 /* BACounter.m */; };
+		1EBDBC662715B2A2006DC662 /* BAMetricProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EBDBC652715B1B5006DC662 /* BAMetricProtocol.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1EBDBC692715DE52006DC662 /* BAObservation.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EBDBC672715DE52006DC662 /* BAObservation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1EBDBC6A2715DE52006DC662 /* BAObservation.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EBDBC682715DE52006DC662 /* BAObservation.m */; };
+		1EBDBC6D2716C94F006DC662 /* BAMetricWebserviceClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EBDBC6B2716C94F006DC662 /* BAMetricWebserviceClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1EBDBC6E2716C94F006DC662 /* BAMetricWebserviceClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EBDBC6C2716C94F006DC662 /* BAMetricWebserviceClient.m */; };
+		1EBDBC76271709D1006DC662 /* BAMetricManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EBDBC74271709D1006DC662 /* BAMetricManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1EBDBC77271709D1006DC662 /* BAMetricManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EBDBC75271709D1006DC662 /* BAMetricManager.m */; };
+		1EBDBC8427188D40006DC662 /* metricTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EBDBC8327188D40006DC662 /* metricTests.m */; };
+		1EBDBC86271D9936006DC662 /* metricManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EBDBC85271D9936006DC662 /* metricManagerTests.m */; };
+		1EC803AB27D2477E00CCE8E5 /* localCampaignsManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EC803AA27D2477E00CCE8E5 /* localCampaignsManagerTests.swift */; };
+		1EF1974427673BBE00386DF0 /* BAInjectionRegistrar.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EF1974227673BBE00386DF0 /* BAInjectionRegistrar.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1EF1974527673BBE00386DF0 /* BAInjectionRegistrar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EF1974327673BBE00386DF0 /* BAInjectionRegistrar.m */; };
 		5105747D21358C2A00789F86 /* batchLispTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5105747C21358C2A00789F86 /* batchLispTests.swift */; };
 		510BD5C522E0B4BA00D8CBA1 /* BAWSResponseAttributesCheck.m in Sources */ = {isa = PBXBuildFile; fileRef = 510BD5BD22E0B4BA00D8CBA1 /* BAWSResponseAttributesCheck.m */; };
 		510BD5C622E0B4BA00D8CBA1 /* BAWSResponseAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = 510BD5BE22E0B4BA00D8CBA1 /* BAWSResponseAttributes.m */; };
@@ -96,6 +126,7 @@
 		5145C78E24C587EA004A89FE /* BASHA.h in Headers */ = {isa = PBXBuildFile; fileRef = 5145C78C24C587EA004A89FE /* BASHA.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5145C78F24C587EA004A89FE /* BASHA.m in Sources */ = {isa = PBXBuildFile; fileRef = 5145C78D24C587EA004A89FE /* BASHA.m */; };
 		51496A2F25110D930051B8A4 /* BAPartialApplicationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 51496A2E25110D680051B8A4 /* BAPartialApplicationDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		514BA4A027D257F100B93FAF /* inboxFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514BA49F27D257F100B93FAF /* inboxFetcherTests.swift */; };
 		514CD72B1BFE2A2C00F79110 /* batchUserDataSQLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 514CD72A1BFE2A2B00F79110 /* batchUserDataSQLTests.m */; };
 		514FE72A2209F5C0003C3426 /* batchOptOutTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 514FE7292209F5C0003C3426 /* batchOptOutTests.m */; };
 		514FFCCE250903F3009D6A20 /* batchUNUserNotificationCenterDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 514FFCCD250903F3009D6A20 /* batchUNUserNotificationCenterDelegateTests.m */; };
@@ -241,11 +272,6 @@
 		517D703D22BBC45900E374FB /* BALocalCampaignsFilePersistence.m in Sources */ = {isa = PBXBuildFile; fileRef = 5169F9491F20C75300274FF9 /* BALocalCampaignsFilePersistence.m */; };
 		517D703E22BBC45900E374FB /* BAEventTrigger.m in Sources */ = {isa = PBXBuildFile; fileRef = AC000C129F28871A4716FFBD /* BAEventTrigger.m */; };
 		517D703F22BBC45900E374FB /* BANextSessionTrigger.m in Sources */ = {isa = PBXBuildFile; fileRef = 519EC18A1F1E5FF50040C432 /* BANextSessionTrigger.m */; };
-		517D704022BBC45900E374FB /* BANowTrigger.m in Sources */ = {isa = PBXBuildFile; fileRef = 519EC1901F1E612B0040C432 /* BANowTrigger.m */; };
-		517D704122BBC45900E374FB /* BACampaignsLoadedTrigger.m in Sources */ = {isa = PBXBuildFile; fileRef = 51B622801F2E7EA500084EC4 /* BACampaignsLoadedTrigger.m */; };
-		517D704222BBC45900E374FB /* BACampaignsRefreshedTrigger.m in Sources */ = {isa = PBXBuildFile; fileRef = 51B622861F2E7EBD00084EC4 /* BACampaignsRefreshedTrigger.m */; };
-		517D704322BBC45900E374FB /* BACampaignsLoadedSignal.m in Sources */ = {isa = PBXBuildFile; fileRef = AC000A0E3EDCBF832A9A9212 /* BACampaignsLoadedSignal.m */; };
-		517D704422BBC45900E374FB /* BACampaignsRefreshedSignal.m in Sources */ = {isa = PBXBuildFile; fileRef = 51B622741F2E77CE00084EC4 /* BACampaignsRefreshedSignal.m */; };
 		517D704522BBC45900E374FB /* BAEventTrackedSignal.m in Sources */ = {isa = PBXBuildFile; fileRef = 51DB2A16213ECE1B005AAA4F /* BAEventTrackedSignal.m */; };
 		517D704622BBC45900E374FB /* BAPublicEventTrackedSignal.m in Sources */ = {isa = PBXBuildFile; fileRef = AC000B0B4DD96B603107E468 /* BAPublicEventTrackedSignal.m */; };
 		517D704722BBC45900E374FB /* BANewSessionSignal.m in Sources */ = {isa = PBXBuildFile; fileRef = 51B6227A1F2E7E0200084EC4 /* BANewSessionSignal.m */; };
@@ -410,12 +436,7 @@
 		517D710522BBC50E00E374FB /* BALocalCampaignTriggerProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = AC0009D244D88C9EF832969B /* BALocalCampaignTriggerProtocol.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517D710622BBC50E00E374FB /* BAEventTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = AC0004230245C03D80B7B367 /* BAEventTrigger.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517D710722BBC50E00E374FB /* BANextSessionTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = 519EC1891F1E5FF50040C432 /* BANextSessionTrigger.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		517D710822BBC50E00E374FB /* BANowTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = 519EC18F1F1E612B0040C432 /* BANowTrigger.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		517D710922BBC50E00E374FB /* BACampaignsLoadedTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B6227F1F2E7EA500084EC4 /* BACampaignsLoadedTrigger.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		517D710A22BBC50E00E374FB /* BACampaignsRefreshedTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B622851F2E7EBD00084EC4 /* BACampaignsRefreshedTrigger.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517D710B22BBC50E00E374FB /* BALocalCampaignSignalProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = AC000EE06573C2D0993F7ADF /* BALocalCampaignSignalProtocol.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		517D710C22BBC50E00E374FB /* BACampaignsLoadedSignal.h in Headers */ = {isa = PBXBuildFile; fileRef = AC00010E96B398D504572D95 /* BACampaignsLoadedSignal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		517D710D22BBC50E00E374FB /* BACampaignsRefreshedSignal.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B622731F2E77CE00084EC4 /* BACampaignsRefreshedSignal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517D710E22BBC50E00E374FB /* BAEventTrackedSignal.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DB2A15213ECE1B005AAA4F /* BAEventTrackedSignal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517D710F22BBC50E00E374FB /* BAPublicEventTrackedSignal.h in Headers */ = {isa = PBXBuildFile; fileRef = AC000B1971869FD12D1376FE /* BAPublicEventTrackedSignal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517D711022BBC50E00E374FB /* BANewSessionSignal.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B622791F2E7E0200084EC4 /* BANewSessionSignal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -776,9 +797,39 @@
 		02F7846419B9EF5A0006FF07 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		02F7846B19B9EF5A0006FF07 /* BatchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BatchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		02F7846E19B9EF5A0006FF07 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1E2C31B327CF740E00A4CB6E /* BAMetricRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAMetricRegistry.h; sourceTree = "<group>"; };
+		1E2C31B427CF740E00A4CB6E /* BAMetricRegistry.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BAMetricRegistry.m; sourceTree = "<group>"; };
+		1E45578327CE1B510048D3A8 /* BALocalCampaignsJITService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BALocalCampaignsJITService.h; sourceTree = "<group>"; };
+		1E45578427CE1B510048D3A8 /* BALocalCampaignsJITService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BALocalCampaignsJITService.m; sourceTree = "<group>"; };
+		1EA32C5627B2C9BE0085D133 /* BALocalCampaignsTracker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BALocalCampaignsTracker.h; sourceTree = "<group>"; };
+		1EA32C5727B2C9BE0085D133 /* BALocalCampaignsTracker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BALocalCampaignsTracker.m; sourceTree = "<group>"; };
+		1EA32C5D27B3A4140085D133 /* localCampaignsTrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = localCampaignsTrackerTests.swift; sourceTree = "<group>"; };
+		1EA32C5F27B524600085D133 /* localCampaignsSQLTrackerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = localCampaignsSQLTrackerTests.m; sourceTree = "<group>"; };
+		1EA32C6327B587620085D133 /* BAMutableDateProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAMutableDateProvider.h; sourceTree = "<group>"; };
+		1EA32C6427B587620085D133 /* BAMutableDateProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BAMutableDateProvider.m; sourceTree = "<group>"; };
 		1EA42DF726A84C71004CC618 /* BADBGFindMyInstallationHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BADBGFindMyInstallationHelper.m; sourceTree = "<group>"; };
 		1EA42DF926A84C99004CC618 /* BADBGFindMyInstallationHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BADBGFindMyInstallationHelper.h; sourceTree = "<group>"; };
 		1EA42E0226A9A716004CC618 /* FindMyInstallationHelperTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FindMyInstallationHelperTests.m; sourceTree = "<group>"; };
+		1EC9656F27AD7879007D66AD /* BALocalCampaignsGlobalCappings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BALocalCampaignsGlobalCappings.h; sourceTree = "<group>"; };
+		1EC9657027AD7879007D66AD /* BALocalCampaignsGlobalCappings.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BALocalCampaignsGlobalCappings.m; sourceTree = "<group>"; };
+		1EF1974227673BBE00386DF0 /* BAInjectionRegistrar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAInjectionRegistrar.h; sourceTree = "<group>"; };
+		1EF1974327673BBE00386DF0 /* BAInjectionRegistrar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BAInjectionRegistrar.m; sourceTree = "<group>"; };
+		1EBDBC6127157A3A006DC662 /* BACounter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BACounter.h; sourceTree = "<group>"; };
+		1EBDBC6227157A3A006DC662 /* BACounter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BACounter.m; sourceTree = "<group>"; };
+		1EBDBC652715B1B5006DC662 /* BAMetricProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAMetricProtocol.h; sourceTree = "<group>"; };
+		1EBDBC672715DE52006DC662 /* BAObservation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAObservation.h; sourceTree = "<group>"; };
+		1EBDBC682715DE52006DC662 /* BAObservation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BAObservation.m; sourceTree = "<group>"; };
+		1EBDBC6B2716C94F006DC662 /* BAMetricWebserviceClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAMetricWebserviceClient.h; sourceTree = "<group>"; };
+		1EBDBC6C2716C94F006DC662 /* BAMetricWebserviceClient.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BAMetricWebserviceClient.m; sourceTree = "<group>"; };
+		1EBDBC74271709D1006DC662 /* BAMetricManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAMetricManager.h; sourceTree = "<group>"; };
+		1EBDBC75271709D1006DC662 /* BAMetricManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BAMetricManager.m; sourceTree = "<group>"; };
+		1EBDBC8327188D40006DC662 /* metricTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = metricTests.m; sourceTree = "<group>"; };
+		1EBDBC85271D9936006DC662 /* metricManagerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = metricManagerTests.m; sourceTree = "<group>"; };
+		1EC803AA27D2477E00CCE8E5 /* localCampaignsManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = localCampaignsManagerTests.swift; sourceTree = "<group>"; };
+		1EF1974227673BBE00386DF0 /* BAInjectionRegistrar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAInjectionRegistrar.h; sourceTree = "<group>"; };
+		1EF1974327673BBE00386DF0 /* BAInjectionRegistrar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BAInjectionRegistrar.m; sourceTree = "<group>"; };
+		1EF8BA98271462D90063E117 /* BAMetric.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BAMetric.m; sourceTree = "<group>"; };
+		1EF8BA9A271462F80063E117 /* BAMetric.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAMetric.h; sourceTree = "<group>"; };
 		510134181E9D433E0053EF52 /* BAEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAEvent.h; path = Batch/Modules/Tracker/BAEvent.h; sourceTree = SOURCE_ROOT; };
 		510134191E9D433E0053EF52 /* BAEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BAEvent.m; path = Batch/Modules/Tracker/BAEvent.m; sourceTree = SOURCE_ROOT; };
 		5101341A1E9D433E0053EF52 /* BAEventDatasourceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAEventDatasourceProtocol.h; path = Batch/Modules/Tracker/BAEventDatasourceProtocol.h; sourceTree = SOURCE_ROOT; };
@@ -895,6 +946,7 @@
 		514671C11D647AFE00C50113 /* BAActionsCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAActionsCenter.h; path = Batch/Modules/Actions/BAActionsCenter.h; sourceTree = SOURCE_ROOT; };
 		514671C21D647AFE00C50113 /* BAActionsCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BAActionsCenter.m; path = Batch/Modules/Actions/BAActionsCenter.m; sourceTree = SOURCE_ROOT; };
 		51496A2E25110D680051B8A4 /* BAPartialApplicationDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAPartialApplicationDelegate.h; sourceTree = "<group>"; };
+		514BA49F27D257F100B93FAF /* inboxFetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = inboxFetcherTests.swift; sourceTree = "<group>"; };
 		514CD72A1BFE2A2B00F79110 /* batchUserDataSQLTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = batchUserDataSQLTests.m; path = batchTests/Modules/User/batchUserDataSQLTests.m; sourceTree = SOURCE_ROOT; };
 		514FCA7325121DDF00CAF31A /* OCMock.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = OCMock.modulemap; sourceTree = "<group>"; };
 		514FCA7425121DED00CAF31A /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -1098,8 +1150,6 @@
 		519D342A2111F4B300E5D2BE /* batchEventDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = batchEventDataTests.swift; sourceTree = "<group>"; };
 		519EC1891F1E5FF50040C432 /* BANextSessionTrigger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BANextSessionTrigger.h; sourceTree = "<group>"; };
 		519EC18A1F1E5FF50040C432 /* BANextSessionTrigger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BANextSessionTrigger.m; sourceTree = "<group>"; };
-		519EC18F1F1E612B0040C432 /* BANowTrigger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BANowTrigger.h; sourceTree = "<group>"; };
-		519EC1901F1E612B0040C432 /* BANowTrigger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BANowTrigger.m; sourceTree = "<group>"; };
 		51A214D825CC0769003FD6A6 /* BATWebviewUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BATWebviewUtils.h; sourceTree = "<group>"; };
 		51A214D925CC0769003FD6A6 /* BATWebviewUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BATWebviewUtils.m; sourceTree = "<group>"; };
 		51A214E525CC09D0003FD6A6 /* webviewUtilsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = webviewUtilsTests.swift; sourceTree = "<group>"; };
@@ -1129,14 +1179,8 @@
 		51B5239824FF9363009E2191 /* bridgy.config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bridgy.config.json; sourceTree = SOURCE_ROOT; };
 		51B5E4871C849D8900047F6E /* BABundleInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BABundleInfo.h; path = Batch/Modules/Core/BABundleInfo.h; sourceTree = SOURCE_ROOT; };
 		51B5E4881C849D8900047F6E /* BABundleInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BABundleInfo.m; path = Batch/Modules/Core/BABundleInfo.m; sourceTree = SOURCE_ROOT; };
-		51B622731F2E77CE00084EC4 /* BACampaignsRefreshedSignal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BACampaignsRefreshedSignal.h; sourceTree = "<group>"; };
-		51B622741F2E77CE00084EC4 /* BACampaignsRefreshedSignal.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BACampaignsRefreshedSignal.m; sourceTree = "<group>"; };
 		51B622791F2E7E0200084EC4 /* BANewSessionSignal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BANewSessionSignal.h; sourceTree = "<group>"; };
 		51B6227A1F2E7E0200084EC4 /* BANewSessionSignal.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BANewSessionSignal.m; sourceTree = "<group>"; };
-		51B6227F1F2E7EA500084EC4 /* BACampaignsLoadedTrigger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BACampaignsLoadedTrigger.h; sourceTree = "<group>"; };
-		51B622801F2E7EA500084EC4 /* BACampaignsLoadedTrigger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BACampaignsLoadedTrigger.m; sourceTree = "<group>"; };
-		51B622851F2E7EBD00084EC4 /* BACampaignsRefreshedTrigger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BACampaignsRefreshedTrigger.h; sourceTree = "<group>"; };
-		51B622861F2E7EBD00084EC4 /* BACampaignsRefreshedTrigger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BACampaignsRefreshedTrigger.m; sourceTree = "<group>"; };
 		51B8074724003DF70006882D /* BATMessagePackReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BATMessagePackReader.h; sourceTree = "<group>"; };
 		51B8074824003DF70006882D /* BATMessagePackReader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BATMessagePackReader.m; sourceTree = "<group>"; };
 		51BB37AB1E918D3600D9A142 /* Batch.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; name = Batch.modulemap; path = Batch/Batch.modulemap; sourceTree = SOURCE_ROOT; };
@@ -1316,7 +1360,6 @@
 		AAFEE7A222205A760075D33B /* BAPushPayload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BAPushPayload.m; sourceTree = "<group>"; };
 		AAFEE7A322205A760075D33B /* BAPushPayload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BAPushPayload.h; sourceTree = "<group>"; };
 		AC000096E68ECC4C68693F4E /* BALocalCampaignsManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BALocalCampaignsManager.m; sourceTree = "<group>"; };
-		AC00010E96B398D504572D95 /* BACampaignsLoadedSignal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BACampaignsLoadedSignal.h; sourceTree = "<group>"; };
 		AC000174980B9EC97BEB96D9 /* BALocalCampaignCountedEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BALocalCampaignCountedEvent.m; sourceTree = "<group>"; };
 		AC0001BC2CE52CAB936977F1 /* BALocalCampaignTrackerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BALocalCampaignTrackerProtocol.h; sourceTree = "<group>"; };
 		AC0001DD28E99CE2CB1D5491 /* BALocalCampaignsCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BALocalCampaignsCenter.m; sourceTree = "<group>"; };
@@ -1329,7 +1372,6 @@
 		AC0007BE0CFCA9BFDAAF189C /* BALocalCampaign.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BALocalCampaign.h; sourceTree = "<group>"; };
 		AC0008174ED9163E664A735E /* BALocalCampaign.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BALocalCampaign.m; sourceTree = "<group>"; };
 		AC0009D244D88C9EF832969B /* BALocalCampaignTriggerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BALocalCampaignTriggerProtocol.h; sourceTree = "<group>"; };
-		AC000A0E3EDCBF832A9A9212 /* BACampaignsLoadedSignal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BACampaignsLoadedSignal.m; sourceTree = "<group>"; };
 		AC000B0B4DD96B603107E468 /* BAPublicEventTrackedSignal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BAPublicEventTrackedSignal.m; sourceTree = "<group>"; };
 		AC000B1971869FD12D1376FE /* BAPublicEventTrackedSignal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BAPublicEventTrackedSignal.h; sourceTree = "<group>"; };
 		AC000B8FE3C5B6356DA2B026 /* BALocalCampaignsSQLTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BALocalCampaignsSQLTracker.m; sourceTree = "<group>"; };
@@ -1374,6 +1416,7 @@
 				5155F7AA1EF95E6E00929DD8 /* Local Campaigns */,
 				028499FC19B9EFBA0013408B /* Push */,
 				02849A0319B9EFBA0013408B /* Tracker */,
+				1EF8BA9727145FDA0063E117 /* Metrics */,
 				514B7A091CD224FB00E87FD8 /* Messaging */,
 				5101539B1BEA52AD009E8B16 /* User */,
 				514671C01D647AE500C50113 /* Actions */,
@@ -1509,6 +1552,7 @@
 				510BD5BC22E0A71D00D8CBA1 /* Crypto */,
 				510BD5B922E0A63900D8CBA1 /* Query */,
 				510BD5B822E0A55200D8CBA1 /* Query Services Implementations */,
+				1E45578227CE1ABD0048D3A8 /* MsgPack Services implementations */,
 			);
 			path = Webservices;
 			sourceTree = "<group>";
@@ -1565,6 +1609,8 @@
 				5155F79D1EF95E5B00929DD8 /* BASecureDateProvider.m */,
 				5155F79E1EF95E5B00929DD8 /* BASystemDateProvider.h */,
 				5155F79F1EF95E5B00929DD8 /* BASystemDateProvider.m */,
+				1EA32C6327B587620085D133 /* BAMutableDateProvider.h */,
+				1EA32C6427B587620085D133 /* BAMutableDateProvider.m */,
 				5113B65C1F27497400CDB623 /* BATZAwareDate.h */,
 				5113B65D1F27497400CDB623 /* BATZAwareDate.m */,
 				51D9A2A11F3080A7004307A7 /* BAUptimeProvider.h */,
@@ -1602,6 +1648,7 @@
 		02849BDA19B9FA2D0013408B /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				1EBDBC7C27188154006DC662 /* Metric */,
 				1EA42E0126A9A5D8004CC618 /* Debug */,
 				626D8552240032F600C24F19 /* Display Receipt */,
 				629EF3BB243E2590006A47CC /* Inbox */,
@@ -1826,12 +1873,50 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		1E45578227CE1ABD0048D3A8 /* MsgPack Services implementations */ = {
+			isa = PBXGroup;
+			children = (
+				1E45578327CE1B510048D3A8 /* BALocalCampaignsJITService.h */,
+				1E45578427CE1B510048D3A8 /* BALocalCampaignsJITService.m */,
+			);
+			path = "MsgPack Services implementations";
+			sourceTree = "<group>";
+		};
 		1EA42E0126A9A5D8004CC618 /* Debug */ = {
 			isa = PBXGroup;
 			children = (
 				1EA42E0226A9A716004CC618 /* FindMyInstallationHelperTests.m */,
 			);
 			path = Debug;
+			sourceTree = "<group>";
+		};
+		1EBDBC7C27188154006DC662 /* Metric */ = {
+			isa = PBXGroup;
+			children = (
+				1EBDBC8327188D40006DC662 /* metricTests.m */,
+				1EBDBC85271D9936006DC662 /* metricManagerTests.m */,
+			);
+			path = Metric;
+			sourceTree = "<group>";
+		};
+		1EF8BA9727145FDA0063E117 /* Metrics */ = {
+			isa = PBXGroup;
+			children = (
+				1EF8BA9A271462F80063E117 /* BAMetric.h */,
+				1EF8BA98271462D90063E117 /* BAMetric.m */,
+				1EBDBC6127157A3A006DC662 /* BACounter.h */,
+				1EBDBC6227157A3A006DC662 /* BACounter.m */,
+				1EBDBC652715B1B5006DC662 /* BAMetricProtocol.h */,
+				1EBDBC672715DE52006DC662 /* BAObservation.h */,
+				1EBDBC682715DE52006DC662 /* BAObservation.m */,
+				1EBDBC6B2716C94F006DC662 /* BAMetricWebserviceClient.h */,
+				1EBDBC6C2716C94F006DC662 /* BAMetricWebserviceClient.m */,
+				1EBDBC74271709D1006DC662 /* BAMetricManager.h */,
+				1EBDBC75271709D1006DC662 /* BAMetricManager.m */,
+				1E2C31B327CF740E00A4CB6E /* BAMetricRegistry.h */,
+				1E2C31B427CF740E00A4CB6E /* BAMetricRegistry.m */,
+			);
+			path = Metrics;
 			sourceTree = "<group>";
 		};
 		5101539B1BEA52AD009E8B16 /* User */ = {
@@ -2210,6 +2295,8 @@
 		5155F7AA1EF95E6E00929DD8 /* Local Campaigns */ = {
 			isa = PBXGroup;
 			children = (
+				1EC9656F27AD7879007D66AD /* BALocalCampaignsGlobalCappings.h */,
+				1EC9657027AD7879007D66AD /* BALocalCampaignsGlobalCappings.m */,
 				AC0002234B6BB609DE70C67F /* BALocalCampaignsManager.h */,
 				AC000096E68ECC4C68693F4E /* BALocalCampaignsManager.m */,
 				AC000634AAB8CE3352835CA2 /* BALocalCampaignsCenter.h */,
@@ -2322,6 +2409,8 @@
 				51379B7D22FC5C0200AB7B82 /* BAInjectableImplementations.h */,
 				51379B7E22FC5C0200AB7B82 /* BAInjectableImplementations.m */,
 				51379B8222FC7C3100AB7B82 /* BAOverlayedInjectable-Private.h */,
+				1EF1974227673BBE00386DF0 /* BAInjectionRegistrar.h */,
+				1EF1974327673BBE00386DF0 /* BAInjectionRegistrar.m */,
 			);
 			path = Private;
 			sourceTree = "<group>";
@@ -2445,6 +2534,9 @@
 			children = (
 				51A214F025CC608D003FD6A6 /* localCampaignsParserTests.swift */,
 				51C6B11425CD53E200B531C5 /* localCampaignsCenterTests.m */,
+				1EC803AA27D2477E00CCE8E5 /* localCampaignsManagerTests.swift */,
+				1EA32C5D27B3A4140085D133 /* localCampaignsTrackerTests.swift */,
+				1EA32C5F27B524600085D133 /* localCampaignsSQLTrackerTests.m */,
 			);
 			path = "Local Campaigns";
 			sourceTree = "<group>";
@@ -2617,6 +2709,7 @@
 				6295B153243F44520065059E /* inboxFetchWebserviceClientTests.m */,
 				628C158E24AB8E990026C4EC /* inboxSyncWebserviceClientTests.m */,
 				627278E024A491CB0067F036 /* inboxNotificationDatasourceTests.m */,
+				514BA49F27D257F100B93FAF /* inboxFetcherTests.swift */,
 			);
 			path = Inbox;
 			sourceTree = "<group>";
@@ -2638,12 +2731,6 @@
 				AC000C129F28871A4716FFBD /* BAEventTrigger.m */,
 				519EC1891F1E5FF50040C432 /* BANextSessionTrigger.h */,
 				519EC18A1F1E5FF50040C432 /* BANextSessionTrigger.m */,
-				519EC18F1F1E612B0040C432 /* BANowTrigger.h */,
-				519EC1901F1E612B0040C432 /* BANowTrigger.m */,
-				51B6227F1F2E7EA500084EC4 /* BACampaignsLoadedTrigger.h */,
-				51B622801F2E7EA500084EC4 /* BACampaignsLoadedTrigger.m */,
-				51B622851F2E7EBD00084EC4 /* BACampaignsRefreshedTrigger.h */,
-				51B622861F2E7EBD00084EC4 /* BACampaignsRefreshedTrigger.m */,
 			);
 			path = Triggers;
 			sourceTree = "<group>";
@@ -2656,6 +2743,8 @@
 				AC00071E6A71EF7314BF62B9 /* BALocalCampaignCountedEvent.h */,
 				AC000174980B9EC97BEB96D9 /* BALocalCampaignCountedEvent.m */,
 				AC0001BC2CE52CAB936977F1 /* BALocalCampaignTrackerProtocol.h */,
+				1EA32C5627B2C9BE0085D133 /* BALocalCampaignsTracker.h */,
+				1EA32C5727B2C9BE0085D133 /* BALocalCampaignsTracker.m */,
 			);
 			path = Tracker;
 			sourceTree = "<group>";
@@ -2664,10 +2753,6 @@
 			isa = PBXGroup;
 			children = (
 				AC000EE06573C2D0993F7ADF /* BALocalCampaignSignalProtocol.h */,
-				AC00010E96B398D504572D95 /* BACampaignsLoadedSignal.h */,
-				AC000A0E3EDCBF832A9A9212 /* BACampaignsLoadedSignal.m */,
-				51B622731F2E77CE00084EC4 /* BACampaignsRefreshedSignal.h */,
-				51B622741F2E77CE00084EC4 /* BACampaignsRefreshedSignal.m */,
 				51DB2A15213ECE1B005AAA4F /* BAEventTrackedSignal.h */,
 				51DB2A16213ECE1B005AAA4F /* BAEventTrackedSignal.m */,
 				AC000B1971869FD12D1376FE /* BAPublicEventTrackedSignal.h */,
@@ -2698,6 +2783,7 @@
 				517D70E822BBC4EC00E374FB /* BatchMessagingModels.h in Headers */,
 				517D70E922BBC4EC00E374FB /* BatchActions.h in Headers */,
 				621F1EA92355E9FB002B36DA /* BatchEventDispatcher.h in Headers */,
+				1EF1974427673BBE00386DF0 /* BAInjectionRegistrar.h in Headers */,
 				620F174E24488AFB00D046D5 /* BADisplayReceipt.h in Headers */,
 				620F174F24488AFB00D046D5 /* BADisplayReceiptCache.h in Headers */,
 				620F174D24488AFB00D046D5 /* BADisplayReceiptCenter.h in Headers */,
@@ -2729,12 +2815,7 @@
 				517D710522BBC50E00E374FB /* BALocalCampaignTriggerProtocol.h in Headers */,
 				517D710622BBC50E00E374FB /* BAEventTrigger.h in Headers */,
 				517D710722BBC50E00E374FB /* BANextSessionTrigger.h in Headers */,
-				517D710822BBC50E00E374FB /* BANowTrigger.h in Headers */,
-				517D710922BBC50E00E374FB /* BACampaignsLoadedTrigger.h in Headers */,
-				517D710A22BBC50E00E374FB /* BACampaignsRefreshedTrigger.h in Headers */,
 				517D710B22BBC50E00E374FB /* BALocalCampaignSignalProtocol.h in Headers */,
-				517D710C22BBC50E00E374FB /* BACampaignsLoadedSignal.h in Headers */,
-				517D710D22BBC50E00E374FB /* BACampaignsRefreshedSignal.h in Headers */,
 				517D710E22BBC50E00E374FB /* BAEventTrackedSignal.h in Headers */,
 				517D710F22BBC50E00E374FB /* BAPublicEventTrackedSignal.h in Headers */,
 				517D711022BBC50E00E374FB /* BANewSessionSignal.h in Headers */,
@@ -2943,8 +3024,19 @@
 				517CC28725B6DAC200A3F380 /* BATWebviewBridgeLegacyWKHandler.h in Headers */,
 				51F58E36257FAA65000DE3E0 /* BAMessagingAnalyticsDelegate.h in Headers */,
 				5166D7D525ED3EEE00F36A5E /* BATMessagingCloseErrorCause.h in Headers */,
+				1EC9657127AD7879007D66AD /* BALocalCampaignsGlobalCappings.h in Headers */,
 				51496A2F25110D930051B8A4 /* BAPartialApplicationDelegate.h in Headers */,
+				1EA32C5827B2C9BE0085D133 /* BALocalCampaignsTracker.h in Headers */,
+				1EA32C6527B587620085D133 /* BAMutableDateProvider.h in Headers */,
 				1EA42DFB26A85DF9004CC618 /* BADBGFindMyInstallationHelper.h in Headers */,
+				1EBDBC6327157A3A006DC662 /* BACounter.h in Headers */,
+				1EBDBC6027146C97006DC662 /* BAMetric.h in Headers */,
+				1EBDBC692715DE52006DC662 /* BAObservation.h in Headers */,
+				1EBDBC6D2716C94F006DC662 /* BAMetricWebserviceClient.h in Headers */,
+				1EBDBC76271709D1006DC662 /* BAMetricManager.h in Headers */,
+				1E45578527CE1B510048D3A8 /* BALocalCampaignsJITService.h in Headers */,
+				1E2C31B527CF740E00A4CB6E /* BAMetricRegistry.h in Headers */,
+				1EBDBC662715B2A2006DC662 /* BAMetricProtocol.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3033,7 +3125,7 @@
 					517D701722BBC34A00E374FB = {
 						CreatedOnToolsVersion = 11.0;
 						DevelopmentTeam = U5K2ETC2Y6;
-						LastSwiftMigration = 1130;
+						LastSwiftMigration = 1320;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -3140,6 +3232,7 @@
 				6295B154243F44520065059E /* inboxFetchWebserviceClientTests.m in Sources */,
 				51B4F50025D3F76F0077E948 /* osHelperTests.swift in Sources */,
 				62579A11235DBF7C0018B26C /* pushEventPayloadTests.m in Sources */,
+				1EBDBC8427188D40006DC662 /* metricTests.m in Sources */,
 				51ACA05D2166193D006FAD04 /* batchUserDiffTests.swift in Sources */,
 				515A74972510C17800F05E80 /* swiftSwizzling.swift in Sources */,
 				51EB8A3723A3D97000879584 /* queryTestHelpers.swift in Sources */,
@@ -3149,6 +3242,7 @@
 				5192784A25D1764D005C43B4 /* webviewJavascriptBridgeTests.swift in Sources */,
 				5105747D21358C2A00789F86 /* batchLispTests.swift in Sources */,
 				51E22DC72451CA3C00D02CA8 /* batchUserEditorPublicAPITests.m in Sources */,
+				1EA32C6027B524600085D133 /* localCampaignsSQLTrackerTests.m in Sources */,
 				51C6A47225CA99DF00B07AB6 /* batchTestsBootstrap.m in Sources */,
 				516D31C22445C40400BF3AB0 /* messagePackWriterTests.swift in Sources */,
 				51242705244D905000025DA3 /* batchUserDataEditorTests.swift in Sources */,
@@ -3159,6 +3253,7 @@
 				516BE209214819160057D937 /* deeplinkDelegateTests.m in Sources */,
 				51ECC06D22D4F8C800F1C5EC /* webserviceAESGCMCryptorTests.m in Sources */,
 				1EA42E0426A9A736004CC618 /* FindMyInstallationHelperTests.m in Sources */,
+				1EBDBC86271D9936006DC662 /* metricManagerTests.m in Sources */,
 				628C158F24AB8E990026C4EC /* inboxSyncWebserviceClientTests.m in Sources */,
 				5192785025D17B80005C43B4 /* XCTest+BAPromise.swift in Sources */,
 				5159B4ED25E01BA9008082FA /* loggerSetupTests.m in Sources */,
@@ -3169,8 +3264,10 @@
 				02849BFD19B9FA2D0013408B /* batchCoreTests.m in Sources */,
 				518D887023560C79007BF341 /* messagingAnalyticsDeduplicatingDelegateTests.swift in Sources */,
 				51675F0C21383D6A000E7B9F /* batchContextTests.swift in Sources */,
+				514BA4A027D257F100B93FAF /* inboxFetcherTests.swift in Sources */,
 				939E058A222D2CC700E8D32D /* batchUserTests.m in Sources */,
 				510D906F24C83A81005981AC /* shaTests.swift in Sources */,
+				1EC803AB27D2477E00CCE8E5 /* localCampaignsManagerTests.swift in Sources */,
 				51DD799E25D29FA6005E8D62 /* webviewBridgeWKHandlerTests.swift in Sources */,
 				02849C1719B9FA2D0013408B /* batchCoreCenterTests.m in Sources */,
 				622910222452DE5500B03563 /* displayReceiptSwiftTests.swift in Sources */,
@@ -3180,6 +3277,7 @@
 				029B335B1A39A1F7006B9DC6 /* batchAESTests.m in Sources */,
 				51D5779B24409EE000211582 /* messagePackReaderTests.swift in Sources */,
 				02849C2E19B9FA2D0013408B /* batchResponseHelperTests.m in Sources */,
+				1EA32C5E27B3A4140085D133 /* localCampaignsTrackerTests.swift in Sources */,
 				513DA84522F87D6A00144521 /* eventTrackerServiceTests.swift in Sources */,
 				62A4811424003D0600A2606D /* displayReceiptTests.m in Sources */,
 				9373ECDD2211C9D800FA00A3 /* DeeplinkDelegateStub.m in Sources */,
@@ -3298,6 +3396,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1EA42DFA26A85D7D004CC618 /* BADBGFindMyInstallationHelper.m in Sources */,
+				1EBDBC5F27146B8B006DC662 /* BAMetric.m in Sources */,
 				517D702022BBC45900E374FB /* BatchCore.m in Sources */,
 				5145C78B24C1FFC6004A89FE /* BATWebserviceHMAC.m in Sources */,
 				517D702122BBC45900E374FB /* BatchEventData.m in Sources */,
@@ -3313,6 +3412,7 @@
 				517D702722BBC45900E374FB /* BatchMessaging.m in Sources */,
 				5193FC9722F0830900F5C9B9 /* BAURLSession.m in Sources */,
 				517D702822BBC45900E374FB /* BatchActions.m in Sources */,
+				1EC9657227AD7879007D66AD /* BALocalCampaignsGlobalCappings.m in Sources */,
 				517D702922BBC45900E374FB /* BANotificationCenter.m in Sources */,
 				51B8074A24003DF70006882D /* BATMessagePackReader.m in Sources */,
 				517D702E22BBC45900E374FB /* BAConfiguration.m in Sources */,
@@ -3328,7 +3428,9 @@
 				5184045422E9F27D006322DF /* BAStartService.m in Sources */,
 				517D703722BBC45900E374FB /* BAInstallationID.m in Sources */,
 				517D703922BBC45900E374FB /* BALocalCampaignsManager.m in Sources */,
+				1EA32C6627B587620085D133 /* BAMutableDateProvider.m in Sources */,
 				517D703A22BBC45900E374FB /* BALocalCampaignsCenter.m in Sources */,
+				1EBDBC77271709D1006DC662 /* BAMetricManager.m in Sources */,
 				5127299F23FD720E00999505 /* BATMessagePackWriter.m in Sources */,
 				517D703B22BBC45900E374FB /* BALocalCampaignsParser.m in Sources */,
 				517D703C22BBC45900E374FB /* BALocalCampaign.m in Sources */,
@@ -3337,12 +3439,7 @@
 				620F175424488AFB00D046D5 /* BADisplayReceiptCache.m in Sources */,
 				51F91A2122DF1B00003A42F1 /* BAWebserviceURLBuilder.m in Sources */,
 				517D703F22BBC45900E374FB /* BANextSessionTrigger.m in Sources */,
-				517D704022BBC45900E374FB /* BANowTrigger.m in Sources */,
-				517D704122BBC45900E374FB /* BACampaignsLoadedTrigger.m in Sources */,
-				517D704222BBC45900E374FB /* BACampaignsRefreshedTrigger.m in Sources */,
-				517D704322BBC45900E374FB /* BACampaignsLoadedSignal.m in Sources */,
 				621F1EC423561BB1002B36DA /* BAPushEventPayload.m in Sources */,
-				517D704422BBC45900E374FB /* BACampaignsRefreshedSignal.m in Sources */,
 				517D704522BBC45900E374FB /* BAEventTrackedSignal.m in Sources */,
 				5179E72322FC2BC900614F9D /* BAInjectable.m in Sources */,
 				517D704622BBC45900E374FB /* BAPublicEventTrackedSignal.m in Sources */,
@@ -3384,6 +3481,7 @@
 				517D706622BBC45900E374FB /* BACSSParser.m in Sources */,
 				517D706722BBC45900E374FB /* BACSSToken.m in Sources */,
 				517D706822BBC45900E374FB /* BACSSBuiltinImportProvider.m in Sources */,
+				1EBDBC6427157A3A006DC662 /* BACounter.m in Sources */,
 				517D706922BBC45900E374FB /* BATGIFAnimator.m in Sources */,
 				517D706A22BBC45900E374FB /* BATGIFFile.m in Sources */,
 				517D706B22BBC45900E374FB /* BAMSGViewController.m in Sources */,
@@ -3401,6 +3499,7 @@
 				517D707622BBC45900E374FB /* BAMSGButton.m in Sources */,
 				517D707722BBC45900E374FB /* BAMSGCloseButton.m in Sources */,
 				517D707822BBC45900E374FB /* BAMSGImageView.m in Sources */,
+				1EBDBC6E2716C94F006DC662 /* BAMetricWebserviceClient.m in Sources */,
 				517D707922BBC45900E374FB /* BAMSGRemoteImageView.m in Sources */,
 				517D707A22BBC45900E374FB /* BAMSGLabel.m in Sources */,
 				517D707B22BBC45900E374FB /* BAMSGStylableView.m in Sources */,
@@ -3422,6 +3521,7 @@
 				517D708622BBC45900E374FB /* BAUserDataEditor.m in Sources */,
 				517D708722BBC45900E374FB /* BAUserAttribute.m in Sources */,
 				517D708822BBC45900E374FB /* BAUserDataServices.m in Sources */,
+				1E45578627CE1B510048D3A8 /* BALocalCampaignsJITService.m in Sources */,
 				513175DD2524BC30001D0033 /* BATrackingAuthorization.m in Sources */,
 				517D708922BBC45900E374FB /* BAActionsCenter.m in Sources */,
 				629B42A52490D8FA0025411E /* BATGZIP.m in Sources */,
@@ -3460,6 +3560,7 @@
 				517D70A222BBC45900E374FB /* BAWSQuery.m in Sources */,
 				620F175224488AFB00D046D5 /* BADisplayReceiptCenter.m in Sources */,
 				510BD5C622E0B4BA00D8CBA1 /* BAWSResponseAttributes.m in Sources */,
+				1EA32C5927B2C9BE0085D133 /* BALocalCampaignsTracker.m in Sources */,
 				517D70A622BBC45900E374FB /* BAWSQueryPushToken.m in Sources */,
 				5179E71F22FC15C000614F9D /* BAInjection.m in Sources */,
 				517D70A822BBC45900E374FB /* BAWSQueryTracking.m in Sources */,
@@ -3483,6 +3584,7 @@
 				517D70BE22BBC45900E374FB /* BARandom.m in Sources */,
 				517D70BF22BBC45900E374FB /* BAHTTPHeaders.m in Sources */,
 				517D70C022BBC45900E374FB /* BADirectories.m in Sources */,
+				1E2C31B627CF740E00A4CB6E /* BAMetricRegistry.m in Sources */,
 				517D70C122BBC45900E374FB /* BAStringUtils.m in Sources */,
 				517D70C222BBC45900E374FB /* BAOSHelper.m in Sources */,
 				517D70C322BBC45900E374FB /* BADateFormatting.m in Sources */,
@@ -3505,10 +3607,12 @@
 				517D70D122BBC45900E374FB /* BAPropertiesCenter.m in Sources */,
 				517D70D222BBC45900E374FB /* BAUserDefaults.m in Sources */,
 				517D70D322BBC45900E374FB /* BAReachability.m in Sources */,
+				1EF1974527673BBE00386DF0 /* BAInjectionRegistrar.m in Sources */,
 				517D70D422BBC45900E374FB /* BAReachabilityHelper.m in Sources */,
 				517D70D522BBC45900E374FB /* BAConnection.m in Sources */,
 				5179E72722FC2BDB00614F9D /* BAOverlayedInjectable.m in Sources */,
 				510BD5D922E0B4D500D8CBA1 /* BAWSQueryAttributesCheck.m in Sources */,
+				1EBDBC6A2715DE52006DC662 /* BAObservation.m in Sources */,
 				6231A5292458173D00AFFA3D /* BAWebserviceMsgPackClient.m in Sources */,
 				517D70DA22BBC45900E374FB /* BAWebserviceClient.m in Sources */,
 				517D70DC22BBC45900E374FB /* BASecureDate.m in Sources */,

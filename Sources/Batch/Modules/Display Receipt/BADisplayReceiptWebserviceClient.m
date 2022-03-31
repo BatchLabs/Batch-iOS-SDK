@@ -8,12 +8,7 @@
 #import <Batch/BADisplayReceiptWebserviceClient.h>
 #import <Batch/BAWebserviceURLBuilder.h>
 #import <Batch/BADisplayReceipt.h>
-#import <Batch/BAHTTPHeaders.h>
 #import <Batch/BAErrorHelper.h>
-
-#define BA_RECEIPT_HEADER_SDK_VERSION       @"x-batch-sdk-version"
-#define BA_RECEIPT_HEADER_SCHEMA_VERSION    @"x-batch-protocol-version"
-#define BA_RECEIPT_SCHEMA_VERSION           @"1.0.0"
 
 #define LOGGER_DOMAIN @"BADisplayReceiptWebserviceClient"
 
@@ -36,15 +31,6 @@
         _errorHandler = errorHandler;
     }
     return self;
-}
-
-- (nonnull NSMutableDictionary *)requestHeaders
-{
-    NSMutableDictionary *headers = [super requestHeaders];
-    headers[@"User-Agent"] = [BAHTTPHeaders userAgent];
-    headers[BA_RECEIPT_HEADER_SCHEMA_VERSION] = BA_RECEIPT_SCHEMA_VERSION;
-    headers[BA_RECEIPT_HEADER_SDK_VERSION] = @(BAAPILevel);
-    return headers;
 }
 
 - (nullable NSData *)requestBody:(NSError **)error

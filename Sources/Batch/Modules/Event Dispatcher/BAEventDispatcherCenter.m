@@ -6,24 +6,12 @@
 //
 
 #import <Batch/BAEventDispatcherCenter.h>
-#import <Batch/BAInjection.h>
 
 #define LOGGER_DOMAIN @"EventDispatcher"
 
-@implementation BAEventDispatcherCenter
+#define CUSTOM_DISPATCHER_NAME @"other"
 
-+ (void)load
-{
-    BAInjectable *lcInjectable = [BAInjectable injectableWithInitializer: ^id () {
-                                    static id singleInstance = nil;
-                                    static dispatch_once_t once;
-                                    dispatch_once(&once, ^{
-                                      singleInstance = [BAEventDispatcherCenter new];
-                                    });
-                                    return singleInstance;
-                                }];
-    [BAInjection registerInjectable:lcInjectable forClass:BAEventDispatcherCenter.class];
-}
+@implementation BAEventDispatcherCenter
 
 - (instancetype)init
 {
@@ -54,6 +42,10 @@
                                webViewAnalyticsIdentifier:webViewAnalyticsIdentifier];
 }
 
++ (BOOL)isBatchEventDispatcher:(NSString*)name {
+    return [@[@"firebase", @"at_internet", @"mixpanel", @"google_analytics", @"batch_plugins"] containsObject:name];
+}
+
 - (void)addEventDispatcher:(nonnull id<BatchEventDispatcherDelegate>)dispatcher
 {
     [BALogger publicForDomain:LOGGER_DOMAIN message:@"Adding event dispatcher: %@", NSStringFromClass([dispatcher class])];
@@ -63,6 +55,20 @@
 - (void)removeEventDispatcher:(nonnull id<BatchEventDispatcherDelegate>)dispatcher
 {
     [self.dispatchers removeObject:(dispatcher)];
+}
+
+- (nonnull NSDictionary*)dispatchersAnalyticRepresentation {
+    NSMutableDictionary *analyticRepresentation = [NSMutableDictionary dictionary];
+    for (id<BatchEventDispatcherDelegate> dispatcher in self.dispatchers) {
+         if ([dispatcher respondsToSelector:@selector(name)] && [dispatcher respondsToSelector:@selector(version)]) {
+             NSString *name = [[dispatcher name] copy];
+             if (![BAEventDispatcherCenter isBatchEventDispatcher:name]) {
+                 name = CUSTOM_DISPATCHER_NAME;
+             }
+             [analyticRepresentation setObject:[NSNumber numberWithUnsignedInteger:[dispatcher version]] forKey:name];
+         }
+    }
+    return analyticRepresentation;
 }
 
 - (void)dispatchEventWithType:(BatchEventDispatcherType)type payload:(id<BatchEventDispatcherPayload>)payload {

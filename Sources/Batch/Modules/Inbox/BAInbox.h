@@ -61,6 +61,8 @@
 
 @property (readonly) BOOL endReached;
 
+@property BOOL filterSilentNotifications;
+
 - (void)fetchNewNotifications:(void (^ _Nullable)(NSError *_Nullable error, NSArray<BatchInboxNotificationContent *> *_Nullable notifications, BOOL foundNewNotifications, BOOL endReached))completionHandler;
 
 - (void)fetchNextPage:(void (^ _Nullable)(NSError *_Nullable error, NSArray<BatchInboxNotificationContent *> *_Nullable notifications, BOOL endReached))completionHandler;

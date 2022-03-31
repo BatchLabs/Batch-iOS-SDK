@@ -37,7 +37,9 @@
 
 #define DB_VERSION                      @2
 
-@implementation BAInboxSQLiteDatasource
+@implementation BAInboxSQLiteDatasource {
+    NSObject *_lock;
+}
 
 - (instancetype)initWithFilename:(NSString *)name forDBHelper:(id<BAInboxDBHelperProtocol>)inboxDBHelper
 {
@@ -48,7 +50,7 @@
         return nil;
     }
     
-    self.lock = [NSObject new];
+    _lock = [NSObject new];
     
     if (!inboxDBHelper) {
         return nil;
@@ -237,7 +239,7 @@
 
 - (void)close
 {
-    @synchronized(self.lock)
+    @synchronized(_lock)
     {
         if( self->_database )
         {
@@ -252,7 +254,7 @@
 
 - (void)clear
 {
-    @synchronized(self.lock)
+    @synchronized(_lock)
     {
         NSString *clearStatement = [NSString stringWithFormat:@"DELETE FROM %@;", TABLE_FETCHERS];
         if (sqlite3_exec(self->_database, [clearStatement cStringUsingEncoding:NSUTF8StringEncoding], NULL, NULL, NULL) != SQLITE_OK)
@@ -276,7 +278,7 @@
 
 - (long long)createFetcherIdWith:(BAInboxWebserviceClientType)type identifier:(nonnull NSString*)identifier
 {
-    @synchronized(self.lock)
+    @synchronized(_lock)
     {
         if ([BANullHelper isStringEmpty:identifier]) {
             return -1;
@@ -340,7 +342,7 @@
 
 - (BOOL)insertNotification:(BAInboxNotificationContent *)notification withFetcherId:(long long)fetcherId
 {
-    @synchronized(self.lock)
+    @synchronized(_lock)
     {
         if (!self->_insertNotificationStatement || !self->_insertFetcherStatement) {
             return NO;
@@ -399,7 +401,7 @@
 -(NSArray<BAInboxCandidateNotification*> *)candidateNotificationsFromCursor:(NSString *)cursor limit:(NSUInteger)limit fetcherId:(long long)fetcherId
 {
     NSMutableArray<BAInboxCandidateNotification*> *candidates = [NSMutableArray new];
-    @synchronized(self.lock)
+    @synchronized(_lock)
     {
         sqlite3_stmt *statement;
         if (![BANullHelper isStringEmpty:cursor]) {
@@ -480,7 +482,7 @@
         return notifications;
     }
     
-    @synchronized(self.lock)
+    @synchronized(_lock)
     {
         NSMutableString *valuesString = [[NSMutableString alloc] init];
         for (int i = 0; i < [notificaitonIds count]; i++)
@@ -630,7 +632,7 @@
         i += 1;
     }
     
-    @synchronized(self.lock)
+    @synchronized(_lock)
     {
         NSString *updateNotificationSQL = [NSString stringWithFormat:@"UPDATE %@ SET %@ WHERE %@ = ?", TABLE_NOTIFICATIONS, setQuery, COLUMN_NOTIFICATION_ID];
         sqlite3_stmt *updateNotificationStatement;
@@ -736,7 +738,7 @@
 
 -(BOOL)markAsDeleted:(nonnull NSString*)notificationId
 {
-    @synchronized(self.lock)
+    @synchronized(_lock)
     {
         NSString *updateSQL = [NSString stringWithFormat:@"UPDATE %@ SET %@ = ? WHERE %@ = ?;",
                                TABLE_NOTIFICATIONS,
@@ -759,7 +761,7 @@
 
 -(BOOL)markAsRead:(nonnull NSString*)notificationId
 {
-    @synchronized(self.lock)
+    @synchronized(_lock)
     {
         NSString *updateSQL = [NSString stringWithFormat:@"UPDATE %@ SET %@ = ? WHERE %@ = ?;",
                                TABLE_NOTIFICATIONS,
@@ -782,7 +784,7 @@
 
 -(BOOL)markAllAsRead:(long long)time withFetcherId:(long long)fetcherId
 {
-    @synchronized(self.lock)
+    @synchronized(_lock)
     {
         NSString *updateSQL = [NSString stringWithFormat:@"UPDATE %@ SET %@ = ? WHERE %@ <= ? AND EXISTS (SELECT %@ FROM %@ WHERE %@ = ? AND %@ = %@.%@);",
                                TABLE_NOTIFICATIONS,
@@ -813,7 +815,7 @@
 
 -(BOOL)deleteNotifications:(nonnull NSArray<NSString*> *)notificaitonIds
 {
-    @synchronized(self.lock)
+    @synchronized(_lock)
     {
         if ([notificaitonIds count] <= 0) {
             return YES;
@@ -888,7 +890,7 @@
 
 -(BOOL)cleanDatabase
 {
-    @synchronized(self.lock)
+    @synchronized(_lock)
     {
         NSString *selectSQL = [NSString stringWithFormat:@"SELECT %@ FROM %@ WHERE %@ <= ?", COLUMN_NOTIFICATION_ID, TABLE_NOTIFICATIONS, COLUMN_DATE];
         

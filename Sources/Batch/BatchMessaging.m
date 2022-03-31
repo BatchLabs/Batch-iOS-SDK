@@ -311,6 +311,9 @@ NSInteger const BatchMessageGlobalActionIndex = -1;
 
 @implementation BatchInAppMessage
 {
+    
+    NSObject *_lock;
+    
     id<BatchInAppMessageContent> _content;
 }
 
@@ -324,6 +327,7 @@ NSInteger const BatchMessageGlobalActionIndex = -1;
     self = [super initWithPayload:payload];
     if (self)
     {
+        _lock = [NSObject new];
         NSObject *identifier = payload[@"id"];
         if (![identifier isKindOfClass:[NSString class]])
         {
@@ -371,6 +375,7 @@ NSInteger const BatchMessageGlobalActionIndex = -1;
     BatchInAppMessage *copy = [super copyWithZone:zone];
     
     if (copy) {
+        copy->_lock = [NSObject new];
         copy->_customPayload = [_customPayload copyWithZone:zone];
         copy.devTrackingIdentifier = self.devTrackingIdentifier;
         copy.messageIdentifier = self.messageIdentifier;
@@ -384,7 +389,7 @@ NSInteger const BatchMessageGlobalActionIndex = -1;
 
 - (id<BatchInAppMessageContent>)content
 {
-    @synchronized(self) {
+    @synchronized(_lock) {
         if (_content == nil) {
             BAMSGMessage *msg = [BAMSGPayloadParser messageForRawMessage:self bailIfNotAlert:false];
             if ([msg isKindOfClass:[BAMSGMessageAlert class]]) {

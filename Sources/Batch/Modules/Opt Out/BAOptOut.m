@@ -24,6 +24,7 @@ NSString * const kBATOptOutWipeDataKey = @"wipe_data";
 {
     BOOL _optedOut;
     BAOptOutEventTracker *_eventTracker;
+    NSObject *_lock;
 }
 
 + (BAOptOut *)instance
@@ -41,6 +42,7 @@ NSString * const kBATOptOutWipeDataKey = @"wipe_data";
 {
     self = [super init];
     if (self) {
+        _lock = [NSObject new];
         [self refresh];
     }
     return self;
@@ -58,7 +60,7 @@ NSString * const kBATOptOutWipeDataKey = @"wipe_data";
 
 - (void)initEventTrackerIfNeeded
 {
-    @synchronized (self) {
+    @synchronized (_lock) {
         if (!_eventTracker) {
             [self setEventTracker:[BAOptOutEventTracker new]];
         }

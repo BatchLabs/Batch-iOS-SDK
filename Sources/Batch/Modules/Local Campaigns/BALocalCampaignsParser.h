@@ -9,6 +9,7 @@
 
 #import <Batch/BALocalCampaign.h>
 #import <Batch/BAEventTrigger.h>
+#import <Batch/BALocalCampaignsGlobalCappings.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,6 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable BALocalCampaign*)parseCampaign:(nonnull NSDictionary*)rawJson error:(NSError**)error;
 
 + (nullable id<BALocalCampaignTriggerProtocol>)parseTrigger:(nonnull NSDictionary*)rawJson error:(NSError**)error;
+
++ (nullable BALocalCampaignsGlobalCappings*)parseCappings:(nonnull NSDictionary*)rawJson outPersistable:(NSDictionary * _Nullable * _Nullable)persist;
 
 @end
 

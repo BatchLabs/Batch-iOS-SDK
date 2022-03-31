@@ -64,16 +64,6 @@ if (![attrValue isKindOfClass:expectedClass]) { \
     NSString* _userFields[3];
 }
 
-bainjection_injectable_initializer bai_user_data_editor_init() {
-    // Use a block initializer to always return a new BAUserDataEditor instance
-    BAInjectable *injectable = [BAInjectable injectableWithInitializer: ^id () {
-       return [BAUserDataEditor new];
-    }];
-    
-    [BAInjection registerInjectable:injectable
-                           forClass:BAUserDataEditor.class];
-}
-
 - (instancetype)init
 {
     self = [super init];

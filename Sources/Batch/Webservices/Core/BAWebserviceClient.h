@@ -45,7 +45,7 @@ typedef NS_ENUM(NSUInteger, BAWebserviceClientRequestMethod) {
  @abstract Change the request timeout. Default value is 60s
  @param seconds :   Number of seconds before the request timed out.
  */
-- (void)setTimeout:(NSUInteger)seconds;
+- (void)setTimeout:(NSTimeInterval)seconds;
 
 /*
  Query parameters to add

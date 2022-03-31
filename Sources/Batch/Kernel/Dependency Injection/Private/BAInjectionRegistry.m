@@ -6,6 +6,7 @@
 //
 
 #import <Batch/BAInjectionRegistry.h>
+#import <Batch/BAInjectionRegistrar.h>
 
 @interface BAInjectionRegistry ()
 {
@@ -15,6 +16,8 @@
     NSMapTable<id, BAOverlayedInjectable*> *_overlaysTable;
     
     NSObject *_registrationLockToken;
+    NSObject *_overlaysLockToken;
+
 }
 @end
 
@@ -40,6 +43,7 @@
         _protocolInjectables = [NSMapTable strongToStrongObjectsMapTable];
         _overlaysTable = nil;
         _registrationLockToken = [NSObject new];
+        _overlaysLockToken = [NSObject new];
     }
     return self;
 }
@@ -70,6 +74,7 @@
 
 - (nullable id)injectClass:(Class _Nonnull)classToInject
 {
+    [self registerInjectablesIfNeeded];
     id instance = [[_classInjectables objectForKey:classToInject] resolveInstance];
     if (_overlaysTable != nil) {
         return [self overlayedClass:classToInject originalInstance:instance];
@@ -79,11 +84,21 @@
 
 - (nullable id)injectProtocol:(nonnull Protocol *)protocolToInject
 {
+    [self registerInjectablesIfNeeded];
     id instance = [[_protocolInjectables objectForKey:protocolToInject] resolveInstance];
     if (_overlaysTable != nil) {
         return [self overlayedProtocol:protocolToInject originalInstance:instance];
     }
     return instance;
+}
+
+#pragma mark Registration
+
+- (void) registerInjectablesIfNeeded {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [BAInjectionRegistrar registerInjectables];
+    });
 }
 
 #pragma mark Overlaying
@@ -122,7 +137,7 @@
 
 - (void)unregisterOverlay:(nonnull BAOverlayedInjectable*)overlay
 {
-    @synchronized (self) {
+    @synchronized (_overlaysLockToken) {
         if (_overlaysTable != nil) {
             @synchronized (_overlaysTable) {
                 NSMapTable<id, BAOverlayedInjectable*> *overlaysTableCopy = [_overlaysTable copy];
@@ -143,7 +158,7 @@
 
 - (void)setupOverlay
 {
-    @synchronized (self) {
+    @synchronized (_overlaysLockToken) {
         if (_overlaysTable == nil) {
             _overlaysTable = [NSMapTable strongToWeakObjectsMapTable];
         }

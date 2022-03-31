@@ -74,6 +74,11 @@ enum
      Could not create the URL Request
      */
     BAConnectionErrorCauseRequestCreation     = 800,
+    
+    /*!
+     Server respond with http code 429 (overloaded)
+     */
+    BAConnectionErrorCauseServerTooManyRequest     = 900,
 };
 /*!
  @typedef BAConnectionErrorCause
@@ -107,7 +112,7 @@ typedef NSInteger BAConnectionErrorCause;
  @property timeout
  @abstract The number of second before the query is considerated as failed without response from the server. Default = 60.
  */
-@property (nonatomic) NSInteger timeout;
+@property (nonatomic) NSTimeInterval timeout;
 
 /*!
  @property _delegate
@@ -124,6 +129,7 @@ typedef NSInteger BAConnectionErrorCause;
  Controls whether this connection can bypass the global Opt-Out
  */
 @property (nonatomic) BOOL canBypassOptOut;
+
 
 /*!
  @method errorCauseForError:

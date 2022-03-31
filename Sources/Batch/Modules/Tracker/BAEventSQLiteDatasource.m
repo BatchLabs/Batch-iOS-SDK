@@ -21,7 +21,9 @@
 #define DB_VERSION          @3
 
 
-@implementation BAEventSQLiteDatasource
+@implementation BAEventSQLiteDatasource {
+    NSObject *_lock;
+}
 
 - (instancetype)initWithFilename:(NSString *)name forDBHelper:(id<BAEventDBHelperProtocol>)eventDBHelper
 {
@@ -32,7 +34,7 @@
         return nil;
     }
     
-    self.lock = [NSObject new];
+    _lock = [NSObject new];
     
     if (!eventDBHelper) {
         return nil;
@@ -203,7 +205,7 @@
 
 - (void)close
 {
-    @synchronized(self.lock)
+    @synchronized(_lock)
     {
         if( self->_database )
         {
@@ -218,7 +220,7 @@
 
 - (void)clear
 {
-    @synchronized(self.lock)
+    @synchronized(_lock)
     {
         NSString *clearStatement = [NSString stringWithFormat:@"DELETE FROM %@;", TABLE_EVENTS];
         
@@ -231,7 +233,7 @@
 
 - (BOOL)addEvent:(BAEvent *)event
 {
-    @synchronized(self.lock)
+    @synchronized(_lock)
     {
         if( !self->_insertStatement || !event )
         {
@@ -277,7 +279,7 @@
 
 - (NSArray *)eventsToSend:(NSUInteger)count
 {
-    @synchronized(self.lock)
+    @synchronized(_lock)
     {
         NSMutableArray *events = [[NSMutableArray alloc] initWithCapacity:count];
         
@@ -349,7 +351,7 @@
 
 - (void)updateEventsStateFrom:(BAEventState)fromState to:(BAEventState)toState
 {
-    @synchronized(self.lock)
+    @synchronized(_lock)
     {
         NSMutableString *updateSQL = [[NSMutableString alloc] init];
         [updateSQL appendFormat:@"UPDATE %@ SET %@='%ld'", TABLE_EVENTS, COLUMN_STATE, (long)toState];
@@ -377,7 +379,7 @@
 
 - (void)updateEventsStateTo:(BAEventState)state forEventsIdentifier:(NSArray*)events
 {
-    @synchronized(self.lock)
+    @synchronized(_lock)
     {
         if( !events || [events count] == 0 )
         {
@@ -428,7 +430,7 @@
 
 - (void)deleteEvents:(NSArray *)eventIdentifiers
 {
-    @synchronized(self.lock)
+    @synchronized(_lock)
     {
         if( !eventIdentifiers || [eventIdentifiers count] == 0 )
         {
@@ -484,7 +486,7 @@
 
 - (void)deleteEventsOlderThanTheLast:(NSUInteger)eventNumber
 {
-    @synchronized(self.lock)
+    @synchronized(_lock)
     {
         if (eventNumber <= 0)
         {

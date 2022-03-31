@@ -84,11 +84,6 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
     [[NSNotificationCenter defaultCenter] addObserver:[BAMessagingCenter class]
                                              selector:@selector(pushOpenedNotification:)
                                                  name:BatchPushOpenedNotification object:nil];
-
-    BAInjectable *lcInjectable = [BAInjectable injectableWithInitializer: ^id () {
-                                    return [BAMessagingCenter instance];
-                                 }];
-    [BAInjection registerInjectable:lcInjectable forClass:BAMessagingCenter.class];
 }
 
 + (instancetype)instance

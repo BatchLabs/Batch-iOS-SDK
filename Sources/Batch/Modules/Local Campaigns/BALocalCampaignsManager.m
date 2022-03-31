@@ -18,25 +18,53 @@
 #import <Batch/BALocalCampaignCountedEvent.h>
 
 #import <Batch/BALocalCampaignsCenter.h>
-#import <Batch/BACampaignsLoadedSignal.h>
+#import <Batch/BALocalCampaignsJITService.h>
+#import <Batch/BAWebserviceClientExecutor.h>
+#import <Batch/BAStandardQueryWebserviceIdentifiersProvider.h>
 
 #define LOG_DOMAIN @"LocalCampaignsManager"
 
+/// Max number of campaigns to send to the server for JIT sync
+#define MAX_CAMPAIGNS_JIT_THRESHOLD 5
+
+/// Min delay between two JIT sync (in seconds)
+#define MIN_DELAY_BETWEEN_JIT_SYNC 15
+
+/// Period during cached local campaign requiring a JIT sync is considered as up-to-date  (in seconds).
+#define JIT_CAMPAIGN_CACHE_PERIOD 30
+
 @interface BALocalCampaignsManager ()
 {
+    /// Date provider
     id<BADateProviderProtocol> _dateProvider;
-    id<BALocalCampaignTrackerProtocol> _viewTracker;
 
+    /// View tracker
+    BALocalCampaignsTracker *_viewTracker;
+
+    /// Local campaigns
     NSMutableArray<BALocalCampaign*> * _campaignList;
+    
+    /// Watched event names
     NSSet *_watchedEventNames;
+    
+    /// Timestamp to wait before JIT service be available again.
+    NSTimeInterval _nextAvailableJITTimestamp;
+    
+    /// Simple synchronized lock for watched events
     NSObject *_watchedEventsLock;
+    
+    /// Simple synchronized lock for requiresJITSync
+    NSObject *_nextAvailableJITTimestampLock;
+    
+    /// Cached list of synced JIT campaigns
+    NSMutableDictionary *_syncedJITCampaigns;
 }
 
 @end
 
 @implementation BALocalCampaignsManager
 
-- (instancetype)initWithViewTracker:(id<BALocalCampaignTrackerProtocol>)viewTracker {
+- (instancetype)initWithViewTracker:(BALocalCampaignsTracker*)viewTracker {
     self = [self init];
     if (self) {
         _dateProvider = [BASecureDateProvider new];
@@ -47,7 +75,7 @@
     return self;
 }
 
-- (instancetype)initWithDateProvider:(id<BADateProviderProtocol>)dateProvider viewTracker:(id<BALocalCampaignTrackerProtocol>)viewTracker {
+- (instancetype)initWithDateProvider:(id<BADateProviderProtocol>)dateProvider viewTracker:(BALocalCampaignsTracker*)viewTracker {
     self = [self init];
     if (self) {
         _dateProvider = dateProvider;
@@ -61,6 +89,8 @@
 - (void)setup {
     _campaignList = [NSMutableArray new];
     _watchedEventsLock = [NSObject new];
+    _nextAvailableJITTimestampLock = [NSObject new];
+    _syncedJITCampaigns = [NSMutableDictionary dictionary];
 }
 
 #pragma mark Public methods
@@ -93,10 +123,9 @@
     return [watchedEvents containsObject:uppercaseName];
 }
 
-- (BALocalCampaign*)campaignToDisplayForSignal:(id<BALocalCampaignSignalProtocol>)signal {
+- (nonnull NSArray<BALocalCampaign*>*)eligibleCampaignsSortedByPriority:(id<BALocalCampaignSignalProtocol>)signal {
     @synchronized (_campaignList) {
         NSMutableArray<BALocalCampaign*>* eligibleCampaigns = [NSMutableArray new];
-
         for (BALocalCampaign *campaign in _campaignList) {
             BOOL satisfiesTrigger = false;
             for (id<BALocalCampaignTriggerProtocol> trigger in campaign.triggers) {
@@ -115,21 +144,107 @@
 
             [eligibleCampaigns addObject:campaign];
         }
-
-        [_campaignList sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        [BALogger debugForDomain:LOG_DOMAIN message:@"Found %lu eligible campaigns for signal %@", (unsigned long)[eligibleCampaigns count], [signal description]];
+        
+        return [eligibleCampaigns sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
             NSInteger first = ((BALocalCampaign*)obj1).priority;
             NSInteger second = ((BALocalCampaign*)obj2).priority;
             return (first < second) ? NSOrderedDescending : ((first == second) ? NSOrderedSame : NSOrderedAscending);
         }];
-
-        NSUInteger count = [eligibleCampaigns count];
-        [BALogger debugForDomain:LOG_DOMAIN message:@"Found %lu eligible campaigns for signal %@", (unsigned long)count, [signal description]];
-        if (count > 0) {
-            return eligibleCampaigns[0];
-        }
-
-        return nil;
     }
+}
+
+- (nonnull NSArray<BALocalCampaign*>*)firstEligibleCampaignsRequiringSync:(NSArray<BALocalCampaign*>*)eligibleCampaigns
+{
+    NSMutableArray *eligibleCampaignNotRequiringSync = [NSMutableArray array];
+    int i = 0;
+    for(BALocalCampaign *campaign in eligibleCampaigns) {
+        if (i >= MAX_CAMPAIGNS_JIT_THRESHOLD) {
+            break;
+        }
+        if (campaign.requiresJustInTimeSync) {
+            [eligibleCampaignNotRequiringSync addObject:campaign];
+        } else {
+            break;
+        }
+        i++;
+    }
+    return eligibleCampaignNotRequiringSync;
+}
+
+- (nullable BALocalCampaign*)firstCampaignNotRequiringJITSync:(NSArray<BALocalCampaign*>*)eligibleCampaigns
+{
+    for(BALocalCampaign *campaign in eligibleCampaigns) {
+        if (!campaign.requiresJustInTimeSync) {
+            return campaign;
+        }
+    }
+    return nil;
+}
+
+- (void)verifyCampaignsEligibilityFromServer:(NSArray<BALocalCampaign*>*)eligibleCampaigns withCompletion:(void (^ _Nonnull)(BALocalCampaign * _Nullable))completionHandler
+{
+    
+    if ([eligibleCampaigns count] <= 0) {
+        completionHandler(nil);
+    }
+    
+    if (![self isJITServiceAvailable]) {
+        completionHandler(nil);
+    }
+    NSMutableArray *eligibleCampaignsSynced = [eligibleCampaigns mutableCopy];
+    BALocalCampaignsJITService *wsClient = [[BALocalCampaignsJITService alloc] initWithLocalCampaigns:eligibleCampaignsSynced viewTracker:_viewTracker success:^(NSArray* eligibleCampaignIds) {
+        
+        self->_nextAvailableJITTimestamp = [[self->_dateProvider currentDate] timeIntervalSince1970] + MIN_DELAY_BETWEEN_JIT_SYNC;
+        
+        if ([eligibleCampaignIds count] > 0) {
+            for (BALocalCampaign *campaign in eligibleCampaignsSynced) {
+                BATSyncedJITResult *syncedJITResult = [[BATSyncedJITResult alloc] initWithTimestamp:[[self->_dateProvider currentDate] timeIntervalSince1970]];
+                if (![eligibleCampaignIds containsObject:campaign.campaignID]) {
+                    [eligibleCampaignsSynced removeObject:campaign];
+                    syncedJITResult.eligible = false;
+                } else {
+                    syncedJITResult.eligible = true;
+                }
+                self->_syncedJITCampaigns[campaign.campaignID] = syncedJITResult;
+            }
+            if ([eligibleCampaignsSynced count] > 0) {
+                completionHandler(eligibleCampaigns[0]);
+            } else {
+                completionHandler(nil);
+            }
+        } else {
+            completionHandler(nil);
+        }
+    } error:^(NSError* error, NSNumber* retryAfter) {
+        self->_nextAvailableJITTimestamp = [[self->_dateProvider currentDate] timeIntervalSince1970] + retryAfter.doubleValue;
+        completionHandler(nil);
+    }];
+    [BAWebserviceClientExecutor.sharedInstance addClient:wsClient];
+}
+
+- (BOOL)isJITServiceAvailable
+{
+    @synchronized (_nextAvailableJITTimestampLock) {
+        return ([[_dateProvider currentDate] timeIntervalSince1970] >= _nextAvailableJITTimestamp);
+    }
+}
+
+- (BATSyncedJITCampaignState)syncedJITCampaignState:(BALocalCampaign*)campaign
+{
+    if (!campaign.requiresJustInTimeSync) {
+        //Should not happen but ensure we do not sync for a non-jit campaign
+        return BATSyncedJITCampaignStateEligible;
+    }
+    
+    BATSyncedJITResult *syncedJITResult = _syncedJITCampaigns[campaign.campaignID];
+    if (syncedJITResult == nil) {
+        return BATSyncedJITCampaignStateRequiresSync;
+    }
+    if ([[_dateProvider currentDate] timeIntervalSince1970] >= (syncedJITResult.timestamp + JIT_CAMPAIGN_CACHE_PERIOD)) {
+        return BATSyncedJITCampaignStateRequiresSync;
+    }
+    return syncedJITResult.eligible ? BATSyncedJITCampaignStateEligible : BATSyncedJITCampaignStateNotEligible;
 }
 
 - (nullable NSDictionary<NSString*, BALocalCampaignCountedEvent*>*)viewCountsForLoadedCampaigns
@@ -150,6 +265,38 @@
     }
     
     return views;
+}
+
+- (BOOL)isOverGlobalCappings {
+    
+    if (_cappings == nil ) {
+        // No cappings
+        return false;
+    }
+    
+    if (_cappings.session != nil && _viewTracker.sessionViewsCount >= _cappings.session.intValue) {
+        [BALogger debugForDomain:LOG_DOMAIN message:@"Session capping has been reached"];
+        return true;
+    }
+    
+    NSArray<BALocalCampaignsTimeBasedCapping *>* timeBasedCappings = _cappings.timeBasedCappings;
+    if (timeBasedCappings != nil) {
+        for (BALocalCampaignsTimeBasedCapping *timeBasedCapping in timeBasedCappings) {
+            if (timeBasedCapping.duration != nil && timeBasedCapping.views != nil) {
+                double timestamp = [[_dateProvider currentDate] timeIntervalSince1970] - timeBasedCapping.duration.doubleValue;
+                NSNumber *count = [_viewTracker numberOfViewEventsSince:timestamp];
+                if (count == nil ) {
+                    [BALogger debugForDomain:LOG_DOMAIN message:@"Cannot retrived the number of view events. Campaigns will be prevented from displaying."];
+                    return true;
+                }
+                if (count.intValue >= timeBasedCapping.views.intValue) {
+                    [BALogger debugForDomain:LOG_DOMAIN message:@"Time-based cappings have been reached"];
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
 }
 
 #pragma mark Private methods
@@ -251,7 +398,7 @@
         [BALogger debugForDomain:LOG_DOMAIN message:@"Ignoring campaign %@ since it is past its end_date", campaign.campaignID];
         return false;
     }
-    
+
     return true;
 }
 

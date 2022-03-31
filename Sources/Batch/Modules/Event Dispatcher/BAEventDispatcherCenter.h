@@ -29,6 +29,8 @@
 
 - (void)removeEventDispatcher:(nonnull id<BatchEventDispatcherDelegate>)dispatcher;
 
+- (nonnull NSDictionary*)dispatchersAnalyticRepresentation;
+
 - (void)dispatchEventWithType:(BatchEventDispatcherType)type payload:(nonnull id<BatchEventDispatcherPayload>)payload;
 
 @end

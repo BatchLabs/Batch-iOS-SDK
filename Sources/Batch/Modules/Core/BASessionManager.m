@@ -11,6 +11,8 @@
 #import <Batch/BANotificationCenter.h>
 #import <Batch/BAUptimeProvider.h>
 #import <Batch/BATrackerCenter.h>
+#import <Batch/BALocalCampaignsCenter.h>
+
 
 #define LOCAL_LOGGER_DOMAIN @"SessionManager"
 
@@ -76,7 +78,7 @@ NSString *const BATNewSessionStartedNotification = @"NewSessionStarted";
     _sessionID = [[NSUUID UUID] UUIDString];
     [BALogger debugForDomain:@"SessionManager" message:@"New session started. ID: '%@'", _sessionID];
     [[BANotificationCenter defaultCenter] postNotificationName:BATNewSessionStartedNotification object:nil];
-    
+    [[[BALocalCampaignsCenter instance] viewTracker] resetSessionViewsCount];
     
     //TODO: re-enable this [ch13776]
     //[BATrackerCenter trackPrivateEvent:@"_NEW_SESSION"

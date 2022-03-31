@@ -9,7 +9,6 @@
 #import <Batch/BADirectories.h>
 #import <Batch/BAJson.h>
 #import <Batch/BALogger.h>
-#import <Batch/BAInjection.h>
 
 #define LOGGER_DOMAIN @"Local Campaigns - File Persistence"
 #define LOCAL_ERROR_DOMAIN @"com.batch.module.localcampaigns.filepersistence"
@@ -17,15 +16,6 @@
 #define FILE_VERSION 1
 
 @implementation BALocalCampaignsFilePersistence
-
-bainjection_injectable_initializer bai_local_campagins_persistence_init() {
-    BAInjectable *injectable = [BAInjectable injectableWithInitializer:^id () {
-        return [BALocalCampaignsFilePersistence new];
-    }];
-    
-    [BAInjection registerInjectable:injectable
-                        forProtocol:@protocol(BALocalCampaignsPersisting)];
-}
 
 - (void)persistCampaigns:(nonnull NSDictionary*)rawCampaignsData
 {

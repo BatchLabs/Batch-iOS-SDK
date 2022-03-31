@@ -10,6 +10,25 @@
 #import <Batch/BatchMessaging.h>
 #import <Batch/BatchPush.h>
 
+@interface BatchInboxNotificationContentMessage : NSObject
+
+/**
+ Notification title (if present)
+ */
+@property (nonatomic, readonly, nullable) NSString *title;
+
+/**
+ Notification subtitle (if present)
+ */
+@property (nonatomic, readonly, nullable) NSString *subtitle;
+
+/**
+ Notification alert body
+ */
+@property (nonatomic, readonly, nullable) NSString *body;
+
+@end
+
 /**
  BatchInboxNotificationContent is the model for notifications fetched using the Inbox API
  Use it to display them in the way you like.
@@ -22,14 +41,24 @@
 @property (nonatomic, readonly, nonnull) NSString *identifier;
 
 /**
- Notification title (if present)
+ Notification message, if present.
+ This can be nil if filtering of silent notifications has been disabled on the inbox fetcher, meaning that this notification is silent (shows nothing to the user).
  */
-@property (nonatomic, readonly, nullable) NSString *title;
+@property (nonatomic, readonly, nullable) BatchInboxNotificationContentMessage *message;
+
+/**
+ Notification title (if present)
+ @deprecated
+ */
+@property (nonatomic, readonly, nullable) NSString *title  __attribute__((deprecated("The title should be accessed via the message property")));
 
 /**
  Notification alert body
+ 
+ For compatibility, this will be the empty string when representing a silent notification, if their filtering has been disabled on the fetcher.
+ @deprecated
  */
-@property (nonatomic, readonly, nonnull) NSString *body;
+@property (nonatomic, readonly, nonnull) NSString *body __attribute__((deprecated("The body should be accessed via the message property")));
 
 /**
  URL of the rich notification attachment (image/audio/video)
@@ -58,6 +87,11 @@
  @deprecated
  */
 @property (nonatomic, readonly) BOOL isDeleted  __attribute__((deprecated("You should refresh your copy of the data with allFetchedNotifications after using markNotificationAsDeleted.")));
+
+/**
+ Flag indicating whether this notification is silent or not
+ */
+@property (nonatomic, readonly) BOOL isSilent;
 
 /**
  The push notification's source, indicating what made Batch send it. It can come from a push campaign via the API or the dashboard, or from the transactional API, for example.
@@ -91,6 +125,17 @@
  This class should not be instanciated directly: use BatchInbox to get a correctly initialized instance.
  */
 - (nonnull instancetype)init NS_UNAVAILABLE;
+
+/**
+ Whether silent notifications should be filtered from the fetched notifications. This parameter should be set before the first fetch happens.
+ If set to false, silent notifications (notifications not showing a visible message to the user) will not be filtered by the SDK.
+ 
+ For compatiblity, a notification content's `body` property will be the empty string rather than nil.
+ To differentiate silent notifications from visible ones, look at the `message` property: it will be nil if the notification is silent.
+ 
+ Default: true
+ */
+@property (nonatomic) BOOL filterSilentNotifications;
 
 /**
  Number of notifications to fetch on each call, up to 100 messages per page.

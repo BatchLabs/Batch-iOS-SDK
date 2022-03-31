@@ -10,6 +10,7 @@
 #import <Batch/BACenterMulticastDelegate.h>
 
 #import <Batch/BALocalCampaignsManager.h>
+#import <Batch/BALocalCampaignsTracker.h>
 #import <Batch/BALocalCampaignSignalProtocol.h>
 
 @class BatchEventData;
@@ -26,7 +27,14 @@
 
 @property (nonnull, readonly) BALocalCampaignsManager *campaignManager;
 
+@property (nonnull, readonly) BALocalCampaignsTracker *viewTracker;
+
 @property (assign) long globalMinimumDisplayInterval;
+
+/**
+ Persistence queue. Exposed for tests only.
+ */
+@property (nonnull, nonatomic, readonly, strong) dispatch_queue_t persistenceQueue;
 
 /**
  Displays the campaign for the specified application event.
@@ -61,6 +69,13 @@
   - Emit the campaigns loaded signal
  */
 - (void)handleWebserviceResponsePayload:(nonnull NSDictionary*)payload;
+
+/**
+ Notify this module that the local campaigns webservice has finished with success or not.
+ 
+ Used to release the signal queue.
+ */
+-(void)localCampaignsWebserviceDidFinish;
 
 /**
  Trigger a WS call to refresh the campaigns

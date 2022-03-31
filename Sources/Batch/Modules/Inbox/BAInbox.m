@@ -37,21 +37,6 @@
 
 @implementation BAInbox
 
-+ (void)load
-{
-    BAInjectable *lcInjectable = [BAInjectable injectableWithInitializer: ^id () {
-        static id singleInstance = nil;
-        static dispatch_once_t once;
-        dispatch_once(&once, ^{
-            singleInstance = [[BAInboxSQLiteDatasource alloc] initWithFilename:@"ba_in.db" forDBHelper:[BAInboxSQLiteHelper new]];
-        });
-        return singleInstance;
-    }];
-                             
-    [BAInjection registerInjectable:lcInjectable
-                        forProtocol:@protocol(BAInboxDatasourceProtocol)];
-}
-
 - (instancetype)init
 {
     return nil;
@@ -66,6 +51,7 @@
 {
     self = [super init];
     if (self) {
+        [self commonInit];
         _clientType = BAInboxWebserviceClientTypeInstallation;
         _clientIdentifier = [BAPropertiesCenter valueForShortName:@"di"];
         _clientAuthKey = nil;
@@ -83,6 +69,7 @@
 {
     self = [super init];
     if (self) {
+        [self commonInit];
         _clientType = BAInboxWebserviceClientTypeUserIdentifier;
         _clientIdentifier = identifier;
         _clientAuthKey = authKey;
@@ -93,6 +80,10 @@
         }
     }
     return self;
+}
+
+- (void)commonInit {
+    _filterSilentNotifications = true;
 }
 
 - (void)setupUsingCache:(BOOL)useCache
@@ -455,7 +446,8 @@
         BatchInboxNotificationContent *model = [[BatchInboxNotificationContent alloc] initWithInternalIdentifier:privateModel.identifiers.identifier
                                                                                                       rawPayload:privateModel.payload
                                                                                                         isUnread:privateModel.isUnread
-                                                                                                            date:privateModel.date];
+                                                                                                            date:privateModel.date
+                                                                                        failOnSilentNotification:self.filterSilentNotifications];
         if (model != nil) {
             [models addObject:model];
         } else {

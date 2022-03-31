@@ -8,12 +8,14 @@
 #import <Batch/BALocalCampaignsService.h>
 
 #import <Batch/BALogger.h>
+#import <Batch/BAInjection.h>
 #import <Batch/BAWebserviceURLBuilder.h>
 
 #import <Batch/BALocalCampaignsCenter.h>
 
 #import <Batch/BAWSQueryLocalCampaigns.h>
 #import <Batch/BAWSResponseLocalCampaigns.h>
+#import <Batch/BAMetricRegistry.h>
 
 #import <Batch/BALocalCampaignCountedEvent.h>
 
@@ -64,6 +66,7 @@
 @interface BALocalCampaignsServiceDelegate()
 {
     BALocalCampaignsCenter *_lcCenter;
+    BAMetricRegistry *_metricRegistry;
 }
 
 @end
@@ -75,26 +78,35 @@
     self = [super init];
     if (self) {
         _lcCenter = center;
+        _metricRegistry = [BAInjection injectClass:BAMetricRegistry.class];
     }
     return self;
 }
 
+- (void)webserviceClientWillStart:(BAQueryWebserviceClient *)client
+{
+    [[_metricRegistry localCampaignsSyncResponseTime] startTimer];
+}
+
 - (void)webserviceClient:(BAQueryWebserviceClient*)client didFailWithError:(NSError *)error
 {
+    [[_metricRegistry localCampaignsSyncResponseTime] observeDuration];
+    [_lcCenter localCampaignsWebserviceDidFinish];
 }
 
 - (void)webserviceClient:(BAQueryWebserviceClient*)client didSucceedWithResponses:(NSArray<id<BAWSResponse>> *)responses
 {
-    for (BAWSResponse *response in responses)
-    {
-        if ([response isKindOfClass:[BAWSResponseLocalCampaigns class]])
-        {
+    [[_metricRegistry localCampaignsSyncResponseTime] observeDuration];
+    for (BAWSResponse *response in responses) {
+        if ([response isKindOfClass:[BAWSResponseLocalCampaigns class]]) {
             [self handleLocalCampaignsResponse:(BAWSResponseLocalCampaigns*)response];
         }
     }
+    [_lcCenter localCampaignsWebserviceDidFinish];
 }
 
-- (void)handleLocalCampaignsResponse:(BAWSResponseLocalCampaigns*)response {
+- (void)handleLocalCampaignsResponse:(BAWSResponseLocalCampaigns*)response
+{
     if (response == nil || response.payload == nil) {
         [BALogger errorForDomain:@"Local Campaigns" message:@"An error occurred while handling the local campaigns query response."];
         return;

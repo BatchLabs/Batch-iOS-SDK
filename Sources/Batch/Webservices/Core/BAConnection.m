@@ -15,6 +15,8 @@
 #import <Batch/BALogger.h>
 #import <Batch/BARandom.h>
 
+#define DEFAULT_RETRY_AFTER @60 // seconds
+
 // Internal methods and parameters.
 @interface BAConnection()
 
@@ -271,7 +273,17 @@
             if (!serverError) {
                 serverError = @"<undecodable>";
             }
-            error = [NSError errorWithDomain:NETWORKING_ERROR_DOMAIN code:BAConnectionErrorCauseOther userInfo:@{@"serverErrorBody":serverError, @"subcode": @3}];
+            if (statusCode == 429) {
+                NSDictionary *headers = [httpResponse allHeaderFields];
+                NSString *retryAfterHeader = [headers objectForKey:@"Retry-After"];
+                NSNumber *retryAfter = DEFAULT_RETRY_AFTER;
+                if ([BANullHelper isStringEmpty:retryAfterHeader] == NO) {
+                    retryAfter = [NSNumber numberWithInteger:[retryAfterHeader integerValue]];
+                }
+                error = [NSError errorWithDomain:NETWORKING_ERROR_DOMAIN code:BAConnectionErrorCauseServerTooManyRequest userInfo:@{@"serverErrorBody":serverError, @"subcode": @3, @"retryAfter": retryAfter}];
+            } else {
+                error = [NSError errorWithDomain:NETWORKING_ERROR_DOMAIN code:BAConnectionErrorCauseOther userInfo:@{@"serverErrorBody":serverError, @"subcode": @3}];
+            }
             
             if (statusCode == kCipherFallbackHTTPErrorCode) {
                 NSNumber *now = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];

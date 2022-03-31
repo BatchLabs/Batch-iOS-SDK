@@ -246,6 +246,9 @@
 - (void)connectionWillStart
 {
     [super connectionWillStart];
+    if ([self.delegate respondsToSelector:@selector(webserviceClientWillStart:)]) {
+        [self.delegate webserviceClientWillStart:self];
+    }
     [[BAWebserviceMetrics sharedInstance] webserviceStarted:self.shortIdentifier];
 }
 

@@ -171,6 +171,8 @@ if (error == NULL) {\
 
 #define kParametersWebserviceBase                   @"https://ws.batch.com"
 #define kParametersDisplayReceiptWebserviceBase     @"https://drws.batch.com"
+#define kParametersMetricWebserviceBase             @"https://wsmetrics.batch.com/api-sdk"
+
 #define kParametersWebserviceDomain                 kParametersWebserviceHost @"/i/"
 
 // URL shortnames
@@ -181,6 +183,8 @@ if (error == NULL) {\
 #define kParametersAttributesCheckWebserviceShortname   @"atc"
 #define kParametersInboxFetchWebserviceShortname        @"inbox"
 #define kParametersLocalCampaignsWebserviceShortname    @"local"
+#define kParametersLocalCampaignsJITWebserviceShortname    @"lc_jit"
+
 
 // start
 #define kParametersStartWebserviceURL               kParametersWebserviceDomain BAVersion @"/" kParametersStartWebserviceShortname

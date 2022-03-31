@@ -2,7 +2,6 @@
 
 #import <Batch/BADBGNameValueListItem.h>
 #import <Batch/BAEventTrigger.h>
-#import <Batch/BANowTrigger.h>
 #import <Batch/BANextSessionTrigger.h>
 
 #define DEFAULT_CELL_NAME @"cell"
@@ -58,8 +57,6 @@
             } else {
                 triggerValue = [NSString stringWithFormat:@"Event: \"%@\"", eventTrigger.name];
             }
-        } else if ([trigger isKindOfClass:[BANowTrigger class]]) {
-            triggerValue = @"As soon as possible";
         } else if ([trigger isKindOfClass:[BANextSessionTrigger class]]) {
             triggerValue = @"New session";
         } else {

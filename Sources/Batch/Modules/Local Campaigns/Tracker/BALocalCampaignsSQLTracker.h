@@ -6,11 +6,11 @@
 
 + (BALocalCampaignsSQLTracker *)instance;
 
-/*!
- @property lock
- @abstract Read/Write lock.
- */
-@property NSObject *lock;
+- (BOOL)deleteViewEvents;
+
+- (void)clear;
+
+- (void)close;
 
 @end
 

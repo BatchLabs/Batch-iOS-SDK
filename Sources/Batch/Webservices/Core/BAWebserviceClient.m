@@ -80,7 +80,7 @@
 }
 
 // Change the request timeout. Default value is 60s
-- (void)setTimeout:(NSUInteger)seconds
+- (void)setTimeout:(NSTimeInterval)seconds
 {
     [_connection setTimeout:seconds];
 }

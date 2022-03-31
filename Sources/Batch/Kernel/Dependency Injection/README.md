@@ -86,23 +86,7 @@ BAInjectable *lcInjectable = [BAInjectable injectableWithInstance:instance];
 
 >Note: Consider adding "BATCH_USE_INJECTION_OUTSIDE_TESTS" after your init signature to tell developers that classes should not be instanciated directly 
 
-### Providing a class at app start
-
-Rather than rely on +(void)load or other ObjC methods, BAInjection.h provides a macro that allows you to register your injector on launch:
-
-```
-bainjection_injectable_initializer bai_local_campaigns_init() {
-    BAInjectable *lcInjectable = [BAInjectable injectableWithnstance:[BALocalCampaignsManager shared]];
-                             
-    [BAInjection registerInjectable:lcInjectable
-                        forProtocol:@protocol(BALocalCampaignsCenterProtocol)];
-}
-```
-
-Note that you **SHOULD** prefix initializers with "bai" even though no compile time check will be performed.
-This is because on static libraries, symbol conflicts can occure. This is not a problem for dynamic frameworks, but we can be relinked statically.
-
-This function will be run on load, due to the underlying usage of __attribute((constructor))
+All injectables classes are declared in `BAInjectionRegistrar.m`. Its allow us to handle declaration order and prevent dependency issues. Registration is done only once during the first injection.
 
 ## Testing
 

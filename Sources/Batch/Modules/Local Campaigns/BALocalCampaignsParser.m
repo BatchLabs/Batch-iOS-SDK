@@ -10,9 +10,6 @@
 #import <Batch/BATJsonDictionary.h>
 #import <Batch/BAEventTrigger.h>
 #import <Batch/BANextSessionTrigger.h>
-#import <Batch/BANowTrigger.h>
-#import <Batch/BACampaignsRefreshedTrigger.h>
-#import <Batch/BACampaignsLoadedTrigger.h>
 
 #import <Batch/BALocalCampaignOutputProtocol.h>
 #import <Batch/BALocalCampaignLandingOutput.h>
@@ -148,6 +145,8 @@
         return nil;
     }
     
+    campaign.requiresJustInTimeSync = [[json objectForKey:@"requireJIT" kindOfClass:[NSNumber class] fallback:@(NO)] boolValue];
+    
     NSArray *triggersJSON = [json objectForKey:@"triggers" kindOfClass:[NSArray class] allowNil:NO error:&outErr];
     if (triggersJSON == nil) {
         if (error) {
@@ -214,6 +213,61 @@
     return triggers;
 }
 
++ (BALocalCampaignsGlobalCappings*)parseCappings:(NSDictionary*)rawJson outPersistable:(NSDictionary **)persist {
+    
+    BALocalCampaignsGlobalCappings *cappings = [BALocalCampaignsGlobalCappings new];
+    
+    NSDictionary *json = [rawJson objectForKey:@"cappings"];
+
+    if (json != nil && [json isKindOfClass:[NSDictionary class]]) {
+        
+        BATJsonDictionary *jsonCappings = [[BATJsonDictionary alloc] initWithDictionary:json errorDomain:@"com.batch.module.localcampaigns.parser.cappings"];
+        
+        cappings.session = [jsonCappings objectForKey:@"session" kindOfClass:[NSNumber class] fallback:nil];
+        
+        NSArray *jsonTimeBasedCappings = [jsonCappings objectForKey:@"time" kindOfClass:[NSArray class] fallback:nil];
+        
+        if (jsonTimeBasedCappings != nil) {
+            
+            NSMutableArray<BALocalCampaignsTimeBasedCapping*>* parsedTimeBasedCappings = [NSMutableArray new];
+
+            for (NSObject *jsonTimeBasedCapping in jsonTimeBasedCappings) {
+                BALocalCampaignsTimeBasedCapping *timeBasedCapping = [self parseTimeBasedCapping:(NSDictionary*)jsonTimeBasedCapping];
+                if (timeBasedCapping != nil && timeBasedCapping.duration != nil && timeBasedCapping.views != nil) {
+                    [parsedTimeBasedCappings addObject:timeBasedCapping];
+                }
+            }
+            if ([parsedTimeBasedCappings count] > 0) {
+                cappings.timeBasedCappings = parsedTimeBasedCappings;
+            }
+        }
+        if (persist != nil) {
+            *persist = @{
+                @"cappings": json
+            };
+        }
+        return cappings;
+    }
+    return nil;
+}
+   
++ (BALocalCampaignsTimeBasedCapping*)parseTimeBasedCapping:(NSDictionary*)rawJson {
+    
+    BATJsonDictionary *json = [[BATJsonDictionary alloc] initWithDictionary:rawJson errorDomain:@"com.batch.module.localcampaigns.parser.timebasedcapping"];
+    BALocalCampaignsTimeBasedCapping *timeBasedCapping = [BALocalCampaignsTimeBasedCapping new];
+    
+    timeBasedCapping.views = [json objectForKey:@"views" kindOfClass:[NSNumber class] fallback:nil];
+    if (timeBasedCapping.views.intValue == 0) {
+        timeBasedCapping.views = nil;
+    }
+    timeBasedCapping.duration = [json objectForKey:@"duration" kindOfClass:[NSNumber class] fallback:nil];
+    if (timeBasedCapping.duration.intValue == 0) {
+        timeBasedCapping.duration = nil;
+    }
+    return timeBasedCapping;
+}
+
+
 + (id<BALocalCampaignTriggerProtocol>)parseTrigger:(NSDictionary*)rawJson error:(NSError**)error {
     BATJsonDictionary *json = [[BATJsonDictionary alloc] initWithDictionary:rawJson errorDomain:@"com.batch.module.inapp.parser.error.trigger"];
     
@@ -234,26 +288,12 @@
         return nil;
     }
     
-    if ([@"NOW" isEqualToString:type]) {
+    if ([@"NOW" isEqualToString:type] || [@"NEXT_SESSION" isEqualToString:type]) {
         if (error) {
             *error = nil;
         }
-        return [BANowTrigger new];
-    } else if ([@"NEXT_SESSION" isEqualToString:type]) {
-        if (error) {
-            *error = nil;
-        }
+        // Workaround to handle deprecated NOW trigger as NEXT_SESSION
         return [BANextSessionTrigger new];
-    } else if ([@"CAMPAIGNS_REFRESHED" isEqualToString:type]) {
-        if (error) {
-            *error = nil;
-        }
-        return [BACampaignsRefreshedTrigger new];
-    } else if ([@"CAMPAIGNS_LOADED" isEqualToString:type]) {
-        if (error) {
-            *error = nil;
-        }
-        return [BACampaignsLoadedTrigger new];
     } else if ([@"EVENT" isEqualToString:type]) {
         NSString *eventName = [[json objectForKey:@"event" kindOfClass:[NSString class] allowNil:NO error:&outErr] uppercaseString];
         if (eventName == nil) {

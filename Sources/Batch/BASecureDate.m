@@ -19,7 +19,9 @@
 
 @end
 
-@implementation BASecureDate
+@implementation BASecureDate {
+    NSObject *_lock;
+}
 
 #pragma mark -
 #pragma mark Public methods
@@ -36,10 +38,19 @@
     return sharedInstance;
 }
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        _lock = [NSObject new];
+    }
+    return self;
+}
+
 // Update the secure date system with the server date.
 - (void)updateServerDate:(NSNumber *)timestamp
 {
-    @synchronized(self)
+    @synchronized(_lock)
     {
         if (timestamp != nil)
         {
@@ -59,7 +70,7 @@
     }
 
     NSDate *date = nil;
-    @synchronized(self)
+    @synchronized(_lock)
     {
         NSDate *serverDate = [NSDate dateWithTimeIntervalSince1970:[self serverInterval]];
         NSTimeInterval delta = [BAUptimeProvider uptime] - [self bootInterval];

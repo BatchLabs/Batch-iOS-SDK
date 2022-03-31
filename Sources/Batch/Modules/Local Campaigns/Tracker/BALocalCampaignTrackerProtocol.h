@@ -26,6 +26,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BALocalCampaignCountedEvent*)eventInformationForCampaignID:(NSString*)campaignID kind:(BALocalCampaignTrackerEventKind)kind;
 
+/**
+ Get the number of view events tracked since a given timestamp
+
+ Return the number of view events ().
+ */
+ - (nullable NSNumber*)numberOfViewEventsSince:(double)timestamp;
+
 @end
 
 NS_ASSUME_NONNULL_END

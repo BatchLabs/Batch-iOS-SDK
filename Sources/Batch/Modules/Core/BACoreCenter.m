@@ -37,6 +37,9 @@
 
 #import <Batch/BAWindowHelper.h>
 
+#import <Batch/BAEventDispatcherCenter.h>
+#import <Batch/BAInjection.h>
+
 #define LOGGER_DOMAIN @"Core"
 
 // Internal methods and parameters.
@@ -304,28 +307,22 @@
 }
 
 - (void)callStartWebserviceWithSilentStart:(BOOL)isSilentStart {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        // Do that asynchronously on the next loop
-        // Kind of a dirty hack to let all of the UIApplicationWillEnterForegroundNotification main thread consumers
-        // This lets the session manager refresh the session ID
-        // A cleaner way would be to use the session manager's signal to track the start, but that's in dicussion and possibly coming later
-        id session = [BACoreCenter instance].status.sessionManager.sessionID;
-        if (session == nil) {
-            session = [NSNull null];
-        }
-        
-        [BALogger debugForDomain:LOGGER_DOMAIN message:@"Sending start webservice. Silent: %d Session: %@", isSilentStart, session];
-        
-        BAStartServiceDatasource *startService = [[BAStartServiceDatasource alloc] init];
-        startService.isSilent = isSilentStart;
-        BAQueryWebserviceClient *ws = [[BAQueryWebserviceClient alloc] initWithDatasource:startService delegate:nil];
-        [BAWebserviceClientExecutor.sharedInstance addClient:ws];
-        
-        [BATrackerCenter trackPrivateEvent:@"_START"
-                                parameters:@{@"silent":@(isSilentStart),
-                                             @"session": session
-                                }];
-    });
+    [BALogger debugForDomain:LOGGER_DOMAIN message:@"Sending start webservice. Silent: %d", isSilentStart];
+    
+    BAStartServiceDatasource *startService = [[BAStartServiceDatasource alloc] init];
+    startService.isSilent = isSilentStart;
+    BAQueryWebserviceClient *ws = [[BAQueryWebserviceClient alloc] initWithDatasource:startService delegate:nil];
+    [BAWebserviceClientExecutor.sharedInstance addClient:ws];
+            
+    NSMutableDictionary *startParameters = [NSMutableDictionary dictionary];
+    startParameters[@"silent"] = @(isSilentStart);
+    
+    
+    NSDictionary *dispatcherParameters = [[BAInjection injectClass:BAEventDispatcherCenter.class] dispatchersAnalyticRepresentation];
+    if ([dispatcherParameters count] > 0) {
+        startParameters[@"dispatchers"] = dispatcherParameters;
+    }
+    [BATrackerCenter trackPrivateEvent:@"_START" parameters: startParameters];
 }
 
 // Test if Batch is running in development mode.

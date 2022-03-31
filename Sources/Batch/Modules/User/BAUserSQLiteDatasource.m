@@ -11,7 +11,6 @@
 #import <Batch/BALogger.h>
 #import <Batch/BAParameter.h>
 #import <Batch/BADirectories.h>
-#import <Batch/BAInjection.h>
 
 #define USER_DATABASE_NAME    @"ba_user_profile.db"
 #define TABLE_ATTRIBUTES      @"attributes"
@@ -44,11 +43,6 @@
 @end
 
 @implementation BAUserSQLiteDatasource
-
-bainjection_injectable_initializer bai_user_datasource_init() {
-    [BAInjection registerInjectable:[BAInjectable injectableWithInstance:[BAUserSQLiteDatasource instance]]
-                        forProtocol:@protocol(BAUserDatasourceProtocol)];
-}
 
 + (BAUserSQLiteDatasource *)instance
 {

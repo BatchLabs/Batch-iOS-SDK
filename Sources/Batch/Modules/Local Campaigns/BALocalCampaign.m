@@ -24,3 +24,15 @@
 }
 
 @end
+
+@implementation BATSyncedJITResult
+
+- (nonnull instancetype)initWithTimestamp:(NSTimeInterval)timestamp {
+    self = [super init];
+    if (self) {
+        self.timestamp = timestamp;
+    }
+    return self;
+}
+
+@end

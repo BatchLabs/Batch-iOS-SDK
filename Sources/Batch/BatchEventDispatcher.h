@@ -70,6 +70,21 @@ typedef NS_ENUM(NSInteger, BatchEventDispatcherType) {
  */
 @protocol BatchEventDispatcherDelegate <NSObject>
 
+
+@optional
+/**
+ Get the name of the dispatcher
+ */
+- (nonnull NSString*)name;
+
+@optional
+/**
+ Get the version of the dispatcher
+ */
+
+- (NSUInteger)version;
+
+
 @required
 
 /**

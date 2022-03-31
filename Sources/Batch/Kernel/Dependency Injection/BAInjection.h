@@ -10,9 +10,6 @@
 #import <Batch/BAInjectable.h>
 #import <Batch/BAOverlayedInjectable.h>
 
-// Helper macro to make a static c function ran on library load
-#define bainjection_injectable_initializer __attribute((constructor)) static void
-
 #define bainjection_instance_singleton(initializer) \
 static id instance = nil; \
 static dispatch_once_t once; \

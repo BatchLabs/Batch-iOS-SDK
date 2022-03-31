@@ -12,7 +12,9 @@
 #import <Batch/BAPropertiesCenter.h>
 #import <Batch/BATrackerCenter.h>
 
-@implementation BAUserProfile
+@implementation BAUserProfile {
+    NSObject *_lock;
+}
 
 #pragma mark -
 #pragma mark Instance methods
@@ -45,6 +47,8 @@ static const int currentVersion = 1;
     {
         return self;
     }
+    
+    _lock = [NSObject new];
     
     return self;
 }
@@ -80,7 +84,7 @@ static const int currentVersion = 1;
 
 - (void)incrementVersion
 {
-    @synchronized(self)
+    @synchronized(_lock)
     {
         NSNumber *version = [self version];
         // Sanity
@@ -105,7 +109,7 @@ static const int currentVersion = 1;
 
 - (NSNumber*)version
 {
-    @synchronized(self)
+    @synchronized(_lock)
     {
         return [BAParameter objectForKey:kParametersAppProfileVersionKey fallback:@(1)];
     }

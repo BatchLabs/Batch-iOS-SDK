@@ -30,12 +30,6 @@
 - (long long)notificationTime:(nonnull NSString *)notificationId;
 
 /*!
- @property lock
- @abstract Read/Write lock.
- */
-@property (nonnull) NSObject *lock;
-
-/*!
  @property templateEvent
  @abstract DB Persistance helper for the object to persist.
  */

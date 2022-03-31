@@ -7,6 +7,13 @@
 #import <XCTest/XCTest.h>
 #import "BADBGFindMyInstallationHelper.h"
 
+@interface BATrackerCenter ()
+
+// Expose the private methods
+- (BAConcurrentQueue *)queue;
+
+@end
+
 @interface FindMyInstallationHelperTests : XCTestCase
 
 @end
@@ -24,7 +31,8 @@
 
 - (void)tearDown
 {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
+    // Clearing FIND_MY_INSTALLATION events
+    [[[BATrackerCenter instance] queue] clear];
 }
 
 - (void)testInstallationIdInClipboard

@@ -26,12 +26,6 @@
 
 @implementation BADisplayReceiptCenter
 
-+ (void)load
-{
-    [BAInjection registerInjectable:[BAInjectable injectableWithInstance:[BADisplayReceiptCenter new]]
-                           forClass:BADisplayReceiptCenter.class];
-}
-
 - (instancetype)init
 {
     self = [super init];

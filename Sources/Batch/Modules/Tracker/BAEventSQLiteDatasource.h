@@ -29,12 +29,6 @@
 - (instancetype)initWithFilename:(NSString *)name forDBHelper:(id<BAEventDBHelperProtocol>)eventDBHelper __attribute__((warn_unused_result));
 
 /*!
- @property lock
- @abstract Read/Write lock.
- */
-@property NSObject *lock;
-
-/*!
  @property templateEvent
  @abstract DB Persistance helper for the object to persist.
  */

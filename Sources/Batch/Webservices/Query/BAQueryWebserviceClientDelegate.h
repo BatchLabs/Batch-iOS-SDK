@@ -11,9 +11,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol BAQueryWebserviceClientDelegate
+@protocol BAQueryWebserviceClientDelegate <NSObject>
 
 @required
+
+- (void)webserviceClientWillStart:(BAQueryWebserviceClient*)client;
 
 - (void)webserviceClient:(BAQueryWebserviceClient*)client didFailWithError:(NSError *)error;
 
