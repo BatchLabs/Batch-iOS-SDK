@@ -9,7 +9,7 @@
 
 @implementation BASystemDateProvider
 
-- (NSDate*)currentDate {
+- (NSDate *)currentDate {
     return [NSDate date];
 }
 

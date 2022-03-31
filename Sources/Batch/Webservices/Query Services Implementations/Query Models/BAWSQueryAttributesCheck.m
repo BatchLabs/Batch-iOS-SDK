@@ -8,25 +8,22 @@
 
 #import <Batch/BAWSQueryAttributesCheck.h>
 
-@interface BAWSQueryAttributesCheck ()
-{
-    NSString   *_transactionID;
-    long long   _version;
+@interface BAWSQueryAttributesCheck () {
+    NSString *_transactionID;
+    long long _version;
 }
 @end
 
 @implementation BAWSQueryAttributesCheck
 
 // Standard constructor.
-- (id<BAWSQuery>)initWithTransactionID:(nonnull NSString *)transaction
-                                    andVersion:(long long)version
-{
+- (id<BAWSQuery>)initWithTransactionID:(nonnull NSString *)transaction andVersion:(long long)version {
     self = [super initWithType:kQueryWebserviceTypeAttributesCheck];
     if (self) {
         _transactionID = transaction;
         _version = version;
     }
-    
+
     return self;
 }
 
@@ -37,7 +34,7 @@
 
     [dictionary setObject:@(_version) forKey:@"ver"];
     [dictionary setObject:_transactionID forKey:@"trid"];
-    
+
     return dictionary;
 }
 

@@ -9,8 +9,7 @@
 
 @implementation BAMSGAction
 
-- (BOOL)isDismissAction
-{
+- (BOOL)isDismissAction {
     return self.actionIdentifier == nil || [@"batch.dismiss" isEqualToString:self.actionIdentifier];
 }
 

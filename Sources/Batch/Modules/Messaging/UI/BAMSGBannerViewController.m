@@ -13,17 +13,17 @@
     BAMSGBaseContainerView *v;
     if (self.allowSwipeToDismiss) {
         v = [BAMSGPannableAnchoredContainerView new];
-        ((BAMSGPannableAnchoredContainerView*)v).delegate = self;
+        ((BAMSGPannableAnchoredContainerView *)v).delegate = self;
     } else {
         v = [BAMSGBaseContainerView new];
     }
     v.touchPassthrough = true;
-    
+
     if (self.globalTapAction != nil) {
         [v addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self
                                                                         action:@selector(didDetectGlobalTap:)]];
     }
-    
+
     self.view = v;
 }
 
@@ -31,7 +31,7 @@
     [super viewDidAppear:animated];
     // Not sure why, but posting the notification directly does not work
     dispatch_async(dispatch_get_main_queue(), ^{
-        UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, self.view);
+      UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, self.view);
     });
 }
 

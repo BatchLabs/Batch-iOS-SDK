@@ -6,12 +6,11 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "BatchUser.h"
-#import "BAUserSQLiteDatasource.h"
 #import "BAUserDatasourceProtocol.h"
+#import "BAUserSQLiteDatasource.h"
+#import "BatchUser.h"
 
-@interface batchUserDataSQLTests : XCTestCase
-{
+@interface batchUserDataSQLTests : XCTestCase {
     id<BAUserDatasourceProtocol> _datasource;
     BatchUserDataEditor *_userEditor;
 }
@@ -22,11 +21,11 @@
 - (void)setUp {
     [super setUp];
     _datasource = [BAUserSQLiteDatasource new];
-    
+
     XCTAssertNotNil(_datasource);
-    
+
     [_datasource clear];
-    
+
     XCTAssertTrue([_datasource acquireTransactionLockWithChangeset:1]);
 }
 
@@ -60,7 +59,7 @@
     XCTAssertTrue([_datasource rollbackTransaction]);
     XCTAssertTrue([_datasource acquireTransactionLockWithChangeset:1]);
     XCTAssertTrue([_datasource commitTransaction]);
-    
+
     XCTAssertFalse([_datasource setStringAttribute:@"String" forKey:@"string"]);
     XCTAssertFalse([_datasource removeAttributeNamed:@"string"]);
     XCTAssertFalse([_datasource addTag:@"tag" toCollection:@"collection"]);
@@ -68,7 +67,7 @@
     XCTAssertFalse([_datasource clearTags]);
     XCTAssertFalse([_datasource clearTagsFromCollection:@"collection"]);
     XCTAssertFalse([_datasource clearAttributes]);
-    
+
     XCTAssertTrue([_datasource acquireTransactionLockWithChangeset:1]);
 }
 

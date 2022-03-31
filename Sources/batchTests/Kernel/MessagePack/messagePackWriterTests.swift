@@ -1,11 +1,11 @@
+import Batch.Batch_Private
 import Foundation
 import XCTest
-import Batch.Batch_Private
 
 // swiftlint:disable force_cast
 
 final class MessagePackWriterTests: XCTestCase {
-    
+
     func testNil() {
         assertPack("C0") { $0.writeNil() }
     }
@@ -14,9 +14,9 @@ final class MessagePackWriterTests: XCTestCase {
         assertPack("C2") { $0.write(false) }
 
         assertPack("C3") { $0.write(true) }
-        
+
         try assertPack("C2") { try $0.write(false as NSNumber) }
-        
+
         try assertPack("C3") { try $0.write(true as NSNumber) }
     }
 
@@ -26,7 +26,7 @@ final class MessagePackWriterTests: XCTestCase {
         try assertPack("01") { try $0.write(1 as NSNumber) }
 
         try assertPack("7F") { try $0.write(127 as NSNumber) }
-        
+
         try assertPack("CC80") { try $0.write(128 as NSNumber) }
 
         try assertPack("CCFF") { try $0.write(255 as NSNumber) }
@@ -37,10 +37,10 @@ final class MessagePackWriterTests: XCTestCase {
 
         try assertPack("CE80000000") { try $0.write(2_147_483_648 as NSNumber) }
 
-        try assertPack("CF7FFFFFFFFFFFFFFF") { try $0.write(9_223_372_036_854_775_807 as NSNumber) } // Max Int
+        try assertPack("CF7FFFFFFFFFFFFFFF") { try $0.write(9_223_372_036_854_775_807 as NSNumber) }  // Max Int
         try assertPack("CF8000000000000000") { try $0.write(UInt(9_223_372_036_854_775_808) as NSNumber) }
 
-        try assertPack("CFFFFFFFFFFFFFFFFF") { try $0.write(UInt(18_446_744_073_709_551_615) as NSNumber) } // Max UInt
+        try assertPack("CFFFFFFFFFFFFFFFFF") { try $0.write(UInt(18_446_744_073_709_551_615) as NSNumber) }  // Max UInt
 
         // Extra pack tests that use different codepaths
         assertPack("7F") { $0.writeUnsignedInt(127) }
@@ -76,7 +76,7 @@ final class MessagePackWriterTests: XCTestCase {
         assertPack("CABDCCCCCD") { $0.write(Float(-0.1)) }
         assertPack("CA42F6E979") { $0.write(Float(123.456)) }
         assertPack("CB405EDD2F1A9FBE77") { $0.write(Double(123.456)) }
-        
+
         // Also test the NSNumber float endoding
         try assertPack("CA42F6E979") { try $0.write(Float(123.456) as NSNumber) }
         try assertPack("CB405EDD2F1A9FBE77") { try $0.write(Double(123.456) as NSNumber) }
@@ -122,19 +122,25 @@ final class MessagePackWriterTests: XCTestCase {
         try assertPack("AA666F6FF09F988A626172") { try $0.write("foo😊bar") }
     }
 
-    func assertPack(_ expected: String, _ writer: BATMessagePackWriter, file: StaticString = #filePath, line: UInt = #line) {
-        XCTAssertEqual(Data(hexString: expected), writer.data,
-                       "Expected \(expected.uppercased()) Packed \(writer.data.hexString.uppercased())",
-                       file: file, line: line)
+    func assertPack(
+        _ expected: String, _ writer: BATMessagePackWriter, file: StaticString = #filePath, line: UInt = #line
+    ) {
+        XCTAssertEqual(
+            Data(hexString: expected), writer.data,
+            "Expected \(expected.uppercased()) Packed \(writer.data.hexString.uppercased())",
+            file: file, line: line)
     }
 
-    func assertPack(_ expected: String, file: StaticString = #filePath, line: UInt = #line,
-                    _ writerClosure: (inout BATMessagePackWriter) throws -> Void) rethrows {
+    func assertPack(
+        _ expected: String, file: StaticString = #filePath, line: UInt = #line,
+        _ writerClosure: (inout BATMessagePackWriter) throws -> Void
+    ) rethrows {
         var writer = BATMessagePackWriter()
         try writerClosure(&writer)
         let data = writer.data
-        XCTAssertEqual(Data(hexString: expected), data,
-                       "Expected \(expected.uppercased()) Packed \(data.hexString.uppercased())",
-                       file: file, line: line)
+        XCTAssertEqual(
+            Data(hexString: expected), data,
+            "Expected \(expected.uppercased()) Packed \(data.hexString.uppercased())",
+            file: file, line: line)
     }
 }

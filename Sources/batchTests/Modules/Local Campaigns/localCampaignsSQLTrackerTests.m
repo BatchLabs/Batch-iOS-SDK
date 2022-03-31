@@ -13,7 +13,6 @@
 }
 @end
 
-
 @implementation localCampaignsSQLTrackerTests
 
 - (void)setUp {
@@ -30,25 +29,24 @@
 }
 
 - (void)testNumberOfViewEventsSince {
-    
     NSNumber *count = [_datasource numberOfViewEventsSince:[[NSDate date] timeIntervalSince1970] - 60];
-    XCTAssertEqual(0,[count intValue]);
+    XCTAssertEqual(0, [count intValue]);
 
     // Track view event
     [_datasource trackEventForCampaignID:@"campaign_id" kind:BALocalCampaignTrackerEventKindView];
-    
+
     double timestamp = [[NSDate date] timeIntervalSince1970];
-    count = [_datasource numberOfViewEventsSince:timestamp -1];
-    
+    count = [_datasource numberOfViewEventsSince:timestamp - 1];
+
     // A tracked view event since 1s
-    XCTAssertEqual(1,[count intValue]);
-    
+    XCTAssertEqual(1, [count intValue]);
+
     // Adding 1 second
-    timestamp+=1;
-    count = [_datasource numberOfViewEventsSince:timestamp -1];
-    
+    timestamp += 1;
+    count = [_datasource numberOfViewEventsSince:timestamp - 1];
+
     // 0 tracked view event since 1 sec
-    XCTAssertEqual(0,[count intValue]);
+    XCTAssertEqual(0, [count intValue]);
 }
 
 @end

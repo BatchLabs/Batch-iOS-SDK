@@ -12,7 +12,8 @@
     _sessionViewsCount = 0;
 }
 
-- (BALocalCampaignCountedEvent*)trackEventForCampaignID:(NSString*)campaignID kind:(BALocalCampaignTrackerEventKind)kind {
+- (BALocalCampaignCountedEvent *)trackEventForCampaignID:(NSString *)campaignID
+                                                    kind:(BALocalCampaignTrackerEventKind)kind {
     _sessionViewsCount++;
     return [super trackEventForCampaignID:campaignID kind:kind];
 }

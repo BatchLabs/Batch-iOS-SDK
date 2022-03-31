@@ -10,19 +10,17 @@
 
 #import <Batch/BALocalCampaignsParser.h>
 
-@interface BAWSResponseLocalCampaigns ()
-{
-    NSDictionary* _payload;
+@interface BAWSResponseLocalCampaigns () {
+    NSDictionary *_payload;
 }
 @end
 
 @implementation BAWSResponseLocalCampaigns
 
 // Default constructor.
-- (instancetype)initWithResponse:(NSDictionary *)response
-{
+- (instancetype)initWithResponse:(NSDictionary *)response {
     self = [super initWithResponse:response];
-    
+
     if (self) {
         _payload = response;
     }
@@ -30,7 +28,7 @@
     return self;
 }
 
-- (NSDictionary*)payload {
+- (NSDictionary *)payload {
     return _payload != nil ? _payload : @{};
 }
 

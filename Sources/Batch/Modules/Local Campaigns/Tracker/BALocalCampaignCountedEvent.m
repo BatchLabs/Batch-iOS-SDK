@@ -1,6 +1,5 @@
 #import <Batch/BALocalCampaignCountedEvent.h>
 
-
 @implementation BALocalCampaignCountedEvent
 
 + (instancetype)eventWithCampaignID:(NSString *)campaignID kind:(BALocalCampaignTrackerEventKind)kind {
@@ -19,12 +18,10 @@
     return self;
 }
 
-- (NSString*)debugDescription {
-    return [NSString stringWithFormat:@"BALocalCampaignCountedEvent - Campaign ID: %@\nKind: %lu\nCount: %lli\nLast occurrence: %@",
-            self.campaignID,
-            (unsigned long)self.kind,
-            self.count,
-            self.lastOccurrence];
+- (NSString *)debugDescription {
+    return [NSString
+        stringWithFormat:@"BALocalCampaignCountedEvent - Campaign ID: %@\nKind: %lu\nCount: %lli\nLast occurrence: %@",
+                         self.campaignID, (unsigned long)self.kind, self.count, self.lastOccurrence];
 }
 
 @end

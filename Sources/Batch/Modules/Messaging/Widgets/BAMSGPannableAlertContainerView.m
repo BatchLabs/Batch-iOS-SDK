@@ -17,12 +17,11 @@
 #define SMALLEST_SCALE_RATIO 0.85
 #define SCALE_RATIO_DISMISS_THRESHOLD 0.96
 
-@implementation BAMSGPannableAlertContainerView
-{
+@implementation BAMSGPannableAlertContainerView {
     UIPanGestureRecognizer *_panGesture;
-    
+
     UIView *_linkedView;
-    
+
     // Gesture recognizer state dependent variable
     BOOL _shouldDismiss;
     UIImpactFeedbackGenerator *_hapticFeedbackGenerator NS_AVAILABLE_IOS(10_0);
@@ -31,8 +30,7 @@
     CGFloat _linkedViewInitialAlpha;
 }
 
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super init];
     if (self) {
         _panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(viewDragged:)];
@@ -45,16 +43,16 @@
     return self;
 }
 
-- (void)viewDragged:(UIPanGestureRecognizer*)recognizer
-{
-    //TODO handle velocity
+- (void)viewDragged:(UIPanGestureRecognizer *)recognizer {
+    // TODO handle velocity
     [self configureHapticFeedbackForState:recognizer.state];
-    
+
     switch (recognizer.state) {
         case UIGestureRecognizerStateBegan:
             _initialAlpha = self.alpha;
             _linkedViewInitialAlpha = _linkedView.alpha;
-            _linkedViewInitialOffset = CGPointMake(self.center.x - _linkedView.center.x, self.center.y - _linkedView.center.y);
+            _linkedViewInitialOffset =
+                CGPointMake(self.center.x - _linkedView.center.x, self.center.y - _linkedView.center.y);
             _shouldDismiss = false;
             break;
         case UIGestureRecognizerStateChanged:
@@ -72,8 +70,7 @@
     }
 }
 
-- (void)configureHapticFeedbackForState:(UIGestureRecognizerState)state
-{
+- (void)configureHapticFeedbackForState:(UIGestureRecognizerState)state {
     switch (state) {
         case UIGestureRecognizerStateBegan:
             _hapticFeedbackGenerator = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleMedium];
@@ -89,26 +86,29 @@
     }
 }
 
-- (void)applyTransformForPanChange:(UIPanGestureRecognizer*)recognizer
-{
+- (void)applyTransformForPanChange:(UIPanGestureRecognizer *)recognizer {
     UIView *superview = self.superview;
     if (!superview) {
         // Bail, we need a superview to calculate everything
         return;
     }
-    
+
     CGPoint translation = [recognizer translationInView:superview];
-    
-    CGFloat scaleRatioVertical = MIN(1, MAX(SMALLEST_SCALE_RATIO, 1 + (-1 * ABS(translation.y) * SCALE_PAN_MULTIPLIER)));
-    CGFloat scaleRatioHorizontal = MIN(1, MAX(SMALLEST_SCALE_RATIO, 1 + (-1 * ABS(translation.x) * SCALE_PAN_MULTIPLIER)));
-    
+
+    CGFloat scaleRatioVertical =
+        MIN(1, MAX(SMALLEST_SCALE_RATIO, 1 + (-1 * ABS(translation.y) * SCALE_PAN_MULTIPLIER)));
+    CGFloat scaleRatioHorizontal =
+        MIN(1, MAX(SMALLEST_SCALE_RATIO, 1 + (-1 * ABS(translation.x) * SCALE_PAN_MULTIPLIER)));
+
     CGFloat scaleRatio = MIN(scaleRatioVertical, scaleRatioHorizontal);
-    
-    CGAffineTransform translationTransform = CGAffineTransformMakeTranslation(_lockVertically ? 0 : translation.x * TRANSLATION_PAN_MULTIPLIER,
-                                                                              translation.y * TRANSLATION_PAN_MULTIPLIER);
+
+    CGAffineTransform translationTransform = CGAffineTransformMakeTranslation(
+        _lockVertically ? 0 : translation.x * TRANSLATION_PAN_MULTIPLIER, translation.y * TRANSLATION_PAN_MULTIPLIER);
     self.transform = CGAffineTransformScale(translationTransform, scaleRatio, scaleRatio);
-    _linkedView.transform = CGAffineTransformTranslate(self.transform, _linkedViewInitialOffset.x - (_linkedViewInitialOffset.x * scaleRatio), _linkedViewInitialOffset.y - (_linkedViewInitialOffset.y * scaleRatio));
-    
+    _linkedView.transform = CGAffineTransformTranslate(
+        self.transform, _linkedViewInitialOffset.x - (_linkedViewInitialOffset.x * scaleRatio),
+        _linkedViewInitialOffset.y - (_linkedViewInitialOffset.y * scaleRatio));
+
     if (scaleRatio <= SCALE_RATIO_DISMISS_THRESHOLD) {
         if (_shouldDismiss == false) {
             _shouldDismiss = true;
@@ -122,22 +122,21 @@
     }
 }
 
-- (void)shouldDismissChanged
-{
+- (void)shouldDismissChanged {
     [_hapticFeedbackGenerator impactOccurred];
     [_hapticFeedbackGenerator prepare];
- 
+
     // Copy to make sure we get the state when the animation is triggered
     BOOL shouldDismiss = _shouldDismiss;
     [UIView animateWithDuration:ANIMATION_DURATION_FAST
                      animations:^{
-                         self.alpha = shouldDismiss ? DISMISSABLE_TARGET_ALPHA : self->_initialAlpha;
-                         self->_linkedView.alpha = shouldDismiss ? DISMISSABLE_TARGET_ALPHA : self->_linkedViewInitialAlpha;
+                       self.alpha = shouldDismiss ? DISMISSABLE_TARGET_ALPHA : self->_initialAlpha;
+                       self->_linkedView.alpha =
+                           shouldDismiss ? DISMISSABLE_TARGET_ALPHA : self->_linkedViewInitialAlpha;
                      }];
 }
 
-- (void)panEnded:(UIPanGestureRecognizer*)recognizer
-{
+- (void)panEnded:(UIPanGestureRecognizer *)recognizer {
     BOOL willDismiss = NO;
     BOOL dismissY = ABS([recognizer velocityInView:self].y) >= DISMISS_THRESHOLD_MINIMUM_VELOCITY;
     BOOL dismissX = (ABS([recognizer velocityInView:self].x) >= DISMISS_THRESHOLD_MINIMUM_VELOCITY) && !_lockVertically;
@@ -146,27 +145,28 @@
         willDismiss = YES;
     }
     _shouldDismiss = false;
-    
+
     if (!willDismiss || (_resetPositionOnDismiss && !UIAccessibilityIsReduceMotionEnabled())) {
         [self resetAnimated];
     }
 }
 
-- (void)resetAnimated
-{
+- (void)resetAnimated {
     [UIView animateWithDuration:ANIMATION_DURATION_FAST
                           delay:0
                         options:UIViewAnimationOptionAllowUserInteraction
                      animations:^{
-                         self.alpha = self->_initialAlpha;
-                         self->_linkedView.alpha = self->_linkedViewInitialAlpha;
-                     } completion:nil];
-    
+                       self.alpha = self->_initialAlpha;
+                       self->_linkedView.alpha = self->_linkedViewInitialAlpha;
+                     }
+                     completion:nil];
+
     if (UIAccessibilityIsReduceMotionEnabled()) { // Put back view with a simple translation
-        [UIView animateWithDuration:ANIMATION_DURATION animations:^{
-            self.transform = CGAffineTransformIdentity;
-            self->_linkedView.transform = CGAffineTransformIdentity;
-        }];
+        [UIView animateWithDuration:ANIMATION_DURATION
+                         animations:^{
+                           self.transform = CGAffineTransformIdentity;
+                           self->_linkedView.transform = CGAffineTransformIdentity;
+                         }];
     } else { // Spring animation
         [UIView animateWithDuration:ANIMATION_DURATION
                               delay:0
@@ -174,16 +174,16 @@
               initialSpringVelocity:0
                             options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionAllowUserInteraction
                          animations:^{
-                             self.transform = CGAffineTransformIdentity;
-                             self->_linkedView.transform = CGAffineTransformIdentity;
-                         } completion:nil];
+                           self.transform = CGAffineTransformIdentity;
+                           self->_linkedView.transform = CGAffineTransformIdentity;
+                         }
+                         completion:nil];
     }
 }
 
 #pragma mark View linking
 
-- (void)setLinkedView:(UIView *)linkedView
-{
+- (void)setLinkedView:(UIView *)linkedView {
     _linkedView = linkedView;
 }
 

@@ -7,8 +7,8 @@
 
 #import <XCTest/XCTest.h>
 #import "BACoreCenter.h"
-#import "BatchCore.h"
 #import "BATHtmlParser.h"
+#import "BatchCore.h"
 
 @interface htmlParserTests : XCTestCase
 
@@ -18,10 +18,10 @@
 
 - (void)testParsingValidString {
     NSString *string = @"01234567890<u>fsdkj</u>dsqsdljk";
-    
+
     BATHtmlParser *parser = [[BATHtmlParser alloc] initWithString:string];
     NSError *error = [parser parse];
-    
+
     XCTAssertNil(error);
     XCTAssertEqual(parser.transforms.count, 1);
     XCTAssertTrue([parser.text isEqualToString:@"01234567890fsdkjdsqsdljk"]);
@@ -32,7 +32,7 @@
 
     BATHtmlParser *parser = [[BATHtmlParser alloc] initWithString:string];
     NSError *error = [parser parse];
-    
+
     XCTAssertNotNil(error);
     XCTAssertEqual(parser.transforms.count, 0);
 }
@@ -40,41 +40,41 @@
 - (void)testParsingEmptyString {
     BATHtmlParser *parser = [[BATHtmlParser alloc] initWithString:@""];
     NSError *error = [parser parse];
-    
+
     XCTAssertNil(error);
     XCTAssertEqual(parser.transforms.count, 0);
 }
 
 - (void)testParsingNoFormatString {
     NSString *string = @"01234567890 sdq,f: ,sdqlkmjfkfsdkjdsqsdljk";
-    
+
     BATHtmlParser *parser = [[BATHtmlParser alloc] initWithString:string];
     NSError *error = [parser parse];
-    
+
     XCTAssertNil(error);
     XCTAssertEqual(parser.transforms.count, 0);
 }
 
 - (void)testParsingUnknownTagString {
     NSString *string = @"01234567890 s<khl>dq,f: ,sdqlkmjfkfsdk</khl>jdsqsdljk";
-    
+
     BATHtmlParser *parser = [[BATHtmlParser alloc] initWithString:string];
     NSError *error = [parser parse];
-    
+
     XCTAssertNil(error);
     XCTAssertEqual(parser.transforms.count, 0);
 }
 
 - (void)testParsingNbsp {
     NSString *string = @"  &nbsp;&nbsp;   &nbsp;";
-    
+
     unichar nbsp = 0x00a0;
     NSString *nbspString = [NSString stringWithCharacters:&nbsp length:1];
-    
+
     NSString *expectedResult = [NSString stringWithFormat:@" %@%@ %@", nbspString, nbspString, nbspString];
     BATHtmlParser *parser = [[BATHtmlParser alloc] initWithString:string];
     NSError *error = [parser parse];
-    
+
     XCTAssertNil(error);
     XCTAssertEqual(parser.transforms.count, 0);
     XCTAssertEqualObjects(parser.text, expectedResult);
@@ -82,13 +82,13 @@
 
 - (void)testParsingNestedTagsString {
     NSString *string = @"<u>R<i>Vera</i></u>";
-    
+
     BATHtmlParser *parser = [[BATHtmlParser alloc] initWithString:string];
     NSError *error = [parser parse];
-    
+
     XCTAssertNil(error);
     XCTAssertEqual(parser.transforms.count, 2);
-    
+
     XCTAssertEqual([[parser.transforms firstObject] range].location, 1);
     XCTAssertEqual([[parser.transforms firstObject] range].length, 4);
     XCTAssertEqual([[parser.transforms lastObject] range].location, 0);
@@ -96,14 +96,16 @@
 }
 
 - (void)testStyles {
-    NSString *string = @"<span style=\"color:#AABBCC\">aa</span><span style=\"background-color:#DDEEFF\">aa</span><big>aa</big><small>aa</small><b>aa</b><i>aa</i><u>aa</u><s>aa</s>";
-    
+    NSString *string = @"<span style=\"color:#AABBCC\">aa</span><span "
+                       @"style=\"background-color:#DDEEFF\">aa</span><big>aa</big><small>aa</small><b>aa</b><i>aa</"
+                       @"i><u>aa</u><s>aa</s>";
+
     BATHtmlParser *parser = [[BATHtmlParser alloc] initWithString:string];
     NSError *error = [parser parse];
-    
+
     XCTAssertNil(error);
     XCTAssertEqual(parser.transforms.count, 8);
-    
+
     XCTAssertEqual(parser.transforms[0].modifiers, BATTextModifierSpan);
     XCTAssertEqualObjects(parser.transforms[0].attributes[@"color"], @"#AABBCC");
     XCTAssertEqual(parser.transforms[1].modifiers, BATTextModifierSpan);

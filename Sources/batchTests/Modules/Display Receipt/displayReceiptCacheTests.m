@@ -6,8 +6,8 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "BADisplayReceiptCache.h"
 #import "BABundleInfo.h"
+#import "BADisplayReceiptCache.h"
 
 #import "OCMock.h"
 
@@ -25,39 +25,35 @@
 
 @implementation displayReceiptCacheTests
 
-- (void)setUp
-{
+- (void)setUp {
     [super setUp];
-    
+
     _sharedGroupMock = OCMClassMock([BABundleInfo class]);
     OCMStub([_sharedGroupMock sharedGroupId]).andReturn(@"test-shared-app-group");
 }
 
-- (void)tearDown
-{
+- (void)tearDown {
     [super tearDown];
-    
+
     [_sharedGroupMock stopMocking];
     _sharedGroupMock = nil;
 }
 
-- (void)testSharedDefaults
-{
+- (void)testSharedDefaults {
     [BADisplayReceiptCache saveApiKey:@"bim"];
     XCTAssertEqual(BADisplayReceiptCache.apiKey, @"bim");
-    
+
     [BADisplayReceiptCache saveLastInstallId:@"zbam"];
     XCTAssertEqual(BADisplayReceiptCache.lastInstallId, @"zbam");
-    
+
     XCTAssertFalse(BADisplayReceiptCache.isOptOut);
     [BADisplayReceiptCache saveIsOptOut:true];
     XCTAssertTrue(BADisplayReceiptCache.isOptOut);
-    
+
     [self resetDefaults:BABundleInfo.sharedDefaults];
 }
 
-- (void)resetDefaults:(NSUserDefaults *)defaults
-{
+- (void)resetDefaults:(NSUserDefaults *)defaults {
     NSDictionary *dict = [defaults dictionaryRepresentation];
     for (id key in dict) {
         [defaults removeObjectForKey:key];

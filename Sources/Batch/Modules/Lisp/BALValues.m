@@ -5,16 +5,16 @@
 //  Copyright © 2018 Batch. All rights reserved.
 //
 
-#import <Batch/BALValues.h>
 #import <Batch/BALEvaluationContext.h>
 #import <Batch/BALOperators.h>
+#import <Batch/BALValues.h>
 
 @implementation BALValue
 @end
 
 @implementation BALErrorValue
 
-- (instancetype)initWithKind:(BALErrorValueKind)kind message:(NSString*)message;
+- (instancetype)initWithKind:(BALErrorValueKind)kind message:(NSString *)message;
 {
     self = [super init];
     if (self) {
@@ -24,13 +24,10 @@
     return self;
 }
 
-+ (instancetype)errorWithKind:(BALErrorValueKind)kind message:(NSString*)message;
-{
-    return [[BALErrorValue alloc] initWithKind:kind message:message];
-}
++ (instancetype)errorWithKind:(BALErrorValueKind)kind message:(NSString *)message;
+{ return [[BALErrorValue alloc] initWithKind:kind message:message]; }
 
-- (BOOL)isEqual:(id)other
-{
+- (BOOL)isEqual:(id)other {
     if (other == self) {
         return YES;
     } else if (![other isKindOfClass:[BALErrorValue class]]) {
@@ -41,8 +38,7 @@
     }
 }
 
-- (NSString*)description
-{
+- (NSString *)description {
     NSString *kind;
     switch (self.kind) {
         case BALErrorValueKindTypeInternal:
@@ -58,7 +54,7 @@
             kind = @"Unknown error kind.";
             break;
     }
-    
+
     return [NSString stringWithFormat:@"<ErrorValue> Kind: %@, Message: \"%@\"", kind, self.message];
 }
 
@@ -66,8 +62,7 @@
 
 @implementation BALPrimitiveValue
 
-- (instancetype)initWithValue:(id)value type:(BALPrimitiveValueType)type
-{
+- (instancetype)initWithValue:(id)value type:(BALPrimitiveValueType)type {
     self = [super init];
     if (self) {
         _type = type;
@@ -76,13 +71,11 @@
     return self;
 }
 
-+ (instancetype)nilValue
-{
++ (instancetype)nilValue {
     return [[BALPrimitiveValue alloc] initWithValue:nil type:BALPrimitiveValueTypeNil];
 }
 
-+ (nullable instancetype)valueWithString:(NSString*)value
-{
++ (nullable instancetype)valueWithString:(NSString *)value {
     if ([value isKindOfClass:[NSString class]]) {
         return [[BALPrimitiveValue alloc] initWithValue:value type:BALPrimitiveValueTypeString];
     } else {
@@ -90,27 +83,23 @@
     }
 }
 
-+ (instancetype)valueWithDouble:(double)value
-{
++ (instancetype)valueWithDouble:(double)value {
     return [[BALPrimitiveValue alloc] initWithValue:[NSNumber numberWithDouble:value] type:BALPrimitiveValueTypeDouble];
 }
 
-+ (instancetype)valueWithBoolean:(BOOL)value
-{
++ (instancetype)valueWithBoolean:(BOOL)value {
     return [[BALPrimitiveValue alloc] initWithValue:[NSNumber numberWithBool:value] type:BALPrimitiveValueTypeBool];
 }
 
-+ (nullable instancetype)valueWithStringSet:(NSSet<NSString*>*)value
-{
-    if ([value isKindOfClass:[NSSet<NSString*> class]]) {
++ (nullable instancetype)valueWithStringSet:(NSSet<NSString *> *)value {
+    if ([value isKindOfClass:[NSSet<NSString *> class]]) {
         return [[BALPrimitiveValue alloc] initWithValue:[value copy] type:BALPrimitiveValueTypeStringSet];
     } else {
         return nil;
     }
 }
 
-+ (nullable instancetype)valueWithURL:(NSURL*)value
-{
++ (nullable instancetype)valueWithURL:(NSURL *)value {
     if ([value isKindOfClass:[NSURL class]]) {
         return [[BALPrimitiveValue alloc] initWithValue:value type:BALPrimitiveValueTypeURL];
     } else {
@@ -118,8 +107,7 @@
     }
 }
 
-- (BOOL)isEqual:(id)other
-{
+- (BOOL)isEqual:(id)other {
     if (other == self) {
         return YES;
     } else if (![other isKindOfClass:[BALPrimitiveValue class]]) {
@@ -127,33 +115,28 @@
     } else {
         BALPrimitiveValue *castedOther = other;
         // Pointer comparaison takes care of nil values
-        return self.type == castedOther.type && (self.value == castedOther.value || [self.value isEqual:castedOther.value]);
+        return self.type == castedOther.type &&
+               (self.value == castedOther.value || [self.value isEqual:castedOther.value]);
     }
 }
 
-- (NSString*)description
-{
-    if (self.type == BALPrimitiveValueTypeNil)
-    {
+- (NSString *)description {
+    if (self.type == BALPrimitiveValueTypeNil) {
         return @"Nil";
     }
-    
+
     NSString *valueDescription = [self.value description];
-    
-    if (self.type == BALPrimitiveValueTypeString)
-    {
+
+    if (self.type == BALPrimitiveValueTypeString) {
         valueDescription = [NSString stringWithFormat:@"\"%@\"", [self escapeString:valueDescription]];
-    }
-    else if (self.type == BALPrimitiveValueTypeStringSet)
-    {
+    } else if (self.type == BALPrimitiveValueTypeStringSet) {
         valueDescription = [self setDescription:self.value];
     }
-    
+
     return valueDescription;
 }
 
-- (NSString*)debugDescription
-{
+- (NSString *)debugDescription {
     NSString *valueDescription = [self.value description];
     NSString *typeDescription;
     switch (self.type) {
@@ -178,12 +161,11 @@
             typeDescription = @"Unknown primitive type.";
             break;
     }
-    
+
     return [NSString stringWithFormat:@"<PrimitiveValue> Type: %@, Value: \"%@\"", typeDescription, valueDescription];
 }
 
-- (NSString*)escapeString:(NSString*)value
-{
+- (NSString *)escapeString:(NSString *)value {
     value = [value stringByReplacingOccurrencesOfString:@"\\" withString:@"\\\\"];
     value = [value stringByReplacingOccurrencesOfString:@"\n" withString:@"\\n"];
     value = [value stringByReplacingOccurrencesOfString:@"\r" withString:@"\\r"];
@@ -194,27 +176,25 @@
     return value;
 }
 
-- (NSString*)setDescription:(NSSet<NSString*>*)set
-{
+- (NSString *)setDescription:(NSSet<NSString *> *)set {
     if (![set isKindOfClass:[NSSet class]]) {
         return @"[error]";
     }
-    
+
     NSMutableString *desc = [NSMutableString new];
-    
+
     [desc appendString:@"["];
-    
-    NSArray<NSString*>* array = [set allObjects];
-    for (int i = 0; i < array.count; i++)
-    {
+
+    NSArray<NSString *> *array = [set allObjects];
+    for (int i = 0; i < array.count; i++) {
         if (i > 0) {
             [desc appendString:@" "];
         }
         [desc appendString:[NSString stringWithFormat:@"\"%@\"", [self escapeString:array[i]]]];
     }
-    
+
     [desc appendString:@"]"];
-    
+
     return desc;
 }
 
@@ -222,8 +202,7 @@
 
 @implementation BALOperatorValue
 
-- (instancetype)initWithOperator:(BALOperator*)operator
-{
+- (instancetype)initWithOperator:(BALOperator *)operator{
     self = [super init];
     if (self) {
         _operator = operator;
@@ -231,13 +210,11 @@
     return self;
 }
 
-+ (instancetype)operatorValueWithOperator:(BALOperator*)operator
-{
++ (instancetype)operatorValueWithOperator:(BALOperator *)operator{
     return [[BALOperatorValue alloc] initWithOperator:operator];
 }
 
-- (BOOL)isEqual:(id)other
-{
+- (BOOL)isEqual:(id)other {
     if (other == self) {
         return YES;
     } else if (![other isKindOfClass:[BALOperatorValue class]]) {
@@ -247,13 +224,11 @@
     }
 }
 
-- (NSString*)description
-{
+- (NSString *)description {
     return self.operator.symbol;
 }
 
-- (NSString*)debugDescription
-{
+- (NSString *)debugDescription {
     return [NSString stringWithFormat:@"<Operator> Symbol: %@", self.operator.symbol];
 }
 
@@ -261,8 +236,7 @@
 
 @implementation BALVariableValue
 
-- (instancetype)initWithName:(NSString*)name
-{
+- (instancetype)initWithName:(NSString *)name {
     self = [super init];
     if (self) {
         _name = name;
@@ -270,24 +244,21 @@
     return self;
 }
 
-+ (instancetype)variableWithName:(NSString*)name
-{
++ (instancetype)variableWithName:(NSString *)name {
     return [[BALVariableValue alloc] initWithName:name];
 }
 
-- (BOOL)isEqual:(id)other
-{
+- (BOOL)isEqual:(id)other {
     if (other == self) {
         return YES;
     } else if (![other isKindOfClass:[BALVariableValue class]]) {
         return NO;
     } else {
-        return [self.name isEqualToString:((BALVariableValue*)other).name];
+        return [self.name isEqualToString:((BALVariableValue *)other).name];
     }
 }
 
-- (nonnull BALValue *)reduce:(nonnull id<BALEvaluationContext>)context
-{
+- (nonnull BALValue *)reduce:(nonnull id<BALEvaluationContext>)context {
     BALValue *resolved = [context resolveVariableNamed:self.name.lowercaseString];
     if (resolved == nil) {
         resolved = [BALPrimitiveValue nilValue];
@@ -295,13 +266,11 @@
     return resolved;
 }
 
-- (NSString*)description
-{
+- (NSString *)description {
     return [NSString stringWithFormat:@"`%@`", self.name];
 }
 
-- (NSString*)debugDescription
-{
+- (NSString *)debugDescription {
     return [NSString stringWithFormat:@"<Variable>: %@", self.name];
 }
 

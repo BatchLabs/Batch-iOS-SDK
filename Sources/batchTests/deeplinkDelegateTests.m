@@ -29,27 +29,26 @@
 - (void)testNoDelegate {
     id uiApplicationMock = OCMClassMock([UIApplication class]);
     OCMStub([uiApplicationMock sharedApplication]).andReturn(uiApplicationMock);
-    
+
     [[BACoreCenter instance] openDeeplink:@"https://apple.fr" inApp:NO];
-    
+
     [self verifyOpenURL:uiApplicationMock];
-    
 }
 
 - (void)testInvalidURL {
     id uiApplicationMock = OCMClassMock([UIApplication class]);
     OCMStub([uiApplicationMock sharedApplication]).andReturn(uiApplicationMock);
-    
+
     [[BACoreCenter instance] openDeeplink:@"poula%" inApp:NO];
-    
+
     [self rejectOpenURL:uiApplicationMock];
-    
+
     DeeplinkDelegateStub *delegate = [DeeplinkDelegateStub new];
     Batch.deeplinkDelegate = delegate;
-    
+
     [[BACoreCenter instance] openDeeplink:@"poula%" inApp:NO];
     [self waitForMainThreadLoop];
-    
+
     XCTAssertTrue(delegate.hasOpenBeenCalled);
 }
 
@@ -58,11 +57,11 @@
     Batch.deeplinkDelegate = delegate;
     id uiApplicationMock = OCMClassMock([UIApplication class]);
     OCMStub([uiApplicationMock sharedApplication]).andReturn(uiApplicationMock);
-    
+
     [[BACoreCenter instance] openDeeplink:@"https://apple.fr" inApp:NO];
     [self waitForMainThreadLoop];
     XCTAssertTrue(delegate.hasOpenBeenCalled);
-    
+
     Batch.deeplinkDelegate = nil;
     [[BACoreCenter instance] openDeeplink:@"https://apple.fr" inApp:NO];
     [self waitForMainThreadLoop];
@@ -74,10 +73,10 @@
     Batch.deeplinkDelegate = delegate;
     id uiApplicationMock = OCMClassMock([UIApplication class]);
     OCMStub([uiApplicationMock sharedApplication]).andReturn(uiApplicationMock);
-    
+
     [[BACoreCenter instance] openDeeplink:@"https://apple.fr" inApp:NO];
     [self waitForMainThreadLoop];
-    
+
     [self rejectOpenURL:uiApplicationMock];
     XCTAssertTrue(delegate.hasOpenBeenCalled);
 }
@@ -110,9 +109,9 @@
     // task to finish
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for a main thread loop run"];
     dispatch_async(dispatch_get_main_queue(), ^{
-        [expectation fulfill];
+      [expectation fulfill];
     });
-    [self waitForExpectations:@[expectation] timeout:3.0];
+    [self waitForExpectations:@[ expectation ] timeout:3.0];
 }
 
 @end

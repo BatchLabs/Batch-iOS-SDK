@@ -5,13 +5,12 @@
 //  Copyright © 2016 Batch. All rights reserved.
 //
 
-#import <Batch/BAPublicEventTrackedSignal.h>
 #import <Batch/BAEventTrigger.h>
+#import <Batch/BAPublicEventTrackedSignal.h>
 
 @implementation BAPublicEventTrackedSignal
 
-- (instancetype)initWithName:(NSString *)name label:(nullable NSString *)label data:(nullable BatchEventData *)data
-{
+- (instancetype)initWithName:(NSString *)name label:(nullable NSString *)label data:(nullable BatchEventData *)data {
     self = [super init];
     if (self) {
         self.name = name;
@@ -22,13 +21,12 @@
     return self;
 }
 
-- (BOOL)doesSatisfyTrigger:(nullable id<BALocalCampaignTriggerProtocol>)trigger
-{
+- (BOOL)doesSatisfyTrigger:(nullable id<BALocalCampaignTriggerProtocol>)trigger {
     if (![trigger isKindOfClass:[BAEventTrigger class]]) {
         return false;
     }
 
-    return [((BAEventTrigger*)trigger) isSatisfiedForName:self.name label: self.label];
+    return [((BAEventTrigger *)trigger) isSatisfiedForName:self.name label:self.label];
 }
 
 @end

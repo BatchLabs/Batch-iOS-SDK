@@ -8,8 +8,8 @@
 
 #import <XCTest/XCTest.h>
 
-#import "BAUserDefaults.h"
 #import "BAAESB64Cryptor.h"
+#import "BAUserDefaults.h"
 
 @interface BatchUserDefaultsTests : XCTestCase
 
@@ -17,26 +17,23 @@
 
 @implementation BatchUserDefaultsTests
 
-- (void)setUp
-{
+- (void)setUp {
     [super setUp];
     // Put setup code here; it will be run once, before the first test case.
 }
 
-- (void)tearDown
-{
+- (void)tearDown {
     // Put teardown code here; it will be run once, after the last test case.
     [super tearDown];
 }
 
-- (void)testCreation
-{
+- (void)testCreation {
     BAUserDefaults *ud;
-    
+
     // Test without cryptor case.
     ud = [[BAUserDefaults alloc] initWithCryptor:nil];
     XCTAssertNotNil(ud, @"Failed to instanciate a BAUserDefault without cryptor.");
-    
+
     // Test with a cryptor case.
     ud = [[BAUserDefaults alloc] initWithCryptor:[[BAAESB64Cryptor alloc] initWithKey:@"MYSUPERKEY"]];
     XCTAssertNotNil(ud, @"Failed to instanciate a BAUserDefault with a cryptor.");

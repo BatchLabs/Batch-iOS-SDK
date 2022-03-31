@@ -11,15 +11,12 @@
 
 @implementation BAOptOutWebserviceClient
 
-- (instancetype)initWithEvents:(NSArray*)events promises:(NSArray *)promises
-{
+- (instancetype)initWithEvents:(NSArray *)events promises:(NSArray *)promises {
     BAEventTrackerService *service = [[BAEventTrackerService alloc] initWithEvents:events promises:promises];
-    return [super initWithDatasource:service
-                            delegate:service];
+    return [super initWithDatasource:service delegate:service];
 }
 
-- (BOOL)canBypassOptOut
-{
+- (BOOL)canBypassOptOut {
     return true;
 }
 

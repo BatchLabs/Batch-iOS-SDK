@@ -13,8 +13,7 @@
 
 #define DEFAULT_GET_TIMEOUT 15 // Seconds
 
-@interface BAGETWebserviceClient()
-{
+@interface BAGETWebserviceClient () {
     NSString *_identifier;
 }
 
@@ -24,11 +23,9 @@
 
 - (instancetype)initWithURL:(nonnull NSURL *)url
                  identifier:(nonnull NSString *)identifier
-                   delegate:(nullable id<BAConnectionDelegate>)delegate
-{
+                   delegate:(nullable id<BAConnectionDelegate>)delegate {
     self = [super initWithMethod:BAWebserviceClientRequestMethodGet URL:url delegate:delegate];
-    if (self)
-    {
+    if (self) {
         _identifier = [identifier copy];
 
         [BALogger debugForDomain:@"Webservice" message:@"GET URL: %@", url.absoluteString];
@@ -39,15 +36,13 @@
     return self;
 }
 
-- (nonnull NSMutableDictionary<NSString *, NSString *>*)requestHeaders
-{
-    NSMutableDictionary<NSString *, NSString *>* headers = [super requestHeaders];
+- (nonnull NSMutableDictionary<NSString *, NSString *> *)requestHeaders {
+    NSMutableDictionary<NSString *, NSString *> *headers = [super requestHeaders];
     headers[@"User-Agent"] = [BAHTTPHeaders userAgent];
     return headers;
 }
 
-- (NSString *)webserviceIdentifier
-{
+- (NSString *)webserviceIdentifier {
     return _identifier;
 }
 

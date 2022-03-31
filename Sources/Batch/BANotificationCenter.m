@@ -14,16 +14,14 @@
 #pragma mark Public methods
 
 // Instance management.
-+ (instancetype)defaultCenter
-{
++ (instancetype)defaultCenter {
     static id sharedInstance = nil;
     static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^ {
-        
-        sharedInstance = [[self alloc] init];
+    dispatch_once(&onceToken, ^{
+      sharedInstance = [[self alloc] init];
     });
-    
-	return sharedInstance;
+
+    return sharedInstance;
 }
 
 @end

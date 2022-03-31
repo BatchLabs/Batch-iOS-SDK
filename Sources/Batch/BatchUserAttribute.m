@@ -9,9 +9,7 @@
 
 @implementation BatchUserAttribute
 
-- (nullable instancetype)initWithValue:(nonnull id)value
-                                  type:(BatchUserAttributeType)type
-{
+- (nullable instancetype)initWithValue:(nonnull id)value type:(BatchUserAttributeType)type {
     self = [super init];
     if (self) {
         self.value = value;
@@ -20,32 +18,29 @@
     return self;
 }
 
-- (nullable NSDate *)dateValue
-{
+- (nullable NSDate *)dateValue {
     if (self.type == BatchUserAttributeTypeDate) {
         return _value;
     }
     return nil;
 }
 
-- (NSString *)stringValue
-{
+- (NSString *)stringValue {
     if (self.type == BatchUserAttributeTypeString) {
         return _value;
     }
     return nil;
 }
 
-- (NSNumber *)numberValue
-{
-    if (self.type == BatchUserAttributeTypeBool || self.type == BatchUserAttributeTypeDouble || self.type == BatchUserAttributeTypeLongLong) {
+- (NSNumber *)numberValue {
+    if (self.type == BatchUserAttributeTypeBool || self.type == BatchUserAttributeTypeDouble ||
+        self.type == BatchUserAttributeTypeLongLong) {
         return _value;
     }
     return nil;
 }
 
-- (NSURL *)urlValue
-{
+- (NSURL *)urlValue {
     if (self.type == BatchUserAttributeTypeURL) {
         return _value;
     }

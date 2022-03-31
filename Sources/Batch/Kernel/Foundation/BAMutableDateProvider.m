@@ -19,11 +19,11 @@
     return self;
 }
 
--(void)setTime:(double)timestamp {
+- (void)setTime:(double)timestamp {
     _date = [NSDate dateWithTimeIntervalSince1970:timestamp];
 }
 
-- (NSDate*)currentDate {
+- (NSDate *)currentDate {
     return _date;
 }
 

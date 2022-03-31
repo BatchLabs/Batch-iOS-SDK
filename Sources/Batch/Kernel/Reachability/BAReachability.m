@@ -2,14 +2,14 @@
      File: Reachability.m
  Abstract: Basic demonstration of how to use the SystemConfiguration Reachablity APIs.
   Version: 3.0
- 
+
  Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple
  Inc. ("Apple") in consideration of your agreement to the following
  terms, and your use, installation, modification or redistribution of
  this Apple software constitutes acceptance of these terms.  If you do
  not agree with these terms, please do not use, install, modify or
  redistribute this Apple software.
- 
+
  In consideration of your agreement to abide by the following terms, and
  subject to these terms, Apple grants you a personal, non-exclusive
  license, under Apple's copyrights in this original Apple software (the
@@ -25,13 +25,13 @@
  implied, are granted by Apple herein, including but not limited to any
  patent rights that may be infringed by your derivative works or by other
  works in which the Apple Software may be incorporated.
- 
+
  The Apple Software is provided by Apple on an "AS IS" basis.  APPLE
  MAKES NO WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
  THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS
  FOR A PARTICULAR PURPOSE, REGARDING THE APPLE SOFTWARE OR ITS USE AND
  OPERATION ALONE OR IN COMBINATION WITH YOUR PRODUCTS.
- 
+
  IN NO EVENT SHALL APPLE BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL
  OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -40,9 +40,9 @@
  AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE),
  STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
- 
+
  Copyright (c) 2014 Apple Inc. All Rights Reserved.
- 
+
  */
 
 #import <arpa/inet.h>
@@ -52,222 +52,190 @@
 
 #import <CoreFoundation/CoreFoundation.h>
 
-#import <Batch/BAReachability.h>
 #import <Batch/BANotificationCenter.h>
-
+#import <Batch/BAReachability.h>
 
 NSString *kBAReachabilityChangedNotification = @"kBANetworkReachabilityChangedNotification";
-
 
 #pragma mark - Supporting functions
 
 #define kBAShouldPrintReachabilityFlags 0
 
-static void BAPrintReachabilityFlags(SCNetworkReachabilityFlags flags, const char* comment)
-{
+static void BAPrintReachabilityFlags(SCNetworkReachabilityFlags flags, const char *comment) {
 #if kBAShouldPrintReachabilityFlags
 
     NSLog(@"Reachability Flag Status: %c%c %c%c%c%c%c%c%c %s\n",
-          (flags & kSCNetworkReachabilityFlagsIsWWAN)				? 'W' : '-',
-          (flags & kSCNetworkReachabilityFlagsReachable)            ? 'R' : '-',
+          (flags & kSCNetworkReachabilityFlagsIsWWAN) ? 'W' : '-',
+          (flags & kSCNetworkReachabilityFlagsReachable) ? 'R' : '-',
 
-          (flags & kSCNetworkReachabilityFlagsTransientConnection)  ? 't' : '-',
-          (flags & kSCNetworkReachabilityFlagsConnectionRequired)   ? 'c' : '-',
-          (flags & kSCNetworkReachabilityFlagsConnectionOnTraffic)  ? 'C' : '-',
+          (flags & kSCNetworkReachabilityFlagsTransientConnection) ? 't' : '-',
+          (flags & kSCNetworkReachabilityFlagsConnectionRequired) ? 'c' : '-',
+          (flags & kSCNetworkReachabilityFlagsConnectionOnTraffic) ? 'C' : '-',
           (flags & kSCNetworkReachabilityFlagsInterventionRequired) ? 'i' : '-',
-          (flags & kSCNetworkReachabilityFlagsConnectionOnDemand)   ? 'D' : '-',
-          (flags & kSCNetworkReachabilityFlagsIsLocalAddress)       ? 'l' : '-',
-          (flags & kSCNetworkReachabilityFlagsIsDirect)             ? 'd' : '-',
-          comment
-          );
+          (flags & kSCNetworkReachabilityFlagsConnectionOnDemand) ? 'D' : '-',
+          (flags & kSCNetworkReachabilityFlagsIsLocalAddress) ? 'l' : '-',
+          (flags & kSCNetworkReachabilityFlagsIsDirect) ? 'd' : '-', comment);
 #endif
 }
 
 // Reachability Flag Status: WR t----l- networkStatusForFlags
 // Reachability Flag Status: -R -----l- networkStatusForFlags
 
-static void BAReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReachabilityFlags flags, void* info)
-{
-    if (info == NULL)
-    {
-        return;
-    }
-    
-    if (kBAShouldPrintReachabilityFlags) NSLog(@"Reachability info: %@",info);
-    
-    if (![(__bridge NSObject*) info isKindOfClass: [BAReachability class]])
-    {
+static void BAReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReachabilityFlags flags, void *info) {
+    if (info == NULL) {
         return;
     }
 
-    BAReachability* noteObject = (__bridge BAReachability *)info;
+    if (kBAShouldPrintReachabilityFlags)
+        NSLog(@"Reachability info: %@", info);
+
+    if (![(__bridge NSObject *)info isKindOfClass:[BAReachability class]]) {
+        return;
+    }
+
+    BAReachability *noteObject = (__bridge BAReachability *)info;
     // Post a notification to notify the client that the network reachability changed.
-    [[BANotificationCenter defaultCenter] postNotificationName: kBAReachabilityChangedNotification object: noteObject];
+    [[BANotificationCenter defaultCenter] postNotificationName:kBAReachabilityChangedNotification object:noteObject];
 }
 
-
-#pragma mark - 
+#pragma mark -
 #pragma mark BAReachability implementation
 
-@implementation BAReachability
-{
-	BOOL localWiFiRef;
-	SCNetworkReachabilityRef reachabilityRef;
+@implementation BAReachability {
+    BOOL localWiFiRef;
+    SCNetworkReachabilityRef reachabilityRef;
 }
 
 + (instancetype)reachabilityWithHostName:(NSString *)hostName;
 {
-	BAReachability* returnValue = NULL;
-	SCNetworkReachabilityRef reachability = SCNetworkReachabilityCreateWithName(NULL, [hostName UTF8String]);
-	if (reachability != NULL)
-	{
-		returnValue= [[self alloc] init];
-		if (returnValue != NULL)
-		{
-			returnValue->reachabilityRef = reachability;
-			returnValue->localWiFiRef = NO;
-		}
-        else
-        {
+    BAReachability *returnValue = NULL;
+    SCNetworkReachabilityRef reachability = SCNetworkReachabilityCreateWithName(NULL, [hostName UTF8String]);
+    if (reachability != NULL) {
+        returnValue = [[self alloc] init];
+        if (returnValue != NULL) {
+            returnValue->reachabilityRef = reachability;
+            returnValue->localWiFiRef = NO;
+        } else {
             CFRelease(reachability);
         }
-	}
-	return returnValue;
+    }
+    return returnValue;
 }
 
 + (instancetype)reachabilityWithAddress:(const struct sockaddr_in *)hostAddress;
 {
-	SCNetworkReachabilityRef reachability = SCNetworkReachabilityCreateWithAddress(kCFAllocatorDefault, (const struct sockaddr *)hostAddress);
+    SCNetworkReachabilityRef reachability =
+        SCNetworkReachabilityCreateWithAddress(kCFAllocatorDefault, (const struct sockaddr *)hostAddress);
 
-	BAReachability* returnValue = NULL;
+    BAReachability *returnValue = NULL;
 
-	if (reachability != NULL)
-	{
-		returnValue = [[self alloc] init];
-		if (returnValue != NULL)
-		{
-			returnValue->reachabilityRef = reachability;
-			returnValue->localWiFiRef = NO;
-		}
-        else
-        {
+    if (reachability != NULL) {
+        returnValue = [[self alloc] init];
+        if (returnValue != NULL) {
+            returnValue->reachabilityRef = reachability;
+            returnValue->localWiFiRef = NO;
+        } else {
             CFRelease(reachability);
         }
-	}
-	return returnValue;
+    }
+    return returnValue;
 }
 
 + (instancetype)reachabilityForInternetConnection;
 {
-	struct sockaddr_in zeroAddress;
-	bzero(&zeroAddress, sizeof(zeroAddress));
-	zeroAddress.sin_len = sizeof(zeroAddress);
-	zeroAddress.sin_family = AF_INET;
-    
-	return [self reachabilityWithAddress:&zeroAddress];
+    struct sockaddr_in zeroAddress;
+    bzero(&zeroAddress, sizeof(zeroAddress));
+    zeroAddress.sin_len = sizeof(zeroAddress);
+    zeroAddress.sin_family = AF_INET;
+
+    return [self reachabilityWithAddress:&zeroAddress];
 }
 
 + (instancetype)reachabilityForLocalWiFi;
 {
-	struct sockaddr_in localWifiAddress;
-	bzero(&localWifiAddress, sizeof(localWifiAddress));
-	localWifiAddress.sin_len = sizeof(localWifiAddress);
-	localWifiAddress.sin_family = AF_INET;
+    struct sockaddr_in localWifiAddress;
+    bzero(&localWifiAddress, sizeof(localWifiAddress));
+    localWifiAddress.sin_len = sizeof(localWifiAddress);
+    localWifiAddress.sin_family = AF_INET;
 
-	// IN_LINKLOCALNETNUM is defined in <netinet/in.h> as 169.254.0.0.
-	localWifiAddress.sin_addr.s_addr = htonl(IN_LINKLOCALNETNUM);
+    // IN_LINKLOCALNETNUM is defined in <netinet/in.h> as 169.254.0.0.
+    localWifiAddress.sin_addr.s_addr = htonl(IN_LINKLOCALNETNUM);
 
-	BAReachability* returnValue = [self reachabilityWithAddress: &localWifiAddress];
-	if (returnValue != NULL)
-	{
-		returnValue->localWiFiRef = YES;
-	}
-    
-	return returnValue;
+    BAReachability *returnValue = [self reachabilityWithAddress:&localWifiAddress];
+    if (returnValue != NULL) {
+        returnValue->localWiFiRef = YES;
+    }
+
+    return returnValue;
 }
-
 
 #pragma mark -
 #pragma mark Start and stop notifier
 
-- (BOOL)startNotifier
-{
-	BOOL returnValue = NO;
-	SCNetworkReachabilityContext context = {0, (__bridge void *)(self), NULL, NULL, NULL};
+- (BOOL)startNotifier {
+    BOOL returnValue = NO;
+    SCNetworkReachabilityContext context = {0, (__bridge void *)(self), NULL, NULL, NULL};
 
-	if (SCNetworkReachabilitySetCallback(reachabilityRef, BAReachabilityCallback, &context))
-	{
-		if (SCNetworkReachabilityScheduleWithRunLoop(reachabilityRef, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode))
-		{
-			returnValue = YES;
-		}
-	}
-    
-	return returnValue;
+    if (SCNetworkReachabilitySetCallback(reachabilityRef, BAReachabilityCallback, &context)) {
+        if (SCNetworkReachabilityScheduleWithRunLoop(reachabilityRef, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode)) {
+            returnValue = YES;
+        }
+    }
+
+    return returnValue;
 }
 
-- (void)stopNotifier
-{
-	if (reachabilityRef != NULL)
-	{
-		SCNetworkReachabilityUnscheduleFromRunLoop(reachabilityRef, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
-	}
+- (void)stopNotifier {
+    if (reachabilityRef != NULL) {
+        SCNetworkReachabilityUnscheduleFromRunLoop(reachabilityRef, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+    }
 }
 
-- (void)dealloc
-{
-	[self stopNotifier];
-	if (reachabilityRef != NULL)
-	{
-		CFRelease(reachabilityRef);
-	}
+- (void)dealloc {
+    [self stopNotifier];
+    if (reachabilityRef != NULL) {
+        CFRelease(reachabilityRef);
+    }
 }
-
 
 #pragma mark -
 #pragma mark Network Flag Handling
 
-- (BANetworkStatus)localWiFiStatusForFlags:(SCNetworkReachabilityFlags)flags
-{
-	BAPrintReachabilityFlags(flags, "localWiFiStatusForFlags");
-	BOOL returnValue = NotReachable;
+- (BANetworkStatus)localWiFiStatusForFlags:(SCNetworkReachabilityFlags)flags {
+    BAPrintReachabilityFlags(flags, "localWiFiStatusForFlags");
+    BOOL returnValue = NotReachable;
 
-	if ((flags & kSCNetworkReachabilityFlagsReachable) && (flags & kSCNetworkReachabilityFlagsIsDirect))
-	{
-		returnValue = ReachableViaWiFi;
-	}
-    
-	return returnValue;
+    if ((flags & kSCNetworkReachabilityFlagsReachable) && (flags & kSCNetworkReachabilityFlagsIsDirect)) {
+        returnValue = ReachableViaWiFi;
+    }
+
+    return returnValue;
 }
 
-- (BANetworkStatus)networkStatusForFlags:(SCNetworkReachabilityFlags)flags
-{
-	BAPrintReachabilityFlags(flags, "networkStatusForFlags");
-	if ((flags & kSCNetworkReachabilityFlagsReachable) == 0)
-	{
-		// The target host is not reachable.
-		return NotReachable;
-	}
+- (BANetworkStatus)networkStatusForFlags:(SCNetworkReachabilityFlags)flags {
+    BAPrintReachabilityFlags(flags, "networkStatusForFlags");
+    if ((flags & kSCNetworkReachabilityFlagsReachable) == 0) {
+        // The target host is not reachable.
+        return NotReachable;
+    }
 
     BANetworkStatus returnValue = NotReachable;
 
-	if ((flags & kSCNetworkReachabilityFlagsConnectionRequired) == 0)
-	{
-		/*
-         If the target host is reachable and no connection is required then we'll assume (for now) that you're on Wi-Fi...
-         */
-		returnValue = ReachableViaWiFi;
-	}
-
-	if ((((flags & kSCNetworkReachabilityFlagsConnectionOnDemand ) != 0) ||
-        (flags & kSCNetworkReachabilityFlagsConnectionOnTraffic) != 0))
-	{
+    if ((flags & kSCNetworkReachabilityFlagsConnectionRequired) == 0) {
         /*
-         ... and the connection is on-demand (or on-traffic) if the calling application is using the CFSocketStream or higher APIs...
+ If the target host is reachable and no connection is required then we'll assume (for now) that you're on Wi-Fi...
+ */
+        returnValue = ReachableViaWiFi;
+    }
+
+    if ((((flags & kSCNetworkReachabilityFlagsConnectionOnDemand) != 0) ||
+         (flags & kSCNetworkReachabilityFlagsConnectionOnTraffic) != 0)) {
+        /*
+         ... and the connection is on-demand (or on-traffic) if the calling application is using the CFSocketStream or
+         higher APIs...
          */
 
-        if ((flags & kSCNetworkReachabilityFlagsInterventionRequired) == 0)
-        {
+        if ((flags & kSCNetworkReachabilityFlagsInterventionRequired) == 0) {
             /*
              ... and no [user] intervention is needed...
              */
@@ -275,65 +243,53 @@ static void BAReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
         }
     }
 
-    
-	if ((flags & kSCNetworkReachabilityFlagsIsWWAN) == kSCNetworkReachabilityFlagsIsWWAN)
-	{
-		/*
-         ... but WWAN connections are OK if the calling application is using the CFNetwork APIs.
-         */
-		returnValue = ReachableViaWWAN;
-	}
-    
-	return returnValue;
+    if ((flags & kSCNetworkReachabilityFlagsIsWWAN) == kSCNetworkReachabilityFlagsIsWWAN) {
+        /*
+ ... but WWAN connections are OK if the calling application is using the CFNetwork APIs.
+ */
+        returnValue = ReachableViaWWAN;
+    }
+
+    return returnValue;
 }
 
-- (BOOL)connectionRequired
-{
-    if (reachabilityRef == NULL)
-    {
+- (BOOL)connectionRequired {
+    if (reachabilityRef == NULL) {
         return NO;
     }
-    
-	SCNetworkReachabilityFlags flags;
 
-	if (SCNetworkReachabilityGetFlags(reachabilityRef, &flags))
-	{
-		return (flags & kSCNetworkReachabilityFlagsConnectionRequired);
-	}
+    SCNetworkReachabilityFlags flags;
+
+    if (SCNetworkReachabilityGetFlags(reachabilityRef, &flags)) {
+        return (flags & kSCNetworkReachabilityFlagsConnectionRequired);
+    }
 
     return NO;
 }
 
-- (BANetworkStatus)currentReachabilityStatus
-{
-    if (reachabilityRef == NULL)
-    {
+- (BANetworkStatus)currentReachabilityStatus {
+    if (reachabilityRef == NULL) {
         return NO;
     }
 
-	BANetworkStatus returnValue = NotReachable;
-	SCNetworkReachabilityFlags flags;
-    
-	if (SCNetworkReachabilityGetFlags(reachabilityRef, &flags))
-	{
+    BANetworkStatus returnValue = NotReachable;
+    SCNetworkReachabilityFlags flags;
+
+    if (SCNetworkReachabilityGetFlags(reachabilityRef, &flags)) {
         returnValue = NotReachable;
-        if ((flags & kSCNetworkReachabilityFlagsReachable) == 0)
-        {
+        if ((flags & kSCNetworkReachabilityFlagsReachable) == 0) {
             // The target host is not reachable.
             return returnValue;
         }
-        
-        if ((flags & kSCNetworkReachabilityFlagsIsWWAN) == kSCNetworkReachabilityFlagsIsWWAN)
-        {
+
+        if ((flags & kSCNetworkReachabilityFlagsIsWWAN) == kSCNetworkReachabilityFlagsIsWWAN) {
             returnValue = ReachableViaWWAN;
-        }
-        else
-        {
+        } else {
             returnValue = ReachableViaWiFi;
         }
-	}
-    
-	return returnValue;
+    }
+
+    return returnValue;
 }
 
 @end

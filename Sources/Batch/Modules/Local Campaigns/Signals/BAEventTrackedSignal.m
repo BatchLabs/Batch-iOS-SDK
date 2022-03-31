@@ -10,23 +10,21 @@
 
 @implementation BAEventTrackedSignal
 
-- (instancetype)initWithName:(NSString *)name
-{
+- (instancetype)initWithName:(NSString *)name {
     self = [super init];
     if (self) {
         self.name = name;
     }
-    
+
     return self;
 }
 
-- (BOOL)doesSatisfyTrigger:(nullable id<BALocalCampaignTriggerProtocol>)trigger
-{
+- (BOOL)doesSatisfyTrigger:(nullable id<BALocalCampaignTriggerProtocol>)trigger {
     if (![trigger isKindOfClass:[BAEventTrigger class]]) {
         return false;
     }
-    
-    return [((BAEventTrigger*)trigger) isSatisfiedForName:self.name label:nil];
+
+    return [((BAEventTrigger *)trigger) isSatisfiedForName:self.name label:nil];
 }
 
 @end

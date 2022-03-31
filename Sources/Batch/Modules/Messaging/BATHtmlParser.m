@@ -9,8 +9,9 @@
 
 @implementation BATTextTransform
 
-- (instancetype)initWithLocation:(NSUInteger)location modifiers:(BATTextModifiers)modifiers attributes:(BATTextTransformAttributes*)attributes
-{
+- (instancetype)initWithLocation:(NSUInteger)location
+                       modifiers:(BATTextModifiers)modifiers
+                      attributes:(BATTextTransformAttributes *)attributes {
     self = [super init];
     if (self) {
         _range = NSMakeRange(location, 0);
@@ -20,18 +21,16 @@
     return self;
 }
 
-- (void)setEndLocation:(NSUInteger)endLocation
-{
-    _range = NSMakeRange(_range.location, endLocation-_range.location);
+- (void)setEndLocation:(NSUInteger)endLocation {
+    _range = NSMakeRange(_range.location, endLocation - _range.location);
 }
 
-- (NSString*)description
-{
+- (NSString *)description {
     NSMutableString *desc = [NSMutableString new];
     [desc appendString:@"BATTextTransform: Range "];
     [desc appendString:NSStringFromRange(_range)];
     [desc appendString:@" - Modifiers: "];
-    
+
     if (_modifiers == BATTextModifierNone) {
         [desc appendString:@"None"];
     } else {
@@ -65,22 +64,20 @@
             [desc appendString:@"Small "];
         }
     }
-    
+
     return desc;
 }
 
 @end
 
-@implementation BATHtmlParser
-{
+@implementation BATHtmlParser {
     NSData *_htmlData;
     NSMutableString *_taglessString;
-    NSMutableArray<BATTextTransform*> *_transforms;
-    NSMutableArray<BATTextTransform*> *_pendingTransforms;
+    NSMutableArray<BATTextTransform *> *_transforms;
+    NSMutableArray<BATTextTransform *> *_pendingTransforms;
 }
 
-- (instancetype)initWithString:(NSString*)string
-{
+- (instancetype)initWithString:(NSString *)string {
     self = [super init];
     if (self) {
         // We wrap the input string in tags if needed, so that we can parse it as valid XML
@@ -93,18 +90,15 @@
     return self;
 }
 
-- (NSString*)text
-{
+- (NSString *)text {
     return [_taglessString copy];
 }
 
-- (NSArray<BATTextTransform*>*)transforms
-{
+- (NSArray<BATTextTransform *> *)transforms {
     return [_transforms copy];
 }
 
-- (NSError*)parse
-{
+- (NSError *)parse {
     NSXMLParser *parser = [[NSXMLParser alloc] initWithData:_htmlData];
     parser.delegate = self;
     if ([parser parse]) {
@@ -112,79 +106,87 @@
     } else {
         return parser.parserError;
     }
-    //NSLog(@"finished");
+    // NSLog(@"finished");
 }
 
-- (NSString*)replaceHtmlEntities:(NSString*)origString
-{
+- (NSString *)replaceHtmlEntities:(NSString *)origString {
     unichar nbsp = 0x00a0;
     NSString *nbspString = [NSString stringWithCharacters:&nbsp length:1];
     NSMutableString *workString = [NSMutableString stringWithString:origString];
-    
-    [workString replaceOccurrencesOfString:@"&nbsp;" withString:nbspString options:NSLiteralSearch range:NSMakeRange(0, [workString length])];
+
+    [workString replaceOccurrencesOfString:@"&nbsp;"
+                                withString:nbspString
+                                   options:NSLiteralSearch
+                                     range:NSMakeRange(0, [workString length])];
 
     return workString;
 }
 
-- (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary<NSString *,NSString *> *)xmlAttributes
-{
-    //NSLog(@"< %@", elementName);
-    // Opening a new tag created a new transform that inherits all past modifiers
-    // Don't skip unknown modifiers so we can close them correctly, except br and html
+- (void)parser:(NSXMLParser *)parser
+    didStartElement:(NSString *)elementName
+       namespaceURI:(NSString *)namespaceURI
+      qualifiedName:(NSString *)qName
+         attributes:(NSDictionary<NSString *, NSString *> *)xmlAttributes {
+    // NSLog(@"< %@", elementName);
+    //  Opening a new tag created a new transform that inherits all past modifiers
+    //  Don't skip unknown modifiers so we can close them correctly, except br and html
     if ([@"html" isEqualToString:elementName] || [@"br" isEqualToString:elementName]) {
         return;
     }
-    
+
     BATTextModifiers newModifier = [self modifierForTag:elementName];
-    
+
     // Merge modifiers and attributes
     BATTextTransform *previousTransform = [_pendingTransforms lastObject];
     BATTextModifiers previousModifier = previousTransform.modifiers;
-    
+
     BATTextTransformAttributes *mergedAttributes = [BATTextTransformAttributes new];
-    
+
     if ([xmlAttributes count] > 0) {
-        mergedAttributes = [self mergeXmlAttributes:xmlAttributes intoPrevious:previousTransform.attributes newModifier:newModifier];
+        mergedAttributes = [self mergeXmlAttributes:xmlAttributes
+                                       intoPrevious:previousTransform.attributes
+                                        newModifier:newModifier];
     }
-    
+
     [_pendingTransforms addObject:[[BATTextTransform alloc] initWithLocation:_taglessString.length
                                                                    modifiers:previousModifier | newModifier
                                                                   attributes:mergedAttributes]];
-    
-    //NSLog(@"- %@ %@ %@", _taglessString, _pendingTransforms, _transforms);
+
+    // NSLog(@"- %@ %@ %@", _taglessString, _pendingTransforms, _transforms);
 }
 
-- (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName
-{
-    //NSLog(@"/ %@ >", elementName);
-    // XML parser enforces that only the last opened tag can be closed, so we can "pop" it
-    
+- (void)parser:(NSXMLParser *)parser
+    didEndElement:(NSString *)elementName
+     namespaceURI:(NSString *)namespaceURI
+    qualifiedName:(NSString *)qName {
+    // NSLog(@"/ %@ >", elementName);
+    //  XML parser enforces that only the last opened tag can be closed, so we can "pop" it
+
     if ([@"br" isEqualToString:elementName]) {
         [_taglessString appendString:@"\n"];
         return;
     }
-    
+
     BATTextTransform *pendingTransform = [_pendingTransforms lastObject];
     [_pendingTransforms removeLastObject];
     if (pendingTransform.modifiers != BATTextModifierNone) {
         [pendingTransform setEndLocation:_taglessString.length];
         [_transforms addObject:pendingTransform];
     }
-    
-    //NSLog(@"~ %@ %@ %@", _taglessString, _pendingTransforms, _transforms);
+
+    // NSLog(@"~ %@ %@ %@", _taglessString, _pendingTransforms, _transforms);
 }
 
-- (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string
-{
+- (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string {
     NSUInteger len = [string length];
-    unichar inputBuffer[len+1];
+    unichar inputBuffer[len + 1];
     [string getCharacters:inputBuffer range:NSMakeRange(0, len)];
 
     unichar outputBuffer[len];
     NSUInteger outputPos = 0;
     unichar previousChar = '\0';
     unichar currentChar;
-    for(int i = 0; i < len; i++) {
+    for (int i = 0; i < len; i++) {
         currentChar = inputBuffer[i];
         // HTML replaces \n with spaces
         if (currentChar == '\n') {
@@ -203,8 +205,7 @@
     [_taglessString appendString:[NSString stringWithCharacters:outputBuffer length:MIN(len, outputPos)]];
 }
 
-- (BATTextModifiers)modifierForTag:(NSString*)tag
-{
+- (BATTextModifiers)modifierForTag:(NSString *)tag {
     if ([@"big" isEqualToString:tag]) {
         return BATTextModifierBiggerFont;
     } else if ([@"small" isEqualToString:tag]) {
@@ -212,7 +213,7 @@
     } else if ([@"span" isEqualToString:tag]) {
         return BATTextModifierSpan;
     } else {
-        switch([tag characterAtIndex:0]) {
+        switch ([tag characterAtIndex:0]) {
             case 'b':
                 return BATTextModifierBold;
             case 'i':
@@ -227,14 +228,15 @@
     }
 }
 
-- (NSDictionary*)mergeXmlAttributes:(NSDictionary<NSString*, NSString*>*)xmlAttributes intoPrevious:(NSDictionary*)previous newModifier:(BATTextModifiers)newModifier
-{
+- (NSDictionary *)mergeXmlAttributes:(NSDictionary<NSString *, NSString *> *)xmlAttributes
+                        intoPrevious:(NSDictionary *)previous
+                         newModifier:(BATTextModifiers)newModifier {
     if (xmlAttributes == nil) {
         return previous;
     }
-    
-    NSMutableDictionary* outDict = previous != nil ? [previous mutableCopy] : [NSMutableDictionary new];
-    
+
+    NSMutableDictionary *outDict = previous != nil ? [previous mutableCopy] : [NSMutableDictionary new];
+
     // Whitelist keys and transform them
     if (newModifier == BATTextModifierSpan) {
         NSString *xmlStyle = xmlAttributes[@"style"];
@@ -250,7 +252,7 @@
             }
         }
     }
-    
+
     return outDict;
 }
 

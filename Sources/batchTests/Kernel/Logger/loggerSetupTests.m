@@ -14,24 +14,22 @@
 
 @implementation loggerSetupTests
 
-+ (void)tearDown
-{
++ (void)tearDown {
     BALogger.internalLogsEnabled = false;
 }
 
-- (void)testEnableInternalLogsWithArgument
-{
+- (void)testEnableInternalLogsWithArgument {
     BALogger.internalLogsEnabled = false;
-    
+
     NSMutableArray *mockArguments = [NSMutableArray new];
-    
+
     id nsProcessMock = OCMClassMock([NSProcessInfo class]);
     OCMStub([nsProcessMock processInfo]).andReturn(nsProcessMock);
     OCMStub([nsProcessMock arguments]).andReturn(mockArguments);
-    
+
     [BALogger setup];
     XCTAssertFalse(BALogger.internalLogsEnabled);
-    
+
     [mockArguments addObject:@"-BatchSDKEnableInternalLogs"];
     [BALogger setup];
     XCTAssertTrue(BALogger.internalLogsEnabled);

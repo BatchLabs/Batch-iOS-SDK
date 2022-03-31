@@ -14,13 +14,11 @@
 #import <Batch/BAJson.h>
 #import <Batch/BALogger.h>
 
-@implementation BATrackerSignpostHelper
-{
+@implementation BATrackerSignpostHelper {
     os_log_t _log;
 }
 
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super init];
     if (self) {
         if ([BALogger internalLogsEnabled]) {
@@ -32,20 +30,21 @@
     return self;
 }
 
-- (void)trackEvent:(NSString*)event withParameters:(NSDictionary*)parameters collapsable:(BOOL)collapsable
-{
+- (void)trackEvent:(NSString *)event withParameters:(NSDictionary *)parameters collapsable:(BOOL)collapsable {
     if (!os_signpost_enabled(_log)) {
         return;
     }
-    
+
     NSString *jsonParams;
     jsonParams = [BAJson serialize:parameters error:nil];
-    
+
     if (jsonParams == nil) {
         jsonParams = @"nil";
     }
-    
-    os_signpost_event_emit(_log, OS_SIGNPOST_ID_EXCLUSIVE, "Event tracked", "Name: \"%{public}@\", Parameters: %{public}@, Collapsable?: %{public}s", event, jsonParams, collapsable ? "YES" : "NO");
+
+    os_signpost_event_emit(_log, OS_SIGNPOST_ID_EXCLUSIVE, "Event tracked",
+                           "Name: \"%{public}@\", Parameters: %{public}@, Collapsable?: %{public}s", event, jsonParams,
+                           collapsable ? "YES" : "NO");
 }
 
 // Add webservice reporting?

@@ -6,17 +6,17 @@
 //  Copyright (c) 2015 Batch SDK. All rights reserved.
 //
 
-#import <Batch/BatchUser.h>
+#import <Batch/BAInjectable.h>
+#import <Batch/BAPropertiesCenter.h>
+#import <Batch/BATrackerCenter.h>
 #import <Batch/BAUserDataEditor.h>
 #import <Batch/BAUserDataManager.h>
-#import <Batch/BATrackerCenter.h>
-#import <Batch/BAPropertiesCenter.h>
-#import <Batch/BatchEventDataPrivate.h>
-#import <Batch/BatchUserAttribute.h>
-#import <Batch/BAUserSQLiteDatasource.h>
-#import <Batch/BatchUserAttributePrivate.h>
 #import <Batch/BAUserProfile.h>
-#import <Batch/BAInjectable.h>
+#import <Batch/BAUserSQLiteDatasource.h>
+#import <Batch/BatchEventDataPrivate.h>
+#import <Batch/BatchUser.h>
+#import <Batch/BatchUserAttribute.h>
+#import <Batch/BatchUserAttributePrivate.h>
 
 #define EVENT_NAME_REGEXP @"^[a-zA-Z0-9_]{1,30}$"
 
@@ -28,241 +28,212 @@ NSErrorDomain const BatchUserDataEditorErrorDomain = @"com.batch.ios.userdataedi
 
 @implementation BatchUser
 
-+ (nullable NSString*)installationID
-{
++ (nullable NSString *)installationID {
     return [[BAPropertiesCenter valueForShortName:@"di"] uppercaseString];
 }
 
-+ (nonnull BatchUserDataEditor*)editor
-{
++ (nonnull BatchUserDataEditor *)editor {
     return [BatchUserDataEditor new];
 }
 
-+ (nonnull NSString *)language
-{
++ (nonnull NSString *)language {
     NSString *savedLanguage = [[BAUserProfile defaultUserProfile] language];
     return savedLanguage;
 }
 
-+ (nonnull NSString *)region
-{
++ (nonnull NSString *)region {
     NSString *savedRegion = [[BAUserProfile defaultUserProfile] region];
     return savedRegion;
 }
 
-+ (nullable NSString *)identifier
-{
++ (nullable NSString *)identifier {
     return [[BAUserProfile defaultUserProfile] customIdentifier];
 }
 
-+ (void)fetchAttributes:(void (^)(NSDictionary<NSString*, BatchUserAttribute*>* _Nullable))completionHandler
-{
++ (void)fetchAttributes:(void (^)(NSDictionary<NSString *, BatchUserAttribute *> *_Nullable))completionHandler {
     dispatch_async([BAUserDataManager sharedQueue], ^{
-        id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
-        NSDictionary<NSString*, BAUserAttribute*> *privateAttributes = [datasource attributes];
-        NSMutableDictionary<NSString*, BatchUserAttribute*> *publicAttributes = [NSMutableDictionary new];
-        for (NSString* key in privateAttributes) {
-            BAUserAttribute *privateAttribute = privateAttributes[key];
-            
-            BatchUserAttributeType publicType;
-            switch (privateAttribute.type) {
-                case BAUserAttributeTypeBool:
-                    publicType = BatchUserAttributeTypeBool;
-                    break;
-                case BAUserAttributeTypeDate:
-                    publicType = BatchUserAttributeTypeDate;
-                    break;
-                case BAUserAttributeTypeString:
-                    publicType = BatchUserAttributeTypeString;
-                    break;
-                case BAUserAttributeTypeLongLong:
-                    publicType = BatchUserAttributeTypeLongLong;
-                    break;
-                case BAUserAttributeTypeDouble:
-                    publicType = BatchUserAttributeTypeDouble;
-                    break;
-                case BAUserAttributeTypeURL:
-                    publicType = BatchUserAttributeTypeURL;
-                    break;
-                default:
-                    continue; // We skip attributes whose type is not dealt with above.
-                    break;
-            }
-            
-            BatchUserAttribute *publicAttribute = [[BatchUserAttribute alloc] initWithValue:privateAttribute.value
-                                                                                       type:publicType];
-            
-            // Clean the key so that it is equal to the one used when setting the attribute.
-            NSString *userKey = [key stringByReplacingCharactersInRange:NSMakeRange(0, 2) withString: @""];
-            publicAttributes[userKey] = publicAttribute;
-        }
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            completionHandler([publicAttributes copy]);
-        });
+      id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+      NSDictionary<NSString *, BAUserAttribute *> *privateAttributes = [datasource attributes];
+      NSMutableDictionary<NSString *, BatchUserAttribute *> *publicAttributes = [NSMutableDictionary new];
+      for (NSString *key in privateAttributes) {
+          BAUserAttribute *privateAttribute = privateAttributes[key];
+
+          BatchUserAttributeType publicType;
+          switch (privateAttribute.type) {
+              case BAUserAttributeTypeBool:
+                  publicType = BatchUserAttributeTypeBool;
+                  break;
+              case BAUserAttributeTypeDate:
+                  publicType = BatchUserAttributeTypeDate;
+                  break;
+              case BAUserAttributeTypeString:
+                  publicType = BatchUserAttributeTypeString;
+                  break;
+              case BAUserAttributeTypeLongLong:
+                  publicType = BatchUserAttributeTypeLongLong;
+                  break;
+              case BAUserAttributeTypeDouble:
+                  publicType = BatchUserAttributeTypeDouble;
+                  break;
+              case BAUserAttributeTypeURL:
+                  publicType = BatchUserAttributeTypeURL;
+                  break;
+              default:
+                  continue; // We skip attributes whose type is not dealt with above.
+                  break;
+          }
+
+          BatchUserAttribute *publicAttribute = [[BatchUserAttribute alloc] initWithValue:privateAttribute.value
+                                                                                     type:publicType];
+
+          // Clean the key so that it is equal to the one used when setting the attribute.
+          NSString *userKey = [key stringByReplacingCharactersInRange:NSMakeRange(0, 2) withString:@""];
+          publicAttributes[userKey] = publicAttribute;
+      }
+
+      dispatch_async(dispatch_get_main_queue(), ^{
+        completionHandler([publicAttributes copy]);
+      });
     });
 }
 
-+ (void)fetchTagCollections:(void (^)(NSDictionary<NSString *,NSSet<NSString *> *> * _Nullable))completionHandler
-{
++ (void)fetchTagCollections:(void (^)(NSDictionary<NSString *, NSSet<NSString *> *> *_Nullable))completionHandler {
     dispatch_async([BAUserDataManager sharedQueue], ^{
-        id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
-        NSDictionary<NSString*, NSSet<NSString*>*>* tagCollections = [datasource tagCollections];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            completionHandler(tagCollections);
-        });
+      id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+      NSDictionary<NSString *, NSSet<NSString *> *> *tagCollections = [datasource tagCollections];
+      dispatch_async(dispatch_get_main_queue(), ^{
+        completionHandler(tagCollections);
+      });
     });
 }
 
-+ (void)trackEvent:(nonnull NSString*)event
-{
++ (void)trackEvent:(nonnull NSString *)event {
     [BatchUser trackEvent:event withLabel:nil associatedData:nil];
 }
 
-+ (void)trackEvent:(nonnull NSString*)event withLabel:(nullable NSString*)label
-{
++ (void)trackEvent:(nonnull NSString *)event withLabel:(nullable NSString *)label {
     [BatchUser trackEvent:event withLabel:label associatedData:nil];
 }
 
-+ (void)trackEvent:(nonnull NSString*)event withLabel:(nullable NSString*)label data:(nullable NSDictionary*)legacyData
-{
++ (void)trackEvent:(nonnull NSString *)event
+         withLabel:(nullable NSString *)label
+              data:(nullable NSDictionary *)legacyData {
     BatchEventData *data = nil;
-    if (legacyData != nil)
-    {
+    if (legacyData != nil) {
         data = [BatchEventData new];
         [data _copyLegacyData:legacyData];
     }
-    
+
     [BatchUser trackEvent:event withLabel:label associatedData:data];
 }
-    
-+ (void)trackEvent:(nonnull NSString*)event withLabel:(nullable NSString*)label associatedData:(nullable BatchEventData*)data
-{
+
++ (void)trackEvent:(nonnull NSString *)event
+         withLabel:(nullable NSString *)label
+    associatedData:(nullable BatchEventData *)data {
     static id eventNameValidationRegexp = nil;
     static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^ {
-        
-        NSError *error = nil;
-        
-        eventNameValidationRegexp = [NSRegularExpression regularExpressionWithPattern:EVENT_NAME_REGEXP
-                                                                              options:0
-                                                                                error:&error];
-        if (error)
-        {
-            // Something went really wrong, so we'll just throw internal errors
-            [BALogger errorForDomain:@"BatchUser - Events" message:@"Error while creating event name regexp."];
-            eventNameValidationRegexp = nil;
-        }
+    dispatch_once(&onceToken, ^{
+      NSError *error = nil;
+
+      eventNameValidationRegexp = [NSRegularExpression regularExpressionWithPattern:EVENT_NAME_REGEXP
+                                                                            options:0
+                                                                              error:&error];
+      if (error) {
+          // Something went really wrong, so we'll just throw internal errors
+          [BALogger errorForDomain:@"BatchUser - Events" message:@"Error while creating event name regexp."];
+          eventNameValidationRegexp = nil;
+      }
     });
-    
-    if (!eventNameValidationRegexp)
-    {
+
+    if (!eventNameValidationRegexp) {
         [BALogger publicForDomain:@"BatchUser - Events" message:@"Internal error. Ignoring attribute '%@'.", event];
         return;
     }
-    
+
     BOOL eventValidated = NO;
-    
-    if ([event isKindOfClass:[NSString class]])
-    {
+
+    if ([event isKindOfClass:[NSString class]]) {
         NSRange matchingRange = [eventNameValidationRegexp rangeOfFirstMatchInString:event
                                                                              options:0
                                                                                range:NSMakeRange(0, event.length)];
-        if (matchingRange.location != NSNotFound)
-        {
+        if (matchingRange.location != NSNotFound) {
             eventValidated = YES;
         }
     }
-    
-    
-    if (!eventValidated)
-    {
+
+    if (!eventValidated) {
         [BALogger publicForDomain:@"BatchUser - Events" message:@"Invalid event name ('%@'). Not tracking.", event];
         return;
     }
-    
-    if (![label isKindOfClass:[NSString class]])
-    {
+
+    if (![label isKindOfClass:[NSString class]]) {
         label = nil;
     }
-    
-    if (![data isKindOfClass:[BatchEventData class]])
-    {
+
+    if (![data isKindOfClass:[BatchEventData class]]) {
         data = nil;
     }
-    
+
     [BATrackerCenter trackPublicEvent:event.uppercaseString label:label data:data];
 }
 
-+ (void)trackTransactionWithAmount:(double)amount
-{
++ (void)trackTransactionWithAmount:(double)amount {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [BatchUser trackTransactionWithAmount:amount data:nil];
 #pragma clang diagnostic pop
 }
 
-+ (void)trackTransactionWithAmount:(double)amount data:(nullable NSDictionary*)legacyData
-{
++ (void)trackTransactionWithAmount:(double)amount data:(nullable NSDictionary *)legacyData {
     NSMutableDictionary *params = [NSMutableDictionary new];
-    
+
     [params setObject:[NSNumber numberWithDouble:amount] forKey:BA_PUBLIC_EVENT_KEY_AMOUNT];
-    
+
     BatchEventData *data = nil;
-    if (legacyData != nil)
-    {
+    if (legacyData != nil) {
         data = [BatchEventData new];
         [data _copyLegacyData:legacyData];
         [params addEntriesFromDictionary:[data _internalDictionaryRepresentation]];
     }
-    
+
     [BATrackerCenter trackPrivateEvent:@"T" parameters:params];
 }
 
-+ (void)trackLocation:(nonnull CLLocation*)location
-{
++ (void)trackLocation:(nonnull CLLocation *)location {
     [BATrackerCenter trackLocation:location];
 }
 
-+ (void)printDebugInformation
-{
++ (void)printDebugInformation {
     [BAUserDataManager printDebugInformation];
 }
 
 @end
 
-@implementation BatchUserDataEditor
-{
+@implementation BatchUserDataEditor {
     BAUserDataEditor *_backingImpl;
 }
 
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super init];
-    if (self)
-    {
+    if (self) {
         _backingImpl = [BAInjection injectClass:BAUserDataEditor.class];
     }
     return self;
 }
 
-- (void)setLanguage:(nullable NSString*)language
-{
+- (void)setLanguage:(nullable NSString *)language {
     [_backingImpl setLanguage:language];
 }
 
-- (void)setRegion:(nullable NSString*)region
-{
+- (void)setRegion:(nullable NSString *)region {
     [_backingImpl setRegion:region];
 }
 
-- (void)setIdentifier:(nullable NSString*)identifier
-{
+- (void)setIdentifier:(nullable NSString *)identifier {
     [_backingImpl setIdentifier:identifier];
 }
 
-- (void)setAttribute:(nullable NSObject*)attribute forKey:(nonnull NSString*)key
-{
+- (void)setAttribute:(nullable NSObject *)attribute forKey:(nonnull NSString *)key {
     [_backingImpl setAttribute:attribute forKey:key];
 }
 
@@ -302,38 +273,31 @@ NSErrorDomain const BatchUserDataEditorErrorDomain = @"com.batch.ios.userdataedi
     return [_backingImpl setURLAttribute:attribute forKey:key error:error];
 }
 
-- (void)removeAttributeForKey:(nonnull NSString*)key
-{
+- (void)removeAttributeForKey:(nonnull NSString *)key {
     [_backingImpl removeAttributeForKey:key];
 }
 
-- (void)clearAttributes
-{
+- (void)clearAttributes {
     [_backingImpl clearAttributes];
 }
 
-- (void)addTag:(nonnull NSString*)tag inCollection:(nonnull NSString*)collection
-{
+- (void)addTag:(nonnull NSString *)tag inCollection:(nonnull NSString *)collection {
     [_backingImpl addTag:tag inCollection:collection];
 }
 
-- (void)removeTag:(nonnull NSString*)tag fromCollection:(nonnull NSString*)collection
-{
+- (void)removeTag:(nonnull NSString *)tag fromCollection:(nonnull NSString *)collection {
     [_backingImpl removeTag:tag fromCollection:collection];
 }
 
-- (void)clearTags
-{
+- (void)clearTags {
     [_backingImpl clearTags];
 }
 
-- (void)clearTagCollection:(nonnull NSString*)collection
-{
+- (void)clearTagCollection:(nonnull NSString *)collection {
     [_backingImpl clearTagCollection:collection];
 }
 
-- (void)save
-{
+- (void)save {
     [_backingImpl save];
 }
 

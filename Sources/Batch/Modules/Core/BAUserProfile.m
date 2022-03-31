@@ -21,85 +21,70 @@
 
 static const int currentVersion = 1;
 
-+ (void)initialize
-{
-    if (self == [BAUserProfile class])
-    {
++ (void)initialize {
+    if (self == [BAUserProfile class]) {
         [self setVersion:currentVersion];
     }
 }
 
-+ (BAUserProfile *)defaultUserProfile
-{
++ (BAUserProfile *)defaultUserProfile {
     static BAUserProfile *sharedInstance = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        sharedInstance = [[BAUserProfile alloc] init];
+      sharedInstance = [[BAUserProfile alloc] init];
     });
-    
+
     return sharedInstance;
 }
 
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super init];
-    if ([BANullHelper isNull:self])
-    {
+    if ([BANullHelper isNull:self]) {
         return self;
     }
-    
+
     _lock = [NSObject new];
-    
+
     return self;
 }
 
 // Key-Value dictionary representation of a user profile.
-- (NSDictionary *)dictionaryRepresentation
-{
+- (NSDictionary *)dictionaryRepresentation {
     NSMutableDictionary *keyValues = [[NSMutableDictionary alloc] init];
     [keyValues setValue:[self language] forKey:@"ula"];
     [keyValues setValue:[self region] forKey:@"ure"];
     [keyValues setValue:[self version] forKey:@"upv"];
-    
+
     return [NSDictionary dictionaryWithDictionary:keyValues];
 }
 
 // Method that saves a parameter and bumps data version if needed
-- (NSError*)updateValue:(NSString*)value forKey:(NSString*)key
-{
+- (NSError *)updateValue:(NSString *)value forKey:(NSString *)key {
     NSError *error = nil;
-    if ([BANullHelper isStringEmpty:value])
-    {
+    if ([BANullHelper isStringEmpty:value]) {
         // Reset the custom identifier, language or region
         error = [BAParameter removeObjectForKey:key];
-    }
-    else
-    {
+    } else {
         // Change the value.
         error = [BAParameter setValue:value forKey:key saved:YES];
     }
-    
+
     return error;
 }
 
-- (void)incrementVersion
-{
-    @synchronized(_lock)
-    {
+- (void)incrementVersion {
+    @synchronized(_lock) {
         NSNumber *version = [self version];
         // Sanity
-        if (![version isKindOfClass:[NSNumber class]])
-        {
+        if (![version isKindOfClass:[NSNumber class]]) {
             [BAParameter setValue:@(1) forKey:kParametersAppProfileVersionKey saved:YES];
-        }
-        else
-        {
+        } else {
             [BAParameter setValue:@([version longLongValue] + 1) forKey:kParametersAppProfileVersionKey saved:YES];
         }
-        
+
         NSMutableDictionary *eventParameters = [[self dictionaryRepresentation] mutableCopy];
         [eventParameters setValue:[self customIdentifier] forKey:@"cus"];
-        
+
         [BATrackerCenter trackPrivateEvent:@"_PROFILE_CHANGED" parameters:eventParameters];
     }
 }
@@ -107,94 +92,80 @@ static const int currentVersion = 1;
 #pragma mark -
 #pragma mark Properties override methods
 
-- (NSNumber*)version
-{
-    @synchronized(_lock)
-    {
+- (NSNumber *)version {
+    @synchronized(_lock) {
         return [BAParameter objectForKey:kParametersAppProfileVersionKey fallback:@(1)];
     }
 }
 
 /*** Custom Identifier ***/
 
-- (NSString *)customIdentifier
-{
+- (NSString *)customIdentifier {
     return [BAParameter objectForKey:kParametersCustomUserIDKey fallback:nil];
 }
 
-- (void)setCustomIdentifier:(NSString *)customIdentifier
-{
+- (void)setCustomIdentifier:(NSString *)customIdentifier {
     NSError *error = [self updateValue:customIdentifier forKey:kParametersCustomUserIDKey];
-    
-    if (error != nil)
-    {
-        [BALogger errorForDomain:@"UserProfile" message:@"Error changing custom identifier: %@", [error localizedDescription]];
+
+    if (error != nil) {
+        [BALogger errorForDomain:@"UserProfile"
+                         message:@"Error changing custom identifier: %@", [error localizedDescription]];
     }
 }
 
 /*** Language ***/
 
-- (NSString *)language
-{
+- (NSString *)language {
     return [BAParameter objectForKey:kParametersAppLanguageKey fallback:nil];
 }
 
-- (void)setLanguage:(NSString *)language
-{
+- (void)setLanguage:(NSString *)language {
     NSError *error = [self updateValue:language forKey:kParametersAppLanguageKey];
-    
-    if (error != nil)
-    {
-        [BALogger errorForDomain:@"UserProfile" message:@"Error changing the language: %@", [error localizedDescription]];
+
+    if (error != nil) {
+        [BALogger errorForDomain:@"UserProfile"
+                         message:@"Error changing the language: %@", [error localizedDescription]];
     }
 }
 
 /*** Region ***/
 
-- (NSString *)region
-{
+- (NSString *)region {
     return [BAParameter objectForKey:kParametersAppRegionKey fallback:nil];
 }
 
-- (void)setRegion:(NSString *)region
-{
+- (void)setRegion:(NSString *)region {
     NSError *error = [self updateValue:region forKey:kParametersAppRegionKey];
-    
-    if (error != nil)
-    {
+
+    if (error != nil) {
         [BALogger errorForDomain:@"UserProfile" message:@"Error changing the region: %@", [error localizedDescription]];
     }
 }
 
-
 #pragma mark -
 #pragma mark NSCoding archive methods
 
-- (void)encodeWithCoder:(NSCoder *)encoder
-{
+- (void)encodeWithCoder:(NSCoder *)encoder {
     // Encode properties.
     [encoder encodeObject:self.customIdentifier forKey:@"customIdentifier"];
     [encoder encodeObject:self.language forKey:@"language"];
     [encoder encodeObject:self.region forKey:@"region"];
 }
 
-- (id)initWithCoder:(NSCoder *)decoder
-{
-    if((self = [super init]))
-    {
+- (id)initWithCoder:(NSCoder *)decoder {
+    if ((self = [super init])) {
         long version = [decoder versionForClassName:NSStringFromClass([BAUserProfile class])];
-        
-        if (version < currentVersion)
-        {
+
+        if (version < currentVersion) {
             // Manage old versions.
         }
-        
+
         // Decode properties.
         self.customIdentifier = [decoder decodeObjectForKey:@"customIdentifier"];
         self.language = [decoder decodeObjectForKey:@"language"];
         self.region = [decoder decodeObjectForKey:@"region"];
     }
-    
+
     return self;
 }
 

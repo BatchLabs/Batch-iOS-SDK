@@ -9,8 +9,7 @@
 
 #import <Batch/BASecureDate.h>
 
-@interface BASecureDateProvider ()
-{
+@interface BASecureDateProvider () {
     BASecureDate *_secureDate;
 }
 @end
@@ -26,7 +25,7 @@
     return self;
 }
 
-- (NSDate*)currentDate {
+- (NSDate *)currentDate {
     NSDate *date = [_secureDate date];
     return date != nil ? date : [super currentDate];
 }

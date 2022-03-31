@@ -21,11 +21,9 @@
 
 @implementation BAMSGMessageInterstitial
 
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super init];
-    if (self)
-    {
+    if (self) {
         self.showCloseButton = YES;
         self.attachCTAsBottom = NO;
         self.stackCTAsHorizontally = NO;
@@ -39,14 +37,11 @@
 
 @end
 
-
 @implementation BAMSGMessageBaseBanner
 
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super init];
-    if (self)
-    {
+    if (self) {
         self.allowSwipeToDismiss = YES;
         self.globalTapAction = nil;
         self.globalTapDelay = 0;
@@ -59,7 +54,6 @@
 
 @end
 
-
 @implementation BAMSGMessageBanner
 
 @end
@@ -70,11 +64,9 @@
 
 @implementation BAMSGMessageImage
 
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super init];
-    if (self)
-    {
+    if (self) {
         self.imageSize = CGSizeMake(0, 0);
         self.imageURL = nil;
         self.globalTapDelay = 0;
@@ -86,14 +78,11 @@
 
 @end
 
-
 @implementation BAMSGMessageWebView
 
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super init];
-    if (self)
-    {
+    if (self) {
         self.url = [NSURL URLWithString:@""];
         self.css = @"";
         self.developmentMode = false;

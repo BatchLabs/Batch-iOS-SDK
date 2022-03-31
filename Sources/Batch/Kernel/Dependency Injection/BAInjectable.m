@@ -13,27 +13,23 @@
 
 #pragma mark Classes
 
-+ (nonnull BAInjectable*)injectableWithInitializer:(nonnull BAInjectableInitializer)initializer
-{
++ (nonnull BAInjectable *)injectableWithInitializer:(nonnull BAInjectableInitializer)initializer {
     return [[BABlockInitializerInjectable alloc] initWithInitializer:initializer];
 }
 
-+ (nonnull BAInjectable*)injectableWithInstance:(nullable id)instance
-{
++ (nonnull BAInjectable *)injectableWithInstance:(nullable id)instance {
     return [[BAInstanceInjectable alloc] initWithInstance:instance];
 }
 
 #pragma mark Instance resolving
 
-- (id)resolveInstance
-{
+- (id)resolveInstance {
     return nil;
 }
 
 #pragma mark Other
 
-- (NSString*)description
-{
+- (NSString *)description {
     return @"BAInjectable";
 }
 

@@ -33,8 +33,8 @@
 
 + (BOOL)hasASceneInState:(UISceneActivationState)activationState {
     if ([self applicationUsesUIScene]) {
-        NSSet<UIScene*>* connectedScenes = UIApplication.sharedApplication.connectedScenes;
-        for (UIScene* scene in connectedScenes) {
+        NSSet<UIScene *> *connectedScenes = UIApplication.sharedApplication.connectedScenes;
+        for (UIScene *scene in connectedScenes) {
             if (scene.activationState == activationState) {
                 return true;
             }
@@ -46,8 +46,8 @@
 + (BOOL)hasASceneInForegroundState {
     if (@available(iOS 13.0, *)) {
         if ([self applicationUsesUIScene]) {
-            NSSet<UIScene*>* connectedScenes = UIApplication.sharedApplication.connectedScenes;
-            for (UIScene* scene in connectedScenes) {
+            NSSet<UIScene *> *connectedScenes = UIApplication.sharedApplication.connectedScenes;
+            for (UIScene *scene in connectedScenes) {
                 if (scene.activationState == UISceneActivationStateForegroundActive ||
                     scene.activationState == UISceneActivationStateForegroundInactive) {
                     return true;

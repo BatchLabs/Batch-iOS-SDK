@@ -10,21 +10,18 @@
 
 @implementation BAUserDataOperation
 
-- (instancetype)initWithBlock:(BOOL (^)(void))block
-{
+- (instancetype)initWithBlock:(BOOL (^)(void))block {
     self = [super init];
-    if (self)
-    {
+    if (self) {
         _operationBlock = block;
     }
     return self;
 }
 
-- (BOOL)run
-{
+- (BOOL)run {
     if (!_operationBlock)
         return YES;
-    
+
     return _operationBlock();
 }
 

@@ -13,8 +13,7 @@
 @implementation BAWSQueryStart
 
 // Standard constructor.
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super initWithType:kQueryWebserviceTypeStart];
     self.isSilent = false;
     return self;
@@ -25,7 +24,7 @@
 {
     NSMutableDictionary *dictionary = [super objectToSend];
     [dictionary setValue:@(self.isSilent) forKey:kWebserviceKeyQuerySilentStart];
-    
+
     return dictionary;
 }
 

@@ -1,7 +1,6 @@
 #import <Batch/BAMSGBaseContainerView.h>
 
-@implementation BAMSGBaseContainerView
-{
+@implementation BAMSGBaseContainerView {
     // corner radius set outside the class
     float _cornerRadius;
     // corner radius that fits the current bounds. it will be maxed to half the dimension of the view.
@@ -23,23 +22,23 @@
     _cornerRadius = 0;
     _fittingCornerRadius = 0;
     _rasterizeShadow = true;
-    
+
     CALayer *layer = self.layer;
     layer.masksToBounds = false;
     layer.shadowColor = [UIColor blackColor].CGColor;
     layer.shadowOffset = CGSizeZero;
     layer.shadowRadius = 0;
-    
+
     _contentView = [BAMSGGradientView new];
     _contentView.translatesAutoresizingMaskIntoConstraints = false;
     _contentView.layer.masksToBounds = true;
     [self _addRootSubview:_contentView];
-    
+
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(0)-[_contentView]-(0)-|"
                                                                  options:0
                                                                  metrics:nil
                                                                    views:NSDictionaryOfVariableBindings(_contentView)]];
-    
+
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[_contentView]-(0)-|"
                                                                  options:0
                                                                  metrics:nil
@@ -50,7 +49,7 @@
     if (!_touchPassthrough) {
         return [super hitTest:point withEvent:event];
     }
-    
+
     UIView *hitView = [super hitTest:point withEvent:event];
     if (hitView == self) {
         return nil;
@@ -101,7 +100,8 @@
         if (_cornerRadius == 0) {
             self.layer.shadowPath = [UIBezierPath bezierPathWithRect:_contentView.bounds].CGPath;
         } else {
-            self.layer.shadowPath = [UIBezierPath bezierPathWithRoundedRect:_contentView.bounds cornerRadius:_fittingCornerRadius].CGPath;
+            self.layer.shadowPath =
+                [UIBezierPath bezierPathWithRoundedRect:_contentView.bounds cornerRadius:_fittingCornerRadius].CGPath;
         }
     } else {
         self.layer.shadowPath = nil;
@@ -115,7 +115,8 @@
 - (void)setCornerRadius:(float)cornerRadius {
     _cornerRadius = cornerRadius;
 
-    _fittingCornerRadius = MIN(_contentView.bounds.size.height / 2, MIN(_contentView.bounds.size.width / 2, cornerRadius));
+    _fittingCornerRadius =
+        MIN(_contentView.bounds.size.height / 2, MIN(_contentView.bounds.size.width / 2, cornerRadius));
 
     _contentView.layer.cornerRadius = _fittingCornerRadius;
     [self regenerateShadow];
@@ -158,19 +159,17 @@
 
 - (void)setRasterizeShadow:(BOOL)rasterizeShadow {
     _rasterizeShadow = rasterizeShadow;
-    
+
     [self regenerateShadow];
 }
 
 #pragma mark Gradient
 
-- (void)setBackgroundColor:(UIColor *)backgroundColor
-{
+- (void)setBackgroundColor:(UIColor *)backgroundColor {
     [_contentView setBackgroundColor:backgroundColor];
 }
 
-- (void)setBackgroundGradient:(float)angle colors:(NSArray*)colors locations:(NSArray*)locations
-{
+- (void)setBackgroundGradient:(float)angle colors:(NSArray *)colors locations:(NSArray *)locations {
     [_contentView setBackgroundGradient:angle colors:colors locations:locations];
 }
 

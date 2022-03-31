@@ -7,13 +7,12 @@
 
 #import <Foundation/Foundation.h>
 
-#import <Batch/BAPushEventPayload.h>
 #import <Batch/BAPushCenter.h>
+#import <Batch/BAPushEventPayload.h>
 
 @implementation BAPushEventPayload
 
-- (instancetype)initWithUserInfo:(nonnull NSDictionary*)userInfo
-{
+- (instancetype)initWithUserInfo:(nonnull NSDictionary *)userInfo {
     self = [super init];
     if (self) {
         _sourceMessage = nil;
@@ -27,8 +26,7 @@
     return self;
 }
 
-- (nullable NSObject*)customValueForKey:(nonnull NSString*)key
-{
+- (nullable NSObject *)customValueForKey:(nonnull NSString *)key {
     if ([kWebserviceKeyPushBatchData isEqualToString:key]) {
         return nil;
     }

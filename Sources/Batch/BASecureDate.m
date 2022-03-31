@@ -7,8 +7,8 @@
 //
 #import <Batch/BASecureDate.h>
 
-#import <Batch/BAParameter.h>
 #import <Batch/BANotificationCenter.h>
+#import <Batch/BAParameter.h>
 #import <Batch/BAUptimeProvider.h>
 
 @interface BASecureDate ()
@@ -27,19 +27,17 @@
 #pragma mark Public methods
 
 // Instance management.
-+ (BASecureDate *)instance
-{
++ (BASecureDate *)instance {
     static BASecureDate *sharedInstance = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        sharedInstance = [[BASecureDate alloc] init];
+      sharedInstance = [[BASecureDate alloc] init];
     });
-    
+
     return sharedInstance;
 }
 
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super init];
     if (self) {
         _lock = [NSObject new];
@@ -48,58 +46,48 @@
 }
 
 // Update the secure date system with the server date.
-- (void)updateServerDate:(NSNumber *)timestamp
-{
-    @synchronized(_lock)
-    {
-        if (timestamp != nil)
-        {
+- (void)updateServerDate:(NSNumber *)timestamp {
+    @synchronized(_lock) {
+        if (timestamp != nil) {
             // Server gives us miliseconds.
-            [self setServerInterval:(NSTimeInterval)([timestamp doubleValue]/1000)];
+            [self setServerInterval:(NSTimeInterval)([timestamp doubleValue] / 1000)];
             [self setBootInterval:[BAUptimeProvider uptime]];
         }
     }
 }
 
 // The computed secure date.
-- (NSDate *)date
-{
-    if (![self serverInterval] || ![self bootInterval])
-    {
+- (NSDate *)date {
+    if (![self serverInterval] || ![self bootInterval]) {
         return nil;
     }
 
     NSDate *date = nil;
-    @synchronized(_lock)
-    {
+    @synchronized(_lock) {
         NSDate *serverDate = [NSDate dateWithTimeIntervalSince1970:[self serverInterval]];
         NSTimeInterval delta = [BAUptimeProvider uptime] - [self bootInterval];
-        
+
         date = [NSDate dateWithTimeInterval:delta sinceDate:serverDate];
     }
-    
+
     return date;
 }
 
-- (NSString *)formattedString
-{
-    
+- (NSString *)formattedString {
     NSDate *currentDate = [self date];
-    if ([BANullHelper isNull:currentDate])
-    {
+    if ([BANullHelper isNull:currentDate]) {
         return nil;
     }
-    
+
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    if ([kParametersDateFormat rangeOfString:@"'Z'"].location != NSNotFound)
-    {
+    if ([kParametersDateFormat rangeOfString:@"'Z'"].location != NSNotFound) {
         [formatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
     }
     [formatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"]];
     [formatter setDateFormat:kParametersDateFormat];
-    
+
     NSString *dateString = [formatter stringFromDate:currentDate];
-    
+
     return dateString;
 }
 

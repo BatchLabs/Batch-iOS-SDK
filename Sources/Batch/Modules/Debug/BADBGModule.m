@@ -4,8 +4,7 @@
 
 @implementation BADBGModule
 
-+ (UIViewController*)debugViewController
-{
++ (UIViewController *)debugViewController {
     return [[UINavigationController alloc] initWithRootViewController:[BADBGDebugViewController new]];
 }
 

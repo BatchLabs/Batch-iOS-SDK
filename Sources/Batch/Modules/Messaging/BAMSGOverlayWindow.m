@@ -2,8 +2,7 @@
 
 @implementation BAMSGOverlayWindow
 
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super init];
     if (self) {
         self.visibilityAnimationDuration = 0;
@@ -21,33 +20,32 @@
     return hitView;
 }
 
-- (void)presentAnimated
-{
+- (void)presentAnimated {
     self.alpha = 0;
-    self.windowLevel = UIWindowLevelNormal+1;
+    self.windowLevel = UIWindowLevelNormal + 1;
     [self setHidden:NO];
-    [UIView animateWithDuration:self.visibilityAnimationDuration animations:^{
-        self.alpha = 1;
-    }];
+    [UIView animateWithDuration:self.visibilityAnimationDuration
+                     animations:^{
+                       self.alpha = 1;
+                     }];
 }
 
-- (BAPromise*)dismissAnimated
-{
+- (BAPromise *)dismissAnimated {
     BAPromise *dismissPromise = [BAPromise new];
     __strong __block id strongSelf = self;
     // Retain ourselves during the animation
     [UIView animateWithDuration:self.visibilityAnimationDuration
-                     animations:^{
-                         self.alpha = 0;
-                     }
-                     completion:^(BOOL finished) {
-                         self.hidden = YES;
-                         [self removeFromSuperview];
-                         [[self.rootViewController presentedViewController] dismissViewControllerAnimated:NO completion:nil];
-                         self.rootViewController = nil;
-                         strongSelf = nil;
-                         [dismissPromise resolve:nil];
-                     }];
+        animations:^{
+          self.alpha = 0;
+        }
+        completion:^(BOOL finished) {
+          self.hidden = YES;
+          [self removeFromSuperview];
+          [[self.rootViewController presentedViewController] dismissViewControllerAnimated:NO completion:nil];
+          self.rootViewController = nil;
+          strongSelf = nil;
+          [dismissPromise resolve:nil];
+        }];
     return dismissPromise;
 }
 

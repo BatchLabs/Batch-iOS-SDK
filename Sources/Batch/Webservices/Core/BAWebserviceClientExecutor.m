@@ -7,27 +7,24 @@
 
 #import <Batch/BAWebserviceClientExecutor.h>
 
-@interface BAWebserviceClientExecutor ()
-{
+@interface BAWebserviceClientExecutor () {
     NSOperationQueue *_queue;
 }
 @end
 
 @implementation BAWebserviceClientExecutor
 
-+ (BAWebserviceClientExecutor *)sharedInstance
-{
++ (BAWebserviceClientExecutor *)sharedInstance {
     static BAWebserviceClientExecutor *instance = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        instance = [BAWebserviceClientExecutor new];
+      instance = [BAWebserviceClientExecutor new];
     });
-    
+
     return instance;
 }
 
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super init];
     if (self) {
         _queue = [[NSOperationQueue alloc] init];
@@ -36,8 +33,7 @@
     return self;
 }
 
-- (void)addClient:(BAWebserviceClient*)client
-{
+- (void)addClient:(BAWebserviceClient *)client {
     [_queue addOperation:client];
 }
 

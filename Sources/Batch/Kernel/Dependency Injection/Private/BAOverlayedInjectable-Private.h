@@ -4,6 +4,7 @@
 //
 //  Copyright © Batch.com. All rights reserved.
 //
+#import <Batch/BAOverlayedInjectable.h>
 
 @interface BAOverlayedInjectable()
 

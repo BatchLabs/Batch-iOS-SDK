@@ -7,16 +7,14 @@
  A simple Promise-like implementation that is not thread-safe.
  then can't mutate the value
  */
-@implementation BAPromise
-{
+@implementation BAPromise {
     BAPromiseStatus _status;
     NSObject *_resolvedValue; // NSError* if rejected
     NSMutableArray *_thenQueue;
-    void (^_catchBlock)(NSError*);
+    void (^_catchBlock)(NSError *);
 }
 
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super init];
     if (self) {
         _status = BAPromiseStatusPending;
@@ -26,31 +24,28 @@
     return self;
 }
 
-+ (nonnull instancetype)resolved:(nullable NSObject*)value
-{
++ (nonnull instancetype)resolved:(nullable NSObject *)value {
     BAPromise *promise = [BAPromise new];
     [promise resolve:value];
     return promise;
 }
 
-+ (nonnull instancetype)rejected:(nullable NSError*)error
-{
++ (nonnull instancetype)rejected:(nullable NSError *)error {
     BAPromise *promise = [BAPromise new];
     [promise reject:error];
     return promise;
 }
 
-- (void)resolve:(nullable NSObject*)value
-{
+- (void)resolve:(nullable NSObject *)value {
     @synchronized(_thenQueue) {
         if (_status != BAPromiseStatusPending) {
             return;
         }
-        
+
         _status = BAPromiseStatusResolved;
         _resolvedValue = value;
-        
-        void (^thenBlock)(NSObject*);
+
+        void (^thenBlock)(NSObject *);
         while ([_thenQueue count] > 0) {
             thenBlock = [_thenQueue objectAtIndex:0];
             [_thenQueue removeObjectAtIndex:0];
@@ -61,22 +56,20 @@
     }
 }
 
-- (void)reject:(nullable NSError*)error
-{
+- (void)reject:(nullable NSError *)error {
     if (_status != BAPromiseStatusPending) {
         return;
     }
-    
+
     _status = BAPromiseStatusRejected;
     _resolvedValue = error;
-    
+
     if (_catchBlock) {
         _catchBlock(error);
     }
 }
 
-- (void)then:(void (^_Nonnull)(NSObject* _Nullable ))thenBlock
-{
+- (void)then:(void (^_Nonnull)(NSObject *_Nullable))thenBlock {
     @synchronized(_thenQueue) {
         if (_status == BAPromiseStatusResolved) {
             thenBlock(_resolvedValue);
@@ -86,11 +79,10 @@
     }
 }
 
-- (void)catch:(void (^_Nonnull)(NSError* _Nullable ))catchBlock
-{
+- (void)catch:(void (^_Nonnull)(NSError *_Nullable))catchBlock {
     if (_status == BAPromiseStatusRejected) {
         if ([_resolvedValue isKindOfClass:[NSError class]]) {
-            catchBlock((NSError*)_resolvedValue);
+            catchBlock((NSError *)_resolvedValue);
         } else {
             catchBlock(nil);
         }

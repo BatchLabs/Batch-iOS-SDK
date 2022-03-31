@@ -11,59 +11,46 @@
 @implementation BAWSResponseAttributesCheck
 
 // Default constructor.
-- (instancetype)initWithResponse:(NSDictionary *)response
-{
+- (instancetype)initWithResponse:(NSDictionary *)response {
     self = [super initWithResponse:response];
-    
-    if ([BANullHelper isNull:self] == YES)
-    {
+
+    if ([BANullHelper isNull:self] == YES) {
         return nil;
     }
-    
+
     _actionString = [response objectForKey:@"action"];
     _version = [response objectForKey:@"ver"];
     _time = [response objectForKey:@"t"];
-    
+
     // Sanity checks yay
-    if (![_actionString isKindOfClass:[NSString class]])
-    {
+    if (![_actionString isKindOfClass:[NSString class]]) {
         _actionString = nil;
     }
-    
-    if (![_version isKindOfClass:[NSNumber class]])
-    {
+
+    if (![_version isKindOfClass:[NSNumber class]]) {
         _version = nil;
     }
-    
-    if (![_time isKindOfClass:[NSNumber class]])
-    {
+
+    if (![_time isKindOfClass:[NSNumber class]]) {
         _time = nil;
     }
-    
+
     return self;
 }
 
-- (BAWSResponseAttrCheckAction)action
-{
+- (BAWSResponseAttrCheckAction)action {
     NSString *action = [_actionString uppercaseString];
-    
-    if ([@"OK" isEqualToString:action])
-    {
+
+    if ([@"OK" isEqualToString:action]) {
         return BAWSResponseAttrCheckActionOk;
-    }
-    else if ([@"BUMP" isEqualToString:action])
-    {
+    } else if ([@"BUMP" isEqualToString:action]) {
         return BAWSResponseAttrCheckActionBump;
-    }
-    else if ([@"RECHECK" isEqualToString:action])
-    {
+    } else if ([@"RECHECK" isEqualToString:action]) {
         return BAWSResponseAttrCheckActionRecheck;
-    }
-    else if ([@"RESEND" isEqualToString:action])
-    {
+    } else if ([@"RESEND" isEqualToString:action]) {
         return BAWSResponseAttrCheckActionResend;
     }
-    
+
     return BAWSResponseAttrCheckActionUnknown;
 }
 

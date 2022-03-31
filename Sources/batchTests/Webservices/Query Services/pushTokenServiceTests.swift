@@ -5,11 +5,11 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
+import Batch.Batch_Private
 import Foundation
 import XCTest
-import Batch.Batch_Private
 
-private let expectedToken = "test_token"
+fileprivate let expectedToken = "test_token"
 
 class pushTokenServiceTests: XCTestCase {
 
@@ -20,7 +20,7 @@ class pushTokenServiceTests: XCTestCase {
     func testShortIdentifier() {
         XCTAssertEqual(makeService().requestShortIdentifier, "t")
     }
-    
+
     func makeService() -> BAPushTokenServiceDatasource {
         return BAPushTokenServiceDatasource(token: expectedToken, usesProductionEnvironment: false)
     }

@@ -10,32 +10,27 @@
 
 #import <Batch/BAResponseHelper.h>
 
-
 @implementation BAWSResponse
 
 // Default constructor.
-- (instancetype)initWithResponse:(NSDictionary *)response
-{
+- (instancetype)initWithResponse:(NSDictionary *)response {
     self = [super init];
-    
-    if ([BANullHelper isNull:self] == YES)
-    {
+
+    if ([BANullHelper isNull:self] == YES) {
         return self;
     }
-    
-    if ([BANullHelper isDictionaryEmpty:response] == YES)
-    {
+
+    if ([BANullHelper isDictionaryEmpty:response] == YES) {
         return nil;
     }
-    
+
     // Reference is the ID of the query this response references
     NSString *reference = [response objectForKey:kWebserviceKeyQueryIdentifier];
-    
-    if ([BANullHelper isStringEmpty:reference] == YES)
-    {
+
+    if ([BANullHelper isStringEmpty:reference] == YES) {
         return nil;
     }
-    
+
     _reference = reference;
 
     return self;

@@ -5,7 +5,6 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-
 @import Batch.Batch_Private;
 
 // Class that gets instantiated before all tests
@@ -16,8 +15,7 @@
 
 @implementation batchTestsBootstrap
 
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super init];
     if (self) {
         [self setup];
@@ -25,8 +23,7 @@
     return self;
 }
 
-- (void)setup
-{
+- (void)setup {
     BALogger.internalLogsEnabled = true;
 }
 

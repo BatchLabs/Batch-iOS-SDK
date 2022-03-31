@@ -7,27 +7,27 @@
 
 #import <Batch/BAMessagingCenter.h>
 
-#import <Batch/BatchPush.h>
 #import <Batch/BACoreCenter.h>
-#import <Batch/BAPushCenter.h>
-#import <Batch/BAMSGPayloadParser.h>
 #import <Batch/BADelegatedUIAlertController.h>
-#import <Batch/BAMSGInterstitialViewController.h>
-#import <Batch/BAMSGBannerViewController.h>
-#import <Batch/BAMSGImageViewController.h>
-#import <Batch/BAMSGWebviewViewController.h>
-#import <Batch/BAMSGLabel.h>
-#import <Batch/BAMSGButton.h>
-#import <Batch/BAMSGAction.h>
-#import <Batch/BAOptOut.h>
 #import <Batch/BAEventDispatcherCenter.h>
+#import <Batch/BAMSGAction.h>
+#import <Batch/BAMSGBannerViewController.h>
+#import <Batch/BAMSGButton.h>
+#import <Batch/BAMSGImageViewController.h>
+#import <Batch/BAMSGInterstitialViewController.h>
+#import <Batch/BAMSGLabel.h>
+#import <Batch/BAMSGPayloadParser.h>
+#import <Batch/BAMSGWebviewViewController.h>
+#import <Batch/BAOptOut.h>
+#import <Batch/BAPushCenter.h>
+#import <Batch/BatchPush.h>
 
 #import <Batch/BAMSGImageDownloader.h>
 
+#import <Batch/BAActionsCenter.h>
 #import <Batch/BANotificationCenter.h>
 #import <Batch/BAOSHelper.h>
 #import <Batch/BAThreading.h>
-#import <Batch/BAActionsCenter.h>
 #import <Batch/BATrackerCenter.h>
 #import <Batch/BatchMessaging.h>
 #import <Batch/BatchMessagingPrivate.h>
@@ -62,46 +62,42 @@
 
 #define BAMESSAGING_EVENT_TYPE_WEBVIEW_CLICK @"webview_click"
 
-#define BAMESSAGING_BANNER_ANIMATION_DURATION 0.3 //seconds
+#define BAMESSAGING_BANNER_ANIMATION_DURATION 0.3 // seconds
 
 // Kind of needlessly long key, but this is to make sure we don't collide with anything
 static char kBABatchMessagingMessageModelObject;
 
-NSString * const kBATMessagingMessageDidAppear = @"batch.messaging.messageDidAppear";
-NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidDisappear";
+NSString *const kBATMessagingMessageDidAppear = @"batch.messaging.messageDidAppear";
+NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidDisappear";
 
-@interface BAMessagingCenter ()
-{
-    BABatchMessagingDelegateWrapper* _wrappedDelegate;
-    BatchMessage* _pendingMessage;
+@interface BAMessagingCenter () {
+    BABatchMessagingDelegateWrapper *_wrappedDelegate;
+    BatchMessage *_pendingMessage;
 }
 @end
 
 @implementation BAMessagingCenter
 
-+ (void)load
-{
++ (void)load {
     [[NSNotificationCenter defaultCenter] addObserver:[BAMessagingCenter class]
                                              selector:@selector(pushOpenedNotification:)
-                                                 name:BatchPushOpenedNotification object:nil];
+                                                 name:BatchPushOpenedNotification
+                                               object:nil];
 }
 
-+ (instancetype)instance
-{
++ (instancetype)instance {
     static BAMessagingCenter *sharedInstance = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        sharedInstance = [[BAMessagingCenter alloc] init];
+      sharedInstance = [[BAMessagingCenter alloc] init];
     });
-    
+
     return sharedInstance;
 }
 
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super init];
-    if (self)
-    {
+    if (self) {
         _wrappedDelegate = [[BABatchMessagingDelegateWrapper alloc] initWithDelgate:nil];
         _canReconfigureAVAudioSession = YES;
         _automaticMode = YES;
@@ -115,24 +111,21 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
 #pragma mark -
 #pragma mark Private static methods
 
-+ (void)pushOpenedNotification:(NSNotification *)notification
-{
-
-    if (notification.userInfo != nil)
-    {
++ (void)pushOpenedNotification:(NSNotification *)notification {
+    if (notification.userInfo != nil) {
         id payload = notification.userInfo[BatchPushOpenedNotificationPayloadKey];
         if (![payload isKindOfClass:NSDictionary.class]) {
             [BALogger publicForDomain:LOGGER_DOMAIN message:@"Cannot display landing/deeplink: internal error"];
             return;
         }
         BatchPushMessage *message = [BatchMessaging messageFromPushPayload:payload];
-        
+
         if (message) {
             [BALogger debugForDomain:LOGGER_DOMAIN message:@"Push contains a mobile landing"];
             if ([BAMessagingCenter instance].automaticMode) {
                 [BAThreading performBlockOnMainThreadAsync:^{
-                    [BALogger debugForDomain:LOGGER_DOMAIN message:@"automatic mode is enabled: trying to display it"];
-                    [[BAMessagingCenter instance] displayMessage:message error:nil];
+                  [BALogger debugForDomain:LOGGER_DOMAIN message:@"automatic mode is enabled: trying to display it"];
+                  [[BAMessagingCenter instance] displayMessage:message error:nil];
                 }];
             } else {
                 [BALogger debugForDomain:LOGGER_DOMAIN message:@"but BatchMessaging is in manual mode: ignoring."];
@@ -155,40 +148,33 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
 
 #pragma mark Public instance methods
 
-- (void)setDelegate:(id<BatchMessagingDelegate> _Nullable)delegate
-{
+- (void)setDelegate:(id<BatchMessagingDelegate> _Nullable)delegate {
     _wrappedDelegate = [[BABatchMessagingDelegateWrapper alloc] initWithDelgate:delegate];
 }
 
-- (void)setImageDownloadTimeout:(NSTimeInterval)timeout
-{
+- (void)setImageDownloadTimeout:(NSTimeInterval)timeout {
     _imageDownloadTimeout = timeout;
 }
 
-- (void)setCanReconfigureAVAudioSession:(BOOL)canReconfigureAVAudioSession
-{
+- (void)setCanReconfigureAVAudioSession:(BOOL)canReconfigureAVAudioSession {
     _canReconfigureAVAudioSession = canReconfigureAVAudioSession;
 }
 
-- (void)setAutomaticMode:(BOOL)automatic
-{
+- (void)setAutomaticMode:(BOOL)automatic {
     _automaticMode = automatic;
 }
 
-- (BOOL)hasPendingMessage
-{
+- (BOOL)hasPendingMessage {
     return _pendingMessage != nil;
 }
 
-- (BatchMessage* _Nullable)popPendingMessage
-{
+- (BatchMessage *_Nullable)popPendingMessage {
     BatchMessage *msg = _pendingMessage;
     _pendingMessage = nil;
     return msg;
 }
 
-- (BOOL)showPendingMessage
-{
+- (BOOL)showPendingMessage {
     BatchMessage *msg = [self popPendingMessage];
     if (msg) {
         [self displayMessage:msg error:nil];
@@ -197,13 +183,14 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
     return false;
 }
 
-- (void)setFontOverride:(UIFont*)font boldFont:(UIFont*)boldFont
-{
+- (void)setFontOverride:(UIFont *)font boldFont:(UIFont *)boldFont {
     [self setFontOverride:font boldFont:boldFont italicFont:nil boldItalicFont:nil];
 }
 
-- (void)setFontOverride:(nullable UIFont*)font boldFont:(nullable UIFont*)boldFont italicFont:(nullable UIFont*)italicFont boldItalicFont:(nullable UIFont*)boldItalicFont
-{
+- (void)setFontOverride:(nullable UIFont *)font
+               boldFont:(nullable UIFont *)boldFont
+             italicFont:(nullable UIFont *)italicFont
+         boldItalicFont:(nullable UIFont *)boldItalicFont {
     if (font == nil) {
         [BAMSGLabel setFontOverride:nil boldFont:nil italicFont:nil boldItalicFont:nil];
         [BAMSGButton setFontOverride:nil boldFont:nil italicFont:nil boldItalicFont:nil];
@@ -213,78 +200,73 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
     }
 }
 
-- (void)handleInAppMessage:(nonnull BatchInAppMessage*)message
-{
+- (void)handleInAppMessage:(nonnull BatchInAppMessage *)message {
     [BAThreading performBlockOnMainThreadAsync:^{
-        if ([self->_wrappedDelegate batchInAppMessageReady:message])
-        {
-            [BALogger debugForDomain:LOGGER_DOMAIN message:@"Called developer's delegate with the In-App message %@", message];
-        }
-        else
-        {
-            if ([[UIApplication sharedApplication] applicationState] != UIApplicationStateBackground)
-            {
-                NSError *err;
-                if ([self displayMessage:message error:&err])
-                {
-                    [BALogger debugForDomain:LOGGER_DOMAIN message:@"Displayed the In-App message %@", message];
-                }
-                else
-                {
-                    [BALogger publicForDomain:LOGGER_DOMAIN message:@"Batch tried to display an In-App message, but failed. Error: %@", err ? err.localizedDescription : @"Unknown"];
-                }
-            }
-            else
-            {
-                [BALogger debugForDomain:LOGGER_DOMAIN message:@"An In-App message should have been shown, but the app is in the UIApplicationStateBackground state"];
-            }
-        }
+      if ([self->_wrappedDelegate batchInAppMessageReady:message]) {
+          [BALogger debugForDomain:LOGGER_DOMAIN
+                           message:@"Called developer's delegate with the In-App message %@", message];
+      } else {
+          if ([[UIApplication sharedApplication] applicationState] != UIApplicationStateBackground) {
+              NSError *err;
+              if ([self displayMessage:message error:&err]) {
+                  [BALogger debugForDomain:LOGGER_DOMAIN message:@"Displayed the In-App message %@", message];
+              } else {
+                  [BALogger publicForDomain:LOGGER_DOMAIN
+                                    message:@"Batch tried to display an In-App message, but failed. Error: %@",
+                                            err ? err.localizedDescription : @"Unknown"];
+              }
+          } else {
+              [BALogger debugForDomain:LOGGER_DOMAIN
+                               message:@"An In-App message should have been shown, but the app is in the "
+                                       @"UIApplicationStateBackground state"];
+          }
+      }
     }];
 }
 
-- (UIViewController* _Nullable)loadViewControllerForMessage:(BatchMessage* _Nonnull)message
-                                                      error:(NSError * _Nullable * _Nullable)error
-{
+- (UIViewController *_Nullable)loadViewControllerForMessage:(BatchMessage *_Nonnull)message
+                                                      error:(NSError *_Nullable *_Nullable)error {
     /*if (_automaticMode)
     {
         if (error)
         {
             *error = [NSError errorWithDomain:MESSAGING_ERROR_DOMAIN
                                          code:BatchMessagingErrorAutomaticModeNotDisabled
-                                     userInfo:@{NSLocalizedDescriptionKey: @"Automatic mode must be disabled on BatchMessaging before you can use loadViewControllerForMessage:error: ."}];
+                                     userInfo:@{NSLocalizedDescriptionKey: @"Automatic mode must be disabled on
+    BatchMessaging before you can use loadViewControllerForMessage:error: ."}];
         }
-        
+
         return nil;
     }*/
-    
-    return [self internalLoadViewControllerForMessage:message
-                                                error:error];
+
+    return [self internalLoadViewControllerForMessage:message error:error];
 }
 
-- (BOOL)presentMessagingViewController:(nonnull UIViewController*)vc error:(NSError**)error
-{
+- (BOOL)presentMessagingViewController:(nonnull UIViewController *)vc error:(NSError **)error {
     if (![NSThread currentThread].isMainThread) {
         [BALogger publicForDomain:@"Messaging"
-                          message:@"[BatchMessaging presentMessagingViewController:] was called outside of the main thead. Aborting."];
+                          message:@"[BatchMessaging presentMessagingViewController:] was called outside of the main "
+                                  @"thead. Aborting."];
         return false;
     }
-    
-    if ([[BAOptOut instance] isOptedOut])
-    {
-        if (error)
-        {
-            *error = [NSError errorWithDomain:MESSAGING_ERROR_DOMAIN
-                                         code:BatchMessagingErrorOptedOut
-                                     userInfo:@{NSLocalizedDescriptionKey: @"Cannot perform messaging action: Batch is opted-out from"}];
+
+    if ([[BAOptOut instance] isOptedOut]) {
+        if (error) {
+            *error = [NSError
+                errorWithDomain:MESSAGING_ERROR_DOMAIN
+                           code:BatchMessagingErrorOptedOut
+                       userInfo:@{
+                           NSLocalizedDescriptionKey : @"Cannot perform messaging action: Batch is opted-out from"
+                       }];
         }
-        
+
         return false;
     }
-    
+
     if (![vc respondsToSelector:@selector(shouldDisplayInSeparateWindow)]) {
         return false;
     }
-    
+
     if ([(id)vc shouldDisplayInSeparateWindow]) {
         [self showViewControllerInOwnWindow:vc];
         return true;
@@ -295,229 +277,205 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
             hasDeveloperOverridenVC = false;
             targetVC = [[BAWindowHelper keyWindow] rootViewController];
         }
-        
-        if (targetVC)
-        {
+
+        if (targetVC) {
             UIViewController *presentedVC = targetVC.presentedViewController;
-            void (^presentationBlock)(void)  = ^{
-                [targetVC presentViewController:vc animated:YES completion:nil];
+            void (^presentationBlock)(void) = ^{
+              [targetVC presentViewController:vc animated:YES completion:nil];
             };
-            
-            if ([presentedVC isKindOfClass:[BAMSGInterstitialViewController class]])
-            {
+
+            if ([presentedVC isKindOfClass:[BAMSGInterstitialViewController class]]) {
                 [presentedVC dismissViewControllerAnimated:true completion:presentationBlock];
-            }
-            else
-            {
-                if (presentedVC && !hasDeveloperOverridenVC)
-                {
+            } else {
+                if (presentedVC && !hasDeveloperOverridenVC) {
                     targetVC = presentedVC;
                 }
                 presentationBlock();
             }
             return true;
-        }
-        else
-        {
-            [BALogger publicForDomain:LOGGER_DOMAIN message:@"A Batch message was about to be displayed, but no suitable View Controller has been found"];
+        } else {
+            [BALogger publicForDomain:LOGGER_DOMAIN
+                              message:@"A Batch message was about to be displayed, but no suitable View Controller has "
+                                      @"been found"];
             if (error) {
                 *error = [NSError errorWithDomain:MESSAGING_ERROR_DOMAIN
                                              code:BatchMessagingErrorNoSuitableVCForDisplay
-                                         userInfo:@{NSLocalizedDescriptionKey: @"Could not find a suitable view controller to display the message on."}];
+                                         userInfo:@{
+                                             NSLocalizedDescriptionKey :
+                                                 @"Could not find a suitable view controller to display the message on."
+                                         }];
             }
             return false;
         }
     }
 }
 
-- (UIViewController* _Nullable)internalLoadViewControllerForMessage:(BatchMessage* _Nonnull)message
-                                                              error:(NSError * _Nullable * _Nullable)error
-{
-    if (error)
-    {
+- (UIViewController *_Nullable)internalLoadViewControllerForMessage:(BatchMessage *_Nonnull)message
+                                                              error:(NSError *_Nullable *_Nullable)error {
+    if (error) {
         *error = nil;
     }
-    
-    if (![NSThread currentThread].isMainThread)
-    {
-        if (error)
-        {
-            *error = [NSError errorWithDomain:MESSAGING_ERROR_DOMAIN
-                                         code:BatchMessagingErrorNotOnMainThread
-                                     userInfo:@{NSLocalizedDescriptionKey: @"loadViewControllerForMessage:error: should be called from the main thread"}];
+
+    if (![NSThread currentThread].isMainThread) {
+        if (error) {
+            *error =
+                [NSError errorWithDomain:MESSAGING_ERROR_DOMAIN
+                                    code:BatchMessagingErrorNotOnMainThread
+                                userInfo:@{
+                                    NSLocalizedDescriptionKey :
+                                        @"loadViewControllerForMessage:error: should be called from the main thread"
+                                }];
         }
-        
+
         return nil;
     }
-    
-    if ([[BAOptOut instance] isOptedOut])
-    {
-        if (error)
-        {
-            *error = [NSError errorWithDomain:MESSAGING_ERROR_DOMAIN
-                                         code:BatchMessagingErrorOptedOut
-                                     userInfo:@{NSLocalizedDescriptionKey: @"Cannot perform messaging action: Batch is opted-out from"}];
+
+    if ([[BAOptOut instance] isOptedOut]) {
+        if (error) {
+            *error = [NSError
+                errorWithDomain:MESSAGING_ERROR_DOMAIN
+                           code:BatchMessagingErrorOptedOut
+                       userInfo:@{
+                           NSLocalizedDescriptionKey : @"Cannot perform messaging action: Batch is opted-out from"
+                       }];
         }
-        
+
         return nil;
     }
-    
-    BAMSGMessage *msg = [BAMSGPayloadParser messageForRawMessage:message
-                                                  bailIfNotAlert:NO];
-    
-    if ([msg isKindOfClass:[BAMSGMessageAlert class]])
-    {
-        return [BADelegatedUIAlertController alertControllerWithMessage:(BAMSGMessageAlert*)msg];
-    }
-    else if ([msg isKindOfClass:[BAMSGMessageInterstitial class]])
-    {
-        BAMSGMessageInterstitial *universalMessage = (BAMSGMessageInterstitial*)msg;
-        
+
+    BAMSGMessage *msg = [BAMSGPayloadParser messageForRawMessage:message bailIfNotAlert:NO];
+
+    if ([msg isKindOfClass:[BAMSGMessageAlert class]]) {
+        return [BADelegatedUIAlertController alertControllerWithMessage:(BAMSGMessageAlert *)msg];
+    } else if ([msg isKindOfClass:[BAMSGMessageInterstitial class]]) {
+        BAMSGMessageInterstitial *universalMessage = (BAMSGMessageInterstitial *)msg;
+
         NSError *err = nil;
-        
+
         NSURL *imageURL = [NSURL URLWithString:universalMessage.heroImageURL];
-        
+
         BOOL hasHeroContent = imageURL != nil || universalMessage.videoURL != nil;
         BOOL shouldWaitForImageDownload = imageURL != nil && !universalMessage.videoURL;
-        
-        BAMSGInterstitialViewController *universalVC = [self universalViewControllerForMessage:universalMessage
-                                                                                hasHeroContent:hasHeroContent
-                                                                            shouldWaitForImage:shouldWaitForImageDownload
-                                                                                         error:&err];
-        
-        if (imageURL && !universalMessage.videoURL)
-        {
+
+        BAMSGInterstitialViewController *universalVC =
+            [self universalViewControllerForMessage:universalMessage
+                                     hasHeroContent:hasHeroContent
+                                 shouldWaitForImage:shouldWaitForImageDownload
+                                              error:&err];
+
+        if (imageURL && !universalMessage.videoURL) {
             __weak BAMSGInterstitialViewController *weakVC = universalVC;
             [BAMSGImageDownloader downloadImageForURL:imageURL
                                       downloadTimeout:self.imageDownloadTimeout
-                                    completionHandler:^(NSData * _Nullable data, BOOL isGif, UIImage * _Nullable image, NSError * _Nullable error) {
-                                        if (isGif) {
-                                            [weakVC didFinishLoadingGIFHero:data];
-                                        } else {
-                                            [weakVC didFinishLoadingHero:image];
-                                        }
+                                    completionHandler:^(NSData *_Nullable data, BOOL isGif, UIImage *_Nullable image,
+                                                        NSError *_Nullable error) {
+                                      if (isGif) {
+                                          [weakVC didFinishLoadingGIFHero:data];
+                                      } else {
+                                          [weakVC didFinishLoadingHero:image];
+                                      }
                                     }];
-            
         }
-        
-        if (error && err)
-        {
+
+        if (error && err) {
             *error = err;
         }
-        
+
         return universalVC;
-    }
-    else if ([msg isKindOfClass:[BAMSGMessageBanner class]])
-    {
-        BAMSGMessageBanner *bannerMessage = (BAMSGMessageBanner*)msg;
-        
+    } else if ([msg isKindOfClass:[BAMSGMessageBanner class]]) {
+        BAMSGMessageBanner *bannerMessage = (BAMSGMessageBanner *)msg;
+
         NSError *err = nil;
-        
-        BAMSGBannerViewController *bannerVC = [self bannerViewControllerForMessage:bannerMessage
-                                                                             error:&err];
-        
-        if (error && err)
-        {
+
+        BAMSGBannerViewController *bannerVC = [self bannerViewControllerForMessage:bannerMessage error:&err];
+
+        if (error && err) {
             *error = err;
         }
-        
+
         return bannerVC;
-    }
-    else if ([msg isKindOfClass:[BAMSGMessageModal class]])
-    {
-        BAMSGMessageModal *modalMessage = (BAMSGMessageModal*)msg;
-        
+    } else if ([msg isKindOfClass:[BAMSGMessageModal class]]) {
+        BAMSGMessageModal *modalMessage = (BAMSGMessageModal *)msg;
+
         NSError *err = nil;
-        
-        BAMSGModalViewController *modalVC = [self modalViewControllerForMessage:modalMessage
-                                                                          error:&err];
-        
-        if (error && err)
-        {
+
+        BAMSGModalViewController *modalVC = [self modalViewControllerForMessage:modalMessage error:&err];
+
+        if (error && err) {
             *error = err;
         }
-        
+
         return modalVC;
-    }
-    else if ([msg isKindOfClass:[BAMSGMessageImage class]])
-    {
+    } else if ([msg isKindOfClass:[BAMSGMessageImage class]]) {
         BAMSGMessageImage *imageMessage = (BAMSGMessageImage *)msg;
-        
+
         NSError *err = nil;
-        
-        BAMSGImageViewController *imageVC = [self imageViewControllerForMessage:imageMessage
-                                                                          error: &err];
-        
-        if (error && err)
-        {
+
+        BAMSGImageViewController *imageVC = [self imageViewControllerForMessage:imageMessage error:&err];
+
+        if (error && err) {
             *error = err;
         }
-        
+
         return imageVC;
-    }
-    else if ([msg isKindOfClass:[BAMSGMessageWebView class]])
-    {
+    } else if ([msg isKindOfClass:[BAMSGMessageWebView class]]) {
         BAMSGMessageWebView *webviewMessage = (BAMSGMessageWebView *)msg;
-        
+
         NSError *err = nil;
-        
-        BAMSGWebviewViewController *imageVC = [self webviewViewControllerForMessage:webviewMessage
-                                                                              error:&err];
-        
-        if (error && err)
-        {
+
+        BAMSGWebviewViewController *imageVC = [self webviewViewControllerForMessage:webviewMessage error:&err];
+
+        if (error && err) {
             *error = err;
         }
-        
+
         return imageVC;
-    }
-    else
-    {
-        if (error)
-        {
-            *error = [NSError errorWithDomain:MESSAGING_ERROR_DOMAIN
-                                         code:BatchMessagingErrorNoValidBatchMessage
-                                     userInfo:@{NSLocalizedDescriptionKey: @"Payload didn't contain a valid Batch message or this SDK is too old to understand it."}];
+    } else {
+        if (error) {
+            *error = [NSError
+                errorWithDomain:MESSAGING_ERROR_DOMAIN
+                           code:BatchMessagingErrorNoValidBatchMessage
+                       userInfo:@{
+                           NSLocalizedDescriptionKey :
+                               @"Payload didn't contain a valid Batch message or this SDK is too old to understand it."
+                       }];
         }
-        
+
         return nil;
     }
 }
 
-- (BOOL)performAction:(nonnull BAMSGAction*)action
-               source:(nullable id<BatchUserActionSource>)source
-{
-    if (!action)
-    {
+- (BOOL)performAction:(nonnull BAMSGAction *)action source:(nullable id<BatchUserActionSource>)source {
+    if (!action) {
         return false;
     }
-    
+
     // A button with no action identifier will still close the message, since all buttons do
-    if (action.actionIdentifier)
-    {
-        if ([@"" isEqualToString:action.actionIdentifier])
-        {
+    if (action.actionIdentifier) {
+        if ([@"" isEqualToString:action.actionIdentifier]) {
             [BALogger publicForDomain:LOGGER_DOMAIN
-                              message:@"Internal error - A callback CTA was triggered but the action string was empty. This shouldn't happen: please report this to Batch support: https://batch.com"];
+                              message:@"Internal error - A callback CTA was triggered but the action string was empty. "
+                                      @"This shouldn't happen: please report this to Batch support: https://batch.com"];
             return false;
         }
-        
-        if (![[BAActionsCenter instance] performAction:action.actionIdentifier withArgs:action.actionArguments andSource:source])
-        {
+
+        if (![[BAActionsCenter instance] performAction:action.actionIdentifier
+                                              withArgs:action.actionArguments
+                                             andSource:source]) {
             [BALogger publicForDomain:LOGGER_DOMAIN
-                              message:@"The action '%@' couldn't be found. Did you forget to register it?", action.actionIdentifier];
+                              message:@"The action '%@' couldn't be found. Did you forget to register it?",
+                                      action.actionIdentifier];
             return false;
         }
     }
-    
+
     return true;
 }
 
-- (void)performAction:(nonnull BAMSGAction*)action
+- (void)performAction:(nonnull BAMSGAction *)action
                source:(nullable id<BatchUserActionSource>)source
           actionIndex:(NSInteger)index
-    messageIdentifier:(nullable NSString *)identifier
-{
+    messageIdentifier:(nullable NSString *)identifier {
     if (![self performAction:action source:source]) {
         return;
     }
@@ -525,19 +483,18 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
     BatchMessageAction *publicAction = nil;
 
     if ([action isKindOfClass:[BAMSGCTA class]]) {
-        publicAction = [[BatchMessageCTA alloc] _initWithInternalAction: (BAMSGCTA *)action];
+        publicAction = [[BatchMessageCTA alloc] _initWithInternalAction:(BAMSGCTA *)action];
     } else {
-        publicAction = [[BatchMessageAction alloc] _initWithInternalAction: action];
+        publicAction = [[BatchMessageAction alloc] _initWithInternalAction:action];
     }
 
     [_wrappedDelegate batchMessageDidTriggerAction:publicAction messageIdentifier:identifier actionIndex:index];
 }
 
-- (void)performAction:(nonnull BAMSGAction*)action
-               source:(nullable id<BatchUserActionSource>)source
-   webViewAnalyticsID:(nullable NSString *)analyticsID
-    messageIdentifier:(nullable NSString *)messageIdentifier
-{
+- (void)performAction:(nonnull BAMSGAction *)action
+                source:(nullable id<BatchUserActionSource>)source
+    webViewAnalyticsID:(nullable NSString *)analyticsID
+     messageIdentifier:(nullable NSString *)messageIdentifier {
     if (![self performAction:action source:source]) {
         return;
     }
@@ -545,9 +502,9 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
     BatchMessageAction *publicAction = nil;
 
     if ([action isKindOfClass:[BAMSGCTA class]]) {
-        publicAction = [[BatchMessageCTA alloc] _initWithInternalAction: (BAMSGCTA *)action];
+        publicAction = [[BatchMessageCTA alloc] _initWithInternalAction:(BAMSGCTA *)action];
     } else if (action != nil) {
-        publicAction = [[BatchMessageAction alloc] _initWithInternalAction: action];
+        publicAction = [[BatchMessageAction alloc] _initWithInternalAction:action];
     }
 
     [_wrappedDelegate batchWebViewMessageDidTriggerAction:publicAction
@@ -557,8 +514,7 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
 
 #pragma mark Event tracking
 
-- (NSMutableDictionary*)baseEventParametersForMessage:(BAMSGMessage* _Nonnull)message type:(NSString* _Nonnull)type
-{
+- (NSMutableDictionary *)baseEventParametersForMessage:(BAMSGMessage *_Nonnull)message type:(NSString *_Nonnull)type {
     NSMutableDictionary *parameters = [NSMutableDictionary new];
 
     NSString *messageSource;
@@ -583,31 +539,30 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
     return parameters;
 }
 
-- (void)trackGenericEvent:(BAMSGMessage* _Nonnull)message type:(NSString* _Nonnull)type
-{
-    [BATrackerCenter trackPrivateEvent:BAMESSAGING_EVENT_NAME parameters:[self baseEventParametersForMessage:message type:type]];
+- (void)trackGenericEvent:(BAMSGMessage *_Nonnull)message type:(NSString *_Nonnull)type {
+    [BATrackerCenter trackPrivateEvent:BAMESSAGING_EVENT_NAME
+                            parameters:[self baseEventParametersForMessage:message type:type]];
 }
 
-- (void)trackCTAClickEvent:(BAMSGMessage* _Nonnull)message ctaIndex:(NSInteger)ctaIndex action:(NSString*)action
-{
+- (void)trackCTAClickEvent:(BAMSGMessage *_Nonnull)message ctaIndex:(NSInteger)ctaIndex action:(NSString *)action {
     NSMutableDictionary *parameters = [self baseEventParametersForMessage:message type:BAMESSAGING_EVENT_TYPE_CTA];
     [parameters setObject:@(ctaIndex) forKey:@"ctaIndex"];
     [parameters setObject:(action != nil ? action : [NSNull null]) forKey:@"action"];
     [BATrackerCenter trackPrivateEvent:BAMESSAGING_EVENT_NAME parameters:parameters];
 }
 
-- (void)trackCloseError:(BAMSGMessage* _Nonnull)message cause:(BATMessagingCloseErrorCause)cause
-{
-    NSMutableDictionary *parameters = [self baseEventParametersForMessage:message type:BAMESSAGING_EVENT_TYPE_CLOSE_ERROR];
+- (void)trackCloseError:(BAMSGMessage *_Nonnull)message cause:(BATMessagingCloseErrorCause)cause {
+    NSMutableDictionary *parameters = [self baseEventParametersForMessage:message
+                                                                     type:BAMESSAGING_EVENT_TYPE_CLOSE_ERROR];
     [parameters setObject:@(cause) forKey:@"cause"];
     [BATrackerCenter trackPrivateEvent:BAMESSAGING_EVENT_NAME parameters:parameters];
 }
 
 - (void)trackWebViewClickEvent:(BAMSGMessage *_Nonnull)message
-                        action:(BAMSGAction*)action
-           analyticsIdentifier:(NSString*)analyticsID
-{
-    NSMutableDictionary *parameters = [self baseEventParametersForMessage:message type:BAMESSAGING_EVENT_TYPE_WEBVIEW_CLICK];
+                        action:(BAMSGAction *)action
+           analyticsIdentifier:(NSString *)analyticsID {
+    NSMutableDictionary *parameters = [self baseEventParametersForMessage:message
+                                                                     type:BAMESSAGING_EVENT_TYPE_WEBVIEW_CLICK];
     if (![BANullHelper isStringEmpty:analyticsID]) {
         [parameters setObject:analyticsID forKey:@"analyticsID"];
     }
@@ -617,21 +572,23 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
     [BATrackerCenter trackPrivateEvent:BAMESSAGING_EVENT_NAME parameters:parameters];
 }
 
-- (void)messageShown:(BAMSGMessage* _Nonnull)message
-{
-    if (message != nil)
-    {
+- (void)messageShown:(BAMSGMessage *_Nonnull)message {
+    if (message != nil) {
         [[BANotificationCenter defaultCenter] postNotificationName:kBATMessagingMessageDidAppear object:message];
-        
+
         [self trackGenericEvent:message type:BAMESSAGING_EVENT_TYPE_SHOW];
 
         if ([message.sourceMessage isKindOfClass:[BatchInAppMessage class]]) {
-            // Maybe there's a better way to decouple classes here, but forward this to the In-App Campaigns module if needed
-            BatchInAppMessage *castedSourceMessage = ((BatchInAppMessage*)message.sourceMessage);
-            [[BALocalCampaignsCenter instance] didPerformCampaignOutputWithIdentifier:castedSourceMessage.campaignIdentifier eventData:castedSourceMessage.eventData];
+            // Maybe there's a better way to decouple classes here, but forward this to the In-App Campaigns module if
+            // needed
+            BatchInAppMessage *castedSourceMessage = ((BatchInAppMessage *)message.sourceMessage);
+            [[BALocalCampaignsCenter instance]
+                didPerformCampaignOutputWithIdentifier:castedSourceMessage.campaignIdentifier
+                                             eventData:castedSourceMessage.eventData];
         }
-        
-        id<BatchEventDispatcherPayload> payload = [BAEventDispatcherCenter messageEventPayloadFromMessage:message.sourceMessage];
+
+        id<BatchEventDispatcherPayload> payload =
+            [BAEventDispatcherCenter messageEventPayloadFromMessage:message.sourceMessage];
         if (payload != nil) {
             [self.eventDispatcher dispatchEventWithType:BatchEventDispatcherTypeMessagingShow payload:payload];
         }
@@ -640,13 +597,12 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
     [_wrappedDelegate batchMessageDidAppear:message.sourceMessage.devTrackingIdentifier];
 }
 
-- (void)messageAutomaticallyClosed:(BAMSGMessage* _Nonnull)message
-{
-    if (message != nil)
-    {
+- (void)messageAutomaticallyClosed:(BAMSGMessage *_Nonnull)message {
+    if (message != nil) {
         [self trackGenericEvent:message type:BAMESSAGING_EVENT_TYPE_AUTO_CLOSE];
-        
-        id<BatchEventDispatcherPayload> payload = [BAEventDispatcherCenter messageEventPayloadFromMessage:message.sourceMessage];
+
+        id<BatchEventDispatcherPayload> payload =
+            [BAEventDispatcherCenter messageEventPayloadFromMessage:message.sourceMessage];
         if (payload != nil) {
             [self.eventDispatcher dispatchEventWithType:BatchEventDispatcherTypeMessagingAutoClose payload:payload];
         }
@@ -655,13 +611,12 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
     [_wrappedDelegate batchMessageWasCancelledByAutoclose:message.sourceMessage.devTrackingIdentifier];
 }
 
-- (void)messageClosed:(BAMSGMessage* _Nonnull)message
-{
-    if (message != nil)
-    {
+- (void)messageClosed:(BAMSGMessage *_Nonnull)message {
+    if (message != nil) {
         [self trackGenericEvent:message type:BAMESSAGING_EVENT_TYPE_CLOSE];
-        
-        id<BatchEventDispatcherPayload> payload = [BAEventDispatcherCenter messageEventPayloadFromMessage:message.sourceMessage];
+
+        id<BatchEventDispatcherPayload> payload =
+            [BAEventDispatcherCenter messageEventPayloadFromMessage:message.sourceMessage];
         if (payload != nil) {
             [self.eventDispatcher dispatchEventWithType:BatchEventDispatcherTypeMessagingClose payload:payload];
         }
@@ -670,13 +625,12 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
     [_wrappedDelegate batchMessageWasCancelledByUserAction:message.sourceMessage.devTrackingIdentifier];
 }
 
-- (void)message:(BAMSGMessage* _Nonnull)message closedByError:(BATMessagingCloseErrorCause)errorCause
-{
-    if (message != nil)
-    {
+- (void)message:(BAMSGMessage *_Nonnull)message closedByError:(BATMessagingCloseErrorCause)errorCause {
+    if (message != nil) {
         [self trackCloseError:message cause:errorCause];
-        
-        id<BatchEventDispatcherPayload> payload = [BAEventDispatcherCenter messageEventPayloadFromMessage:message.sourceMessage];
+
+        id<BatchEventDispatcherPayload> payload =
+            [BAEventDispatcherCenter messageEventPayloadFromMessage:message.sourceMessage];
         if (payload != nil) {
             [self.eventDispatcher dispatchEventWithType:BatchEventDispatcherTypeMessagingCloseError payload:payload];
         }
@@ -685,26 +639,25 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
     [_wrappedDelegate batchMessageWasCancelledByError:message.sourceMessage.devTrackingIdentifier];
 }
 
-- (void)messageDismissed:(BAMSGMessage* _Nonnull)message
-{
-    if (message != nil)
-    {
+- (void)messageDismissed:(BAMSGMessage *_Nonnull)message {
+    if (message != nil) {
         [[BANotificationCenter defaultCenter] postNotificationName:kBATMessagingMessageDidDisappear object:message];
-        
+
         [self trackGenericEvent:message type:BAMESSAGING_EVENT_TYPE_DISMISS];
     }
     [_wrappedDelegate batchMessageDidDisappear:message.sourceMessage.devTrackingIdentifier];
 }
 
-- (void)messageGlobalTapActionTriggered:(BAMSGMessage *_Nonnull)message action:(BAMSGAction *)action
-{
-    if (message != nil)
-    {
-        NSMutableDictionary *parameters = [self baseEventParametersForMessage:message type:BAMESSAGING_EVENT_TYPE_GLOBAL_TAP];
-        [parameters setObject:(action.actionIdentifier != nil ? action.actionIdentifier : [NSNull null]) forKey:@"action"];
+- (void)messageGlobalTapActionTriggered:(BAMSGMessage *_Nonnull)message action:(BAMSGAction *)action {
+    if (message != nil) {
+        NSMutableDictionary *parameters = [self baseEventParametersForMessage:message
+                                                                         type:BAMESSAGING_EVENT_TYPE_GLOBAL_TAP];
+        [parameters setObject:(action.actionIdentifier != nil ? action.actionIdentifier : [NSNull null])
+                       forKey:@"action"];
         [BATrackerCenter trackPrivateEvent:BAMESSAGING_EVENT_NAME parameters:parameters];
-        
-        id<BatchEventDispatcherPayload> payload = [BAEventDispatcherCenter messageEventPayloadFromMessage:message.sourceMessage action:action];
+
+        id<BatchEventDispatcherPayload> payload =
+            [BAEventDispatcherCenter messageEventPayloadFromMessage:message.sourceMessage action:action];
         if (payload != nil) {
             if ([action isDismissAction]) {
                 [self.eventDispatcher dispatchEventWithType:BatchEventDispatcherTypeMessagingClose payload:payload];
@@ -715,13 +668,12 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
     }
 }
 
-- (void)messageButtonClicked:(BAMSGMessage *_Nonnull)message ctaIndex:(NSInteger)ctaIndex action:(BAMSGCTA *)action
-{
-    if (message != nil)
-    {
+- (void)messageButtonClicked:(BAMSGMessage *_Nonnull)message ctaIndex:(NSInteger)ctaIndex action:(BAMSGCTA *)action {
+    if (message != nil) {
         [self trackCTAClickEvent:message ctaIndex:ctaIndex action:action.actionIdentifier];
-        
-        id<BatchEventDispatcherPayload> payload = [BAEventDispatcherCenter messageEventPayloadFromMessage:message.sourceMessage action:action];
+
+        id<BatchEventDispatcherPayload> payload =
+            [BAEventDispatcherCenter messageEventPayloadFromMessage:message.sourceMessage action:action];
         if (payload != nil) {
             if ([action isDismissAction]) {
                 [self.eventDispatcher dispatchEventWithType:BatchEventDispatcherTypeMessagingClose payload:payload];
@@ -733,23 +685,21 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
 }
 
 - (void)messageWebViewClickTracked:(BAMSGMessage *_Nonnull)message
-                            action:(BAMSGAction*)action
-               analyticsIdentifier:(NSString*)analyticsID
-{
-    if (message != nil)
-    {   
-        [self trackWebViewClickEvent:message
-                              action:action
-                 analyticsIdentifier:analyticsID];
-        
-        id<BatchEventDispatcherPayload> payload = [BAEventDispatcherCenter messageEventPayloadFromMessage:message.sourceMessage
-                                                                                                   action:action
-                                                                               webViewAnalyticsIdentifier:analyticsID];
+                            action:(BAMSGAction *)action
+               analyticsIdentifier:(NSString *)analyticsID {
+    if (message != nil) {
+        [self trackWebViewClickEvent:message action:action analyticsIdentifier:analyticsID];
+
+        id<BatchEventDispatcherPayload> payload =
+            [BAEventDispatcherCenter messageEventPayloadFromMessage:message.sourceMessage
+                                                             action:action
+                                         webViewAnalyticsIdentifier:analyticsID];
         if (payload != nil) {
             if ([action isDismissAction]) {
                 [self.eventDispatcher dispatchEventWithType:BatchEventDispatcherTypeMessagingClose payload:payload];
             } else {
-                [self.eventDispatcher dispatchEventWithType:BatchEventDispatcherTypeMessagingWebViewClick payload:payload];
+                [self.eventDispatcher dispatchEventWithType:BatchEventDispatcherTypeMessagingWebViewClick
+                                                    payload:payload];
             }
         }
     }
@@ -757,8 +707,7 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
 
 #pragma mark Instance methods
 
-- (BAEventDispatcherCenter*)eventDispatcher
-{
+- (BAEventDispatcherCenter *)eventDispatcher {
     return [BAInjection injectClass:BAEventDispatcherCenter.class];
 }
 
@@ -766,25 +715,27 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
  Display a message on the most appropriate view controller Batch can find.
  Warning: this does NOT take into account the automatic mode switch
  This must be called on the main thread
- 
+
  @param message BatchMessage instance to display
  @param outErr Error output pointer
  @return YES on success, NO on failure
  */
-- (BOOL)displayMessage:(BatchMessage* _Nonnull)message
-                 error:(NSError * _Nullable * _Nullable)outErr
-{
+- (BOOL)displayMessage:(BatchMessage *_Nonnull)message error:(NSError *_Nullable *_Nullable)outErr {
     if (self.doNotDisturb) {
-        [BALogger publicForDomain:LOGGER_DOMAIN message:@"A BatchMessage was attempted to be displayed, but Do Not Disturb is enabled. Enqueing."];
+        [BALogger
+            publicForDomain:LOGGER_DOMAIN
+                    message:@"A BatchMessage was attempted to be displayed, but Do Not Disturb is enabled. Enqueing."];
         _pendingMessage = message;
         return true;
     }
-    
+
     NSError *err = nil;
     UIViewController *vc = [self internalLoadViewControllerForMessage:message error:&err];
-    
+
     if (err) {
-        [BALogger publicForDomain:LOGGER_DOMAIN message:@"An error occurred while loading Batch's messaging view: %@", [err localizedDescription]];
+        [BALogger
+            publicForDomain:LOGGER_DOMAIN
+                    message:@"An error occurred while loading Batch's messaging view: %@", [err localizedDescription]];
         if (outErr) {
             *outErr = err;
         }
@@ -793,49 +744,47 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
         return [self presentMessagingViewController:vc error:outErr];
     } else {
         if (outErr) {
-            *outErr = [NSError errorWithDomain:MESSAGING_ERROR_DOMAIN
-                                          code:BatchMessagingErrorInternal
-                                      userInfo:@{NSLocalizedDescriptionKey: @"Could not load Batch's messaging view for an unknown reason."}];
+            *outErr = [NSError
+                errorWithDomain:MESSAGING_ERROR_DOMAIN
+                           code:BatchMessagingErrorInternal
+                       userInfo:@{
+                           NSLocalizedDescriptionKey : @"Could not load Batch's messaging view for an unknown reason."
+                       }];
         }
         return false;
     }
 }
 
-- (BAMSGMessage*)messageForObject:(id)object
-{
-    if (object == nil)
-    {
+- (BAMSGMessage *)messageForObject:(id)object {
+    if (object == nil) {
         return nil;
     }
-    
+
     id retVal = objc_getAssociatedObject(object, &kBABatchMessagingMessageModelObject);
-    
-    if (![retVal isKindOfClass:[BAMSGMessage class]])
-    {
+
+    if (![retVal isKindOfClass:[BAMSGMessage class]]) {
         return nil;
     }
-    
+
     return retVal;
 }
 
-- (BAMSGInterstitialViewController*)universalViewControllerForMessage:(BAMSGMessageInterstitial*)message
-                                                       hasHeroContent:(BOOL)hasHeroContent
-                                                   shouldWaitForImage:(BOOL)waitForImage
-                                                                error:(NSError**)error
-{
+- (BAMSGInterstitialViewController *)universalViewControllerForMessage:(BAMSGMessageInterstitial *)message
+                                                        hasHeroContent:(BOOL)hasHeroContent
+                                                    shouldWaitForImage:(BOOL)waitForImage
+                                                                 error:(NSError **)error {
     NSError *cssError = nil;
-    BACSSDocument *style = [[BACSSParser parserWithString:message.css andImportProvider:[BACSSBuiltinImportProvider new]] parseWithError:&cssError];
-    if (!style || cssError)
-    {
-        if (error)
-        {
+    BACSSDocument *style = [[BACSSParser parserWithString:message.css
+                                        andImportProvider:[BACSSBuiltinImportProvider new]] parseWithError:&cssError];
+    if (!style || cssError) {
+        if (error) {
             *error = [NSError errorWithDomain:MESSAGING_ERROR_DOMAIN
                                          code:BatchMessagingErrorInternal
-                                     userInfo:@{NSLocalizedDescriptionKey: @"Invalid style attributes."}];
+                                     userInfo:@{NSLocalizedDescriptionKey : @"Invalid style attributes."}];
         }
         return nil;
     }
-    
+
     BAMSGInterstitialViewController *vc = [[BAMSGInterstitialViewController alloc] initWithStyleRules:style
                                                                                        hasHeroContent:hasHeroContent
                                                                                    shouldWaitForImage:waitForImage];
@@ -852,33 +801,32 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
     vc.flipHeroVertical = message.flipHeroVertical;
     vc.flipHeroHorizontal = message.flipHeroHorizontal;
     [vc setCloseButtonEnabled:message.showCloseButton autoclosingDuration:message.autoClose];
-    
-    if (message.heroSplitRatio != nil)
-    {
+
+    if (message.heroSplitRatio != nil) {
         vc.heroSplitRatio = [message.heroSplitRatio floatValue];
     }
-    
-    if (message.videoURL)
-    {
+
+    if (message.videoURL) {
         vc.videoURL = [NSURL URLWithString:message.videoURL];
     }
-    
-    if (![vc canBeClosed])
-    {
-        if (error)
-        {
-            *error = [NSError errorWithDomain:MESSAGING_ERROR_DOMAIN
-                                         code:BatchMessagingErrorInternal
-                                     userInfo:@{NSLocalizedDescriptionKey: @"This universal template is unclosable. Refusing to show it."}];
+
+    if (![vc canBeClosed]) {
+        if (error) {
+            *error = [NSError
+                errorWithDomain:MESSAGING_ERROR_DOMAIN
+                           code:BatchMessagingErrorInternal
+                       userInfo:@{
+                           NSLocalizedDescriptionKey : @"This universal template is unclosable. Refusing to show it."
+                       }];
         }
         return nil;
     }
-    
+
     return vc;
 }
 
-- (NSError*)setupBaseBannerViewController:(BAMSGBaseBannerViewController*)vc forMessage:(BAMSGMessageBaseBanner*)message
-{
+- (NSError *)setupBaseBannerViewController:(BAMSGBaseBannerViewController *)vc
+                                forMessage:(BAMSGMessageBaseBanner *)message {
     vc.messageDescription = message;
     vc.titleText = message.titleText;
     vc.bodyText = message.bodyText;
@@ -891,119 +839,106 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
     vc.imageURL = message.imageURL;
     vc.imageDescription = message.imageDescription;
     [vc setCloseButtonEnabled:message.showCloseButton autoclosingDuration:message.autoClose];
-    
-    if (![vc canBeClosed])
-    {
-        return [NSError errorWithDomain:MESSAGING_ERROR_DOMAIN
-                                   code:BatchMessagingErrorInternal
-                               userInfo:@{NSLocalizedDescriptionKey: @"This template is unclosable. Refusing to show it."}];
+
+    if (![vc canBeClosed]) {
+        return [NSError
+            errorWithDomain:MESSAGING_ERROR_DOMAIN
+                       code:BatchMessagingErrorInternal
+                   userInfo:@{NSLocalizedDescriptionKey : @"This template is unclosable. Refusing to show it."}];
     }
-    
+
     return nil;
 }
 
-- (BAMSGBannerViewController*)bannerViewControllerForMessage:(BAMSGMessageBanner*)message error:(NSError**)error
-{
+- (BAMSGBannerViewController *)bannerViewControllerForMessage:(BAMSGMessageBanner *)message error:(NSError **)error {
     NSError *cssError = nil;
-    BACSSDocument *style = [[BACSSParser parserWithString:message.css andImportProvider:[BACSSBuiltinImportProvider new]] parseWithError:&cssError];
-    if (!style || cssError)
-    {
-        if (error)
-        {
+    BACSSDocument *style = [[BACSSParser parserWithString:message.css
+                                        andImportProvider:[BACSSBuiltinImportProvider new]] parseWithError:&cssError];
+    if (!style || cssError) {
+        if (error) {
             *error = [NSError errorWithDomain:MESSAGING_ERROR_DOMAIN
                                          code:BatchMessagingErrorInternal
-                                     userInfo:@{NSLocalizedDescriptionKey: @"Invalid style attributes."}];
+                                     userInfo:@{NSLocalizedDescriptionKey : @"Invalid style attributes."}];
         }
         return nil;
     }
-    
+
     BAMSGBannerViewController *vc = [[BAMSGBannerViewController alloc] initWithStyleRules:style];
     NSError *setupErr = [self setupBaseBannerViewController:vc forMessage:message];
-    if (setupErr != nil)
-    {
-        if (error)
-        {
+    if (setupErr != nil) {
+        if (error) {
             *error = setupErr;
         }
         return nil;
     }
-    
+
     return vc;
 }
 
-- (BAMSGModalViewController*)modalViewControllerForMessage:(BAMSGMessageModal*)message error:(NSError**)error
-{
+- (BAMSGModalViewController *)modalViewControllerForMessage:(BAMSGMessageModal *)message error:(NSError **)error {
     NSError *cssError = nil;
-    BACSSDocument *style = [[BACSSParser parserWithString:message.css andImportProvider:[BACSSBuiltinImportProvider new]] parseWithError:&cssError];
-    if (!style || cssError)
-    {
-        if (error)
-        {
+    BACSSDocument *style = [[BACSSParser parserWithString:message.css
+                                        andImportProvider:[BACSSBuiltinImportProvider new]] parseWithError:&cssError];
+    if (!style || cssError) {
+        if (error) {
             *error = [NSError errorWithDomain:MESSAGING_ERROR_DOMAIN
                                          code:BatchMessagingErrorInternal
-                                     userInfo:@{NSLocalizedDescriptionKey: @"Invalid style attributes."}];
+                                     userInfo:@{NSLocalizedDescriptionKey : @"Invalid style attributes."}];
         }
         return nil;
     }
-    
+
     BAMSGModalViewController *vc = [[BAMSGModalViewController alloc] initWithStyleRules:style];
     NSError *setupErr = [self setupBaseBannerViewController:vc forMessage:message];
-    if (setupErr != nil)
-    {
-        if (error)
-        {
+    if (setupErr != nil) {
+        if (error) {
             *error = setupErr;
         }
         return nil;
     }
-    
+
     return vc;
 }
 
-- (BAMSGImageViewController *)imageViewControllerForMessage:(BAMSGMessageImage *)message error:(NSError**)error
-{
+- (BAMSGImageViewController *)imageViewControllerForMessage:(BAMSGMessageImage *)message error:(NSError **)error {
     NSError *cssError = nil;
-    BACSSDocument *style = [[BACSSParser parserWithString:message.css andImportProvider:[BACSSBuiltinImportProvider new]] parseWithError:&cssError];
-    if (!style || cssError)
-    {
-        if (error)
-        {
+    BACSSDocument *style = [[BACSSParser parserWithString:message.css
+                                        andImportProvider:[BACSSBuiltinImportProvider new]] parseWithError:&cssError];
+    if (!style || cssError) {
+        if (error) {
             *error = [NSError errorWithDomain:MESSAGING_ERROR_DOMAIN
                                          code:BatchMessagingErrorInternal
-                                     userInfo:@{NSLocalizedDescriptionKey: @"Invalid style attributes."}];
+                                     userInfo:@{NSLocalizedDescriptionKey : @"Invalid style attributes."}];
         }
         return nil;
     }
-    
+
     BAMSGImageViewController *vc = [[BAMSGImageViewController alloc] initWithMessage:message andStyle:style];
     return vc;
 }
 
-- (BAMSGWebviewViewController *)webviewViewControllerForMessage:(BAMSGMessageWebView *)message error:(NSError**)error
-{
+- (BAMSGWebviewViewController *)webviewViewControllerForMessage:(BAMSGMessageWebView *)message error:(NSError **)error {
     NSError *cssError = nil;
-    BACSSDocument *style = [[BACSSParser parserWithString:message.css andImportProvider:[BACSSBuiltinImportProvider new]] parseWithError:&cssError];
-    if (!style || cssError)
-    {
-        if (error)
-        {
+    BACSSDocument *style = [[BACSSParser parserWithString:message.css
+                                        andImportProvider:[BACSSBuiltinImportProvider new]] parseWithError:&cssError];
+    if (!style || cssError) {
+        if (error) {
             *error = [NSError errorWithDomain:MESSAGING_ERROR_DOMAIN
                                          code:BatchMessagingErrorInternal
-                                     userInfo:@{NSLocalizedDescriptionKey: @"Invalid style attributes."}];
+                                     userInfo:@{NSLocalizedDescriptionKey : @"Invalid style attributes."}];
         }
         return nil;
     }
-    
+
     BAMSGWebviewViewController *vc = [[BAMSGWebviewViewController alloc] initWithMessage:message andStyle:style];
     return vc;
 }
 
-- (void)showViewControllerInOwnWindow:(UIViewController*)vc
-{
+- (void)showViewControllerInOwnWindow:(UIViewController *)vc {
     if (vc == nil) {
         return;
     }
-    
+
     UIWindow *overlayedWindow = [BAWindowHelper keyWindow];
     BAMSGOverlayWindow *shownWindow = self.shownWindow;
     if (shownWindow) {
@@ -1020,7 +955,7 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
         [shownWindow dismissAnimated];
         self.shownWindow = nil;
     }
-    
+
     BAMSGOverlayWindow *window;
     if (@available(iOS 13.0, *)) {
         UIWindowScene *scene = [BAWindowHelper keyWindow].windowScene;
@@ -1028,7 +963,7 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
             window = [[BAMSGOverlayWindow alloc] initWithWindowScene:scene];
         }
     }
-    
+
     if (window == nil) {
         window = [[BAMSGOverlayWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
     }
@@ -1038,32 +973,31 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
         ((id<BAMSGWindowHolder>)vc).overlayedWindow = overlayedWindow;
         ((id<BAMSGWindowHolder>)vc).presentingWindow = window;
     }
-    
+
     window.rootViewController = vc;
     window.visibilityAnimationDuration = BAMESSAGING_BANNER_ANIMATION_DURATION;
-    
+
     [window presentAnimated];
-    
+
     self.shownWindow = window;
 }
 
-- (BAPromise*)dismissWindow:(nullable BAMSGOverlayWindow*)window
-{
+- (BAPromise *)dismissWindow:(nullable BAMSGOverlayWindow *)window {
     BAPromise *dismissPromise = [BAPromise new];
     [BAThreading performBlockOnMainThread:^{
-        if (self.shownWindow == window) {
-            BAPromise *windowPromise = [window dismissAnimated];
-            [windowPromise then:^(NSObject * _Nullable value) {
-                [dismissPromise resolve:value];
-            }];
-            [windowPromise catch:^(NSError * _Nullable error) {
-                [dismissPromise reject:error];
-            }];
-            self.shownWindow = nil;
-        } else {
-            // Don't reject, it may just be gone already
-            [dismissPromise resolve:nil];
-        }
+      if (self.shownWindow == window) {
+          BAPromise *windowPromise = [window dismissAnimated];
+          [windowPromise then:^(NSObject *_Nullable value) {
+            [dismissPromise resolve:value];
+          }];
+          [windowPromise catch:^(NSError *_Nullable error) {
+            [dismissPromise reject:error];
+          }];
+          self.shownWindow = nil;
+      } else {
+          // Don't reject, it may just be gone already
+          [dismissPromise resolve:nil];
+      }
     }];
     return dismissPromise;
 }
@@ -1073,31 +1007,28 @@ NSString * const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDid
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #pragma clang diagnostic ignored "-Wdeprecated-implementations"
-- (void)didPresentAlertView:(UIAlertView *)alertView
-{
+- (void)didPresentAlertView:(UIAlertView *)alertView {
     [self messageShown:[self messageForObject:alertView]];
 }
 
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    BAMSGMessageAlert *message = (BAMSGMessageAlert*)[self messageForObject:alertView];
-    
-    if (![message isKindOfClass:[BAMSGMessageAlert class]])
-    {
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    BAMSGMessageAlert *message = (BAMSGMessageAlert *)[self messageForObject:alertView];
+
+    if (![message isKindOfClass:[BAMSGMessageAlert class]]) {
         message = nil;
     }
-    
+
     [self messageDismissed:message];
-    
+
     // We can do this since our alert views only have one other CTA
-    if (buttonIndex != [alertView cancelButtonIndex])
-    {
+    if (buttonIndex != [alertView cancelButtonIndex]) {
         // We don't need to handle BAMSGCTAActionKindClose since the UIAlertView always dismisses itself
         [self messageButtonClicked:message ctaIndex:0 action:message.acceptCTA];
-        [self performAction:message.acceptCTA source:message.sourceMessage actionIndex:0 messageIdentifier:message.sourceMessage.devTrackingIdentifier];
-    }
-    else
-    {
+        [self performAction:message.acceptCTA
+                       source:message.sourceMessage
+                  actionIndex:0
+            messageIdentifier:message.sourceMessage.devTrackingIdentifier];
+    } else {
         [self messageClosed:message];
     }
 }

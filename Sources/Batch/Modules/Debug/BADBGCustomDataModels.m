@@ -6,8 +6,7 @@
 
 @implementation BADBGCustomDataAttribute
 
-+ (instancetype)attributeWithName:(NSString *)name value:(NSString *)value
-{
++ (instancetype)attributeWithName:(NSString *)name value:(NSString *)value {
     BADBGCustomDataAttribute *item = [[BADBGCustomDataAttribute alloc] init];
     item.name = name;
     item.value = value;
@@ -15,4 +14,3 @@
 }
 
 @end
-

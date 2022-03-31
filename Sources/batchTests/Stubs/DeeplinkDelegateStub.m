@@ -9,8 +9,7 @@
 
 @implementation DeeplinkDelegateStub
 
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super init];
     if (self) {
         self.hasOpenBeenCalled = false;
@@ -18,8 +17,7 @@
     return self;
 }
 
-- (void)openBatchDeeplink:(NSString *)deeplink
-{
+- (void)openBatchDeeplink:(NSString *)deeplink {
     self.hasOpenBeenCalled = true;
 }
 

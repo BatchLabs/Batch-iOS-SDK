@@ -7,12 +7,11 @@
 
 #import <Batch/BAPushTokenService.h>
 
-#import <Batch/BAWebserviceURLBuilder.h>
 #import <Batch/BAWSQueryPushToken.h>
 #import <Batch/BAWSResponsePushToken.h>
+#import <Batch/BAWebserviceURLBuilder.h>
 
-@interface BAPushTokenServiceDatasource ()
-{
+@interface BAPushTokenServiceDatasource () {
     NSString *_token;
     BOOL _usesProductionEnvironment;
 }
@@ -20,8 +19,7 @@
 
 @implementation BAPushTokenServiceDatasource : NSObject
 
-- (instancetype)initWithToken:(NSString *)token
-    usesProductionEnvironment:(BOOL)usesProductionEnvironment;
+- (instancetype)initWithToken:(NSString *)token usesProductionEnvironment:(BOOL)usesProductionEnvironment;
 {
     self = [super init];
     if (self) {
@@ -31,7 +29,7 @@
     return self;
 }
 
-- (NSURL*)requestURL {
+- (NSURL *)requestURL {
     return [BAWebserviceURLBuilder webserviceURLForShortname:self.requestShortIdentifier];
 }
 
@@ -44,12 +42,12 @@
 }
 
 - (NSArray<id<BAWSQuery>> *)queriesToSend {
-    BAWSQueryPushToken *query = [[BAWSQueryPushToken alloc] initWithToken:_token andIsProduction:_usesProductionEnvironment];
-    return @[query];
+    BAWSQueryPushToken *query = [[BAWSQueryPushToken alloc] initWithToken:_token
+                                                          andIsProduction:_usesProductionEnvironment];
+    return @[ query ];
 }
 
-- (nullable BAWSResponse *)responseForQuery:(BAWSQuery *)query
-                                            content:(NSDictionary *)content {
+- (nullable BAWSResponse *)responseForQuery:(BAWSQuery *)query content:(NSDictionary *)content {
     if ([query isKindOfClass:[BAWSQueryPushToken class]]) {
         return [[BAWSResponsePushToken alloc] initWithResponse:content];
     }

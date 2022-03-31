@@ -11,11 +11,10 @@
 
 @implementation BALNativeAttributeContext
 
-- (nullable BALValue *)resolveVariableNamed:(nonnull NSString *)name
-{
+- (nullable BALValue *)resolveVariableNamed:(nonnull NSString *)name {
     if ([name hasPrefix:@"b."] && [name length] > 2) {
         NSString *parameter = [BAPropertiesCenter valueForShortName:[name substringFromIndex:2]];
-        
+
         if (parameter != nil && [parameter length] > 0) {
             return [BALPrimitiveValue valueWithString:parameter];
         } else {

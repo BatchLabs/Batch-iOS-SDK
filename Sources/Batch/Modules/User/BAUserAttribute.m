@@ -10,46 +10,43 @@
 
 @implementation BAUserAttribute
 
-+ (instancetype)attributeWithValue:(nonnull id)value type:(BAUserAttributeType)type
-{
++ (instancetype)attributeWithValue:(nonnull id)value type:(BAUserAttributeType)type {
     BAUserAttribute *attribute = [[BAUserAttribute alloc] init];
     attribute.value = value;
     attribute.type = type;
-    
+
     return attribute;
 }
 
-+ (nonnull NSDictionary<NSString*, id>*)serverJsonRepresentationForAttributes:(nullable NSDictionary<NSString*, BAUserAttribute*>*)attributes;
++ (nonnull NSDictionary<NSString *, id> *)serverJsonRepresentationForAttributes:
+    (nullable NSDictionary<NSString *, BAUserAttribute *> *)attributes;
 {
     NSMutableDictionary *result = [NSMutableDictionary new];
-    
-    for (NSString *name in attributes.allKeys)
-    {
+
+    for (NSString *name in attributes.allKeys) {
         BAUserAttribute *attribute = attributes[name];
         // Convert the dates!
         id value = attribute.value;
-        
-        if ([value isKindOfClass:[NSDate class]])
-        {
+
+        if ([value isKindOfClass:[NSDate class]]) {
             value = @(floor([value timeIntervalSince1970] * 1000));
         }
-        
+
         // Convert the urls!
-        if ([value isKindOfClass:[NSURL class]])
-        {
-            value = ((NSURL *) value).absoluteString;
+        if ([value isKindOfClass:[NSURL class]]) {
+            value = ((NSURL *)value).absoluteString;
         }
 
-        [result setObject:value forKey:[NSString stringWithFormat:@"%@.%@", [name substringFromIndex:2], [BAUserAttribute stringForType:attribute.type]]];
+        [result setObject:value
+                   forKey:[NSString stringWithFormat:@"%@.%@", [name substringFromIndex:2],
+                                                     [BAUserAttribute stringForType:attribute.type]]];
     }
-    
+
     return result;
 }
 
-+ (NSString*)stringForType:(BAUserAttributeType)type
-{
-    switch (type)
-    {
++ (NSString *)stringForType:(BAUserAttributeType)type {
+    switch (type) {
         case BAUserAttributeTypeBool:
             return @"b";
         case BAUserAttributeTypeLongLong:
@@ -67,8 +64,7 @@
     }
 }
 
-- (BOOL)isEqual:(id)other
-{
+- (BOOL)isEqual:(id)other {
     if (other == self) {
         return YES;
     } else if (![other isKindOfClass:[BAUserAttribute class]]) {
@@ -76,12 +72,12 @@
     } else {
         BAUserAttribute *castedOther = other;
         // Pointer comparaison takes care of nil values
-        return self.type == castedOther.type && (self.value == castedOther.value || [self.value isEqual:castedOther.value]);
+        return self.type == castedOther.type &&
+               (self.value == castedOther.value || [self.value isEqual:castedOther.value]);
     }
 }
 
-- (NSString*)description
-{
+- (NSString *)description {
     return [NSString stringWithFormat:@"type: %@ value: %@", [BAUserAttribute stringForType:self.type], self.value];
 }
 

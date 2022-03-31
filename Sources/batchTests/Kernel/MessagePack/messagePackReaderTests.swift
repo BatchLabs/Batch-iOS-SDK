@@ -1,6 +1,6 @@
+import Batch.Batch_Private
 import Foundation
 import XCTest
-import Batch.Batch_Private
 
 // swiftlint:disable force_cast
 
@@ -33,10 +33,14 @@ final class MessagePackReaderTests: XCTestCase {
 
         assertUnpack("CE80000000", 2_147_483_648) { try $0.readIntegerAllowingNil(false) }
 
-        assertUnpack("CF7FFFFFFFFFFFFFFF", 9_223_372_036_854_775_807) { try $0.readIntegerAllowingNil(false) } // Max Int
-        assertUnpack("CF8000000000000000", UInt(9_223_372_036_854_775_808)) { UInt(truncating: try $0.readIntegerAllowingNil(false)) }
+        assertUnpack("CF7FFFFFFFFFFFFFFF", 9_223_372_036_854_775_807) { try $0.readIntegerAllowingNil(false) }  // Max Int
+        assertUnpack("CF8000000000000000", UInt(9_223_372_036_854_775_808)) {
+            UInt(truncating: try $0.readIntegerAllowingNil(false))
+        }
 
-        assertUnpack("CFFFFFFFFFFFFFFFFF", UInt64(18_446_744_073_709_551_615)) { UInt64(truncating: try $0.readIntegerAllowingNil(false)) } // Max UInt
+        assertUnpack("CFFFFFFFFFFFFFFFFF", UInt64(18_446_744_073_709_551_615)) {
+            UInt64(truncating: try $0.readIntegerAllowingNil(false))
+        }  // Max UInt
     }
 
     func testInt() {
@@ -55,7 +59,9 @@ final class MessagePackReaderTests: XCTestCase {
         assertUnpack("D280000000", -2_147_483_648) { try $0.readIntegerAllowingNil(false) }
         assertUnpack("D3FFFFFFFF7FFFFFFF", -2_147_483_649) { try $0.readIntegerAllowingNil(false) }
 
-        assertUnpack("D38000000000000000", Int64(-9_223_372_036_854_775_808)) { try Int64(truncating: $0.readIntegerAllowingNil(false)) }
+        assertUnpack("D38000000000000000", Int64(-9_223_372_036_854_775_808)) {
+            try Int64(truncating: $0.readIntegerAllowingNil(false))
+        }
     }
 
     func testFloat() {
@@ -86,12 +92,18 @@ final class MessagePackReaderTests: XCTestCase {
     }
 
     func testDictionary() throws {
-        assertUnpack("80", [:] as NSDictionary ) { try $0.readDictionaryAllowingNil(false) as NSDictionary }
-        assertUnpack("81A3666F6FA3626172", ["foo": "bar"] as NSDictionary ) { try $0.readDictionaryAllowingNil(false) as NSDictionary }
-        assertUnpack("81A3666F6FC0", ["foo": nil] as NSDictionary ) { try $0.readDictionaryAllowingNil(false) as NSDictionary }
-        assertUnpack("810203", [2: 3] as NSDictionary ) { try $0.readDictionaryAllowingNil(false) as NSDictionary }
-        assertUnpack("8102810203", [2: [2: 3]] as NSDictionary ) { try $0.readDictionaryAllowingNil(false) as NSDictionary }
-        assertUnpack("81029103", [2: [3]] as NSDictionary ) { try $0.readDictionaryAllowingNil(false) as NSDictionary }
+        assertUnpack("80", [:] as NSDictionary) { try $0.readDictionaryAllowingNil(false) as NSDictionary }
+        assertUnpack("81A3666F6FA3626172", ["foo": "bar"] as NSDictionary) {
+            try $0.readDictionaryAllowingNil(false) as NSDictionary
+        }
+        assertUnpack("81A3666F6FC0", ["foo": nil] as NSDictionary) {
+            try $0.readDictionaryAllowingNil(false) as NSDictionary
+        }
+        assertUnpack("810203", [2: 3] as NSDictionary) { try $0.readDictionaryAllowingNil(false) as NSDictionary }
+        assertUnpack("8102810203", [2: [2: 3]] as NSDictionary) {
+            try $0.readDictionaryAllowingNil(false) as NSDictionary
+        }
+        assertUnpack("81029103", [2: [3]] as NSDictionary) { try $0.readDictionaryAllowingNil(false) as NSDictionary }
         // We can't test dicts with multiple keys easily as the order is not guaranteed in swift
     }
 
@@ -101,15 +113,18 @@ final class MessagePackReaderTests: XCTestCase {
         assertUnpack("AA666F6FF09F988A626172", "foo😊bar") { try $0.readStringAllowingNil(false) }
     }
 
-    func assertUnpack<T: Equatable>(_ hexData: String, _ expected: T, file: StaticString = #filePath, line: UInt = #line,
-                                    _ readerClosure: (inout BATMessagePackReader) throws -> T) {
+    func assertUnpack<T: Equatable>(
+        _ hexData: String, _ expected: T, file: StaticString = #filePath, line: UInt = #line,
+        _ readerClosure: (inout BATMessagePackReader) throws -> T
+    ) {
         var reader = BATMessagePackReader(data: Data(hexString: hexData))
         let value: T
         do {
             value = try readerClosure(&reader)
-            XCTAssertEqual(expected, value,
-                           "Expected \(expected), got \(value)",
-                           file: file, line: line)
+            XCTAssertEqual(
+                expected, value,
+                "Expected \(expected), got \(value)",
+                file: file, line: line)
         } catch let err {
             XCTFail("Unpacking \(hexData) threw error '\(err)'", file: file, line: line)
         }

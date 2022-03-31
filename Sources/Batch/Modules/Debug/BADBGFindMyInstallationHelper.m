@@ -4,9 +4,9 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 #import <Batch/BADBGFindMyInstallationHelper.h>
-#import <Batch/BatchUser.h>
-#import <Batch/BatchLogger.h>
 #import <Batch/BATrackerCenter.h>
+#import <Batch/BatchLogger.h>
+#import <Batch/BatchUser.h>
 
 #define MAX_DELAY_BETWEEN_FOREGROUNDS 20000
 
@@ -14,19 +14,16 @@
 
 static BOOL BADebugEnablesFindMyInstallation = true;
 
-@implementation BADBGFindMyInstallationHelper
-{
-    
-    /// Pasteborard 
+@implementation BADBGFindMyInstallationHelper {
+    /// Pasteborard
     UIPasteboard *_pasteboard;
-    
-    /// Timestamps when app is foregrounded
-    NSMutableArray<NSNumber*>* _timestamps;
-}
-#pragma mark  - Instance setup
 
-- (instancetype)init
-{
+    /// Timestamps when app is foregrounded
+    NSMutableArray<NSNumber *> *_timestamps;
+}
+#pragma mark - Instance setup
+
+- (instancetype)init {
     self = [super init];
     if (self) {
         _pasteboard = [UIPasteboard generalPasteboard];
@@ -36,7 +33,7 @@ static BOOL BADebugEnablesFindMyInstallation = true;
     return self;
 }
 
-- (instancetype)initWithPasteboard:(UIPasteboard*)pasteboard;
+- (instancetype)initWithPasteboard:(UIPasteboard *)pasteboard;
 {
     self = [super init];
     if (self) {
@@ -47,36 +44,34 @@ static BOOL BADebugEnablesFindMyInstallation = true;
     return self;
 }
 
-- (void)registerObserver
-{
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notifyForeground) name:UIApplicationDidBecomeActiveNotification object:nil];
+- (void)registerObserver {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(notifyForeground)
+                                                 name:UIApplicationDidBecomeActiveNotification
+                                               object:nil];
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 #pragma mark - Feature control methods
 
-+ (BOOL)enablesFindMyInstallation
-{
++ (BOOL)enablesFindMyInstallation {
     return BADebugEnablesFindMyInstallation;
 }
 
-+ (void)setEnablesFindMyInstallation:(BOOL)enabled
-{
++ (void)setEnablesFindMyInstallation:(BOOL)enabled {
     BADebugEnablesFindMyInstallation = enabled;
 }
 
 #pragma mark - Utility methods
 
 /// Notify the app has been foregrounded, we save the current timestamp
-- (void)notifyForeground
-{
+- (void)notifyForeground {
     if (BADebugEnablesFindMyInstallation) {
-        NSNumber *timestamp = @(floor([[NSDate date]  timeIntervalSince1970] * 1000));
-        [_timestamps addObject: timestamp];
+        NSNumber *timestamp = @(floor([[NSDate date] timeIntervalSince1970] * 1000));
+        [_timestamps addObject:timestamp];
         if ([_timestamps count] >= MIN_FOREGROUND_THRESHOLD) {
             if ([self shouldCopyInstallationID]) {
                 // Cleaning all timestamps
@@ -91,14 +86,12 @@ static BOOL BADebugEnablesFindMyInstallation = true;
         }
     }
 }
-    
 
 /// Check if we should copy the installation id to the clipboard
-- (BOOL)shouldCopyInstallationID
-{
-    NSMutableArray<NSNumber*>* reversed = [[[_timestamps reverseObjectEnumerator] allObjects] copy];
+- (BOOL)shouldCopyInstallationID {
+    NSMutableArray<NSNumber *> *reversed = [[[_timestamps reverseObjectEnumerator] allObjects] copy];
     for (NSNumber *timestamp in reversed) {
-        NSNumber *now = @(floor([[NSDate date]  timeIntervalSince1970] * 1000));
+        NSNumber *now = @(floor([[NSDate date] timeIntervalSince1970] * 1000));
         double delta = [now doubleValue] - [timestamp doubleValue];
         if (delta >= MAX_DELAY_BETWEEN_FOREGROUNDS) {
             return NO;
@@ -107,10 +100,8 @@ static BOOL BADebugEnablesFindMyInstallation = true;
     return YES;
 }
 
-
 /// Copy the user installation id to the clipboard
-- (void)copyInstallationIDToClipboard
-{
+- (void)copyInstallationIDToClipboard {
     [_pasteboard setString:[NSString stringWithFormat:@"Batch Installation ID: %@", [BatchUser installationID]]];
 }
 

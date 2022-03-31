@@ -12,7 +12,7 @@ import UIKit
 @objc
 class SwiftStubApplicationDelegate: NSObject, UIApplicationDelegate {
     @objc public var didFailToRegisterRecorded = false
-    
+
     @objc
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         didFailToRegisterRecorded = true

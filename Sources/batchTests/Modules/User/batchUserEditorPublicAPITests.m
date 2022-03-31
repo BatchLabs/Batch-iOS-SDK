@@ -59,10 +59,10 @@
     OCMVerify([mockBackingEditor setDoubleAttribute:1.234L forKey:@"bar" error:anyError]);
     OCMVerify([mockBackingEditor setURLAttribute:url forKey:@"bar" error:anyError]);
     OCMVerify([mockBackingEditor removeAttributeForKey:@"bar"]);
-    OCMVerify([(BAUserDataEditor*)mockBackingEditor clearAttributes]);
+    OCMVerify([(BAUserDataEditor *)mockBackingEditor clearAttributes]);
     OCMVerify([mockBackingEditor addTag:@"foo" inCollection:@"bar"]);
-    OCMVerify([(BAUserDataEditor*)mockBackingEditor removeTag:@"foo" fromCollection:@"bar"]);
-    OCMVerify([(BAUserDataEditor*)mockBackingEditor clearTags]);
+    OCMVerify([(BAUserDataEditor *)mockBackingEditor removeTag:@"foo" fromCollection:@"bar"]);
+    OCMVerify([(BAUserDataEditor *)mockBackingEditor clearTags]);
     OCMVerify([mockBackingEditor clearTagCollection:@"bar"]);
     OCMVerify([mockBackingEditor save]);
 }

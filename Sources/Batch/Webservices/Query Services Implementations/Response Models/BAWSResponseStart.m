@@ -11,15 +11,13 @@
 @implementation BAWSResponseStart
 
 // Default constructor.
-- (instancetype)initWithResponse:(NSDictionary *)response
-{
+- (instancetype)initWithResponse:(NSDictionary *)response {
     self = [super initWithResponse:response];
-    
-    if ([BANullHelper isNull:self] == YES)
-    {
+
+    if ([BANullHelper isNull:self] == YES) {
         return nil;
     }
-    
+
     return self;
 }
 

@@ -5,24 +5,20 @@
 
 #import <Batch/BATZAwareDate.h>
 
-@implementation BATZAwareDate
-{
+@implementation BATZAwareDate {
     NSDate *_date;
     NSTimeZone *_localTZ;
 }
 
-+ (instancetype)date
-{
++ (instancetype)date {
     return [[BATZAwareDate alloc] initWithDate:[NSDate date] relativeToUserTZ:false];
 }
 
-+ (instancetype)dateWithDate:(NSDate*)date relativeToUserTZ:(BOOL)useLocalTZ
-{
++ (instancetype)dateWithDate:(NSDate *)date relativeToUserTZ:(BOOL)useLocalTZ {
     return [[BATZAwareDate alloc] initWithDate:date relativeToUserTZ:useLocalTZ];
 }
 
-- (instancetype)initWithDate:(NSDate*)date relativeToUserTZ:(BOOL)useLocalTZ
-{
+- (instancetype)initWithDate:(NSDate *)date relativeToUserTZ:(BOOL)useLocalTZ {
     self = [super init];
     if (self) {
         _date = date;
@@ -35,26 +31,22 @@
     return self;
 }
 
-- (NSTimeInterval)offsettedTimeIntervalSince1970
-{
+- (NSTimeInterval)offsettedTimeIntervalSince1970 {
     if (_localTZ != nil) {
         return _date.timeIntervalSince1970 - [_localTZ secondsFromGMTForDate:_date];
     }
     return _date.timeIntervalSince1970;
 }
 
-- (BOOL)isAfter:(BATZAwareDate*)date
-{
+- (BOOL)isAfter:(BATZAwareDate *)date {
     return [self offsettedTimeIntervalSince1970] > [date offsettedTimeIntervalSince1970];
 }
 
-- (BOOL)isBefore:(BATZAwareDate*)date
-{
+- (BOOL)isBefore:(BATZAwareDate *)date {
     return [self offsettedTimeIntervalSince1970] < [date offsettedTimeIntervalSince1970];
 }
 
-- (BOOL)isEqualToDate:(BATZAwareDate*)date
-{
+- (BOOL)isEqualToDate:(BATZAwareDate *)date {
     return [self offsettedTimeIntervalSince1970] == [date offsettedTimeIntervalSince1970];
 }
 

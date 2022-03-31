@@ -8,8 +8,8 @@
 
 #import <Batch/BatchUserProfile.h>
 
-#import <Batch/BAUserProfile.h>
 #import <Batch/BAPropertiesCenter.h>
+#import <Batch/BAUserProfile.h>
 
 @interface BatchUserProfile ()
 
@@ -22,39 +22,33 @@
 #pragma mark -
 #pragma mark Instance methods
 
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super init];
-    if ([BANullHelper isNull:self])
-    {
+    if ([BANullHelper isNull:self]) {
         return self;
     }
-    
+
     _internal = [BAUserProfile defaultUserProfile];
-    
+
     return self;
 }
-
 
 #pragma mark -
 #pragma mark Properties override methods
 
 /*** Custom Identifier ***/
 
-- (NSString *)customIdentifier
-{
+- (NSString *)customIdentifier {
     return [self.internal customIdentifier];
 }
 
-- (void)setCustomIdentifier:(NSString *)customIdentifier
-{
+- (void)setCustomIdentifier:(NSString *)customIdentifier {
     [self.internal setCustomIdentifier:customIdentifier];
 }
 
 /*** Language ***/
 
-- (NSString *)language
-{
+- (NSString *)language {
     NSString *value = [self.internal language];
     if (value == nil) {
         value = [BAPropertiesCenter valueForShortName:@"dla"];
@@ -62,15 +56,13 @@
     return value;
 }
 
-- (void)setLanguage:(NSString *)language
-{
+- (void)setLanguage:(NSString *)language {
     [self.internal setLanguage:language];
 }
 
 /*** Region ***/
 
-- (NSString *)region
-{
+- (NSString *)region {
     NSString *value = [self.internal region];
     if (value == nil) {
         value = [BAPropertiesCenter valueForShortName:@"dre"];
@@ -78,8 +70,7 @@
     return value;
 }
 
-- (void)setRegion:(NSString *)region
-{
+- (void)setRegion:(NSString *)region {
     [self.internal setRegion:region];
 }
 
