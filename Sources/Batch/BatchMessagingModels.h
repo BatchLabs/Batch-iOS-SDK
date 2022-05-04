@@ -8,7 +8,7 @@
 
 FOUNDATION_EXPORT NSInteger const BatchMessageGlobalActionIndex;
 
-typedef enum NSUInteger {
+NS_ENUM(NSUInteger, BatchMessagingContentType) {
     /**
      * The message is invalid and does not contain any displayable message,
      * or that the format is unknown to this version of the SDK, and might be available in a newer one.
@@ -44,7 +44,7 @@ typedef enum NSUInteger {
      * Corresponding content class is BatchMessageWebViewContent.
      */
     BatchMessagingContentTypeWebView
-} BatchMessagingContentType;
+};
 
 /**
  Represents an In-App Message content
