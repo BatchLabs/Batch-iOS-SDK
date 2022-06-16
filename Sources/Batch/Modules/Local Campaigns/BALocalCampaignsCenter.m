@@ -428,6 +428,10 @@
     // Delete campaigns from disk cache
     [_campaignPersister deleteCampaigns];
 
+    // Clear view tracker and close.
+    [_viewTracker clear];
+    [_viewTracker close];
+
     // Reinitialize state
     [self setup];
 }

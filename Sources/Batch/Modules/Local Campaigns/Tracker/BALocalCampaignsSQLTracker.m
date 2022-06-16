@@ -57,14 +57,14 @@
 }
 
 - (BOOL)setupDatabase {
-    _database = NULL;
+    [self close];
 
     NSString *dbPath =
         [[BADirectories pathForBatchAppSupportDirectory] stringByAppendingPathComponent:TRACKER_DATABASE_NAME];
 
     // Migrations: If the database already exists, check if we need to upgrade it
     if ([[NSFileManager defaultManager] fileExistsAtPath:dbPath]) {
-        NSNumber *oldDbVesion = [BAParameter objectForKey:kParametersUserProfileDBVersion fallback:@-1];
+        NSNumber *oldDbVesion = [BAParameter objectForKey:kParametersInAppTrackerDBVersion fallback:@-1];
         if ([oldDbVesion isEqualToNumber:@1]) {
             // Opening db to execute migrations
             if (![self openDB:dbPath]) {

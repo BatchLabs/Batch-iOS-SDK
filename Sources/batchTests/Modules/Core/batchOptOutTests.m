@@ -125,6 +125,7 @@
 
     id parameterMock = OCMClassMock([BAParameter class]);
     id installIDMock = OCMClassMock([BAInstallationID class]);
+    id displayReceiptCacheMock = OCMClassMock([BADisplayReceiptCache class]);
 
     dummyOptOutEventTracker *tracker = [dummyOptOutEventTracker new];
     tracker.automaticallyResolvePromises = true;
@@ -132,6 +133,7 @@
     [optOut setEventTracker:tracker];
 
     OCMExpect(ClassMethod([parameterMock removeAllObjects])).andForwardToRealObject();
+    OCMExpect(ClassMethod([displayReceiptCacheMock removeAll])).andForwardToRealObject();
     OCMExpect(ClassMethod([installIDMock delete])).andForwardToRealObject();
 
     BALocalCampaignsCenter *campaignsCenter = [BALocalCampaignsCenter instance];
@@ -145,6 +147,11 @@
     NSString *filePath = ((BALocalCampaignsFilePersistence *)[campaignsCenter campaignPersister]).filePath.path;
     XCTAssertTrue([[NSFileManager defaultManager] fileExistsAtPath:filePath]);
 
+    // Add view event
+    NSTimeInterval timestamp = [[NSDate date] timeIntervalSince1970];
+    [[campaignsCenter viewTracker] trackEventForCampaignID:@"campaign_id" kind:BALocalCampaignTrackerEventKindView];
+    XCTAssertEqual([[campaignsCenter viewTracker] numberOfViewEventsSince:timestamp].intValue, 1);
+
     [[BAOptOut instance] setOptedOut:true
                             wipeData:true
                    completionHandler:^BatchOptOutNetworkErrorPolicy(BOOL success) {
@@ -153,9 +160,11 @@
 
     OCMVerifyAll(parameterMock);
     OCMVerifyAll(installIDMock);
+    OCMVerifyAll(displayReceiptCacheMock);
     XCTAssertTrue([[BAOptOut new] isOptedOut]);
 
     [installIDMock stopMocking];
+    [displayReceiptCacheMock stopMocking];
 
     XCTAssertNil([BAInstallationID installationID]);
 
@@ -169,6 +178,11 @@
 
     // Make sure campaigns file was deleted
     XCTAssertFalse([[NSFileManager defaultManager] fileExistsAtPath:filePath]);
+
+    // Make sure view events was deleted
+    XCTAssertEqual([[campaignsCenter viewTracker] numberOfViewEventsSince:timestamp].intValue, 0);
+    [[campaignsCenter viewTracker] clear];
+    [[campaignsCenter viewTracker] close];
 }
 
 - (void)testEvents {

@@ -995,11 +995,27 @@ static NSString *kBAMSGInterstitialViewControllerHeroConstraint = @"BAMainHeroCo
         [self applyAbsolutePositionmentRulesForView:imageView node:node parentView:content];
     }
 
+    BAMSGStackViewItem *textViewStackItem;
     if (self.titleText) {
-        BAMSGStackViewItem *item = [self labelStackViewItemForLabel:self.titleText withNodeIdentifier:@"title"];
+        textViewStackItem = [self labelStackViewItemForLabel:self.titleText withNodeIdentifier:@"title"];
+    } else {
+        // Some CSS rules rely on text being here to layout the content.
+        // Not having this view breaks some themes.
+        // A proper fix would be to rewrite the CSS, but we have some in the wild that
+        // relies on "text" being present. This workaround also doesn't require us to ask
+        // the backend team to add a conditional style, which is something that falls under
+        // the SDK's responsibility.
 
-        [innerContent addItem:item];
+        UIView *titleView = [UIView new];
+
+        BACSSDOMNode *node = [BACSSDOMNode new];
+        node.identifier = @"title";
+
+        textViewStackItem = [BAMSGStackViewItem new];
+        textViewStackItem.view = titleView;
+        textViewStackItem.rules = [self rulesForNode:node];
     }
+    [innerContent addItem:textViewStackItem];
 
     // Body text is not optional
     // We could use the "labelStackViewItemForLabel" method but we need HTML support

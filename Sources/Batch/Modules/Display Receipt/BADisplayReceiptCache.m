@@ -130,8 +130,7 @@ static NSFileCoordinator *coordinator = nil;
 }
 
 + (void)removeAll {
-    NSURL *sharedGroupDir = [self sharedDirectory];
-    NSURL *cacheDir = [sharedGroupDir URLByAppendingPathComponent:BA_RECEIPT_CACHE_DIRECTORY isDirectory:true];
+    NSURL *cacheDir = [self sharedDirectory];
     if (cacheDir == nil) {
         [BALogger errorForDomain:LOGGER_DOMAIN message:@"Could not get app group folder."];
         return;
