@@ -11,6 +11,6 @@
  Comments should not use the // form, as the plist preprocessor will include them
  */
 
-#define BASDKVersion 1.18.1
+#define BASDKVersion 1.18.2
 #define BAAPILevel 41
 #define BAMessagingAPILevel 11
