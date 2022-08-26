@@ -151,13 +151,15 @@
 #pragma mark - NSCopying methods
 
 - (nonnull id)copyWithZone:(nullable NSZone *)zone {
-    BAMetric *copy = [BAMetric new];
-    copy->_name = _name;
-    copy->_type = _type;
-    copy->_values = [_values mutableCopy];
-    copy->_labelNames = [_labelNames mutableCopy];
-    copy->_labelValues = [_labelValues mutableCopy];
-    copy->_children = [_children mutableCopy];
+    BAMetric *copy = [[[self class] allocWithZone:zone] init];
+    if (copy) {
+        copy->_name = _name;
+        copy->_type = _type;
+        copy->_values = [_values mutableCopy];
+        copy->_labelNames = [_labelNames mutableCopy];
+        copy->_labelValues = [_labelValues mutableCopy];
+        copy->_children = [_children mutableCopy];
+    }
     return copy;
 }
 

@@ -53,4 +53,17 @@
     XCTAssertTrue([counter hasChildren]);
 }
 
+- (void)testCopy {
+    // Non regression test for sc-45635, where copyWithZone was not implemented correctly and
+    // returned BAMetric instances when copying one of its subclasses
+    BAMetric *metric = [[BAMetric alloc] initWithName:@"counter_test_metric" andLabelNames:@"label", nil];
+    BACounter *counter = [[BACounter alloc] initWithName:@"counter_test_metric" andLabelNames:@"label", nil];
+    BAObservation *observation = [[BAObservation alloc] initWithName:@"counter_test_metric"
+                                                       andLabelNames:@"label", nil];
+
+    XCTAssertEqual([[metric copy] class], BAMetric.class);
+    XCTAssertEqual([[counter copy] class], BACounter.class);
+    XCTAssertEqual([[observation copy] class], BAObservation.class);
+}
+
 @end

@@ -52,7 +52,9 @@
 
 - (nonnull id)copyWithZone:(nullable NSZone *)zone {
     BAObservation *copy = [super copyWithZone:zone];
-    copy->_startTime = _startTime;
+    if (copy) {
+        copy->_startTime = _startTime;
+    }
     return copy;
 }
 

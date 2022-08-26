@@ -308,22 +308,34 @@
 }
 
 - (void)callStartWebserviceWithSilentStart:(BOOL)isSilentStart {
-    [BALogger debugForDomain:LOGGER_DOMAIN message:@"Sending start webservice. Silent: %d", isSilentStart];
+    // Start asynchronously on the next loop.
+    // This hack (usually) gives BANotificationAuthorization enough time to resynchronize itself
+    // with iOS if the permission changes in the background, which leads to a more accurate "nty" in the push
+    // query that goes along the start service. Otherwise, the backend would not know about a change until a second
+    // start comes later.
+    //
+    // We removed this for 1.19 as we thought it was unneeded but this lead to some timing issues: we've brought
+    // it back as a temporary hotfix. We also believe it led to some unintended opt-in/out metrics change that we
+    // started seeing with 1.19. We will fix this properly at a later date by fully deprecating "nty" once the backend
+    // switches to the new events.
+    dispatch_async(dispatch_get_main_queue(), ^{
+      [BALogger debugForDomain:LOGGER_DOMAIN message:@"Sending start webservice. Silent: %d", isSilentStart];
 
-    BAStartServiceDatasource *startService = [[BAStartServiceDatasource alloc] init];
-    startService.isSilent = isSilentStart;
-    BAQueryWebserviceClient *ws = [[BAQueryWebserviceClient alloc] initWithDatasource:startService delegate:nil];
-    [BAWebserviceClientExecutor.sharedInstance addClient:ws];
+      BAStartServiceDatasource *startService = [[BAStartServiceDatasource alloc] init];
+      startService.isSilent = isSilentStart;
+      BAQueryWebserviceClient *ws = [[BAQueryWebserviceClient alloc] initWithDatasource:startService delegate:nil];
+      [BAWebserviceClientExecutor.sharedInstance addClient:ws];
 
-    NSMutableDictionary *startParameters = [NSMutableDictionary dictionary];
-    startParameters[@"silent"] = @(isSilentStart);
+      NSMutableDictionary *startParameters = [NSMutableDictionary dictionary];
+      startParameters[@"silent"] = @(isSilentStart);
 
-    NSDictionary *dispatcherParameters =
-        [[BAInjection injectClass:BAEventDispatcherCenter.class] dispatchersAnalyticRepresentation];
-    if ([dispatcherParameters count] > 0) {
-        startParameters[@"dispatchers"] = dispatcherParameters;
-    }
-    [BATrackerCenter trackPrivateEvent:@"_START" parameters:startParameters];
+      NSDictionary *dispatcherParameters =
+          [[BAInjection injectClass:BAEventDispatcherCenter.class] dispatchersAnalyticRepresentation];
+      if ([dispatcherParameters count] > 0) {
+          startParameters[@"dispatchers"] = dispatcherParameters;
+      }
+      [BATrackerCenter trackPrivateEvent:@"_START" parameters:startParameters];
+    });
 }
 
 // Test if Batch is running in development mode.

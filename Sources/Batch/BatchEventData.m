@@ -42,10 +42,12 @@
 }
 
 - (id)copyWithZone:(NSZone *)zone {
-    BatchEventData *copy = [BatchEventData new];
-    copy->_convertedFromLegacy = _convertedFromLegacy;
-    copy->_attributes = [_attributes mutableCopy];
-    copy->_tags = [_tags mutableCopy];
+    BatchEventData *copy = [[[self class] allocWithZone:zone] init];
+    if (copy) {
+        copy->_convertedFromLegacy = _convertedFromLegacy;
+        copy->_attributes = [_attributes mutableCopy];
+        copy->_tags = [_tags mutableCopy];
+    }
 
     return copy;
 }

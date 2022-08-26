@@ -48,7 +48,9 @@
 
 - (nonnull id)copyWithZone:(nullable NSZone *)zone {
     BACounter *copy = [super copyWithZone:zone];
-    copy->_value = _value;
+    if (copy) {
+        copy->_value = _value;
+    }
     return copy;
 }
 
