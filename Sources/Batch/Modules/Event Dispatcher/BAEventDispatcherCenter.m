@@ -39,7 +39,8 @@
 }
 
 + (BOOL)isBatchEventDispatcher:(NSString *)name {
-    return [@[ @"firebase", @"at_internet", @"mixpanel", @"google_analytics", @"batch_plugins" ] containsObject:name];
+    return [@[ @"firebase", @"at_internet", @"mixpanel", @"google_analytics", @"piano", @"batch_plugins" ]
+        containsObject:name];
 }
 
 - (void)addEventDispatcher:(nonnull id<BatchEventDispatcherDelegate>)dispatcher {

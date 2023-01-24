@@ -88,7 +88,13 @@
 
     /*** End of migration things ***/
 
-    if (sqlite3_open([dbPath cStringUsingEncoding:NSUTF8StringEncoding], &_database) != SQLITE_OK) {
+    // TODO: Make In-App JIT use a shared queue and disable FULLMUTEX
+    // See sc-54731
+    // We might want to remove this for performance reasons, but this ensures
+    // that concurrent access of sqlite3 will never crash, at the cost of threads possibly
+    // being blocked for a little bit.
+    if (sqlite3_open_v2([dbPath cStringUsingEncoding:NSUTF8StringEncoding], &_database,
+                        SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX, NULL) != SQLITE_OK) {
         [BALogger errorForDomain:LOGGER_DOMAIN
                          message:@"Error while opening sqlite database, not persisting user data."];
         return nil;

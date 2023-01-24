@@ -177,9 +177,10 @@ NSString *const kBATPushOpenedNotificationOriginatesFromAppDelegate = @"is_from_
                                       @"BatchUNUserNotificationCenterDelegate or implement your own."];
             if (@available(iOS 13.0, *)) {
                 if ([BAApplicationLifecycle applicationUsesUIScene]) {
-                    [BALogger publicForDomain:@"Push"
-                                      message:@"⚠️ App is using UIScene without a UNUserNotificationCenterDelegate: "
-                                              @"Direct Opens, Mobile Landings, Deeplinks will not work."];
+                    [BALogger
+                        publicForDomain:@"Push"
+                                message:@"⚠️ App is using UIScene without a UNUserNotificationCenterDelegate: "
+                                        @"Direct Opens, Mobile Landings, Deeplinks will not work."];
                 }
             }
         }

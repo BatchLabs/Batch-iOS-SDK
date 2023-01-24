@@ -201,7 +201,7 @@
                   [[self->_dateProvider currentDate] timeIntervalSince1970] + MIN_DELAY_BETWEEN_JIT_SYNC;
 
               if ([eligibleCampaignIds count] > 0) {
-                  for (BALocalCampaign *campaign in eligibleCampaignsSynced) {
+                  for (BALocalCampaign *campaign in [NSArray arrayWithArray:eligibleCampaignsSynced]) {
                       BATSyncedJITResult *syncedJITResult = [[BATSyncedJITResult alloc]
                           initWithTimestamp:[[self->_dateProvider currentDate] timeIntervalSince1970]];
                       if (![eligibleCampaignIds containsObject:campaign.campaignID]) {
