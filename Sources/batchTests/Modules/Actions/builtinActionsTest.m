@@ -86,9 +86,9 @@
 }
 
 - (void)testClipboardAction {
+    UIPasteboard *pasteboard = [UIPasteboard pasteboardWithName:@"test-pasteboard" create:YES];
+    [[BAActionsCenter instance] setValue:pasteboard forKey:@"_pasteboard"];
     [[BAActionsCenter instance] performAction:@"batch.clipboard" withArgs:@{@"t" : @"je suis un texte"} andSource:nil];
-
-    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
     XCTAssertTrue([@"je suis un texte" isEqualToString:pasteboard.string]);
 }
 

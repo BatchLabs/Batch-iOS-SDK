@@ -625,6 +625,15 @@ NSString *const BAMSGWebviewDevMenuReload = @"Reload";
 }
 
 - (void)handleNavigationError:(NSError *)error {
+    // Ignoring iOS-specific WebKit error PlugInLoadFailed
+    // Error fired when loading video URL without HTML container
+    // Shortcut issue : [sc-54815]
+    if ([error code] == 204) {
+        [BALogger debugForDomain:BAMSGWebviewPublicLoggerDomain
+                         message:@"WKNavigationDelegate - Ignoring 204 Error (Plug-in handled load)."];
+        return;
+    }
+
     if (_nextNavigationErrorOverride != nil) {
         error = _nextNavigationErrorOverride;
         _nextNavigationErrorOverride = nil;

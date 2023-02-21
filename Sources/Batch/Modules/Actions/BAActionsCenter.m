@@ -34,6 +34,7 @@ NSString *const kBAActionGroupName = @"batch.group";
 
 @implementation BAActionsCenter {
     NSMutableDictionary<NSString *, BatchUserAction *> *registeredActions;
+    UIPasteboard *_pasteboard;
 }
 
 + (instancetype)instance {
@@ -49,6 +50,7 @@ NSString *const kBAActionGroupName = @"batch.group";
 - (instancetype)init {
     self = [super init];
     if (self) {
+        _pasteboard = [UIPasteboard generalPasteboard];
         registeredActions = [NSMutableDictionary new];
 
         [self registerInternalAction:[self deeplinkAction]];
@@ -269,8 +271,7 @@ NSString *const kBAActionGroupName = @"batch.group";
                                    id<BatchUserActionSource> _Nullable source) {
                        NSObject *text = [arguments objectForKey:@"t"];
                        if ([text isKindOfClass:[NSString class]]) {
-                           UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-                           pasteboard.string = (NSString *)text;
+                           self->_pasteboard.string = (NSString *)text;
                        } else {
                            [BALogger publicForDomain:LOGGER_DOMAIN
                                              message:@"An internal error occured while trying to perform a clipboard "

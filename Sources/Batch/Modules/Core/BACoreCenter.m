@@ -39,6 +39,7 @@
 
 #import <Batch/BAEventDispatcherCenter.h>
 #import <Batch/BAInjection.h>
+#import <Batch/BAApplicationLifecycle.h>
 
 #define LOGGER_DOMAIN @"Core"
 
@@ -439,21 +440,43 @@
     [BALogger debugForDomain:LOGGER_DOMAIN
                      message:@"Transferring universal link '%@' to UIApplication", URL.absoluteString];
 
-    // Transferring url to application:continueUserActivity:restorationHandler
+    // Transferring url to application:continueUserActivity:restorationHandler or scene:continueUserActivity:
     NSUserActivity *userActivity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
     userActivity.webpageURL = URL;
+    
+    Boolean errorAlreadyLogged = false;
+    
+    if (@available(iOS 13.0, *)) {
+        if ([BAApplicationLifecycle applicationUsesUIScene]) {
+            UIScene* scene = [[UIApplication sharedApplication].connectedScenes allObjects].firstObject;
+            id<UISceneDelegate> sceneDelegate = [scene delegate];
+            if ([sceneDelegate respondsToSelector:@selector(scene:continueUserActivity:)]) {
+                [sceneDelegate scene:scene continueUserActivity:userActivity];
+                return YES;
+            } else {
+                [BALogger debugForDomain:LOGGER_DOMAIN
+                                 message:@"It looks like scene:continueUserActivity: is not "
+                                         @"implemented, did you correctly add it to your SceneDelegate?"];
+                errorAlreadyLogged = true;
+            }
+        }
+    }
+    
     id<UIApplicationDelegate> appDelegate = [UIApplication sharedApplication].delegate;
     if ([appDelegate respondsToSelector:@selector(application:continueUserActivity:restorationHandler:)]) {
         [appDelegate application:[UIApplication sharedApplication]
             continueUserActivity:userActivity
               restorationHandler:nil];
         return YES;
-    } else {
+    }
+    if (!errorAlreadyLogged) {
         [BALogger debugForDomain:LOGGER_DOMAIN
                          message:@"It looks like application:continueUserActivity:restorationHandler is not "
-                                 @"implemented, did you correctly add it to your AppDelegate ?"];
-        return NO;
+                                 @"implemented, did you correctly add it to your AppDelegate?"];
     }
+
+    return NO;
+    
 }
 
 // Check for potential incompatibilities/misconfigurations, and warn the developer
