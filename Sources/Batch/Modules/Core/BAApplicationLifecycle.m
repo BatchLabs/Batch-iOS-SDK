@@ -11,6 +11,19 @@
 
 @implementation BAApplicationLifecycle
 
++ (BOOL)applicationUsesSwiftUILifecycle {
+    if (@available(iOS 13.0, *)) {
+        UIScene *scene = UIApplication.sharedApplication.connectedScenes.allObjects.firstObject;
+        id<UISceneDelegate> delegate = scene.delegate;
+        if (delegate == nil) {
+            return false;
+        }
+        // Expected name is SwiftUI.AppSceneDelegate but we expect it to change
+        return [NSStringFromClass([delegate class]) hasPrefix:@"SwiftUI."];
+    }
+    return false;
+}
+
 + (BOOL)applicationUsesUIScene {
     if (@available(iOS 13.0, *)) {
         return [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIApplicationSceneManifest"] != nil;

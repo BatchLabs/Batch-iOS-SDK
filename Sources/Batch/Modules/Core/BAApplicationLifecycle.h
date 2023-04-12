@@ -11,6 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface BAApplicationLifecycle : NSObject
 
+@property (class, readonly) BOOL applicationUsesSwiftUILifecycle;
+
 @property (class, readonly) BOOL applicationUsesUIScene;
 
 @property (class, readonly) BOOL applicationImplementsUNDelegate;

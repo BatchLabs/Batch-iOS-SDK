@@ -368,6 +368,8 @@ NSString *const BAMSGWebviewDevMenuReload = @"Reload";
 
     WKWebViewConfiguration *config = [WKWebViewConfiguration new];
     config.userContentController = userContentController;
+    config.allowsInlineMediaPlayback = true;
+    config.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAudio;
 
     return config;
 }
