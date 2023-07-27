@@ -10,6 +10,6 @@
 @protocol BACSSImportProvider <NSObject>
 
 @required
-- (NSString* _Nullable)contentForImportNamed:(NSString* _Nonnull)importName;
+- (NSString *_Nullable)contentForImportNamed:(NSString *_Nonnull)importName;
 
 @end

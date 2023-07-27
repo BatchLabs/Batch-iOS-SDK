@@ -15,16 +15,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  Represents a local campaign output
- 
+
  An output is the action executed by a triggered local campaign
  */
 @protocol BALocalCampaignOutputProtocol <NSObject>
 
 @required
 
-- (nullable instancetype)initWithPayload:(nonnull NSDictionary*)payload error:(NSError**)error;
+- (nullable instancetype)initWithPayload:(nonnull NSDictionary *)payload error:(NSError **)error;
 
-- (void)performForCampaign:(nonnull BALocalCampaign*)campaign;
+- (void)performForCampaign:(nonnull BALocalCampaign *)campaign;
 
 @end
 

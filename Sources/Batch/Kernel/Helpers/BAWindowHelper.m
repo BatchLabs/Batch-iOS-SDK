@@ -55,4 +55,13 @@
     return nil;
 }
 
++ (UIViewController *)frontmostViewController {
+    UIWindow *overlayedWindow = [BAWindowHelper keyWindow];
+    UIViewController *presentedVC = overlayedWindow.rootViewController;
+    while (presentedVC.presentedViewController) {
+        presentedVC = presentedVC.presentedViewController;
+    }
+    return presentedVC;
+}
+
 @end

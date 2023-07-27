@@ -5,8 +5,8 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <Batch/BAQueryWebserviceIdentifiersProviding.h>
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

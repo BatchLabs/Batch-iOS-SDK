@@ -6,47 +6,70 @@
 //  Copyright (c) 2015 Batch SDK. All rights reserved.
 //
 
+#import <Batch/BatchUser.h>
 #import <Foundation/Foundation.h>
 
 @interface BAUserDataEditor : NSObject
 
-- (void)setLanguage:(nullable NSString*)language;
+- (void)setLanguage:(nullable NSString *)language;
 
-- (void)setRegion:(nullable NSString*)region;
+- (void)setRegion:(nullable NSString *)region;
 
-- (void)setIdentifier:(nullable NSString*)identifier;
+- (void)setIdentifier:(nullable NSString *)identifier;
 
-- (void)setAttribute:(nullable NSObject*)attribute forKey:(nonnull NSString*)key;
+- (BOOL)setEmail:(nullable NSString *)email error:(NSError *_Nullable *_Nullable)error;
 
-- (BOOL)setBooleanAttribute:(BOOL)attribute forKey:(nonnull NSString*)key error:(NSError * _Nullable * _Nullable)error NS_SWIFT_NAME(setAttribute(_:forKey:));
+- (void)setEmailMarketingSubscriptionState:(BatchEmailSubscriptionState)state;
 
-- (BOOL)setDateAttribute:(nonnull NSDate*)attribute forKey:(nonnull NSString*)key error:(NSError * _Nullable * _Nullable)error NS_SWIFT_NAME(setAttribute(_:forKey:));
+- (void)setAttribute:(nullable NSObject *)attribute forKey:(nonnull NSString *)key;
 
-- (BOOL)setStringAttribute:(nonnull NSString*)attribute forKey:(nonnull NSString*)key error:(NSError * _Nullable * _Nullable)error NS_SWIFT_NAME(setAttribute(_:forKey:));
+- (BOOL)setBooleanAttribute:(BOOL)attribute
+                     forKey:(nonnull NSString *)key
+                      error:(NSError *_Nullable *_Nullable)error NS_SWIFT_NAME(setAttribute(_:forKey:));
 
-- (BOOL)setNumberAttribute:(nonnull NSNumber*)attribute forKey:(nonnull NSString*)key error:(NSError * _Nullable * _Nullable)error NS_SWIFT_NAME(setAttribute(_:forKey:));
+- (BOOL)setDateAttribute:(nonnull NSDate *)attribute
+                  forKey:(nonnull NSString *)key
+                   error:(NSError *_Nullable *_Nullable)error NS_SWIFT_NAME(setAttribute(_:forKey:));
 
-- (BOOL)setIntegerAttribute:(NSInteger)attribute forKey:(nonnull NSString*)key error:(NSError * _Nullable * _Nullable)error NS_SWIFT_NAME(setAttribute(_:forKey:));
+- (BOOL)setStringAttribute:(nonnull NSString *)attribute
+                    forKey:(nonnull NSString *)key
+                     error:(NSError *_Nullable *_Nullable)error NS_SWIFT_NAME(setAttribute(_:forKey:));
 
-- (BOOL)setLongLongAttribute:(long long)attribute forKey:(nonnull NSString*)key error:(NSError * _Nullable * _Nullable)error NS_SWIFT_NAME(setAttribute(_:forKey:));
+- (BOOL)setNumberAttribute:(nonnull NSNumber *)attribute
+                    forKey:(nonnull NSString *)key
+                     error:(NSError *_Nullable *_Nullable)error NS_SWIFT_NAME(setAttribute(_:forKey:));
 
-- (BOOL)setFloatAttribute:(float)attribute forKey:(nonnull NSString*)key error:(NSError * _Nullable * _Nullable)error NS_SWIFT_NAME(setAttribute(_:forKey:));
+- (BOOL)setIntegerAttribute:(NSInteger)attribute
+                     forKey:(nonnull NSString *)key
+                      error:(NSError *_Nullable *_Nullable)error NS_SWIFT_NAME(setAttribute(_:forKey:));
 
-- (BOOL)setDoubleAttribute:(double)attribute forKey:(nonnull NSString*)key error:(NSError * _Nullable * _Nullable)error NS_SWIFT_NAME(setAttribute(_:forKey:));
+- (BOOL)setLongLongAttribute:(long long)attribute
+                      forKey:(nonnull NSString *)key
+                       error:(NSError *_Nullable *_Nullable)error NS_SWIFT_NAME(setAttribute(_:forKey:));
 
-- (BOOL)setURLAttribute:(nonnull NSURL*)attribute forKey:(nonnull NSString*)key error:(NSError * _Nullable * _Nullable)error NS_SWIFT_NAME(setAttribute(_:forKey:));
+- (BOOL)setFloatAttribute:(float)attribute
+                   forKey:(nonnull NSString *)key
+                    error:(NSError *_Nullable *_Nullable)error NS_SWIFT_NAME(setAttribute(_:forKey:));
 
-- (void)removeAttributeForKey:(nonnull NSString*)key;
+- (BOOL)setDoubleAttribute:(double)attribute
+                    forKey:(nonnull NSString *)key
+                     error:(NSError *_Nullable *_Nullable)error NS_SWIFT_NAME(setAttribute(_:forKey:));
+
+- (BOOL)setURLAttribute:(nonnull NSURL *)attribute
+                 forKey:(nonnull NSString *)key
+                  error:(NSError *_Nullable *_Nullable)error NS_SWIFT_NAME(setAttribute(_:forKey:));
+
+- (void)removeAttributeForKey:(nonnull NSString *)key;
 
 - (void)clearAttributes;
 
-- (void)addTag:(nonnull NSString*)tag inCollection:(nonnull NSString*)collection;
+- (void)addTag:(nonnull NSString *)tag inCollection:(nonnull NSString *)collection;
 
-- (void)removeTag:(nonnull NSString*)tag fromCollection:(nonnull NSString*)collection;
+- (void)removeTag:(nonnull NSString *)tag fromCollection:(nonnull NSString *)collection;
 
 - (void)clearTags;
 
-- (void)clearTagCollection:(nonnull NSString*)collection;
+- (void)clearTagCollection:(nonnull NSString *)collection;
 
 - (void)save;
 
@@ -56,8 +79,6 @@
 
 // Testing methods
 
-- (BOOL)writeChangesToDatasource:(NSArray<BOOL (^)(void)> * _Nonnull)applyQueue changeset:(long long)changeset NS_SWIFT_NAME(writeToDatasource(changes:changeset:));
-
-- (NSArray<BOOL (^)(void)> * _Nonnull)operationQueue;
+- (NSArray<BOOL (^)(void)> *_Nonnull)operationQueue;
 
 @end

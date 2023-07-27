@@ -8,8 +8,8 @@
 #import <Foundation/Foundation.h>
 #import <WebKit/WebKit.h>
 
-#import <Batch/BATWebviewJavascriptBridge.h>
 #import <Batch/BATWebviewBridgeWKHandler.h>
+#import <Batch/BATWebviewJavascriptBridge.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -18,15 +18,15 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol BATWebviewBridgeLegacyWKHandlerWebViewSource
 
 @required
-- (nullable WKWebView*)backingWebViewForLegacyHandler:(BATWebviewBridgeLegacyWKHandler*)handler;
+- (nullable WKWebView *)backingWebViewForLegacyHandler:(BATWebviewBridgeLegacyWKHandler *)handler;
 
 @end
 
 @interface BATWebviewBridgeLegacyWKHandler : BATWebviewBridgeWKHandler <WKScriptMessageHandler>
 
-- (instancetype)initWithBridge:(nonnull BATWebviewJavascriptBridge*)bridge NS_UNAVAILABLE;
+- (instancetype)initWithBridge:(nonnull BATWebviewJavascriptBridge *)bridge NS_UNAVAILABLE;
 
-- (instancetype)initWithBridge:(nonnull BATWebviewJavascriptBridge*)bridge
+- (instancetype)initWithBridge:(nonnull BATWebviewJavascriptBridge *)bridge
                webViewProvider:(nonnull id<BATWebviewBridgeLegacyWKHandlerWebViewSource>)webViewProvider;
 
 @property (weak, nonatomic, readonly) WKWebView *webView;

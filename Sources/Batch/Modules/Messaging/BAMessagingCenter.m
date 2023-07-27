@@ -38,6 +38,7 @@
 
 #import <Batch/BAWindowHelper.h>
 
+#import <SafariServices/SafariServices.h>
 #import <objc/runtime.h>
 
 #define LOGGER_DOMAIN @"Messaging"
@@ -78,6 +79,8 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
 
 @implementation BAMessagingCenter
 
+@synthesize enableDynamicType = _enableDynamicType;
+
 + (void)load {
     [[NSNotificationCenter defaultCenter] addObserver:[BAMessagingCenter class]
                                              selector:@selector(pushOpenedNotification:)
@@ -104,6 +107,7 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
         _imageDownloadTimeout = BAMESSAGING_DEFAULT_TIMEOUT;
         _pendingMessage = nil;
         self.doNotDisturb = NO;
+        _enableDynamicType = YES;
     }
     return self;
 }
@@ -125,7 +129,7 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
             if ([BAMessagingCenter instance].automaticMode) {
                 [BAThreading performBlockOnMainThreadAsync:^{
                   [BALogger debugForDomain:LOGGER_DOMAIN message:@"automatic mode is enabled: trying to display it"];
-                  [[BAMessagingCenter instance] displayMessage:message error:nil];
+                  [[BAMessagingCenter instance] displayMessage:message bypassDnD:false error:nil];
                 }];
             } else {
                 [BALogger debugForDomain:LOGGER_DOMAIN message:@"but BatchMessaging is in manual mode: ignoring."];
@@ -177,7 +181,7 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
 - (BOOL)showPendingMessage {
     BatchMessage *msg = [self popPendingMessage];
     if (msg) {
-        [self displayMessage:msg error:nil];
+        [self displayMessage:msg bypassDnD:false error:nil];
         return true;
     }
     return false;
@@ -200,6 +204,17 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
     }
 }
 
+- (void)setEnableDynamicType:(BOOL)enableDynamicType {
+    _enableDynamicType = enableDynamicType;
+}
+
+- (BOOL)enableDynamicType {
+    if (@available(iOS 15.0, *)) {
+        return _enableDynamicType;
+    }
+    return false;
+}
+
 - (void)handleInAppMessage:(nonnull BatchInAppMessage *)message {
     [BAThreading performBlockOnMainThreadAsync:^{
       if ([self->_wrappedDelegate batchInAppMessageReady:message]) {
@@ -208,7 +223,7 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
       } else {
           if ([[UIApplication sharedApplication] applicationState] != UIApplicationStateBackground) {
               NSError *err;
-              if ([self displayMessage:message error:&err]) {
+              if ([self displayMessage:message bypassDnD:false error:&err]) {
                   [BALogger debugForDomain:LOGGER_DOMAIN message:@"Displayed the In-App message %@", message];
               } else {
                   [BALogger publicForDomain:LOGGER_DOMAIN
@@ -268,8 +283,7 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
     }
 
     if ([(id)vc shouldDisplayInSeparateWindow]) {
-        [self showViewControllerInOwnWindow:vc];
-        return true;
+        return [self showViewControllerInOwnWindow:vc error:error];
     } else {
         BOOL hasDeveloperOverridenVC = true;
         __block UIViewController *targetVC = [_wrappedDelegate presentingViewControllerForBatchUI];
@@ -280,6 +294,9 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
 
         if (targetVC) {
             UIViewController *presentedVC = targetVC.presentedViewController;
+            while (presentedVC.presentedViewController) {
+                presentedVC = presentedVC.presentedViewController;
+            }
             void (^presentationBlock)(void) = ^{
               [targetVC presentViewController:vc animated:YES completion:nil];
             };
@@ -521,7 +538,11 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
     if ([message.sourceMessage isKindOfClass:[BatchInAppMessage class]]) {
         messageSource = @"local";
     } else if ([message.sourceMessage isKindOfClass:[BatchPushMessage class]]) {
-        messageSource = @"landing";
+        if (((BatchPushMessage *)message.sourceMessage).isDisplayedFromInbox) {
+            messageSource = @"inbox-landing";
+        } else {
+            messageSource = @"landing";
+        }
     } else {
         messageSource = @"unknown";
     }
@@ -720,8 +741,10 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
  @param outErr Error output pointer
  @return YES on success, NO on failure
  */
-- (BOOL)displayMessage:(BatchMessage *_Nonnull)message error:(NSError *_Nullable *_Nullable)outErr {
-    if (self.doNotDisturb) {
+- (BOOL)displayMessage:(BatchMessage *_Nonnull)message
+             bypassDnD:(BOOL)bypassDnD
+                 error:(NSError *_Nullable *_Nullable)outErr {
+    if (self.doNotDisturb && !bypassDnD) {
         [BALogger
             publicForDomain:LOGGER_DOMAIN
                     message:@"A BatchMessage was attempted to be displayed, but Do Not Disturb is enabled. Enqueing."];
@@ -934,12 +957,30 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
     return vc;
 }
 
-- (void)showViewControllerInOwnWindow:(UIViewController *)vc {
+- (BOOL)showViewControllerInOwnWindow:(UIViewController *)vc error:(NSError **)error {
     if (vc == nil) {
-        return;
+        if (error) {
+            *error = [NSError errorWithDomain:MESSAGING_ERROR_DOMAIN
+                                         code:BatchMessagingErrorInternal
+                                     userInfo:@{NSLocalizedDescriptionKey : @"Invalid view controller."}];
+        }
+        return false;
     }
 
     UIWindow *overlayedWindow = [BAWindowHelper keyWindow];
+    UIViewController *frontmostViewController = [BAWindowHelper frontmostViewController];
+    if ([frontmostViewController isKindOfClass:SFSafariViewController.class]) {
+        if (error) {
+            *error = [NSError
+                errorWithDomain:MESSAGING_ERROR_DOMAIN
+                           code:BatchMessagingErrorInternal
+                       userInfo:@{
+                           NSLocalizedDescriptionKey :
+                               @"An SFSafariViewController is already presenting and may not be hidden or obscured."
+                       }];
+        }
+        return false;
+    }
     BAMSGOverlayWindow *shownWindow = self.shownWindow;
     if (shownWindow) {
         UIViewController *shownVC = [shownWindow rootViewController];
@@ -980,6 +1021,7 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
     [window presentAnimated];
 
     self.shownWindow = window;
+    return true;
 }
 
 - (BAPromise *)dismissWindow:(nullable BAMSGOverlayWindow *)window {
@@ -1000,6 +1042,16 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
       }
     }];
     return dismissPromise;
+}
+
+- (void)presentLandingMessage:(BatchMessage *_Nonnull)message bypassDnD:(BOOL)bypassDnD {
+    if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground) {
+        [BALogger debugForDomain:LOGGER_DOMAIN
+                         message:@"Trying to present landing message while application is in background"];
+    }
+    [BAThreading performBlockOnMainThreadAsync:^{
+      [self displayMessage:message bypassDnD:bypassDnD error:nil];
+    }];
 }
 
 #pragma mark UIAlertView delegate methods

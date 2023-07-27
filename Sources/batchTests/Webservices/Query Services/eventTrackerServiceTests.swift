@@ -10,7 +10,6 @@ import Foundation
 import XCTest
 
 class eventTrackerServiceTests: XCTestCase {
-
     let events: [BAEvent] = [
         eventTrackerServiceTests.makeEvent(id: 1, state: BAEventStateNew),
         eventTrackerServiceTests.makeEvent(id: 2, state: BAEventStateOld),
@@ -23,11 +22,12 @@ class eventTrackerServiceTests: XCTestCase {
             date: "\(id)234",
             secureDate: "\(id)2345",
             parameters: """
-                {"foo": "bar\(id)"}
-                """,
+            {"foo": "bar\(id)"}
+            """,
             state: state,
             session: "s\(id)",
-            andTick: Int64(990 + id))
+            andTick: Int64(990 + id)
+        )
     }
 
     static func makeSerializedEvent(id: Int) -> [String: Any] {
@@ -55,7 +55,7 @@ class eventTrackerServiceTests: XCTestCase {
         let url = makeService().requestURL
         XCTAssertNotNil(url)
         XCTAssertTrue(url!.absoluteString.contains("tr"))
-        //TODO: better tests with ocmock or DI
+        // TODO: better tests with ocmock or DI
     }
 
     func testQuery() throws {
@@ -84,11 +84,12 @@ class eventTrackerServiceTests: XCTestCase {
                 date: "234",
                 secureDate: "2345",
                 parameters: """
-                    {"foo": "bar"}
-                    """,
+                {"foo": "bar"}
+                """,
                 state: BAEventStateOld,
                 session: nil,
-                andTick: Int64(990))
+                andTick: Int64(990)
+            ),
         ]
         let service = BAEventTrackerService(events: events as [Any])
         // The bug made "objectToSend" crash: simply calling it was enough to trigger it, no need to test any value
@@ -109,10 +110,11 @@ class eventTrackerServiceTests: XCTestCase {
         let promises = [BAPromise(), BAPromise()]
         let service = makeServiceWithPromises(promises)
         service.webserviceClient(
-            makeQueryClient(service: service), didFailWithError: NSError(domain: "test", code: 1, userInfo: nil))
+            makeQueryClient(service: service), didFailWithError: NSError(domain: "test", code: 1, userInfo: nil)
+        )
         XCTAssertTrue(promises[0].status == BAPromiseStatus.rejected)
         XCTAssertTrue(promises[1].status == BAPromiseStatus.rejected)
-        //TODO: Test non promise failure
+        // TODO: Test non promise failure
     }
 
     func testWebserviceSuccess() {
@@ -120,10 +122,11 @@ class eventTrackerServiceTests: XCTestCase {
         let service = makeServiceWithPromises(promises)
         service.webserviceClient(
             makeQueryClient(service: service),
-            didSucceedWith: [BAWSResponseTracking(response: makeBasicQueryResponseDictionary())])
+            didSucceedWith: [BAWSResponseTracking(response: makeBasicQueryResponseDictionary())]
+        )
         XCTAssertTrue(promises[0].status == BAPromiseStatus.resolved)
         XCTAssertTrue(promises[1].status == BAPromiseStatus.resolved)
-        //TODO: Test non promise success
+        // TODO: Test non promise success
     }
 
     func makeService() -> BAEventTrackerService {

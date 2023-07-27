@@ -10,19 +10,18 @@ import XCTest
 
 @testable import Batch
 
-fileprivate struct TestResponses {
+fileprivate enum TestResponses {
     static let cappingPayload: [AnyHashable: Any] = [
         "cappings": [
             "session": 2,
             "time": [
-                ["views": 1, "duration": 3600]
+                ["views": 1, "duration": 3600],
             ],
-        ]
+        ],
     ]
 }
 
 class localCampaignsTrackerTests: XCTestCase {
-
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -32,7 +31,6 @@ class localCampaignsTrackerTests: XCTestCase {
     }
 
     func testSessionTracker() {
-
         let tracker = BALocalCampaignsTracker()
         XCTAssertEqual(0, tracker.sessionViewsCount)
 
@@ -44,7 +42,7 @@ class localCampaignsTrackerTests: XCTestCase {
     }
 
     func testIsOverGlobalCappings() {
-        //Cappings: (2/session & 1/h)
+        // Cappings: (2/session & 1/h)
         let dateProvider = BAMutableDateProvider(timestamp: Date().timeIntervalSince1970)
         let viewTracker = BALocalCampaignsTracker()
         viewTracker.clear()
@@ -79,5 +77,4 @@ class localCampaignsTrackerTests: XCTestCase {
         viewTracker.clear()
         viewTracker.close()
     }
-
 }

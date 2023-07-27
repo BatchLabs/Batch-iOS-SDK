@@ -9,7 +9,6 @@
  */
 - (void)setPercentage:(float)percentage;
 
-- (void)setColor:(nonnull UIColor*)color;
+- (void)setColor:(nonnull UIColor *)color;
 
 @end
-

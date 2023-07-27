@@ -9,8 +9,8 @@
 #import <Foundation/Foundation.h>
 
 // Batch notifications:
-#define kNotificationBatchStarts    @"notification.start"
-#define kNotificationBatchStops     @"notification.stop"
+#define kNotificationBatchStarts @"notification.start"
+#define kNotificationBatchStops @"notification.stop"
 
 /*!
  @class BANotificationCenter

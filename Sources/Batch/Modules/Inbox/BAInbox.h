@@ -21,7 +21,7 @@
 
 @property (nonatomic, nonnull) BAInboxNotificationContentIdentifiers *identifiers;
 @property (nonatomic, nonnull) NSDate *date;
-@property (nonatomic, nullable) NSMutableArray<BAInboxNotificationContentIdentifiers*> *duplicateIdentifiers;
+@property (nonatomic, nullable) NSMutableArray<BAInboxNotificationContentIdentifiers *> *duplicateIdentifiers;
 @property (nonatomic, nonnull) NSDictionary *payload;
 @property (nonatomic) BOOL isUnread;
 @property (nonatomic) BOOL isDeleted;
@@ -49,7 +49,8 @@
 
 - (nonnull instancetype)initForInstallation;
 
-- (nullable instancetype)initForUserIdentifier:(nonnull NSString*)identifier authenticationKey:(nonnull NSString*)authKey;
+- (nullable instancetype)initForUserIdentifier:(nonnull NSString *)identifier
+                             authenticationKey:(nonnull NSString *)authKey;
 
 @property NSUInteger maxPageSize;
 
@@ -57,20 +58,25 @@
 
 @property BOOL performHandlersOnMainThread;
 
-@property (readonly, nonnull) NSArray<BatchInboxNotificationContent*> *allFetchedNotifications;
+@property (readonly, nonnull) NSArray<BatchInboxNotificationContent *> *allFetchedNotifications;
 
 @property (readonly) BOOL endReached;
 
 @property BOOL filterSilentNotifications;
 
-- (void)fetchNewNotifications:(void (^ _Nullable)(NSError *_Nullable error, NSArray<BatchInboxNotificationContent *> *_Nullable notifications, BOOL foundNewNotifications, BOOL endReached))completionHandler;
+- (void)fetchNewNotifications:(void (^_Nullable)(NSError *_Nullable error,
+                                                 NSArray<BatchInboxNotificationContent *> *_Nullable notifications,
+                                                 BOOL foundNewNotifications,
+                                                 BOOL endReached))completionHandler;
 
-- (void)fetchNextPage:(void (^ _Nullable)(NSError *_Nullable error, NSArray<BatchInboxNotificationContent *> *_Nullable notifications, BOOL endReached))completionHandler;
+- (void)fetchNextPage:(void (^_Nullable)(NSError *_Nullable error,
+                                         NSArray<BatchInboxNotificationContent *> *_Nullable notifications,
+                                         BOOL endReached))completionHandler;
 
 - (void)markNotificationAsRead:(nonnull BatchInboxNotificationContent *)notification;
 
 - (void)markAllNotificationsAsRead;
 
-- (void)markNotificationAsDeleted:(nonnull BatchInboxNotificationContent*)notification;
+- (void)markNotificationAsDeleted:(nonnull BatchInboxNotificationContent *)notification;
 
 @end

@@ -76,7 +76,8 @@
 
     // Test with a long and complex data.
     NSString *start = @"!&é\"'(§è!çà)-12567890°_%^$mù`=*/"
-                      @".,?,;:=‘{«ÇøÇø}—ë‘¶Ç¡@#|¿¡ïŒ€£µ~©®†™≈<>≤≥êÊ•π‡∂ƒÌ¬◊ß∞÷≠+∫√¢‰∆∑Ω¥∏ªŸ[]å”„ック金型илджفيحةحديد";
+                      @".,?,;:=‘{«ÇøÇø}—ë‘¶Ç¡@#|¿¡ïŒ€£µ~©®†™≈<>≤≥êÊ•π‡∂ƒÌ¬◊ß∞÷≠+∫√¢‰∆∑Ω¥∏ªŸ[]"
+                      @"å”„ック金型илджفيحةحديد";
     uncrypted = [start dataUsingEncoding:NSUTF8StringEncoding];
     crypted = [aes encryptData:uncrypted];
     XCTAssert([uncrypted isEqualToData:crypted] == NO, @"Failed to crypt data from complex string.");
@@ -111,7 +112,8 @@
 
     // Test with a long and complex data.
     uncrypted = @"!&é\"'(§è!çà)-12567890°_%^$mù`=*/"
-                @".,?,;:=‘{«ÇøÇø}—ë‘¶Ç¡@#|¿¡ïŒ€£µ~©®†™≈<>≤≥êÊ•π‡∂ƒÌ¬◊ß∞÷≠+∫√¢‰∆∑Ω¥∏ªŸ[]å”„ック金型илджفيحةحديد";
+                @".,?,;:=‘{«ÇøÇø}—ë‘¶Ç¡@#|¿¡ïŒ€£µ~©®†™≈<>≤≥êÊ•π‡∂ƒÌ¬◊ß∞÷≠+∫√¢‰∆∑Ω¥∏ªŸ[]"
+                @"å”„ック金型илджفيحةحديد";
     crypted = [aes encrypt:uncrypted];
     XCTAssert([uncrypted isEqualToString:crypted] == NO, @"Failed to crypt string from complex string.");
     XCTAssertEqualObjects(

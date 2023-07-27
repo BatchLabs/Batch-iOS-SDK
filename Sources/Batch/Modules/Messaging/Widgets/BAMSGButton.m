@@ -6,6 +6,7 @@
 //
 
 #import <Batch/BAMSGButton.h>
+#import <Batch/BAMessagingCenter.h>
 
 static void *BAMSGButtonCornerRadiusContext = &BAMSGButtonCornerRadiusContext;
 
@@ -53,6 +54,11 @@ static UIFont *sBAMSGButtonBoldItalicFontOverride = nil;
     _savedCornerRadius = nil;
     _updatingCornerRadius = false;
 
+    self.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    self.titleLabel.adjustsFontForContentSizeCategory = [BAMessagingCenter instance].enableDynamicType;
+    if (@available(iOS 15.0, *)) {
+        self.maximumContentSizeCategory = UIContentSizeCategoryExtraExtraExtraLarge;
+    }
     // a corner radius change from outside the class needs to trigger a corner radius update
     [self.layer addObserver:self forKeyPath:@"cornerRadius" options:0 context:BAMSGButtonCornerRadiusContext];
 

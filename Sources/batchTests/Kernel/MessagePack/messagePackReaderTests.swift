@@ -33,14 +33,16 @@ final class MessagePackReaderTests: XCTestCase {
 
         assertUnpack("CE80000000", 2_147_483_648) { try $0.readIntegerAllowingNil(false) }
 
-        assertUnpack("CF7FFFFFFFFFFFFFFF", 9_223_372_036_854_775_807) { try $0.readIntegerAllowingNil(false) }  // Max Int
+        // Max Int
+        assertUnpack("CF7FFFFFFFFFFFFFFF", 9_223_372_036_854_775_807) { try $0.readIntegerAllowingNil(false) }
         assertUnpack("CF8000000000000000", UInt(9_223_372_036_854_775_808)) {
             UInt(truncating: try $0.readIntegerAllowingNil(false))
         }
 
+        // Max UInt
         assertUnpack("CFFFFFFFFFFFFFFFFF", UInt64(18_446_744_073_709_551_615)) {
             UInt64(truncating: try $0.readIntegerAllowingNil(false))
-        }  // Max UInt
+        }
     }
 
     func testInt() {
@@ -124,7 +126,8 @@ final class MessagePackReaderTests: XCTestCase {
             XCTAssertEqual(
                 expected, value,
                 "Expected \(expected), got \(value)",
-                file: file, line: line)
+                file: file, line: line
+            )
         } catch let err {
             XCTFail("Unpacking \(hexData) threw error '\(err)'", file: file, line: line)
         }

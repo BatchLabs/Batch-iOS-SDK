@@ -30,45 +30,52 @@
 
 // MCC+MNC
 + (NSString *)simOperatorCode {
-    static CTTelephonyNetworkInfo *telephonyNetworkInfo = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-      telephonyNetworkInfo = [[CTTelephonyNetworkInfo alloc] init];
-    });
-    // TODO add cache
-    CTCarrier *carrier;
-
-    if (@available(iOS 12.1, *)) {
-        // This APi is available from iOS 12.0, but returns nil
-        NSDictionary<NSString *, CTCarrier *> *carriers = [telephonyNetworkInfo serviceSubscriberCellularProviders];
-        for (CTCarrier *candidateCarrier in carriers.allValues) {
-            // Try to find a SIM that's active.
-            // Note that for dual sim both can be active. We don't know which one is the default, so we just pick one.
-            if ([candidateCarrier.mobileCountryCode length] > 0 || [candidateCarrier.mobileNetworkCode length] > 0) {
-                carrier = candidateCarrier;
-                break;
-            }
-        }
-    } else {
-        carrier = [telephonyNetworkInfo subscriberCellularProvider];
-    }
-
-    NSString *mobileCountryCode = [carrier mobileCountryCode];
-    NSString *mobileNetworkCode = [carrier mobileNetworkCode];
-
-    if (mobileCountryCode == nil) {
-        mobileCountryCode = @"";
-    }
-
-    if (mobileNetworkCode == nil) {
-        mobileNetworkCode = @"";
-    }
-
-    NSString *operatorCode = [mobileCountryCode stringByAppendingString:mobileNetworkCode];
-    if ([operatorCode length] > 0) {
-        return operatorCode;
-    } else {
+    if (@available(iOS 16.4, *)) {
+        // iOS 16.4 removed support for CTCarrier and returns garbage
         return nil;
+    } else {
+        static CTTelephonyNetworkInfo *telephonyNetworkInfo = nil;
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+          telephonyNetworkInfo = [[CTTelephonyNetworkInfo alloc] init];
+        });
+        // TODO add cache
+        CTCarrier *carrier;
+
+        if (@available(iOS 12.1, *)) {
+            // This APi is available from iOS 12.0, but returns nil
+            NSDictionary<NSString *, CTCarrier *> *carriers = [telephonyNetworkInfo serviceSubscriberCellularProviders];
+            for (CTCarrier *candidateCarrier in carriers.allValues) {
+                // Try to find a SIM that's active.
+                // Note that for dual sim both can be active. We don't know which one is the default, so we just pick
+                // one.
+                if ([candidateCarrier.mobileCountryCode length] > 0 ||
+                    [candidateCarrier.mobileNetworkCode length] > 0) {
+                    carrier = candidateCarrier;
+                    break;
+                }
+            }
+        } else {
+            carrier = [telephonyNetworkInfo subscriberCellularProvider];
+        }
+
+        NSString *mobileCountryCode = [carrier mobileCountryCode];
+        NSString *mobileNetworkCode = [carrier mobileNetworkCode];
+
+        if (mobileCountryCode == nil) {
+            mobileCountryCode = @"";
+        }
+
+        if (mobileNetworkCode == nil) {
+            mobileNetworkCode = @"";
+        }
+
+        NSString *operatorCode = [mobileCountryCode stringByAppendingString:mobileNetworkCode];
+        if ([operatorCode length] > 0) {
+            return operatorCode;
+        } else {
+            return nil;
+        }
     }
 }
 

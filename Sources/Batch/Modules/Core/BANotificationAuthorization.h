@@ -2,14 +2,16 @@
 
 #import <Batch/BatchPushPrivate.h>
 
-typedef NS_OPTIONS(NSUInteger, BANotificationAuthorizationTypes)
-{
-    BANotificationAuthorizationTypesNone                 = 0,
-    BANotificationAuthorizationTypesBadge                = 1 << 0,
-    BANotificationAuthorizationTypesSound                = 1 << 1,
-    BANotificationAuthorizationTypesAlert                = 1 << 2,
-    BANotificationAuthorizationTypesLockscreen           = 1 << 3,
-    BANotificationAuthorizationTypesNotificationCenter   = 1 << 4,
+typedef NS_OPTIONS(NSUInteger, BANotificationAuthorizationTypes) {
+    BANotificationAuthorizationTypesNone = 0,
+    BANotificationAuthorizationTypesBadge = 1 << 0,
+    BANotificationAuthorizationTypesSound = 1 << 1,
+    BANotificationAuthorizationTypesAlert = 1 << 2,
+    BANotificationAuthorizationTypesLockscreen = 1 << 3,
+    BANotificationAuthorizationTypesNotificationCenter = 1 << 4,
+    // Scheduled Delivery is the iOS feature where notifications are delivered in a groupped
+    // summary at set times defined by the user
+    BANotificationAuthorizationTypesScheduledDelivery = 1 << 5,
 };
 
 typedef NS_ENUM(NSUInteger, BANotificationAuthorizationStatus) {
@@ -18,33 +20,33 @@ typedef NS_ENUM(NSUInteger, BANotificationAuthorizationStatus) {
      Not used anymore.
      */
     BANotificationAuthorizationStatusUnsupported = 0,
-    
+
     /**
      "Waiting for value" is the default state, when the OS hasn't called us back yet
      */
     BANotificationAuthorizationStatusWaitingForValue = 1,
-    
+
     /**
      Unknown is for future API compatibilty, when Apple adds states and we didn't
      This happened in iOS 12 with provisional notifications.
      */
     BANotificationAuthorizationStatusUnknown = 2,
-    
+
     /**
      The notification permission has not been requested yet
      */
     BANotificationAuthorizationStatusNotRequested = 3,
-    
+
     /**
      The notification permission has been granted
      */
     BANotificationAuthorizationStatusGranted = 4,
-    
+
     /**
      The notification permission has been deined
      */
     BANotificationAuthorizationStatusDenied = 5,
-    
+
     /**
      The notification permission is granted provisionally (iOS 12+)
      Implies BANotificationAuthorizationStatusNotRequested
@@ -60,9 +62,9 @@ typedef NS_ENUM(NSUInteger, BANotificationAuthorizationStatus) {
 
 @property BatchPushNotificationSettingStatus applicationSetting;
 
-- (nullable NSDictionary*)optionalDictionaryRepresentation;
+- (nullable NSDictionary *)optionalDictionaryRepresentation;
 
-- (nonnull NSDictionary*)dictionaryRepresentation;
+- (nonnull NSDictionary *)dictionaryRepresentation;
 
 @end
 
@@ -76,7 +78,7 @@ typedef NS_ENUM(NSUInteger, BANotificationAuthorizationStatus) {
 
 - (BOOL)shouldFetchSettings;
 
-- (void)fetch:(void(^ _Nullable)(BANotificationAuthorizationSettings* _Nonnull))completionHandler;
+- (void)fetch:(void (^_Nullable)(BANotificationAuthorizationSettings *_Nonnull))completionHandler;
 
 - (void)settingsMayHaveChanged;
 

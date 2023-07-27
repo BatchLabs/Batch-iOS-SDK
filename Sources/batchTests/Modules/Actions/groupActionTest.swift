@@ -10,7 +10,6 @@ import Foundation
 import XCTest
 
 class groupActionTest: XCTestCase {
-
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -27,15 +26,17 @@ class groupActionTest: XCTestCase {
         actionsCenter.register(
             BatchUserAction(
                 identifier: "first",
-                actionBlock: { (identifier: String, args: [String: Any], source: BatchUserActionSource?) in
+                actionBlock: { (_: String, _: [String: Any], _: BatchUserActionSource?) in
                     first.run()
-                }))
+                }
+            ))
         actionsCenter.register(
             BatchUserAction(
                 identifier: "second",
-                actionBlock: { (identifier: String, args: [String: Any], source: BatchUserActionSource?) in
+                actionBlock: { (_: String, _: [String: Any], _: BatchUserActionSource?) in
                     second.run()
-                }))
+                }
+            ))
 
         let groupJSON = "{\"actions\":[[\"first\", {\"foo\": \"bar\"}],[],[\"invalid\"],[\"second\"]]}"
 
@@ -50,16 +51,19 @@ class groupActionTest: XCTestCase {
         actionsCenter.performAction(
             "batch.group",
             withArgs: parseJSON("{\"actions\":\"bar\"}"),
-            andSource: nil)
+            andSource: nil
+        )
         actionsCenter.performAction("batch.group", withArgs: parseJSON("{\"actions\":[]}"), andSource: nil)
         actionsCenter.performAction(
             "batch.group",
             withArgs: parseJSON("{\"actions\":{\"foo\":\"bar\"}}"),
-            andSource: nil)
+            andSource: nil
+        )
         actionsCenter.performAction(
             "batch.group",
             withArgs: parseJSON("{\"actions\":[{\"foo\":\"bar\"}]}"),
-            andSource: nil)
+            andSource: nil
+        )
     }
 
     func testGroupLimits() {
@@ -69,9 +73,10 @@ class groupActionTest: XCTestCase {
         actionsCenter.register(
             BatchUserAction(
                 identifier: "shouldNotRun",
-                actionBlock: { (identifier: String, args: [String: Any], source: BatchUserActionSource?) in
+                actionBlock: { (_: String, _: [String: Any], _: BatchUserActionSource?) in
                     shouldNotRun.run()
-                }))
+                }
+            ))
 
         let nestedAction = "{\"actions\":[[\"batch.group\", {\"actions\": [\"shouldNotRun\"]}]]}"
 
@@ -88,15 +93,17 @@ class groupActionTest: XCTestCase {
         actionsCenter.register(
             BatchUserAction(
                 identifier: "shouldNotRun",
-                actionBlock: { (identifier: String, args: [String: Any], source: BatchUserActionSource?) in
+                actionBlock: { (_: String, _: [String: Any], _: BatchUserActionSource?) in
                     shouldNotRun.run()
-                }))
+                }
+            ))
         actionsCenter.register(
             BatchUserAction(
                 identifier: "dummy",
-                actionBlock: { (identifier: String, args: [String: Any], source: BatchUserActionSource?) in
+                actionBlock: { (_: String, _: [String: Any], _: BatchUserActionSource?) in
                     dummy.run()
-                }))
+                }
+            ))
 
         // Make sure that 10 actions max can run
         // This should only count valid actions

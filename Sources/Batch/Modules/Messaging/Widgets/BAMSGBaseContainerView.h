@@ -1,7 +1,7 @@
 #import <UIKit/UIKit.h>
 
-#import <Batch/BAMSGPassthroughProtocol.h>
 #import <Batch/BAMSGGradientView.h>
+#import <Batch/BAMSGPassthroughProtocol.h>
 
 @protocol BAMSGContainerViewProtocol
 @required
@@ -10,7 +10,8 @@
 
 @end
 
-@interface BAMSGBaseContainerView : UIView <BAMSGGradientBackgroundProtocol, BAMSGContainerViewProtocol, BAMSGPasstroughProtocol>
+@interface BAMSGBaseContainerView
+    : UIView <BAMSGGradientBackgroundProtocol, BAMSGContainerViewProtocol, BAMSGPasstroughProtocol>
 
 @property float cornerRadius;
 

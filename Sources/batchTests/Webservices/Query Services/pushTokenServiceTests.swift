@@ -12,7 +12,6 @@ import XCTest
 fileprivate let expectedToken = "test_token"
 
 class pushTokenServiceTests: XCTestCase {
-
     func testIdentifier() {
         XCTAssertEqual(makeService().requestIdentifier, "push")
     }

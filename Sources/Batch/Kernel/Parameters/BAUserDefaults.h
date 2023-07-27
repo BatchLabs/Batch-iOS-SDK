@@ -32,7 +32,8 @@
  @param suiteName : The name of the suite to use for the UserDefaults.
  @return Instance or nil.
  */
-- (instancetype _Nonnull)initWithCryptor:(id<BAEncryptionProtocol> _Nullable)cryptor andSuiteName:( NSString* _Nullable)suiteName;
+- (instancetype _Nonnull)initWithCryptor:(id<BAEncryptionProtocol> _Nullable)cryptor
+                            andSuiteName:(NSString *_Nullable)suiteName;
 
 /*!
  @method objectForKey:
@@ -40,7 +41,7 @@
  @param key :   The stored key for that value.
  @return The value or nil.
  */
-- (id _Nullable)objectForKey:(NSString * _Nonnull)key;
+- (id _Nullable)objectForKey:(NSString *_Nonnull)key;
 
 /*!
  @method setValue:forKey:
@@ -48,14 +49,14 @@
  @param value   :   The value to save.
  @param key     :   Key for that value.
  */
-- (void)setValue:(id _Nullable)value forKey:(NSString * _Nonnull)key;
+- (void)setValue:(id _Nullable)value forKey:(NSString *_Nonnull)key;
 
 /*!
  @method removeObjectForKey:
  @abstract Remove the value and the key.
  @param key     :   The key to use for storage.
  */
-- (void)removeObjectForKey:(NSString * _Nonnull)key;
+- (void)removeObjectForKey:(NSString *_Nonnull)key;
 
 /*!
  @method saveCustomObject:key:
@@ -63,7 +64,7 @@
  @param object  :   An object implementing NSCoding
  @param key     :   Unique key to same this object on.
  */
-- (void)saveCustomObject:(id _Nonnull)object key:(NSString * _Nonnull)key;
+- (void)saveCustomObject:(id _Nonnull)object key:(NSString *_Nonnull)key;
 
 /*!
  @method loadCustomObjectWithKey:
@@ -71,7 +72,7 @@
  @param key     :   Stored key.
  @return The found object or NULL.
  */
-- (id _Nullable)loadCustomObjectWithKey:(NSString * _Nonnull)key;
+- (id _Nullable)loadCustomObjectWithKey:(NSString *_Nonnull)key;
 
 /**
  Remove all k/v

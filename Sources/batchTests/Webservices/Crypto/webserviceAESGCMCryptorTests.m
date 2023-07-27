@@ -51,10 +51,9 @@
     BAWebserviceAESGCMCryptor *cryptor = [[BAWebserviceAESGCMCryptor alloc] initWithKey:[self key] version:@"1"];
     XCTAssertNotNil(cryptor);
 
-    NSData *expectedData =
-        [@"!&é\"'(§è!çà)-12567890°_%^$mù`=*/"
-         @".,?,;:=‘{«ÇøÇø}—ë‘¶Ç¡@#|¿¡ïŒ€£µ~©®†™≈<>≤≥êÊ•π‡∂ƒÌ¬◊ß∞÷≠+∫√¢‰∆∑Ω¥∏ªŸ[]å”„ック金型илджفيحةحديد"
-            dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *expectedData = [@"!&é\"'(§è!çà)-12567890°_%^$mù`=*/"
+                            @".,?,;:=‘{«ÇøÇø}—ë‘¶Ç¡@#|¿¡ïŒ€£µ~©®†™≈<>≤≥êÊ•π‡∂ƒÌ¬◊ß∞÷≠+∫√¢‰∆∑Ω¥∏ªŸ[]"
+                            @"å”„ック金型илджفيحةحديد" dataUsingEncoding:NSUTF8StringEncoding];
     XCTAssertNotNil(expectedData);
 
     XCTAssertEqualObjects(expectedData, [cryptor decrypt:[cryptor encrypt:expectedData]]);
@@ -68,10 +67,9 @@
                                                                                         version:@"2"];
     XCTAssertNotNil(cryptor);
 
-    NSData *expectedData =
-        [@"!&é\"'(§è!çà)-12567890°_%^$mù`=*/"
-         @".,?,;:=‘{«ÇøÇø}—ë‘¶Ç¡@#|¿¡ïŒ€£µ~©®†™≈<>≤≥êÊ•π‡∂ƒÌ¬◊ß∞÷≠+∫√¢‰∆∑Ω¥∏ªŸ[]å”„ック金型илджفيحةحديد"
-            dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *expectedData = [@"!&é\"'(§è!çà)-12567890°_%^$mù`=*/"
+                            @".,?,;:=‘{«ÇøÇø}—ë‘¶Ç¡@#|¿¡ïŒ€£µ~©®†™≈<>≤≥êÊ•π‡∂ƒÌ¬◊ß∞÷≠+∫√¢‰∆∑Ω¥∏ªŸ[]"
+                            @"å”„ック金型илджفيحةحديد" dataUsingEncoding:NSUTF8StringEncoding];
     XCTAssertNotNil(expectedData);
 
     XCTAssertEqualObjects(expectedData, [cryptor decrypt:[cryptor encrypt:expectedData]]);

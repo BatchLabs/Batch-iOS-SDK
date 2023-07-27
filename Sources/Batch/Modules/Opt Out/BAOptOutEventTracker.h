@@ -19,6 +19,6 @@
  */
 @interface BAOptOutEventTracker : NSObject
 
-- (BAPromise*)track:(BAEvent*)event;
+- (BAPromise *)track:(BAEvent *)event;
 
 @end

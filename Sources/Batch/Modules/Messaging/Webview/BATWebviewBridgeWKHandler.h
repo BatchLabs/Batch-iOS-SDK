@@ -14,11 +14,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface BATWebviewBridgeWKHandler : NSObject <WKScriptMessageHandlerWithReply>
 
-- (instancetype)initWithBridge:(nonnull BATWebviewJavascriptBridge*)bridge;
+- (instancetype)initWithBridge:(nonnull BATWebviewJavascriptBridge *)bridge;
 
 - (void)userContentController:(WKUserContentController *)userContentController
       didReceiveScriptMessage:(WKScriptMessage *)message
-                 replyHandler:(void (^)(id _Nullable, NSString * _Nullable))replyHandler;
+                 replyHandler:(void (^)(id _Nullable, NSString *_Nullable))replyHandler;
 
 @end
 

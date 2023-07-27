@@ -31,7 +31,7 @@
  @abstract Starts tracking a webservice duration
  @param shortName The webservice's short name
  */
-- (void)webserviceStarted:(NSString*)shortName;
+- (void)webserviceStarted:(NSString *)shortName;
 
 /*!
  @method webserviceFinished:success:
@@ -39,7 +39,7 @@
  @param shortName The webservice's short name
  @param success Whether the WS succeeded or not
  */
-- (void)webserviceFinished:(NSString*)shortName success:(BOOL)success;
+- (void)webserviceFinished:(NSString *)shortName success:(BOOL)success;
 
 @end
 
@@ -49,7 +49,7 @@
  */
 @interface BAWebserviceMetric : NSObject
 
-- (instancetype)initWithShortname:(NSString*)shortName;
+- (instancetype)initWithShortname:(NSString *)shortName;
 
 @property (readonly, nonatomic) NSString *shortName;
 
@@ -61,7 +61,7 @@
 
 - (BOOL)isFinished;
 
-- (NSDictionary*)dictionaryRepresentation;
+- (NSDictionary *)dictionaryRepresentation;
 
 - (void)finishWithResult:(BOOL)success;
 

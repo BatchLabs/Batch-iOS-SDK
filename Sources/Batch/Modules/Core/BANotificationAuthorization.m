@@ -152,6 +152,12 @@
               types |= BANotificationAuthorizationTypesLockscreen;
           }
 
+          if (@available(iOS 15.0, *)) {
+              if ((settings.scheduledDeliverySetting & UNNotificationSettingEnabled) > 0) {
+                  types |= BANotificationAuthorizationTypesScheduledDelivery;
+              }
+          }
+
           baSettings.types = types;
           baSettings.applicationSetting = [BANotificationAuthorization applicationSettings];
 

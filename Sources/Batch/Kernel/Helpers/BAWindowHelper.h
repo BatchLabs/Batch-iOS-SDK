@@ -11,11 +11,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface BAWindowHelper : NSObject
 
-+ (nullable UIWindowScene*)activeScene NS_AVAILABLE_IOS(13.0);
++ (nullable UIWindowScene *)activeScene NS_AVAILABLE_IOS(13.0);
 
-+ (nullable UIWindowScene*)activeWindowScene NS_AVAILABLE_IOS(13.0);
++ (nullable UIWindowScene *)activeWindowScene NS_AVAILABLE_IOS(13.0);
 
-+ (nullable UIWindow*)keyWindow;
++ (nullable UIWindow *)keyWindow;
+
++ (nullable UIViewController *)frontmostViewController;
 
 @end
 

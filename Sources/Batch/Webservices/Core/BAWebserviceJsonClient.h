@@ -17,7 +17,7 @@
 @interface BAWebserviceJsonClient : BAWebserviceClient
 
 - (nullable instancetype)initWithMethod:(BAWebserviceClientRequestMethod)method
-                                    URL:(nullable NSURL*)url
+                                    URL:(nullable NSURL *)url
                                delegate:(nullable id<BAConnectionDelegate>)delegate;
 
 /*

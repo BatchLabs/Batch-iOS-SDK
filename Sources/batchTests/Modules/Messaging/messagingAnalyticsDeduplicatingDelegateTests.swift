@@ -18,7 +18,8 @@ class messagingAnalyticsDeduplicatingDelegateTests: XCTestCase {
             deduplicateDelegate.messageAutomaticallyClosed(message)
             deduplicateDelegate.messageGlobalTapActionTriggered(message, action: BAMSGAction())
             deduplicateDelegate.messageWebViewClickTracked(
-                message, action: BAMSGAction(), analyticsIdentifier: "foobar")
+                message, action: BAMSGAction(), analyticsIdentifier: "foobar"
+            )
         }
 
         trackMethods()
@@ -32,7 +33,6 @@ class messagingAnalyticsDeduplicatingDelegateTests: XCTestCase {
 
 // Test analytics delegate that fails the test when any method is called twice
 class TestMessagingAnalyticsDelegate: BAMessagingAnalyticsDelegate {
-
     var shownCalled = false
     var closedCalled = false
     var closedByErrorCalled = false
@@ -41,23 +41,23 @@ class TestMessagingAnalyticsDelegate: BAMessagingAnalyticsDelegate {
     var autoCloseCalled = false
     var globalTapCalled = false
     var timesWebviewClickCalled = 0
-    var lastErrorCause: BATMessagingCloseErrorCause? = nil
+    var lastErrorCause: BATMessagingCloseErrorCause?
 
-    func messageShown(_ message: BAMSGMessage) {
+    func messageShown(_: BAMSGMessage) {
         if shownCalled {
             fail()
         }
         shownCalled = true
     }
 
-    func messageClosed(_ message: BAMSGMessage) {
+    func messageClosed(_: BAMSGMessage) {
         if closedCalled {
             fail()
         }
         closedCalled = true
     }
 
-    func messageClosed(_ message: BAMSGMessage, byError: BATMessagingCloseErrorCause) {
+    func messageClosed(_: BAMSGMessage, byError: BATMessagingCloseErrorCause) {
         if closedByErrorCalled {
             fail()
         }
@@ -65,28 +65,28 @@ class TestMessagingAnalyticsDelegate: BAMessagingAnalyticsDelegate {
         lastErrorCause = byError
     }
 
-    func messageDismissed(_ message: BAMSGMessage) {
+    func messageDismissed(_: BAMSGMessage) {
         if dismissedCalled {
             fail()
         }
         dismissedCalled = true
     }
 
-    func messageButtonClicked(_ message: BAMSGMessage, ctaIndex: Int, action: BAMSGCTA) {
+    func messageButtonClicked(_: BAMSGMessage, ctaIndex _: Int, action _: BAMSGCTA) {
         if buttonClickedCalled {
             fail()
         }
         buttonClickedCalled = true
     }
 
-    func messageAutomaticallyClosed(_ message: BAMSGMessage) {
+    func messageAutomaticallyClosed(_: BAMSGMessage) {
         if autoCloseCalled {
             fail()
         }
         autoCloseCalled = true
     }
 
-    func messageGlobalTapActionTriggered(_ message: BAMSGMessage, action: BAMSGAction) {
+    func messageGlobalTapActionTriggered(_: BAMSGMessage, action _: BAMSGAction) {
         if globalTapCalled {
             fail()
         }
@@ -94,7 +94,7 @@ class TestMessagingAnalyticsDelegate: BAMessagingAnalyticsDelegate {
     }
 
     func messageWebViewClickTracked(
-        _ message: BAMSGMessage, action: BAMSGAction, analyticsIdentifier analyticsID: String
+        _: BAMSGMessage, action _: BAMSGAction, analyticsIdentifier _: String
     ) {
         timesWebviewClickCalled = timesWebviewClickCalled + 1
     }

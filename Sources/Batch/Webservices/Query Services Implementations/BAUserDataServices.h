@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithVersion:(long long)version
                      attributes:(nonnull NSDictionary *)attributes
-                        andTags:(nonnull NSDictionary< NSString*, NSSet< NSString* >* >*)tags;
+                        andTags:(nonnull NSDictionary<NSString *, NSSet<NSString *> *> *)tags;
 
 @end
 
@@ -27,8 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface BAUserDataCheckServiceDatasource : NSObject <BAQueryWebserviceClientDatasource>
 
-- (instancetype)initWithVersion:(long long)version
-                  transactionID:(nonnull NSString*)transactionID;
+- (instancetype)initWithVersion:(long long)version transactionID:(nonnull NSString *)transactionID;
 
 @end
 

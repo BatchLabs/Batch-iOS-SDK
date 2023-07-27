@@ -4,6 +4,6 @@
 
 @interface BAUserEventBuiltinActions : NSObject
 
-+ (BatchUserAction*)trackEventAction;
++ (BatchUserAction *)trackEventAction;
 
 @end

@@ -8,24 +8,35 @@
 
 #import <Batch/BAUserDataManager.h>
 
+#import <Batch/BACoreCenter.h>
 #import <Batch/BAInjection.h>
 #import <Batch/BALogger.h>
+#import <Batch/BAOptOut.h>
 #import <Batch/BAParameter.h>
+#import <Batch/BAQueryWebserviceClient.h>
+#import <Batch/BATrackerCenter.h>
+#import <Batch/BAUserDataDiff.h>
 #import <Batch/BAUserDataManager.h>
+#import <Batch/BAUserDataServices.h>
 #import <Batch/BAUserDatasourceProtocol.h>
 #import <Batch/BAUserSQLiteDatasource.h>
-
-#import <Batch/BAQueryWebserviceClient.h>
-#import <Batch/BAUserDataServices.h>
 #import <Batch/BAWebserviceClientExecutor.h>
+
+#define PUBLIC_DOMAIN @"BatchUser - Manager"
+#define DEBUG_DOMAIN @"UserDataManager"
+
+/// Waiting time before operations are submitted (in ms)
+#define DISPATCH_QUEUE_TIMER 500
 
 @implementation BAUserDataManager
 
 static NSLock *baUserDataManagerCheckScheduledLock;
 static BOOL baUserDataManagerCheckScheduled = NO;
+static NSMutableArray<NSArray<BOOL (^)(void)> *> *operationsQueues;
 
 + (void)load {
     baUserDataManagerCheckScheduledLock = [NSLock new];
+    operationsQueues = [NSMutableArray new];
 }
 
 + (dispatch_queue_t)sharedQueue {
@@ -57,7 +68,6 @@ static BOOL baUserDataManagerCheckScheduled = NO;
           }
 
           NSDictionary *attributes = [BAUserAttribute serverJsonRepresentationForAttributes:[database attributes]];
-
           BAUserDataSendServiceDatasource *wsDatasource;
           wsDatasource = [[BAUserDataSendServiceDatasource alloc] initWithVersion:[changeset longLongValue]
                                                                        attributes:attributes
@@ -187,6 +197,111 @@ static BOOL baUserDataManagerCheckScheduled = NO;
       id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
       [datasource clear];
     });
+}
+
++ (BOOL)writeChangesToDatasource:(NSArray<BOOL (^)(void)> *)applyQueue changeset:(long long)changeset {
+    id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+
+    if (![datasource acquireTransactionLockWithChangeset:changeset]) {
+        [BALogger publicForDomain:PUBLIC_DOMAIN
+                          message:@"An internal error occurred while applying the changes. (Error code 35)"];
+        return false;
+    }
+
+    for (BOOL (^operation)(void) in applyQueue) {
+        if (!operation()) {
+            [datasource rollbackTransaction];
+            [BALogger errorForDomain:DEBUG_DOMAIN message:@"Operation returned false"];
+            [BALogger publicForDomain:PUBLIC_DOMAIN
+                              message:@"An internal error occurred while applying the changes. (Error code 36)"];
+            return false;
+        }
+    }
+
+    if (![datasource commitTransaction]) {
+        [BALogger publicForDomain:PUBLIC_DOMAIN
+                          message:@"An internal error occurred while applying the changes. (Error code 37)"];
+        return false;
+    }
+
+    return true;
+}
+
+/// Add an editor's operations queue to the queue
+/// - Parameters:
+///   - queue: editor's queue to add
+///   - completion: completion triggered when operations are submited
+/// - Warning: We are not synchronizing here because we are on the shared queue, so this method is NOT thread-safe.
++ (void)addOperationQueueAndSubmit:(NSArray<BOOL (^)(void)> *)queue withCompletion:(void (^_Nullable)(void))completion {
+    [operationsQueues addObject:queue];
+    [BAUserDataManager submitWithCompletion:completion];
+}
+
++ (void)submitWithCompletion:(void (^_Nullable)(void))completion {
+    dispatch_after(
+        dispatch_time(DISPATCH_TIME_NOW, (int64_t)(DISPATCH_QUEUE_TIMER * NSEC_PER_MSEC)),
+        [BAUserDataManager sharedQueue], ^{
+          if ([operationsQueues count] == 0) {
+              if (completion != nil) {
+                  completion();
+              }
+              return;
+          }
+
+          NSMutableArray<BOOL (^)(void)> *applyQueue = [NSMutableArray array];
+          for (NSArray<BOOL (^)(void)> *queue in operationsQueues) {
+              [applyQueue addObjectsFromArray:queue];
+          }
+          [operationsQueues removeAllObjects];
+
+          id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+          NSNumber *changeset = [BAParameter objectForKey:kParametersUserProfileDataVersionKey fallback:@(0)];
+          // Sanity
+          if (![changeset isKindOfClass:[NSNumber class]]) {
+              [BAParameter setValue:@(0) forKey:kParametersUserProfileDataVersionKey saved:YES];
+              changeset = @(0);
+          }
+
+          BAUserAttributes *oldAttributes = [datasource attributes];
+          BAUserTagCollections *oldTagCollections = [datasource tagCollections];
+
+          long long newChangeset = [changeset longLongValue] + 1;
+
+          if (![BAUserDataManager writeChangesToDatasource:applyQueue changeset:newChangeset]) {
+              if (completion != nil) {
+                  completion();
+              }
+              return;
+          }
+
+          BAUserAttributes *newAttributes = [datasource attributes];
+          BAUserTagCollections *newTagCollections = [datasource tagCollections];
+
+          BAUserAttributesDiff *attributesDiff = [[BAUserAttributesDiff alloc] initWithNewAttributes:newAttributes
+                                                                                            previous:oldAttributes];
+          BAUserTagCollectionsDiff *tagCollectionsDiff =
+              [[BAUserTagCollectionsDiff alloc] initWithNewTagCollections:newTagCollections previous:oldTagCollections];
+
+          if ([attributesDiff hasChanges] || [tagCollectionsDiff hasChanges]) {
+              NSNumber *newChangesetNumber = @(newChangeset);
+              [BAParameter setValue:newChangesetNumber forKey:kParametersUserProfileDataVersionKey saved:YES];
+              [BAParameter removeObjectForKey:kParametersUserProfileTransactionIDKey];
+              [BAUserDataManager startAttributesSendWSWithDelay:0];
+
+              NSDictionary *eventParams = [BAUserDataDiffTransformer eventParametersFromAttributes:attributesDiff
+                                                                                    tagCollections:tagCollectionsDiff
+                                                                                           version:newChangesetNumber];
+              [BATrackerCenter trackPrivateEvent:@"_INSTALL_DATA_CHANGED" parameters:eventParams];
+
+              [BALogger debugForDomain:DEBUG_DOMAIN message:@"Changes in install occurred: YES"];
+          } else {
+              [BALogger debugForDomain:DEBUG_DOMAIN message:@"Changes in install occurred: NO"];
+          }
+
+          if (completion != nil) {
+              completion();
+          }
+        });
 }
 
 @end

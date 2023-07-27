@@ -1,5 +1,5 @@
-#import <Foundation/Foundation.h>
 #import <Batch/BatchLogger.h>
+#import <Foundation/Foundation.h>
 
 @protocol BALoggerProtocol <NSObject>
 
@@ -9,6 +9,6 @@
 
 @protocol BALoggerDelegateSource <NSObject>
 
-@property (nonatomic, readonly) id <BatchLoggerDelegate> loggerDelegate;
+@property (nonatomic, readonly) id<BatchLoggerDelegate> loggerDelegate;
 
 @end

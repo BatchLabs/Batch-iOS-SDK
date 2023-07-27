@@ -27,58 +27,56 @@ typedef NS_ENUM(NSUInteger, BAConnectionMethod) {
  @enum BAConnectionErrorCause
  @abstract Possible causes of webservice failure.
  */
-enum
-{
+enum {
     /*!
      Value in BAConnectionErrorCauseNone when there is no error.
      */
-    BAConnectionErrorCauseNone                = 0,
-    
-    
+    BAConnectionErrorCauseNone = 0,
+
     /*!
      Value in BAConnectionErrorCauseParsingError when there was a parsing error.
      */
-    BAConnectionErrorCauseParsingError        = 100,
-    
+    BAConnectionErrorCauseParsingError = 100,
+
     /*!
      Value in BAConnectionErrorCauseNetworkUnavailable when the response is in [100;200[ or >= 400 .
      */
-    BAConnectionErrorCauseServerError         = 200,
-    
+    BAConnectionErrorCauseServerError = 200,
+
     /*!
      Value in BAConnectionErrorCauseNetworkTimeout when the network timed out.
      */
-    BAConnectionErrorCauseNetworkTimeout      = 300,
-    
+    BAConnectionErrorCauseNetworkTimeout = 300,
+
     /*!
      Value in BAConnectionErrorCauseSslHandshakeFailure when the SSL Handshake failed.
      */
     BAConnectionErrorCauseSSLHandshakeFailure = 400,
-    
+
     /*!
      Value in BAConnectionErrorCauseOther when the error is of another type than the specified ones.
      */
-    BAConnectionErrorCauseOther               = 500,
-    
+    BAConnectionErrorCauseOther = 500,
+
     /*!
      Batch has been opted-out from: Webservice calls are not allowed
      */
-    BAConnectionErrorCauseOptedOut            = 600,
-    
+    BAConnectionErrorCauseOptedOut = 600,
+
     /*!
      Could not serialize the request body
      */
-    BAConnectionErrorCauseSerialization       = 700,
-    
+    BAConnectionErrorCauseSerialization = 700,
+
     /*!
      Could not create the URL Request
      */
-    BAConnectionErrorCauseRequestCreation     = 800,
-    
+    BAConnectionErrorCauseRequestCreation = 800,
+
     /*!
      Server respond with http code 429 (overloaded)
      */
-    BAConnectionErrorCauseServerTooManyRequest     = 900,
+    BAConnectionErrorCauseServerTooManyRequest = 900,
 };
 /*!
  @typedef BAConnectionErrorCause
@@ -90,7 +88,8 @@ typedef NSInteger BAConnectionErrorCause;
 
 /*!
  @class BAConnection
- @abstract This class provide implementation of NSURLSession and handle auto retring. NSURLConnection variant is available in BAConnectionCompat.
+ @abstract This class provide implementation of NSURLSession and handle auto retring. NSURLConnection variant is
+ available in BAConnectionCompat.
  @discussion This object use default value that you can override:
  timeout = 60
  numberOfRetry = 0
@@ -110,7 +109,8 @@ typedef NSInteger BAConnectionErrorCause;
 
 /*!
  @property timeout
- @abstract The number of second before the query is considerated as failed without response from the server. Default = 60.
+ @abstract The number of second before the query is considerated as failed without response from the server. Default
+ = 60.
  */
 @property (nonatomic) NSTimeInterval timeout;
 
@@ -130,7 +130,6 @@ typedef NSInteger BAConnectionErrorCause;
  */
 @property (nonatomic) BOOL canBypassOptOut;
 
-
 /*!
  @method errorCauseForError:
  @abstract Get the BAConnectionErrorCause associated to a NSError emitted from the connection
@@ -143,8 +142,8 @@ typedef NSInteger BAConnectionErrorCause;
                                delegate:(nullable id<BAConnectionDelegate>)delegate;
 
 - (void)configureWithMethod:(BAConnectionMethod)method
-                        url:(nonnull NSURL*)url
-                       body:(nullable NSData*)body
+                        url:(nonnull NSURL *)url
+                       body:(nullable NSData *)body
              cryptorFactory:(nullable id<BAWebserviceCryptorFactoryProtocol>)cryptorFactory;
 
 - (void)start;

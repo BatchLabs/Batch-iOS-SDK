@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Batch SDK. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
+#import <Foundation/Foundation.h>
 
 #import <Batch/BACenterMulticastDelegate.h>
 #import <Batch/BAEvent.h>
@@ -24,28 +24,26 @@
  @enum BATrackerMode
  @abstract Possible causes of webservice failure.
  */
-enum
-{
+enum {
     /*!
      Value to completly switch off the event tracker.
      */
-    BATrackerModeOFF        = 0,
-    
+    BATrackerModeOFF = 0,
+
     /*!
      Value to stop sending the event (event will continue to be registred in DB).
      */
-    BATrackerModeDB_ONLY    = 1,
-    
+    BATrackerModeDB_ONLY = 1,
+
     /*!
      Value to completely activate the event tracker (default value).
      */
-    BATrackerModeON         = 2
+    BATrackerModeON = 2
 };
 /*!
  @typedef BATrackerMode
  */
 typedef NSInteger BATrackerMode;
-
 
 /*!
  @class BATrackerCenter
@@ -77,7 +75,7 @@ typedef NSInteger BATrackerMode;
 
 /*!
  Track an uncollapsable publicevent with label and data
- 
+
  Do not prepend "E." to the event name: this method will do it
  */
 + (void)trackPublicEvent:(nonnull NSString *)name label:(nullable NSString *)label data:(nullable BatchEventData *)data;
@@ -88,9 +86,12 @@ typedef NSInteger BATrackerMode;
 + (void)trackPrivateEvent:(nonnull NSString *)name parameters:(nullable NSDictionary *)parameters;
 
 /*!
- Track a private event with parameters, optionally collapsable (meaning that only one instance of the event will be stored)
+ Track a private event with parameters, optionally collapsable (meaning that only one instance of the event will be
+ stored)
  */
-+ (void)trackPrivateEvent:(nonnull NSString *)name parameters:(nullable NSDictionary *)parameters collapsable:(BOOL)collapsable;
++ (void)trackPrivateEvent:(nonnull NSString *)name
+               parameters:(nullable NSDictionary *)parameters
+              collapsable:(BOOL)collapsable;
 
 /*!
  Track an already existing private event. Use case: BAEvent is created from an old BAEventLight instance.
@@ -101,7 +102,7 @@ typedef NSInteger BATrackerMode;
  @method trackLocation:
  @abstract Track an location event
  */
-+ (void)trackLocation:(nonnull CLLocation*)location;
++ (void)trackLocation:(nonnull CLLocation *)location;
 
 /*!
  @method datasource

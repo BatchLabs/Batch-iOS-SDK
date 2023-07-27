@@ -6,7 +6,7 @@
 //
 #import <Batch/BAOverlayedInjectable.h>
 
-@interface BAOverlayedInjectable()
+@interface BAOverlayedInjectable ()
 
 - (nonnull instancetype)initWithCallback:(nonnull BAOverlayedInjectableCallback)callback;
 

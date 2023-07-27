@@ -4,8 +4,8 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <Batch/BAMetric.h>
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)sharedInstance;
 
 /// Add a metric to the registered metric list
-- (void)addMetric:(BAMetric*)metric;
+- (void)addMetric:(BAMetric *)metric;
 
 /// Send metrics that have changed
 - (void)sendMetrics;

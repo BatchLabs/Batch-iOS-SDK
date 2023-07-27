@@ -9,15 +9,15 @@
 #import <Foundation/Foundation.h>
 #import <UserNotifications/UserNotifications.h>
 
-#import <Batch/BatchPush.h>
 #import <Batch/BACenterMulticastDelegate.h>
 #import <Batch/BAPartialApplicationDelegate.h>
+#import <Batch/BatchPush.h>
 
 // Is the push open coming from UNUserNotificationCenterDelegate's didResponse callback?
-extern NSString * const kBATPushOpenedNotificationOriginatesFromUNResponseKey;
+extern NSString *const kBATPushOpenedNotificationOriginatesFromUNResponseKey;
 
 // Is the push open coming from application:didFinishLaunchingWithOptions?
-extern NSString * const kBATPushOpenedNotificationOriginatesFromAppDelegate;
+extern NSString *const kBATPushOpenedNotificationOriginatesFromAppDelegate;
 
 /*!
  @class BAPushCenter
@@ -28,7 +28,8 @@ extern NSString * const kBATPushOpenedNotificationOriginatesFromAppDelegate;
 
 /*!
  @property shouldAutomaticallyRetreivePushToken
- @abstract YES registerForRemoteNotifications should be called after the notificaiton user popup. Only YES if user called "[BatchPush registerForRemoteNotifications]"
+ @abstract YES registerForRemoteNotifications should be called after the notificaiton user popup. Only YES if user
+ called "[BatchPush registerForRemoteNotifications]"
  */
 @property (assign, nonatomic) BOOL shouldAutomaticallyRetreivePushToken;
 
@@ -56,12 +57,11 @@ extern NSString * const kBATPushOpenedNotificationOriginatesFromAppDelegate;
  */
 @property BOOL shouldSwizzle;
 
-
 /*!
  @property startPushUserInfo
  @abstract userInfo of the push the app was started with, if it was.
  */
-@property NSDictionary* startPushUserInfo;
+@property NSDictionary *startPushUserInfo;
 
 /*!
  @method instance
@@ -109,7 +109,10 @@ extern NSString * const kBATPushOpenedNotificationOriginatesFromAppDelegate;
  @method setNotificationsCategories:
  @abstract Set the notification action categories to iOS.
  @discussion You should call this every time your app starts
- @param categories  : A set of UIUserNotificationCategory or UNNotificationCategory instances that define the groups of actions a notification may include. If you try to register UIUserNotificationCategory instances on iOS 10, Batch will automatically do a best effort conversion to UNNotificationCategory. If you don't want this behaviour, please use the standard UIApplication methods.
+ @param categories  : A set of UIUserNotificationCategory or UNNotificationCategory instances that define the groups of
+ actions a notification may include. If you try to register UIUserNotificationCategory instances on iOS 10, Batch will
+ automatically do a best effort conversion to UNNotificationCategory. If you don't want this behaviour, please use the
+ standard UIApplication methods.
  */
 + (void)setNotificationsCategories:(NSSet *)categories;
 
@@ -123,14 +126,16 @@ extern NSString * const kBATPushOpenedNotificationOriginatesFromAppDelegate;
 /*!
  @method dismissNotifications
  @abstract Clear the app's notifications in the notification center. Also clears your badge.
- @discussion Call this when you want to remove the notifications. Your badge is removed afterwards, so if you want one, you need to set it up again.
+ @discussion Call this when you want to remove the notifications. Your badge is removed afterwards, so if you want one,
+ you need to set it up again.
  */
 + (void)dismissNotifications;
 
 /*!
  @method enableAutomaticDeeplinkHandling:
  @abstract Set whether Batch Push should automatically try to handle deeplinks
- @discussion By default, this is set to YES. You need to call everytime your app is restarted, this option is not persisted.
+ @discussion By default, this is set to YES. You need to call everytime your app is restarted, this option is not
+ persisted.
  */
 + (void)enableAutomaticDeeplinkHandling:(BOOL)handleDeeplinks;
 
@@ -143,18 +148,21 @@ extern NSString * const kBATPushOpenedNotificationOriginatesFromAppDelegate;
 
 /*!
  @method disableAutomaticIntegration
- @abstract Disable the push's automatic integration. If you call this, you are responsible of forwarding your application's delegate calls to Batch. If you don't, some parts of the SDK and Dashboard will break.
+ @abstract Disable the push's automatic integration. If you call this, you are responsible of forwarding your
+ application's delegate calls to Batch. If you don't, some parts of the SDK and Dashboard will break.
  @warning This must be called before you start Batch, or it will have no effect.
  */
 + (void)disableAutomaticIntegration;
 
 /*!
  @method handleDeviceToken
- @abstract Registers a device token to Batch. You should call this method in "application:didRegisterForRemoteNotificationsWithDeviceToken:".
- @warning If you didn't call "disableAutomaticIntegration", this method will have no effect. If you called it but don't implement this method, Batch's push features will NOT work.
+ @abstract Registers a device token to Batch. You should call this method in
+ "application:didRegisterForRemoteNotificationsWithDeviceToken:".
+ @warning If you didn't call "disableAutomaticIntegration", this method will have no effect. If you called it but don't
+ implement this method, Batch's push features will NOT work.
  @param token : The untouched "deviceToken" NSData argument given to you in the application delegate method.
  */
-+ (void)handleDeviceToken:(NSData*)token;
++ (void)handleDeviceToken:(NSData *)token;
 
 /*!
  @method isBatchPush
@@ -163,30 +171,39 @@ extern NSString * const kBATPushOpenedNotificationOriginatesFromAppDelegate;
  @param userInfo : The untouched "userInfo" NSDictionary argument given to you in the application delegate method.
  @return If it returns true, you should not handle the push.
  */
-+ (BOOL)isBatchPush:(NSDictionary*)userInfo;
++ (BOOL)isBatchPush:(NSDictionary *)userInfo;
 
 /*!
  @method handleNotification
- @abstract Make Batch process a notification. You should call this method in "application:didReceiveRemoteNotification:" or "application:didReceiveRemoteNotification:fetchCompletionHandler:".
- @warning If you didn't call "disableAutomaticIntegration", this method will have no effect. If you called it but don't implement this method, Batch's push features will NOT work.
+ @abstract Make Batch process a notification. You should call this method in "application:didReceiveRemoteNotification:"
+ or "application:didReceiveRemoteNotification:fetchCompletionHandler:".
+ @warning If you didn't call "disableAutomaticIntegration", this method will have no effect. If you called it but don't
+ implement this method, Batch's push features will NOT work.
  @param userInfo : The untouched "userInfo" NSDictionary argument given to you in the application delegate method.
  */
-+ (void)handleNotification:(NSDictionary*)userInfo;
++ (void)handleNotification:(NSDictionary *)userInfo;
 
 /*!
  @method handleNotification
- @abstract Make Batch process a notification action. You should call this method in "application:handleActionWithIdentifier:forRemoteNotification:completionHandler:" or "application:handleActionWithIdentifier:forRemoteNotification:withResponseInfo:completionHandler:".
- @warning If you didn't call "disableAutomaticIntegration", this method will have no effect. If you called it but don't implement this method, Batch's push features will NOT work.
+ @abstract Make Batch process a notification action. You should call this method in
+ "application:handleActionWithIdentifier:forRemoteNotification:completionHandler:" or
+ "application:handleActionWithIdentifier:forRemoteNotification:withResponseInfo:completionHandler:".
+ @warning If you didn't call "disableAutomaticIntegration", this method will have no effect. If you called it but don't
+ implement this method, Batch's push features will NOT work.
  @param userInfo : The untouched "userInfo" NSDictionary argument given to you in the application delegate method.
- @param identifier : The action's identifier. Used for tracking purposes: it can match your raw action name, or be a more user-friendly string;
+ @param identifier : The action's identifier. Used for tracking purposes: it can match your raw action name, or be a
+ more user-friendly string;
  */
-+ (void)handleNotification:(NSDictionary*)userInfo actionIdentifier:(NSString*)identifier;
++ (void)handleNotification:(NSDictionary *)userInfo actionIdentifier:(NSString *)identifier;
 
 /*!
  @method handleNotification
- @abstract Make Batch process the user notification settings change. You should call this method in "application:didRegisterUserNotificationSettings:".
- @warning If you didn't call "disableAutomaticIntegration", this method will have no effect. If you called it but don't implement this method, Batch's push features will NOT work.
- @param notificationSettings : The untouched "notificationSettings" UIUserNotificationSettings* argument given to you in the application delegate method.
+ @abstract Make Batch process the user notification settings change. You should call this method in
+ "application:didRegisterUserNotificationSettings:".
+ @warning If you didn't call "disableAutomaticIntegration", this method will have no effect. If you called it but don't
+ implement this method, Batch's push features will NOT work.
+ @param notificationSettings : The untouched "notificationSettings" UIUserNotificationSettings* argument given to you in
+ the application delegate method.
  */
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -194,29 +211,36 @@ extern NSString * const kBATPushOpenedNotificationOriginatesFromAppDelegate;
 #pragma clang diagnostic pop
 
 /**
- Make Batch process a foreground notification. You should call this method if you set your own UNUserNotificationCenterDelegate, in userNotificationCenter:willPresentNotification:withCompletionHandler:
- 
+ Make Batch process a foreground notification. You should call this method if you set your own
+ UNUserNotificationCenterDelegate, in userNotificationCenter:willPresentNotification:withCompletionHandler:
+
  @param center                          Original center argument
  @param notification                    Original notification argument
- @param willShowSystemForegroundAlert   Whether you will tell the framework to show this notification, or. Batch uses this value to adjust its behaviour accordingly for a better user experience.
+ @param willShowSystemForegroundAlert   Whether you will tell the framework to show this notification, or. Batch uses
+ this value to adjust its behaviour accordingly for a better user experience.
  */
-+ (void)handleUserNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification willShowSystemForegroundAlert:(BOOL)willShowSystemForegroundAlert NS_AVAILABLE_IOS(10_0);
++ (void)handleUserNotificationCenter:(UNUserNotificationCenter *)center
+             willPresentNotification:(UNNotification *)notification
+       willShowSystemForegroundAlert:(BOOL)willShowSystemForegroundAlert NS_AVAILABLE_IOS(10_0);
 
 /**
- Make Batch process a background notification open/action. You should call this method if you set your own UNUserNotificationCenterDelegate, in userNotificationCenter:didReceiveNotificationResponse:
- 
+ Make Batch process a background notification open/action. You should call this method if you set your own
+ UNUserNotificationCenterDelegate, in userNotificationCenter:didReceiveNotificationResponse:
+
  @param center       Original center argument
  @param response     Original response argument
  */
-+ (void)handleUserNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response NS_AVAILABLE_IOS(10_0);
++ (void)handleUserNotificationCenter:(UNUserNotificationCenter *)center
+      didReceiveNotificationResponse:(UNNotificationResponse *)response NS_AVAILABLE_IOS(10_0);
 
 /**
  Make Batch process a notification payload
- 
- Most code should use handleUserNotificationCenter:didReceiveNotificationResponse: but getting an instance of UNNotificationResponse isn't doable manually
+
+ Most code should use handleUserNotificationCenter:didReceiveNotificationResponse: but getting an instance of
+ UNNotificationResponse isn't doable manually
  */
 - (void)parseNotification:(NSDictionary *)userInfo
-   fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler
-originatesFromUNDelegateResponse:(BOOL)originatesFromUNDelegateResponse;
+              fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler
+    originatesFromUNDelegateResponse:(BOOL)originatesFromUNDelegateResponse;
 
 @end

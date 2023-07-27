@@ -194,6 +194,9 @@
             break; // We've only got one rule to check, no need to continue
         }
     }
+    if (@available(iOS 15.0, *)) {
+        self.view.maximumContentSizeCategory = UIContentSizeCategoryExtraExtraExtraLarge;
+    }
 }
 
 #pragma mark - Dismissal

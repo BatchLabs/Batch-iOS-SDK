@@ -8,7 +8,6 @@ import Batch.Batch_Private
 import WebKit
 
 class MinimalWebviewJavascriptBridge: BATWebviewJavascriptBridge {
-
     public let expectedErrorMessage = "test_error_message"
 
     override init() {
@@ -25,7 +24,7 @@ class MinimalWebviewJavascriptBridge: BATWebviewJavascriptBridge {
                 return BAPromise.rejected(
                     NSError(domain: "tests", code: 0, userInfo: [NSLocalizedDescriptionKey: expectedErrorMessage]))
             case "echo":
-                return BAPromise.resolved((rawJSONArguments!["value"] as! NSString))
+                return BAPromise.resolved(rawJSONArguments!["value"] as! NSString)
             case "echo_nil":
                 return BAPromise.resolved(nil)
             default:

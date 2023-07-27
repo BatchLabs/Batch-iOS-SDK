@@ -6,9 +6,9 @@
 #define OptOutDefaultKey @"opted_out"
 #define ShouldFireOptinEventDefaultKey @"should_fire_optin_event"
 
-extern NSString * _Nonnull const kBATOptOutChangedNotification;
-extern NSString * _Nonnull const kBATOptOutValueKey;
-extern NSString * _Nonnull const kBATOptOutWipeDataKey;
+extern NSString *_Nonnull const kBATOptOutChangedNotification;
+extern NSString *_Nonnull const kBATOptOutValueKey;
+extern NSString *_Nonnull const kBATOptOutWipeDataKey;
 
 @class BAOptOutEventTracker;
 
@@ -16,7 +16,9 @@ extern NSString * _Nonnull const kBATOptOutWipeDataKey;
 
 + (nonnull BAOptOut *)instance;
 
-- (void)setOptedOut:(BOOL)newVal wipeData:(BOOL)wipeData completionHandler:(BatchOptOutNetworkErrorPolicy(^ _Nonnull)(BOOL success))handler;
+- (void)setOptedOut:(BOOL)newVal
+             wipeData:(BOOL)wipeData
+    completionHandler:(BatchOptOutNetworkErrorPolicy (^_Nonnull)(BOOL success))handler;
 
 - (BOOL)isOptedOut;
 
@@ -28,8 +30,10 @@ extern NSString * _Nonnull const kBATOptOutWipeDataKey;
 
 - (void)initEventTrackerIfNeeded;
 
-- (void)setEventTracker:(nullable BAOptOutEventTracker*)eventTracker;
+- (void)setEventTracker:(nullable BAOptOutEventTracker *)eventTracker;
 
 - (void)applyOptOut:(BOOL)shouldOptOut wipeData:(BOOL)wipeData;
+
+- (void)wipeData;
 
 @end

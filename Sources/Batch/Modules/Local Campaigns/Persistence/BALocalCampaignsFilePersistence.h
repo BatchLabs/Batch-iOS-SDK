@@ -5,8 +5,8 @@
 //  Copyright © 2017 Batch. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <Batch/BALocalCampaignsPersisting.h>
+#import <Foundation/Foundation.h>
 
 @interface BALocalCampaignsFilePersistence : NSObject <BALocalCampaignsPersisting>
 

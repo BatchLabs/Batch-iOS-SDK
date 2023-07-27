@@ -21,10 +21,11 @@ public func XCTAssertResolves<T>(
     promise.then { (_ resolvedValue: T?) in
         XCTAssertEqual(expected, resolvedValue, message, file: file, line: line)
     }
-    promise.catch { (err) in
+    promise.catch { err in
         XCTFail(
             "Promise was expected to be resolved with '\(String(describing: expected))' but was rejected with '\(String(describing: err))'.",
-            file: file, line: line)
+            file: file, line: line
+        )
     }
 }
 
@@ -32,8 +33,8 @@ public func XCTAssertResolves<T>(
 // Note: this doesn't wait for the promise to have been executed before completing the tests.
 // As there is no way to signal the test runner that we should wait for a value, please call XCTAssertNoPendingPromise at the end of your test
 public func XCTAssertRejects<T>(
-    _ promise: @autoclosure () throws -> BAPromise<T>, _ message: @autoclosure () -> String = "",
-    file: StaticString = #filePath, line: UInt = #line
+    _ promise: @autoclosure () throws -> BAPromise<T>, _: @autoclosure () -> String = "",
+    file _: StaticString = #filePath, line _: UInt = #line
 ) {
     let promise = try! promise()
     promise.then { (_ resolvedValue: T?) in
@@ -44,7 +45,7 @@ public func XCTAssertRejects<T>(
 // Asserts that the promise isn't pending, but has been resolved or rejected
 // This should be ran at the end of your test
 public func XCTAssertNoPendingPromise<T>(
-    _ promise: @autoclosure () throws -> BAPromise<T>, file: StaticString = #filePath, line: UInt = #line
+    _ promise: @autoclosure () throws -> BAPromise<T>, file _: StaticString = #filePath, line _: UInt = #line
 ) {
     let promise = try! promise()
     XCTAssertNotEqual(BAPromiseStatus.pending, promise.status)
@@ -56,7 +57,7 @@ public func XCTAssertNoPendingPromise<T>(
     _ promises: @autoclosure () throws -> [BAPromise<T>], file: StaticString = #filePath, line: UInt = #line
 ) {
     let promises = try! promises()
-    promises.forEach { (promise) in
+    promises.forEach { promise in
         XCTAssertNotEqual(BAPromiseStatus.pending, promise.status, file: file, line: line)
     }
 }
@@ -65,7 +66,7 @@ public func XCTAssertNoPendingPromise<T>(
 // Useful for XCTAssertNoPendingPromise
 extension Array {
     mutating func push<T>(_ promise: Element) -> Element where Element: BAPromise<T> {
-        self.append(promise)
+        append(promise)
         return promise
     }
 }

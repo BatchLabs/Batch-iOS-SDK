@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface BAOptOutWebserviceClient : BAQueryWebserviceClient
 
-- (instancetype)initWithEvents:(NSArray*)events promises:(NSArray *)promises;
+- (instancetype)initWithEvents:(NSArray *)events promises:(NSArray *)promises;
 
 @end
 

@@ -10,7 +10,6 @@ import InstantMock
 import XCTest
 
 class webviewJavascriptBridgeTests: XCTestCase {
-
     var promises = [BAPromise<NSString>]()
 
     override func setUp() {
@@ -61,7 +60,8 @@ class webviewJavascriptBridgeTests: XCTestCase {
 
         XCTAssertResolves(
             BridgeExpectations.trackingID as NSString,
-            promises.push(bridge.executeMethod("getTrackingID", arguments: [:])))
+            promises.push(bridge.executeMethod("getTrackingID", arguments: [:]))
+        )
 
         bridge = MockBridge(trackingID: nil)
         XCTAssertResolves(nil, promises.push(bridge.executeMethod("getTrackingID", arguments: [:])))
@@ -78,18 +78,21 @@ class webviewJavascriptBridgeTests: XCTestCase {
         delegate.expect().call(
             delegate.bridge(
                 Arg.eq(bridge), shouldOpenDeeplink: Arg.eq(batchURL), openInAppOverride: Arg.eq(nil),
-                analyticsID: Arg.eq(nil))
+                analyticsID: Arg.eq(nil)
+            )
         )
         delegate.expect().call(
             delegate.bridge(
                 Arg.eq(bridge), shouldOpenDeeplink: Arg.eq(batchURL), openInAppOverride: Arg.eq(NSNumber?(false)),
-                analyticsID: Arg.eq(nil))
+                analyticsID: Arg.eq(nil)
+            )
         )
         // 2nd is the bad analyticsID type
         delegate.expect().call(
             delegate.bridge(
                 Arg.eq(bridge), shouldOpenDeeplink: Arg.eq(batchURL), openInAppOverride: Arg.eq(NSNumber?(true)),
-                analyticsID: Arg.eq(nil)),
+                analyticsID: Arg.eq(nil)
+            ),
             count: 3
         )
         delegate.expect().call(
@@ -97,7 +100,8 @@ class webviewJavascriptBridgeTests: XCTestCase {
                 Arg.eq(bridge),
                 shouldOpenDeeplink: Arg.eq(batchURL),
                 openInAppOverride: Arg.eq(NSNumber?(true)),
-                analyticsID: Arg.eq(BridgeExpectations.analyticsID as String?))
+                analyticsID: Arg.eq(BridgeExpectations.analyticsID as String?)
+            )
         )
 
         XCTAssertRejects(promises.push(bridge.executeMethod("openDeeplink", arguments: [:])))
@@ -106,7 +110,8 @@ class webviewJavascriptBridgeTests: XCTestCase {
             promises.push(
                 bridge.executeMethod(
                     "openDeeplink", arguments: ["url": batchURL]
-                )))
+                ))
+        )
         XCTAssertResolves(
             "ok",
             promises.push(
@@ -116,7 +121,8 @@ class webviewJavascriptBridgeTests: XCTestCase {
                         "url": batchURL,
                         "openInApp": false,
                     ]
-                )))
+                ))
+        )
         XCTAssertResolves(
             "ok",
             promises.push(
@@ -126,7 +132,8 @@ class webviewJavascriptBridgeTests: XCTestCase {
                         "url": batchURL,
                         "openInApp": true,
                     ]
-                )))
+                ))
+        )
         XCTAssertResolves(
             "ok",
             promises.push(
@@ -137,7 +144,8 @@ class webviewJavascriptBridgeTests: XCTestCase {
                         "openInApp": true,
                         "analyticsID": 2,
                     ]
-                )))
+                ))
+        )
         XCTAssertResolves(
             "ok",
             promises.push(
@@ -148,7 +156,8 @@ class webviewJavascriptBridgeTests: XCTestCase {
                         "openInApp": true,
                         "analyticsID": NSNull(),
                     ]
-                )))
+                ))
+        )
         XCTAssertResolves(
             "ok",
             promises.push(
@@ -159,7 +168,8 @@ class webviewJavascriptBridgeTests: XCTestCase {
                         "openInApp": true,
                         "analyticsID": BridgeExpectations.analyticsID,
                     ]
-                )))
+                ))
+        )
 
         XCTAssertNoPendingPromise(promises)
         delegate.verify()
@@ -176,7 +186,8 @@ class webviewJavascriptBridgeTests: XCTestCase {
         )
         delegate.expect().call(
             delegate.bridge(
-                Arg.eq(bridge), shouldDismissMessageWithAnalyticsID: Arg.eq(BridgeExpectations.analyticsID as String?))
+                Arg.eq(bridge), shouldDismissMessageWithAnalyticsID: Arg.eq(BridgeExpectations.analyticsID as String?)
+            )
         )
 
         XCTAssertResolves("ok", promises.push(bridge.executeMethod("dismiss", arguments: [:])))
@@ -186,18 +197,20 @@ class webviewJavascriptBridgeTests: XCTestCase {
                 bridge.executeMethod(
                     "dismiss",
                     arguments: [
-                        "analyticsID": 2
+                        "analyticsID": 2,
                     ]
-                )))
+                ))
+        )
         XCTAssertResolves(
             "ok",
             promises.push(
                 bridge.executeMethod(
                     "dismiss",
                     arguments: [
-                        "analyticsID": BridgeExpectations.analyticsID
+                        "analyticsID": BridgeExpectations.analyticsID,
                     ]
-                )))
+                ))
+        )
 
         XCTAssertNoPendingPromise(promises)
         delegate.verify()
@@ -212,7 +225,8 @@ class webviewJavascriptBridgeTests: XCTestCase {
                 Arg.eq(bridge),
                 shouldPerformAction: Arg.eq("batch.test"),
                 arguments: Arg.eq([:]),
-                analyticsID: Arg.eq(nil))
+                analyticsID: Arg.eq(nil)
+            )
         )
 
         delegate.expect().call(
@@ -220,7 +234,8 @@ class webviewJavascriptBridgeTests: XCTestCase {
                 Arg.eq(bridge),
                 shouldPerformAction: Arg.eq("batch.test"),
                 arguments: Arg.eq(["arg1": "value"]),
-                analyticsID: Arg.eq(nil)),
+                analyticsID: Arg.eq(nil)
+            ),
             count: 2
         )
 
@@ -229,7 +244,8 @@ class webviewJavascriptBridgeTests: XCTestCase {
                 Arg.eq(bridge),
                 shouldPerformAction: Arg.eq("batch.test"),
                 arguments: Arg.eq(["arg1": "value"]),
-                analyticsID: Arg.eq(" "))
+                analyticsID: Arg.eq(" ")
+            )
         )
 
         delegate.expect().call(
@@ -237,7 +253,8 @@ class webviewJavascriptBridgeTests: XCTestCase {
                 Arg.eq(bridge),
                 shouldPerformAction: Arg.eq("batch.test"),
                 arguments: Arg.eq(["arg1": "value"]),
-                analyticsID: Arg.eq(BridgeExpectations.analyticsID as String?))
+                analyticsID: Arg.eq(BridgeExpectations.analyticsID as String?)
+            )
         )
 
         XCTAssertRejects(promises.push(bridge.executeMethod("performAction", arguments: [:])))
@@ -262,7 +279,8 @@ class webviewJavascriptBridgeTests: XCTestCase {
                         "name": "batch.test",
                         "args": [:],
                     ]
-                )))
+                ))
+        )
         XCTAssertResolves(
             "ok",
             promises.push(
@@ -271,10 +289,11 @@ class webviewJavascriptBridgeTests: XCTestCase {
                     arguments: [
                         "name": "batch.test",
                         "args": [
-                            "arg1": "value"
+                            "arg1": "value",
                         ],
                     ]
-                )))
+                ))
+        )
         XCTAssertResolves(
             "ok",
             promises.push(
@@ -283,11 +302,12 @@ class webviewJavascriptBridgeTests: XCTestCase {
                     arguments: [
                         "name": "batch.test",
                         "args": [
-                            "arg1": "value"
+                            "arg1": "value",
                         ],
                         "analyticsID": 2,
                     ]
-                )))
+                ))
+        )
         XCTAssertResolves(
             "ok",
             promises.push(
@@ -296,11 +316,12 @@ class webviewJavascriptBridgeTests: XCTestCase {
                     arguments: [
                         "name": "batch.test",
                         "args": [
-                            "arg1": "value"
+                            "arg1": "value",
                         ],
                         "analyticsID": " ",
                     ]
-                )))
+                ))
+        )
         XCTAssertResolves(
             "ok",
             promises.push(
@@ -309,18 +330,19 @@ class webviewJavascriptBridgeTests: XCTestCase {
                     arguments: [
                         "name": "batch.test",
                         "args": [
-                            "arg1": "value"
+                            "arg1": "value",
                         ],
                         "analyticsID": BridgeExpectations.analyticsID,
                     ]
-                )))
+                ))
+        )
 
         XCTAssertNoPendingPromise(promises)
         delegate.verify()
     }
 }
 
-fileprivate struct BridgeExpectations {
+fileprivate enum BridgeExpectations {
     static let installationID: NSString = "install"
     static let customLanguage: NSString = "xx"
     static let customRegion: NSString = "XX"
@@ -332,7 +354,6 @@ fileprivate struct BridgeExpectations {
 }
 
 fileprivate class MockBridgeDelegate: Mock, BATWebviewJavascriptBridgeDelegate {
-
     func bridge(_ bridge: BATWebviewJavascriptBridge, shouldDismissMessageWithAnalyticsID analyticsIdentifier: String?)
     {
         super.call(bridge, analyticsIdentifier)
@@ -351,11 +372,9 @@ fileprivate class MockBridgeDelegate: Mock, BATWebviewJavascriptBridgeDelegate {
     ) {
         super.call(bridge, action, arguments, analyticsIdentifier)
     }
-
 }
 
 fileprivate class MockBridge: BATWebviewJavascriptBridge {
-
     var shouldReturnCustomDatas = true
     var shouldReturnAttributionID = true
 
@@ -396,7 +415,6 @@ fileprivate class MockBridge: BATWebviewJavascriptBridge {
         }
         return BAPromise.resolved(BridgeExpectations.customUserID)
     }
-
 }
 
 fileprivate class MockBatchMessage: BatchMessage {

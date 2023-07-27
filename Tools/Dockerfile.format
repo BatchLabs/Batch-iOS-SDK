@@ -1,0 +1,18 @@
+FROM swift:jammy
+
+ENV DEBIAN_FRONTEND noninteractive
+
+# Clang-format
+RUN apt-get update -y && apt-get install -y clang-format-14 && \
+	mv /usr/bin/clang-format-14 /usr/bin/clang-format
+
+COPY .clang-format /data/.clang-format
+COPY .clang-format-version /data/.clang-format-version
+COPY .swift-version /data/.swift-version
+COPY .swiftformat /data/.swiftformat
+COPY Tools /data/Tools
+
+RUN cd /data/Tools && swift run -c release swiftformat || true
+
+WORKDIR "/data/Tools/Scripts"
+ENTRYPOINT ["/bin/bash"]

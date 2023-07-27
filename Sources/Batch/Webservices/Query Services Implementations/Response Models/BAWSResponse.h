@@ -26,7 +26,6 @@
 
 @end
 
-
 /*!
  @class BAWSResponse
  @abstract Basic response implementation.

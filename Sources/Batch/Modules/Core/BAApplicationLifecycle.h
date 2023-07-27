@@ -30,14 +30,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 NS_ASSUME_NONNULL_END
 
-// The following documents the various notifications and callbacks with their corresponding UIApplication and UIScene 
+// The following documents the various notifications and callbacks with their corresponding UIApplication and UIScene
 
 // ---------
 // App is using UIScene on iOS 14
 // ---------
 //
-// Note that "application:didReceiveRemoteNotification:"/"application:didReceiveRemoteNotification:fetchCompletionHandler:"
-// are NEVER called for standard notifications (unless it's a background fetch). UNUserNotificationCenter NEEDS to be implemented.
+// Note that
+// "application:didReceiveRemoteNotification:"/"application:didReceiveRemoteNotification:fetchCompletionHandler:" are
+// NEVER called for standard notifications (unless it's a background fetch). UNUserNotificationCenter NEEDS to be
+// implemented.
 //
 // Cold open
 // Lifecycle - application:didFinishLaunchingWithOptions: - State: Background - Scene: Unattached
@@ -105,15 +107,15 @@ NS_ASSUME_NONNULL_END
 // Lifecycle - UISceneWillEnterForegroundNotification - State: Background - Scene: No UIScene
 // Lifecycle - UIApplicationWillEnterForegroundNotification - State: Background - Scene: No UIScene
 // Lifecycle - userNotificationCenter:didReceive: - State: Inactive - Scene: No UIScene
-// Lifecycle - application:didReceiveRemoteNotification:fetchCompletionHandler: - State: Inactive - Scene: No UIScene // (only if no UN delegate)
-// Lifecycle - UISceneDidActivateNotification - State: Inactive - Scene: No UIScene
-// Lifecycle - UIApplicationDidBecomeActiveNotification - State: Active - Scene: No UIScene
+// Lifecycle - application:didReceiveRemoteNotification:fetchCompletionHandler: - State: Inactive - Scene: No UIScene //
+// (only if no UN delegate) Lifecycle - UISceneDidActivateNotification - State: Inactive - Scene: No UIScene Lifecycle -
+// UIApplicationDidBecomeActiveNotification - State: Active - Scene: No UIScene
 //
 // Notification (no bg refresh) cold open (app is killed)
 // Lifecycle - application:didFinishLaunchingWithOptions: - State: Inactive - Scene: No UIScene
 // Lifecycle - UIApplicationDidFinishLaunchingNotification - State: Inactive - Scene: No UIScene
-// Lifecycle - application:didReceiveRemoteNotification:fetchCompletionHandler: - State: Inactive - Scene: No UIScene // (only if no UN delegate)
-// Lifecycle - userNotificationCenter:didReceive: - State: Inactive - Scene: No UIScene
+// Lifecycle - application:didReceiveRemoteNotification:fetchCompletionHandler: - State: Inactive - Scene: No UIScene //
+// (only if no UN delegate) Lifecycle - userNotificationCenter:didReceive: - State: Inactive - Scene: No UIScene
 // Lifecycle - UISceneDidActivateNotification - State: Inactive - Scene: No UIScene
 // Lifecycle - UIApplicationDidBecomeActiveNotification - State: Active - Scene: No UIScene
 //

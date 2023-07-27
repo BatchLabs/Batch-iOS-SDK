@@ -4,6 +4,6 @@
 
 @interface BAUserDataBuiltinActions : NSObject
 
-+ (BatchUserAction*)tagEditAction;
++ (BatchUserAction *)tagEditAction;
 
 @end

@@ -18,13 +18,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface BALocalCampaignsServiceDatasource : NSObject <BAQueryWebserviceClientDatasource>
 
-- (instancetype)initWithViewEvents:(nullable NSDictionary<NSString*, BALocalCampaignCountedEvent*>*)viewEvents;
+- (instancetype)initWithViewEvents:(nullable NSDictionary<NSString *, BALocalCampaignCountedEvent *> *)viewEvents;
 
 @end
 
 @interface BALocalCampaignsServiceDelegate : NSObject <BAQueryWebserviceClientDelegate>
 
-- (instancetype)initWithLocalCampaignsCenter:(BALocalCampaignsCenter*)center;
+- (instancetype)initWithLocalCampaignsCenter:(BALocalCampaignsCenter *)center;
 
 @end
 

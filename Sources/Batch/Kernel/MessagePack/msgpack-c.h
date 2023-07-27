@@ -27,47 +27,46 @@ THE SOFTWARE.
 
 struct bat_cmp_ctx_s;
 
-typedef bool   (*bat_cmp_reader)(struct bat_cmp_ctx_s *ctx, void *data, size_t limit);
-typedef bool   (*bat_cmp_skipper)(struct bat_cmp_ctx_s *ctx, size_t count);
-typedef size_t (*bat_cmp_writer)(struct bat_cmp_ctx_s *ctx, const void *data,
-                                                    size_t count);
+typedef bool (*bat_cmp_reader)(struct bat_cmp_ctx_s *ctx, void *data, size_t limit);
+typedef bool (*bat_cmp_skipper)(struct bat_cmp_ctx_s *ctx, size_t count);
+typedef size_t (*bat_cmp_writer)(struct bat_cmp_ctx_s *ctx, const void *data, size_t count);
 
 enum {
-  BAT_CMP_TYPE_POSITIVE_FIXNUM, /*  0 */
-  BAT_CMP_TYPE_FIXMAP,          /*  1 */
-  BAT_CMP_TYPE_FIXARRAY,        /*  2 */
-  BAT_CMP_TYPE_FIXSTR,          /*  3 */
-  BAT_CMP_TYPE_NIL,             /*  4 */
-  BAT_CMP_TYPE_BOOLEAN,         /*  5 */
-  BAT_CMP_TYPE_BIN8,            /*  6 */
-  BAT_CMP_TYPE_BIN16,           /*  7 */
-  BAT_CMP_TYPE_BIN32,           /*  8 */
-  BAT_CMP_TYPE_EXT8,            /*  9 */
-  BAT_CMP_TYPE_EXT16,           /* 10 */
-  BAT_CMP_TYPE_EXT32,           /* 11 */
-  BAT_CMP_TYPE_FLOAT,           /* 12 */
-  BAT_CMP_TYPE_DOUBLE,          /* 13 */
-  BAT_CMP_TYPE_UINT8,           /* 14 */
-  BAT_CMP_TYPE_UINT16,          /* 15 */
-  BAT_CMP_TYPE_UINT32,          /* 16 */
-  BAT_CMP_TYPE_UINT64,          /* 17 */
-  BAT_CMP_TYPE_SINT8,           /* 18 */
-  BAT_CMP_TYPE_SINT16,          /* 19 */
-  BAT_CMP_TYPE_SINT32,          /* 20 */
-  BAT_CMP_TYPE_SINT64,          /* 21 */
-  BAT_CMP_TYPE_FIXEXT1,         /* 22 */
-  BAT_CMP_TYPE_FIXEXT2,         /* 23 */
-  BAT_CMP_TYPE_FIXEXT4,         /* 24 */
-  BAT_CMP_TYPE_FIXEXT8,         /* 25 */
-  BAT_CMP_TYPE_FIXEXT16,        /* 26 */
-  BAT_CMP_TYPE_STR8,            /* 27 */
-  BAT_CMP_TYPE_STR16,           /* 28 */
-  BAT_CMP_TYPE_STR32,           /* 29 */
-  BAT_CMP_TYPE_ARRAY16,         /* 30 */
-  BAT_CMP_TYPE_ARRAY32,         /* 31 */
-  BAT_CMP_TYPE_MAP16,           /* 32 */
-  BAT_CMP_TYPE_MAP32,           /* 33 */
-  BAT_CMP_TYPE_NEGATIVE_FIXNUM  /* 34 */
+    BAT_CMP_TYPE_POSITIVE_FIXNUM, /*  0 */
+    BAT_CMP_TYPE_FIXMAP,          /*  1 */
+    BAT_CMP_TYPE_FIXARRAY,        /*  2 */
+    BAT_CMP_TYPE_FIXSTR,          /*  3 */
+    BAT_CMP_TYPE_NIL,             /*  4 */
+    BAT_CMP_TYPE_BOOLEAN,         /*  5 */
+    BAT_CMP_TYPE_BIN8,            /*  6 */
+    BAT_CMP_TYPE_BIN16,           /*  7 */
+    BAT_CMP_TYPE_BIN32,           /*  8 */
+    BAT_CMP_TYPE_EXT8,            /*  9 */
+    BAT_CMP_TYPE_EXT16,           /* 10 */
+    BAT_CMP_TYPE_EXT32,           /* 11 */
+    BAT_CMP_TYPE_FLOAT,           /* 12 */
+    BAT_CMP_TYPE_DOUBLE,          /* 13 */
+    BAT_CMP_TYPE_UINT8,           /* 14 */
+    BAT_CMP_TYPE_UINT16,          /* 15 */
+    BAT_CMP_TYPE_UINT32,          /* 16 */
+    BAT_CMP_TYPE_UINT64,          /* 17 */
+    BAT_CMP_TYPE_SINT8,           /* 18 */
+    BAT_CMP_TYPE_SINT16,          /* 19 */
+    BAT_CMP_TYPE_SINT32,          /* 20 */
+    BAT_CMP_TYPE_SINT64,          /* 21 */
+    BAT_CMP_TYPE_FIXEXT1,         /* 22 */
+    BAT_CMP_TYPE_FIXEXT2,         /* 23 */
+    BAT_CMP_TYPE_FIXEXT4,         /* 24 */
+    BAT_CMP_TYPE_FIXEXT8,         /* 25 */
+    BAT_CMP_TYPE_FIXEXT16,        /* 26 */
+    BAT_CMP_TYPE_STR8,            /* 27 */
+    BAT_CMP_TYPE_STR16,           /* 28 */
+    BAT_CMP_TYPE_STR32,           /* 29 */
+    BAT_CMP_TYPE_ARRAY16,         /* 30 */
+    BAT_CMP_TYPE_ARRAY32,         /* 31 */
+    BAT_CMP_TYPE_MAP16,           /* 32 */
+    BAT_CMP_TYPE_MAP32,           /* 33 */
+    BAT_CMP_TYPE_NEGATIVE_FIXNUM  /* 34 */
 };
 
 enum {
@@ -93,40 +92,40 @@ enum {
 };
 
 typedef struct bat_cmp_ext_s {
-  int8_t type;
-  uint32_t size;
+    int8_t type;
+    uint32_t size;
 } bat_cmp_ext_t;
 
 union bat_cmp_object_data_u {
-  bool      boolean;
-  uint8_t   u8;
-  uint16_t  u16;
-  uint32_t  u32;
-  uint64_t  u64;
-  int8_t    s8;
-  int16_t   s16;
-  int32_t   s32;
-  int64_t   s64;
-  float     flt;
-  double    dbl;
-  uint32_t  array_size;
-  uint32_t  map_size;
-  uint32_t  str_size;
-  uint32_t  bin_size;
-  bat_cmp_ext_t ext;
+    bool boolean;
+    uint8_t u8;
+    uint16_t u16;
+    uint32_t u32;
+    uint64_t u64;
+    int8_t s8;
+    int16_t s16;
+    int32_t s32;
+    int64_t s64;
+    float flt;
+    double dbl;
+    uint32_t array_size;
+    uint32_t map_size;
+    uint32_t str_size;
+    uint32_t bin_size;
+    bat_cmp_ext_t ext;
 };
 
 typedef struct bat_cmp_ctx_s {
-  uint8_t      error;
-  void        *buf;
-  bat_cmp_reader   read;
-  bat_cmp_skipper  skip;
-  bat_cmp_writer   write;
+    uint8_t error;
+    void *buf;
+    bat_cmp_reader read;
+    bat_cmp_skipper skip;
+    bat_cmp_writer write;
 } bat_cmp_ctx_t;
 
 typedef struct bat_cmp_object_s {
-  uint8_t type;
-  union bat_cmp_object_data_u as;
+    uint8_t type;
+    union bat_cmp_object_data_u as;
 } bat_cmp_object_t;
 
 /*
@@ -146,9 +145,7 @@ typedef struct bat_cmp_object_s {
  * If you don't intend to write, `write` may be NULL, but calling `*write*`
  * functions will crash; there is no check.
  */
-void bat_cmp_init(bat_cmp_ctx_t *ctx, void *buf, bat_cmp_reader read,
-                                         bat_cmp_skipper skip,
-                                         bat_cmp_writer write);
+void bat_cmp_init(bat_cmp_ctx_t *ctx, void *buf, bat_cmp_reader read, bat_cmp_skipper skip, bat_cmp_writer write);
 
 /* Returns CMP's version */
 uint32_t bat_cmp_version(void);
@@ -157,7 +154,7 @@ uint32_t bat_cmp_version(void);
 uint32_t bat_cmp_mp_version(void);
 
 /* Returns a string description of a CMP context's error */
-const char* bat_cmp_strerror(bat_cmp_ctx_t *ctx);
+const char *bat_cmp_strerror(bat_cmp_ctx_t *ctx);
 
 /* Writes a signed integer to the backend */
 bool bat_cmp_write_integer(bat_cmp_ctx_t *ctx, int64_t d);
@@ -234,8 +231,7 @@ bool bat_cmp_write_array(bat_cmp_ctx_t *ctx, uint32_t size);
 bool bat_cmp_write_map(bat_cmp_ctx_t *ctx, uint32_t size);
 
 /* Writes an extended type to the backend */
-bool bat_cmp_write_ext(bat_cmp_ctx_t *ctx, int8_t type, uint32_t size,
-                                   const void *data);
+bool bat_cmp_write_ext(bat_cmp_ctx_t *ctx, int8_t type, uint32_t size, const void *data);
 
 /*
  * Writes the extended type marker to the backend.  This is useful if you want
@@ -306,7 +302,7 @@ bool bat_cmp_read_str_size(bat_cmp_ctx_t *ctx, uint32_t *size);
 
 /*
  * Reads a string from the backend; according to the spec, the string's data
- * ought to be encoded using UTF-8, 
+ * ought to be encoded using UTF-8,
  */
 bool bat_cmp_read_str(bat_cmp_ctx_t *ctx, char *data, uint32_t *size);
 
@@ -379,9 +375,9 @@ bool bat_cmp_skip_object_flat(bat_cmp_ctx_t *ctx, bat_cmp_object_t *obj);
  */
 bool bat_cmp_skip_object_limit(bat_cmp_ctx_t *ctx, bat_cmp_object_t *obj, uint32_t limit)
 #ifdef __GNUC__
-  __attribute__((deprecated))
+    __attribute__((deprecated))
 #endif
-;
+    ;
 
 #ifdef _MSC_VER
 #pragma deprecated(bat_cmp_skip_object_limit)
@@ -458,14 +454,11 @@ bool bat_cmp_write_fixext16_marker(bat_cmp_ctx_t *ctx, int8_t type);
 bool bat_cmp_write_fixext16(bat_cmp_ctx_t *ctx, int8_t type, const void *data);
 
 bool bat_cmp_write_ext8_marker(bat_cmp_ctx_t *ctx, int8_t type, uint8_t size);
-bool bat_cmp_write_ext8(bat_cmp_ctx_t *ctx, int8_t type, uint8_t size,
-                                    const void *data);
+bool bat_cmp_write_ext8(bat_cmp_ctx_t *ctx, int8_t type, uint8_t size, const void *data);
 bool bat_cmp_write_ext16_marker(bat_cmp_ctx_t *ctx, int8_t type, uint16_t size);
-bool bat_cmp_write_ext16(bat_cmp_ctx_t *ctx, int8_t type, uint16_t size,
-                                     const void *data);
+bool bat_cmp_write_ext16(bat_cmp_ctx_t *ctx, int8_t type, uint16_t size, const void *data);
 bool bat_cmp_write_ext32_marker(bat_cmp_ctx_t *ctx, int8_t type, uint32_t size);
-bool bat_cmp_write_ext32(bat_cmp_ctx_t *ctx, int8_t type, uint32_t size,
-                                     const void *data);
+bool bat_cmp_write_ext32(bat_cmp_ctx_t *ctx, int8_t type, uint32_t size, const void *data);
 
 bool bat_cmp_read_pfix(bat_cmp_ctx_t *ctx, uint8_t *c);
 bool bat_cmp_read_nfix(bat_cmp_ctx_t *ctx, int8_t *c);
@@ -557,13 +550,12 @@ bool bat_cmp_object_to_bin(bat_cmp_ctx_t *ctx, bat_cmp_object_t *obj, void *data
  * ============================================================================
  */
 
-#define bat_cmp_write_int      bat_cmp_write_integer
-#define bat_cmp_write_sint     bat_cmp_write_integer
+#define bat_cmp_write_int bat_cmp_write_integer
+#define bat_cmp_write_sint bat_cmp_write_integer
 #define bat_cmp_write_sinteger bat_cmp_write_integer
-#define bat_cmp_write_uint     bat_cmp_write_uinteger
-#define bat_cmp_read_sinteger  bat_cmp_read_integer
+#define bat_cmp_write_uint bat_cmp_write_uinteger
+#define bat_cmp_read_sinteger bat_cmp_read_integer
 
 #endif /* BAT_CMP_H__ */
 
 /* vi: set et ts=2 sw=2: */
-

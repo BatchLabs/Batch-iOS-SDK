@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Batch SDK. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <Batch/BAEvent.h>
+#import <Foundation/Foundation.h>
 
 /*!
  @protocol BAEventDatasourceProtocol
@@ -56,7 +56,7 @@
  @param state   :   State to update to
  @param events  :   Event IDs to update (NSArray of NSString)
  */
-- (void)updateEventsStateTo:(BAEventState)state forEventsIdentifier:(NSArray*)events;
+- (void)updateEventsStateTo:(BAEventState)state forEventsIdentifier:(NSArray *)events;
 
 /*!
  @method deleteEvents:

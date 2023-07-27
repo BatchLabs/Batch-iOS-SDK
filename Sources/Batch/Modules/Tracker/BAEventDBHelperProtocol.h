@@ -6,8 +6,9 @@
 //  Copyright (c) 2014 Batch SDK. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <Batch/BAEvent.h>
+#import <Foundation/Foundation.h>
+#import <sqlite3.h>
 
 /*!
  @protocol BAEventDBHelperProtocol
@@ -36,6 +37,6 @@
  @param statement precompiled statement to bind the event to
  @return YES if insertion has been populated, NO otherwise.
  */
-- (BOOL)bindEvent:(BAEvent*)event withStatement:(sqlite3_stmt **)statement __attribute__((warn_unused_result));
+- (BOOL)bindEvent:(BAEvent *)event withStatement:(sqlite3_stmt **)statement __attribute__((warn_unused_result));
 
 @end

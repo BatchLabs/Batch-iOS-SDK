@@ -15,13 +15,13 @@
  @abstract Generate a custom user agent from application an mobile infos.
  @return Formated string description of the user agent.
  */
-+ (NSString*)userAgent;
++ (NSString *)userAgent;
 
 /*!
  @method acceptLanguage
  @abstract Generate a custom accect language from device locale.
  @return Formated string.
  */
-+ (NSString*)acceptLanguage;
++ (NSString *)acceptLanguage;
 
 @end

@@ -7,8 +7,7 @@
 
 #import <Foundation/Foundation.h>
 
-
-@interface BATGZIP: NSObject
+@interface BATGZIP : NSObject
 
 // Gzip data. If the data is already Gzipped, this returns the original data
 + (nullable NSData *)dataByGzipping:(nullable NSData *)data;

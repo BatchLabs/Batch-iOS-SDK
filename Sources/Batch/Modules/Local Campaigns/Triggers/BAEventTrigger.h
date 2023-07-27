@@ -5,8 +5,8 @@
 //  Copyright © 2016 Batch. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <Batch/BALocalCampaignTriggerProtocol.h>
+#import <Foundation/Foundation.h>
 
 @interface BAEventTrigger : NSObject <BALocalCampaignTriggerProtocol>
 

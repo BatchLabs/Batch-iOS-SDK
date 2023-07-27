@@ -9,6 +9,6 @@
 
 - (void)presentAnimated;
 
-- (BAPromise*)dismissAnimated;
+- (BAPromise *)dismissAnimated;
 
 @end

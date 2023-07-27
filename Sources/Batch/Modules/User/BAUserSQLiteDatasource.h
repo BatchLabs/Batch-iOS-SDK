@@ -6,11 +6,11 @@
 //  Copyright (c) 2015 Batch SDK. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <Batch/BAUserDatasourceProtocol.h>
 #import <Batch/BAInjection.h>
+#import <Batch/BAUserDatasourceProtocol.h>
+#import <Foundation/Foundation.h>
 
-@interface BAUserSQLiteDatasource : NSObject<BAUserDatasourceProtocol>
+@interface BAUserSQLiteDatasource : NSObject <BAUserDatasourceProtocol>
 
 + (BAUserSQLiteDatasource *)instance BATCH_USE_INJECTION_OUTSIDE_TESTS;
 

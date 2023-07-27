@@ -15,6 +15,6 @@
  @abstract Generate the hexadeciaml value of the data.
  @return Hexadecimal string.
  */
-+ (NSString *)hexStringValueForData:(NSData*)data;
++ (nonnull NSString *)hexStringValueForData:(nonnull NSData *)data;
 
 @end

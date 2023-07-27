@@ -10,7 +10,6 @@ import WebKit
 import XCTest
 
 class webviewBridgeLegacyTests: XCTestCase, BATWebviewBridgeLegacyWKHandlerWebViewSource {
-
     fileprivate let webViewMock = MockWKWebView()
     let contentController = WKUserContentController()
     var bridge: MinimalWebviewJavascriptBridge!
@@ -31,7 +30,8 @@ class webviewBridgeLegacyTests: XCTestCase, BATWebviewBridgeLegacyWKHandlerWebVi
                 "taskID": "2",
                 "method": "success",
                 "args": [:],
-            ]))
+            ])
+        )
 
         handler.userContentController(
             contentController,
@@ -39,7 +39,8 @@ class webviewBridgeLegacyTests: XCTestCase, BATWebviewBridgeLegacyWKHandlerWebVi
                 "taskID": NSNull(),
                 "method": "success",
                 "args": [:],
-            ]))
+            ])
+        )
 
         handler.userContentController(
             contentController,
@@ -47,7 +48,8 @@ class webviewBridgeLegacyTests: XCTestCase, BATWebviewBridgeLegacyWKHandlerWebVi
                 "taskID": nil,
                 "method": "success",
                 "args": [:],
-            ]))
+            ])
+        )
 
         handler.userContentController(
             contentController,
@@ -55,7 +57,8 @@ class webviewBridgeLegacyTests: XCTestCase, BATWebviewBridgeLegacyWKHandlerWebVi
                 "taskID": [],
                 "method": "success",
                 "args": [:],
-            ]))
+            ])
+        )
 
         handler.userContentController(
             contentController,
@@ -63,7 +66,8 @@ class webviewBridgeLegacyTests: XCTestCase, BATWebviewBridgeLegacyWKHandlerWebVi
                 "taskID": true,
                 "method": "success",
                 "args": [:],
-            ]))
+            ])
+        )
 
         handler.userContentController(
             contentController,
@@ -71,7 +75,8 @@ class webviewBridgeLegacyTests: XCTestCase, BATWebviewBridgeLegacyWKHandlerWebVi
                 "taskID": 2,
                 "method": "success",
                 "args": [:],
-            ]))
+            ])
+        )
 
         handler.userContentController(
             contentController,
@@ -79,7 +84,8 @@ class webviewBridgeLegacyTests: XCTestCase, BATWebviewBridgeLegacyWKHandlerWebVi
                 "taskID": -2,
                 "method": "success",
                 "args": [:],
-            ]))
+            ])
+        )
     }
 
     func testJavascriptCallbackEvaluation() {
@@ -88,7 +94,8 @@ class webviewBridgeLegacyTests: XCTestCase, BATWebviewBridgeLegacyWKHandlerWebVi
         webViewMock.it.expect().call(
             webViewMock.evaluateJavaScript(
                 Arg.eq(makeJSEvalExpectationForSuccess(expected: "ok", taskID: taskID)),
-                completionHandler: Arg.closure())
+                completionHandler: Arg.closure()
+            )
         )
 
         handler.userContentController(
@@ -97,14 +104,16 @@ class webviewBridgeLegacyTests: XCTestCase, BATWebviewBridgeLegacyWKHandlerWebVi
                 "taskID": taskID,
                 "method": "success",
                 "args": [:],
-            ]))
+            ])
+        )
 
         taskID = 25
 
         webViewMock.it.expect().call(
             webViewMock.evaluateJavaScript(
                 Arg.eq(makeJSEvalExpectationForSuccess(expected: "test_value", taskID: taskID)),
-                completionHandler: Arg.closure())
+                completionHandler: Arg.closure()
+            )
         )
 
         handler.userContentController(
@@ -113,14 +122,16 @@ class webviewBridgeLegacyTests: XCTestCase, BATWebviewBridgeLegacyWKHandlerWebVi
                 "taskID": taskID,
                 "method": "echo",
                 "args": ["value": "test_value"],
-            ]))
+            ])
+        )
 
         taskID = 26
 
         webViewMock.it.expect().call(
             webViewMock.evaluateJavaScript(
                 Arg.eq(makeJSEvalExpectationForSuccess(expected: nil, taskID: taskID)),
-                completionHandler: Arg.closure())
+                completionHandler: Arg.closure()
+            )
         )
 
         handler.userContentController(
@@ -129,14 +140,16 @@ class webviewBridgeLegacyTests: XCTestCase, BATWebviewBridgeLegacyWKHandlerWebVi
                 "taskID": taskID,
                 "method": "echo_nil",
                 "args": [:],
-            ]))
+            ])
+        )
 
         taskID = 30
 
         webViewMock.it.expect().call(
             webViewMock.evaluateJavaScript(
                 Arg.eq(makeJSEvalExpectationForError(expected: bridge.expectedErrorMessage, taskID: taskID)),
-                completionHandler: Arg.closure())
+                completionHandler: Arg.closure()
+            )
         )
 
         handler.userContentController(
@@ -145,36 +158,36 @@ class webviewBridgeLegacyTests: XCTestCase, BATWebviewBridgeLegacyWKHandlerWebVi
                 "taskID": taskID,
                 "method": "failure",
                 "args": [:],
-            ]))
+            ])
+        )
 
         webViewMock.it.verify()
     }
 
     func makeJSEvalExpectationForSuccess(expected result: String?, taskID: Int) -> String {
         var expectedResponse = "{}"
-        if let result = result {
+        if let result {
             expectedResponse = """
-                {\"result\":\"\(result)\"}
-                """
+            {\"result\":\"\(result)\"}
+            """
         }
         return """
-            window.batchInAppSDK.__onWebkitCallback(\(taskID), \(expectedResponse));
-            """
+        window.batchInAppSDK.__onWebkitCallback(\(taskID), \(expectedResponse));
+        """
     }
 
     func makeJSEvalExpectationForError(expected error: String, taskID: Int) -> String {
         return """
-            window.batchInAppSDK.__onWebkitCallback(\(taskID), {\"error\":\"\(error)\"});
-            """
+        window.batchInAppSDK.__onWebkitCallback(\(taskID), {\"error\":\"\(error)\"});
+        """
     }
 
-    func backingWebView(forLegacyHandler handler: BATWebviewBridgeLegacyWKHandler) -> WKWebView? {
+    func backingWebView(forLegacyHandler _: BATWebviewBridgeLegacyWKHandler) -> WKWebView? {
         return webViewMock
     }
 }
 
 fileprivate class MockWKWebView: WKWebView, MockDelegate {
-
     private let mock = Mock()
 
     var it: Mock {

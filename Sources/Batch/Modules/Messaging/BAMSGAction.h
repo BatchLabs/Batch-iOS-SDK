@@ -10,7 +10,7 @@
 @interface BAMSGAction : NSObject
 
 @property (nullable) NSString *actionIdentifier;
-@property (nonnull) NSDictionary<NSString*, NSObject*> *actionArguments;
+@property (nonnull) NSDictionary<NSString *, NSObject *> *actionArguments;
 
 - (BOOL)isDismissAction;
 

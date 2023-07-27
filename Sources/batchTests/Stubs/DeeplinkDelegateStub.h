@@ -5,10 +5,10 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <Batch/Batch.h>
+#import <Foundation/Foundation.h>
 
-@interface DeeplinkDelegateStub: NSObject <BatchDeeplinkDelegate>
+@interface DeeplinkDelegateStub : NSObject <BatchDeeplinkDelegate>
 
 @property (assign) BOOL hasOpenBeenCalled;
 

@@ -10,7 +10,7 @@
 @interface BAMetricWebserviceClient : BAWebserviceMsgPackClient <BAConnectionDelegate>
 
 - (nullable instancetype)initWithMetrics:(nonnull NSArray *)metrics
-                                  success:(void (^ _Nullable)(void))successHandler
-                                    error:(void (^ _Nullable)(NSError* _Nonnull error))errorHandler;
+                                 success:(void (^_Nullable)(void))successHandler
+                                   error:(void (^_Nullable)(NSError *_Nonnull error))errorHandler;
 
 @end

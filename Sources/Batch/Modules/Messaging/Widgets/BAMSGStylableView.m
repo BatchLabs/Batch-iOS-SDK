@@ -8,6 +8,7 @@
 #import <Batch/BAMSGBaseContainerView.h>
 #import <Batch/BAMSGGradientView.h>
 #import <Batch/BAMSGStylableView.h>
+#import <Batch/BAMessagingCenter.h>
 
 @implementation BAMSGStylableViewHelper
 
@@ -267,7 +268,10 @@
             labelFont = guessedFont;
         }
     }
-
+    if ([BAMessagingCenter instance].enableDynamicType) {
+        // Scales font if dynamic type is enabled
+        labelFont = [[UIFontMetrics defaultMetrics] scaledFontForFont:labelFont];
+    }
     return labelFont;
 }
 

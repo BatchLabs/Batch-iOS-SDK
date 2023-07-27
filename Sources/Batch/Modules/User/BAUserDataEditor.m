@@ -7,6 +7,7 @@
 //
 
 #import <Batch/BACoreCenter.h>
+#import <Batch/BAEmailUtils.h>
 #import <Batch/BAInjection.h>
 #import <Batch/BAOptOut.h>
 #import <Batch/BAParameter.h>
@@ -15,21 +16,25 @@
 #import <Batch/BAUserDataEditor.h>
 #import <Batch/BAUserDataManager.h>
 #import <Batch/BAUserDatasourceProtocol.h>
+#import <Batch/BAUserEmailSubscription.h>
 #import <Batch/BAUserProfile.h>
 #import <Batch/BAUserSQLiteDatasource.h>
-#import <Batch/BatchUser.h>
 
 #define PUBLIC_DOMAIN @"BatchUser - Editor"
 #define DEBUG_DOMAIN @"UserDataEditor"
 
-#define LANGAGUE_INDEX 0
+#define LANGUAGE_INDEX 0
 #define REGION_INDEX 1
 #define IDENTIFIER_INDEX 2
 
 #define ATTRIBUTE_NAME_RULE @"^[a-zA-Z0-9_]{1,30}$"
-//#define TAG_VALUE_RULE @"^[a-zA-Z0-9_]{1,255}$"
+
+// #define TAG_VALUE_RULE @"^[a-zA-Z0-9_]{1,255}$"
 #define ATTR_STRING_MAX_LENGTH 64
 #define ATTR_URL_MAX_LENGTH 2048
+
+/// Waiting time before editor apply the save operation (in ms)
+#define DISPATCH_QUEUE_TIMER 500
 
 #define VALIDATE_ATTRIBUTE_KEY_OR_BAIL()                  \
     key = [self validateAndNormalizeKey:key error:error]; \
@@ -64,6 +69,9 @@
     NSRegularExpression *_attributeNameValidationRegexp;
     BOOL _updatedFields[3];
     NSString *_userFields[3];
+
+    /// Email subscription
+    BAUserEmailSubscription *_emailSubscription;
 }
 
 - (instancetype)init {
@@ -103,8 +111,8 @@
         }
     }
 
-    _updatedFields[LANGAGUE_INDEX] = YES;
-    _userFields[LANGAGUE_INDEX] = language;
+    _updatedFields[LANGUAGE_INDEX] = YES;
+    _userFields[LANGUAGE_INDEX] = language;
 }
 
 - (void)setRegion:(nullable NSString *)region {
@@ -134,6 +142,64 @@
 
     _updatedFields[IDENTIFIER_INDEX] = YES;
     _userFields[IDENTIFIER_INDEX] = identifier;
+}
+
+- (BOOL)setEmail:(nullable NSString *)email error:(NSError **)error {
+    INIT_AND_BLANK_ERROR_IF_NEEDED(error)
+
+    // Ensure we already have a custom user identifier
+    // or setIdentifier has been previously called in this editor instance
+    if ([BatchUser identifier] == nil &&
+        (_updatedFields[IDENTIFIER_INDEX] == NO ||
+         (_updatedFields[IDENTIFIER_INDEX] == YES && _userFields[IDENTIFIER_INDEX] == nil))) {
+        *error = [self
+            logAndMakeSaveErrorWithCode:BatchUserDataEditorErrorInternal
+                                 reason:@"setEmail called even though no custom user id is set. Please ensure to call "
+                                        @"setIdentifier before using this method."];
+        return false;
+    }
+
+    // Deleting case
+    if (email == nil) {
+        if (_emailSubscription == nil) {
+            _emailSubscription = [[BAUserEmailSubscription alloc] initWithEmail:nil];
+        } else {
+            [_emailSubscription setEmail:nil];
+        }
+        return true;
+    }
+
+    // Ensure email is not too long
+    if ([BAEmailUtils isEmailTooLong:email]) {
+        *error =
+            [self logAndMakeSaveErrorWithCode:BatchUserDataEditorErrorInvalidValue
+                                       reason:@"Email can't be longer than %d characters. Ignoring.", EMAIL_MAX_LENGTH];
+        return false;
+    }
+
+    // Ensure email is valid
+    if (![BAEmailUtils isValidEmail:email]) {
+        *error = [self logAndMakeSaveErrorWithCode:BatchUserDataEditorErrorInvalidValue
+                                            reason:@"setEmail called with invalid email format. Please ensure to "
+                                                   @"respect the following regex: .@.\\..* "];
+        return false;
+    }
+
+    if (_emailSubscription == nil) {
+        _emailSubscription = [[BAUserEmailSubscription alloc]
+            initWithEmail:[email stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
+    } else {
+        [_emailSubscription setEmail:[email stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
+    }
+
+    return true;
+}
+
+- (void)setEmailMarketingSubscriptionState:(BatchEmailSubscriptionState)state {
+    if (_emailSubscription == nil) {
+        _emailSubscription = [[BAUserEmailSubscription alloc] init];
+    }
+    [_emailSubscription setEmailSubscriptionState:state forKind:BAEmailKindMarketing];
 }
 
 - (void)setAttribute:(nullable NSObject *)attribute forKey:(nonnull NSString *)key {
@@ -175,9 +241,9 @@
     INIT_AND_BLANK_ERROR_IF_NEEDED(error)
     VALIDATE_ATTRIBUTE_KEY_OR_BAIL()
 
-    __unsafe_unretained typeof(self) weakSelf = self;
     [self addToQueueSynchronized:^BOOL() {
-      return [weakSelf->_datasource setBoolAttribute:attribute forKey:key];
+      id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+      return [datasource setBoolAttribute:attribute forKey:key];
     }];
 
     return true;
@@ -188,9 +254,9 @@
     VALIDATE_ATTRIBUTE_KEY_OR_BAIL()
     ENSURE_ATTRIBUTE_VALUE_CLASS(attribute, [NSDate class])
 
-    __unsafe_unretained typeof(self) weakSelf = self;
     [self addToQueueSynchronized:^BOOL() {
-      return [weakSelf->_datasource setDateAttribute:attribute forKey:key];
+      id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+      return [datasource setDateAttribute:attribute forKey:key];
     }];
 
     return true;
@@ -212,9 +278,9 @@
         return false;
     }
 
-    __unsafe_unretained typeof(self) weakSelf = self;
     [self addToQueueSynchronized:^BOOL() {
-      return [weakSelf->_datasource setStringAttribute:(NSString *)attribute forKey:key];
+      id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+      return [datasource setStringAttribute:(NSString *)attribute forKey:key];
     }];
 
     return true;
@@ -244,9 +310,9 @@
         return false;
     }
 
-    __unsafe_unretained typeof(self) weakSelf = self;
     [self addToQueueSynchronized:^BOOL() {
-      return [weakSelf->_datasource setURLAttribute:(NSURL *)attribute forKey:key];
+      id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+      return [datasource setURLAttribute:(NSURL *)attribute forKey:key];
     }];
 
     return true;
@@ -257,7 +323,6 @@
     VALIDATE_ATTRIBUTE_KEY_OR_BAIL()
     ENSURE_ATTRIBUTE_VALUE_CLASS(numberAttr, [NSNumber class])
 
-    __unsafe_unretained typeof(self) weakSelf = self;
     BOOL (^operationBlock)(void);
 
     const char *ctype = [numberAttr objCType];
@@ -269,36 +334,44 @@
     [BALogger debugForDomain:DEBUG_DOMAIN message:@"Attribute for key '%@' is a NSNumber: %s", key, ctype];
     if (numberAttr == (id)kCFBooleanTrue || numberAttr == (id)kCFBooleanFalse) {
         operationBlock = ^BOOL() {
-          return [weakSelf->_datasource setBoolAttribute:[numberAttr boolValue] forKey:key];
+          id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+          return [datasource setBoolAttribute:[numberAttr boolValue] forKey:key];
         };
     } else if (strcmp(ctype, @encode(short)) == 0 || strcmp(ctype, @encode(int)) == 0 ||
                strcmp(ctype, @encode(long)) == 0 || strcmp(ctype, @encode(long long)) == 0) {
         operationBlock = ^BOOL() {
-          return [weakSelf->_datasource setLongLongAttribute:[numberAttr longLongValue] forKey:key];
+          id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+          return [datasource setLongLongAttribute:[numberAttr longLongValue] forKey:key];
         };
     } else if (strcmp(ctype, @encode(char)) == 0) {
         // Usually chars are booleans, even shorts are stored as ints.
         char val = [numberAttr charValue];
         if (val == 0 || val == 1) {
             operationBlock = ^BOOL() {
-              return [weakSelf->_datasource setBoolAttribute:[numberAttr boolValue] forKey:key];
+              id<BAUserDatasourceProtocol> datasource =
+                  [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+              return [datasource setBoolAttribute:[numberAttr boolValue] forKey:key];
             };
         } else {
             operationBlock = ^BOOL() {
-              return [weakSelf->_datasource setLongLongAttribute:[numberAttr charValue] forKey:key];
+              id<BAUserDatasourceProtocol> datasource =
+                  [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+              return [datasource setLongLongAttribute:[numberAttr charValue] forKey:key];
             };
         }
     }
     // Decimal values
     else if (strcmp(ctype, @encode(float)) == 0 || strcmp(ctype, @encode(double)) == 0) {
         operationBlock = ^BOOL() {
-          return [weakSelf->_datasource setDoubleAttribute:[numberAttr doubleValue] forKey:key];
+          id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+          return [datasource setDoubleAttribute:[numberAttr doubleValue] forKey:key];
         };
     }
     // According to the documentation that's not supported, but give it a shot
     else if (strcmp(ctype, @encode(BOOL)) == 0) {
         operationBlock = ^BOOL() {
-          return [weakSelf->_datasource setBoolAttribute:[numberAttr boolValue] forKey:key];
+          id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+          return [datasource setBoolAttribute:[numberAttr boolValue] forKey:key];
         };
     } else {
         // Try to make it work in a long long
@@ -306,7 +379,9 @@
         if ([numberAttr isEqualToNumber:[NSNumber numberWithLongLong:val]]) {
             // Yay it worked, allow it. You're lucky we're in a good mood ;)
             operationBlock = ^BOOL() {
-              return [weakSelf->_datasource setLongLongAttribute:val forKey:key];
+              id<BAUserDatasourceProtocol> datasource =
+                  [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+              return [datasource setLongLongAttribute:val forKey:key];
             };
         }
     }
@@ -330,9 +405,9 @@
     INIT_AND_BLANK_ERROR_IF_NEEDED(error)
     VALIDATE_ATTRIBUTE_KEY_OR_BAIL()
 
-    __unsafe_unretained typeof(self) weakSelf = self;
     [self addToQueueSynchronized:^BOOL() {
-      return [weakSelf->_datasource setLongLongAttribute:attribute forKey:key];
+      id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+      return [datasource setLongLongAttribute:attribute forKey:key];
     }];
 
     return true;
@@ -346,9 +421,9 @@
     INIT_AND_BLANK_ERROR_IF_NEEDED(error)
     VALIDATE_ATTRIBUTE_KEY_OR_BAIL()
 
-    __unsafe_unretained typeof(self) weakSelf = self;
     [self addToQueueSynchronized:^BOOL() {
-      return [weakSelf->_datasource setDoubleAttribute:attribute forKey:key];
+      id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+      return [datasource setDoubleAttribute:attribute forKey:key];
     }];
 
     return true;
@@ -364,18 +439,16 @@
 
     [BALogger debugForDomain:DEBUG_DOMAIN message:@"Removing attribute for key '%@'", key];
 
-    __unsafe_unretained typeof(self) weakSelf = self;
-
     [self addToQueueSynchronized:^BOOL {
-      return [weakSelf->_datasource removeAttributeNamed:key];
+      id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+      return [datasource removeAttributeNamed:key];
     }];
 }
 
 - (void)clearAttributes {
-    __unsafe_unretained typeof(self) weakSelf = self;
-
     [self addToQueueSynchronized:^BOOL {
-      return [weakSelf->_datasource clearAttributes];
+      id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+      return [datasource clearAttributes];
     }];
 }
 
@@ -401,10 +474,9 @@
 
     tag = [self normalizeTag:tag];
 
-    __unsafe_unretained typeof(self) weakSelf = self;
-
     [self addToQueueSynchronized:^BOOL {
-      return [weakSelf->_datasource addTag:tag toCollection:collection];
+      id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+      return [datasource addTag:tag toCollection:collection];
     }];
 }
 
@@ -430,18 +502,16 @@
 
     tag = [self normalizeTag:tag];
 
-    __unsafe_unretained typeof(self) weakSelf = self;
-
     [self addToQueueSynchronized:^BOOL {
-      return [weakSelf->_datasource removeTag:tag fromCollection:collection];
+      id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+      return [datasource removeTag:tag fromCollection:collection];
     }];
 }
 
 - (void)clearTags {
-    __unsafe_unretained typeof(self) weakSelf = self;
-
     [self addToQueueSynchronized:^BOOL {
-      return [weakSelf->_datasource clearTags];
+      id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+      return [datasource clearTags];
     }];
 }
 
@@ -455,10 +525,9 @@
         return;
     }
 
-    __unsafe_unretained typeof(self) weakSelf = self;
-
     [self addToQueueSynchronized:^BOOL {
-      return [weakSelf->_datasource clearTagsFromCollection:collection];
+      id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+      return [datasource clearTagsFromCollection:collection];
     }];
 }
 
@@ -466,65 +535,20 @@
  @param completion Used mainly for testing purposes. Called when saving operation completed or failed.
  */
 - (void)save:(void (^)(void))completion {
-    @synchronized(_operationQueue) {
-        NSArray<BOOL (^)(void)> *applyQueue = [self popOperationQueue];
-
-        dispatch_async([BAUserDataManager sharedQueue], ^{
-          if (![self canSave]) {
-              if (completion != nil) {
-                  completion();
-              }
-              return;
-          }
-
-          NSNumber *changeset = [BAParameter objectForKey:kParametersUserProfileDataVersionKey fallback:@(0)];
-          // Sanity
-          if (![changeset isKindOfClass:[NSNumber class]]) {
-              [BAParameter setValue:@(0) forKey:kParametersUserProfileDataVersionKey saved:YES];
-              changeset = @(0);
-          }
-
-          BAUserAttributes *oldAttributes = [self->_datasource attributes];
-          BAUserTagCollections *oldTagCollections = [self->_datasource tagCollections];
-
-          long long newChangeset = [changeset longLongValue] + 1;
-
-          if (![self writeChangesToDatasource:applyQueue changeset:newChangeset]) {
-              if (completion != nil) {
-                  completion();
-              }
-              return;
-          }
-
-          BAUserAttributes *newAttributes = [self->_datasource attributes];
-          BAUserTagCollections *newTagCollections = [self->_datasource tagCollections];
-
-          BAUserAttributesDiff *attributesDiff = [[BAUserAttributesDiff alloc] initWithNewAttributes:newAttributes
-                                                                                            previous:oldAttributes];
-          BAUserTagCollectionsDiff *tagCollectionsDiff =
-              [[BAUserTagCollectionsDiff alloc] initWithNewTagCollections:newTagCollections previous:oldTagCollections];
-
-          if ([attributesDiff hasChanges] || [tagCollectionsDiff hasChanges]) {
-              NSNumber *newChangesetNumber = @(newChangeset);
-              [BAParameter setValue:newChangesetNumber forKey:kParametersUserProfileDataVersionKey saved:YES];
-              [BAParameter removeObjectForKey:kParametersUserProfileTransactionIDKey];
-              [BAUserDataManager startAttributesSendWSWithDelay:0];
-
-              NSDictionary *eventParams = [BAUserDataDiffTransformer eventParametersFromAttributes:attributesDiff
-                                                                                    tagCollections:tagCollectionsDiff
-                                                                                           version:newChangesetNumber];
-              [BATrackerCenter trackPrivateEvent:@"_INSTALL_DATA_CHANGED" parameters:eventParams];
-
-              [BALogger debugForDomain:DEBUG_DOMAIN message:@"Changes in install occurred: YES"];
-          } else {
-              [BALogger debugForDomain:DEBUG_DOMAIN message:@"Changes in install occurred: NO"];
-          }
-
-          if (completion != nil) {
-              completion();
-          }
-        });
-    }
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(DISPATCH_QUEUE_TIMER * NSEC_PER_MSEC)),
+                   [BAUserDataManager sharedQueue], ^{
+                     NSArray<BOOL (^)(void)> *applyQueue;
+                     @synchronized(self->_operationQueue) {
+                         applyQueue = [self popOperationQueue];
+                     }
+                     if (![self canSave]) {
+                         if (completion != nil) {
+                             completion();
+                         }
+                         return;
+                     }
+                     [BAUserDataManager addOperationQueueAndSubmit:applyQueue withCompletion:completion];
+                   });
 }
 
 - (void)save {
@@ -548,32 +572,6 @@
     return true;
 }
 
-- (BOOL)writeChangesToDatasource:(NSArray<BOOL (^)(void)> *)applyQueue changeset:(long long)changeset {
-    if (![self->_datasource acquireTransactionLockWithChangeset:changeset]) {
-        [BALogger publicForDomain:PUBLIC_DOMAIN
-                          message:@"An internal error occurred while applying the changes. (Error code 35)"];
-        return false;
-    }
-
-    for (BOOL (^operation)(void) in applyQueue) {
-        if (!operation()) {
-            [self->_datasource rollbackTransaction];
-            [BALogger errorForDomain:DEBUG_DOMAIN message:@"Operation returned false"];
-            [BALogger publicForDomain:PUBLIC_DOMAIN
-                              message:@"An internal error occurred while applying the changes. (Error code 36)"];
-            return false;
-        }
-    }
-
-    if (![self->_datasource commitTransaction]) {
-        [BALogger publicForDomain:PUBLIC_DOMAIN
-                          message:@"An internal error occurred while applying the changes. (Error code 37)"];
-        return false;
-    }
-
-    return true;
-}
-
 - (NSArray<BOOL (^)(void)> *)operationQueue {
     return [_operationQueue copy];
 }
@@ -587,7 +585,7 @@
 }
 
 - (BOOL (^)(void))userUpdateOperation {
-    if (!_updatedFields[LANGAGUE_INDEX] && !_updatedFields[REGION_INDEX] && !_updatedFields[IDENTIFIER_INDEX]) {
+    if (!_updatedFields[LANGUAGE_INDEX] && !_updatedFields[REGION_INDEX] && !_updatedFields[IDENTIFIER_INDEX]) {
         // Nothing to do
         return nil;
     }
@@ -595,12 +593,12 @@
     return ^{
       NSString *previousUserFields[3];
       BAUserProfile *userProfile = [BAUserProfile defaultUserProfile];
-      previousUserFields[LANGAGUE_INDEX] = [userProfile language];
+      previousUserFields[LANGUAGE_INDEX] = [userProfile language];
       previousUserFields[REGION_INDEX] = [userProfile region];
       previousUserFields[IDENTIFIER_INDEX] = [userProfile customIdentifier];
 
-      if (self->_updatedFields[LANGAGUE_INDEX]) {
-          [userProfile setLanguage:self->_userFields[LANGAGUE_INDEX]];
+      if (self->_updatedFields[LANGUAGE_INDEX]) {
+          [userProfile setLanguage:self->_userFields[LANGUAGE_INDEX]];
       }
 
       if (self->_updatedFields[REGION_INDEX]) {
@@ -629,6 +627,16 @@
     };
 }
 
+- (BOOL (^)(void))emailUpdateOperation {
+    if (_emailSubscription == nil) {
+        return nil;
+    }
+    return ^{
+      [self->_emailSubscription sendEmailSubscriptionEvent];
+      return YES;
+    };
+}
+
 - (void)clearUserFieldsStates {
     _updatedFields[0] = NO;
     _updatedFields[1] = NO;
@@ -641,9 +649,15 @@
 - (NSArray<BOOL (^)(void)> *)popOperationQueue {
     NSMutableArray<BOOL (^)(void)> *applyQueue = [_operationQueue mutableCopy];
     [_operationQueue removeAllObjects];
+
     BOOL (^userUpdateOperation)(void) = [self userUpdateOperation];
     if (userUpdateOperation != nil) {
         [applyQueue insertObject:userUpdateOperation atIndex:0];
+    }
+
+    BOOL (^emailUpdateOperation)(void) = [self emailUpdateOperation];
+    if (emailUpdateOperation != nil) {
+        [applyQueue addObject:emailUpdateOperation];
     }
 
     return applyQueue;

@@ -9,8 +9,11 @@
 
 @interface BAMSGImageDownloader : NSObject
 
-+ (void)downloadImageForURL:(NSURL* _Nonnull)url
++ (void)downloadImageForURL:(NSURL *_Nonnull)url
             downloadTimeout:(NSTimeInterval)timeout
-          completionHandler:(void (^ __nonnull)(NSData* _Nullable rawData, BOOL isGif, UIImage* _Nullable image, NSError* _Nullable error))completionHandler;
+          completionHandler:(void (^__nonnull)(NSData *_Nullable rawData,
+                                               BOOL isGif,
+                                               UIImage *_Nullable image,
+                                               NSError *_Nullable error))completionHandler;
 
 @end

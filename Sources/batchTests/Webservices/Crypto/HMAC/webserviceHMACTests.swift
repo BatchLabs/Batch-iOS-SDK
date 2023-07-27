@@ -34,7 +34,8 @@ class webserviceHMACTests: XCTestCase {
         XCTAssertEqual(nil, request.allHTTPHeaderFields?["Content-SHA1"])
         XCTAssertEqual(
             "SHA256 content-type,foo,x-batch-cipher-version Gf8afLnF3TY/LqACciolOoALYeQSZ2dXy8Vxhfl7kI4=",
-            request.allHTTPHeaderFields?["X-Batch-Signature"] ?? "error")
+            request.allHTTPHeaderFields?["X-Batch-Signature"] ?? "error"
+        )
 
         let body =
             "!&é\"'(§è!çà)-12567890°_%^$mù`=*/.,?,;:=‘{«ÇøÇø}—ë‘¶Ç¡@#|¿¡ïŒ€£µ~©®†™≈<>≤≥êÊ•π‡∂ƒÌ¬◊ß∞÷≠+∫√¢‰∆∑Ω¥∏ªŸ[]å”„ック金型илджفيحةحديد"
@@ -52,14 +53,16 @@ class webserviceHMACTests: XCTestCase {
         XCTAssertEqual("pG+tIWKFrPjoZ4RHGLE4/mQllCE=", request.allHTTPHeaderFields?["Content-SHA1"] ?? "error")
         XCTAssertEqual(
             "SHA256 content-sha1,content-type,foo,x-batch-cipher-version +FZLG5QtIKKrW1zxwzboezVNAb5VJ5RZI0319Wrzal0=",
-            request.allHTTPHeaderFields?["X-Batch-Signature"] ?? "error")
+            request.allHTTPHeaderFields?["X-Batch-Signature"] ?? "error"
+        )
     }
 
     func testHmac() {
+        // key: 12345
         let precomputedHmacWithHeaders =
-            "SHA256 content-type,foo,x-batch-cipher-version 8Qc8LvpoiakXejOZ9HzkxJOhLulKUdU3fzIL8dk720M="  // key: 12345
-        let precomputedHmacWithoutHeaders = "SHA256 GuWkDmJXZa5LJCRCDw5DZEWMm+BWUFL3b8ZjV1oEOcU="  // key: 12345
-        let precomputedHmacWithNoPath = "SHA256 jqvGLeh81CwCwjJxbTDWtmbk9F+kKnfpWqtI4+RbTkY="  // key: 12345
+            "SHA256 content-type,foo,x-batch-cipher-version 8Qc8LvpoiakXejOZ9HzkxJOhLulKUdU3fzIL8dk720M="
+        let precomputedHmacWithoutHeaders = "SHA256 GuWkDmJXZa5LJCRCDw5DZEWMm+BWUFL3b8ZjV1oEOcU=" // key: 12345
+        let precomputedHmacWithNoPath = "SHA256 jqvGLeh81CwCwjJxbTDWtmbk9F+kKnfpWqtI4+RbTkY=" // key: 12345
         XCTAssertEqual(
             precomputedHmacWithHeaders,
             hmac.hmac(
@@ -69,20 +72,26 @@ class webserviceHMACTests: XCTestCase {
                     "foo": "bar",
                     "x-batch-CIPHER-version": "2",
                     "Content-Type": "application/JSON",
-                ]))
+                ]
+            )
+        )
         XCTAssertEqual(
             precomputedHmacWithoutHeaders,
             hmac.hmac(
                 forMethod: "post",
                 relativeURL: "/foo/BAR?param=value",
-                headers: [:]))
+                headers: [:]
+            )
+        )
 
         XCTAssertEqual(
             precomputedHmacWithNoPath,
             hmac.hmac(
                 forMethod: "post",
                 relativeURL: "",
-                headers: [:]))
+                headers: [:]
+            )
+        )
     }
 
     func testRequestSummary() {
@@ -100,7 +109,8 @@ class webserviceHMACTests: XCTestCase {
                     "foo": "bar",
                     "x-batch-CIPHER-version": "2",
                     "Content-Type": "application/JSON",
-                ])
+                ]
+            )
         )
 
         XCTAssertEqual(
@@ -108,13 +118,14 @@ class webserviceHMACTests: XCTestCase {
             hmac._requestSummary(
                 forMethod: "post",
                 relativeURL: "/foo/BAR?param=value",
-                headers: [:])
+                headers: [:]
+            )
         )
     }
 
     func testShaHMAC() {
         var testString = "Lorem Ipsum Dolor 😂"
-        var b64PrecomputedHmac256 = "mih9WNLUTSrPTUOpoviX/PWCHaD2ie0ju716raNCv3Y="  // key: 12345
+        var b64PrecomputedHmac256 = "mih9WNLUTSrPTUOpoviX/PWCHaD2ie0ju716raNCv3Y=" // key: 12345
         var precomputedHmac256 = Data(base64Encoded: b64PrecomputedHmac256)!
         XCTAssertEqual(precomputedHmac256, hmac._sha256Hmac(of: testString.data(using: .utf8)!))
 
@@ -164,7 +175,8 @@ class webserviceHMACTests: XCTestCase {
                 "pro",
                 "User-Agent",
                 "X-Batch-Cipher-Version",
-            ], hmac._sortedHeaderKeys(headers))
+            ], hmac._sortedHeaderKeys(headers)
+        )
     }
 
     func testRelativeURLs() {
@@ -175,10 +187,12 @@ class webserviceHMACTests: XCTestCase {
             {
                 let path = "foo/b😂 a r".addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? "error"
                 return hmac._extractRelativeURL(URL(string: "https://batch.com/\(path)")!)
-            }())
+            }()
+        )
         XCTAssertEqual(
             "/foo/bar?param1=value1&param2=value2",
-            hmac._extractRelativeURL(URL(string: "https://batch.com/foo/bar?param1=value1&param2=value2")!))
+            hmac._extractRelativeURL(URL(string: "https://batch.com/foo/bar?param1=value1&param2=value2")!)
+        )
     }
 
     func testURLPathFixup() {

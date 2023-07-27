@@ -5,9 +5,9 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <Batch/BAMSGBaseContainerView.h>
 #import <Batch/BAMSGPannableContainerView.h>
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -21,14 +21,13 @@ NS_ASSUME_NONNULL_BEGIN
 /** If true, snap the view back in default position when dismissing. Default to YES. */
 @property (nonatomic, assign) BOOL resetPositionOnDismiss;
 
-
 /**
  Link a view to this one
  Linked views will be applied the same transform and alpha changes when this view is dragged
- 
+
  This only supports one linked view for now, as we only have one to deal with as of writing
  */
-- (void)setLinkedView:(nonnull UIView*)linkedView;
+- (void)setLinkedView:(nonnull UIView *)linkedView;
 
 @end
 

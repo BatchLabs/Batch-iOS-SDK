@@ -9,20 +9,20 @@ typedef NS_ENUM(NSUInteger, BAPromiseStatus) {
     BAPromiseStatusRejected,
 };
 
-@interface BAPromise<ObjectType: NSObject*> : NSObject
+@interface BAPromise<ObjectType : NSObject *> : NSObject
 
 @property BAPromiseStatus status;
 
 + (nonnull instancetype)resolved:(nullable ObjectType)value;
 
-+ (nonnull instancetype)rejected:(nullable NSError*)error;
++ (nonnull instancetype)rejected:(nullable NSError *)error;
 
 - (void)resolve:(nullable ObjectType)value;
 
-- (void)reject:(nullable NSError*)error;
+- (void)reject:(nullable NSError *)error;
 
 - (void)then:(void (^_Nonnull)(ObjectType _Nullable value))thenBlock;
 
-- (void)catch:(void (^_Nonnull)(NSError* _Nullable ))catchBlock;
+- (void)catch:(void (^_Nonnull)(NSError *_Nullable))catchBlock;
 
 @end

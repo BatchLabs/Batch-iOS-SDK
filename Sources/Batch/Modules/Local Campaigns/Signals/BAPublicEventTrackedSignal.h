@@ -19,6 +19,8 @@
 
 @property (nullable, assign) BatchEventData *data;
 
-- (nonnull instancetype)initWithName:(nonnull NSString *)name label:(nullable NSString *)label data:(nullable BatchEventData *)data;
+- (nonnull instancetype)initWithName:(nonnull NSString *)name
+                               label:(nullable NSString *)label
+                                data:(nullable BatchEventData *)data;
 
 @end

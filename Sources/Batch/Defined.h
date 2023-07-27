@@ -10,18 +10,18 @@
 
 #include <Batch/Versions.h>
 
-#define ERROR_DOMAIN    @"com.batch.ios"
-#define NETWORKING_ERROR_DOMAIN    @"com.batch.ios.networking"
-#define MESSAGING_ERROR_DOMAIN    @"com.batch.ios.messaging"
+#define ERROR_DOMAIN @"com.batch.ios"
+#define NETWORKING_ERROR_DOMAIN @"com.batch.ios.networking"
+#define MESSAGING_ERROR_DOMAIN @"com.batch.ios.messaging"
 #define WEBVIEW_ERROR_DOMAIN @"com.batch.ios.webview"
 #define BRIDGE_ERROR_DOMAIN @"com.batch.ios.webview.bridge"
 
 #define INIT_AND_BLANK_ERROR_IF_NEEDED(error) \
-if (error == NULL) {\
-    __autoreleasing NSError *fakeOutErr;\
-    error = &fakeOutErr;\
-}\
-*error = nil;
+    if (error == NULL) {                      \
+        __autoreleasing NSError *fakeOutErr;  \
+        error = &fakeOutErr;                  \
+    }                                         \
+    *error = nil;
 
 // Enable IDFA related code
 // Even though IDFA collection is based on AdSupport being linked to the app,
@@ -44,151 +44,151 @@ if (error == NULL) {\
 #define BAGetStringifiedMacro(macro) BAStringifyValue(macro)
 #define BASDKVersionNSString @BAGetStringifiedMacro(BASDKVersion)
 
-#define BAPrivateKeyStorage         @"Pm1oZKMo"
-#define BAPrivateKeyWebservice      @"wgHD"
-#define BAPrivateKeyWebserviceV2    @"jgfx"
-#define BABastionBundleIdentifier   @"com.bastionsdk"
-#define BABundleIdentifier          @"com.batch.ios"
-#define BAProductIdentifier         @"IOS-com.batch.ios"
+#define BAPrivateKeyStorage @"Pm1oZKMo"
+#define BAPrivateKeyWebservice @"wgHD"
+#define BAPrivateKeyWebserviceV2 @"jgfx"
+#define BABastionBundleIdentifier @"com.bastionsdk"
+#define BABundleIdentifier @"com.batch.ios"
+#define BAProductIdentifier @"IOS-com.batch.ios"
 
 // Read receipt
-#define kParametersReadReceiptEventName             @"_PUSH_RECEIVED"
+#define kParametersReadReceiptEventName @"_PUSH_RECEIVED"
 
 // Application parameters.
 
-#define kParametersLocalInstallIdentifierKey        @"app.install.id"
-#define kParametersLocalInstallDateIdentifierKey    @"app.install.timestamp"
-#define kParametersLocalIcloudIdentifierKey         @"app.icloud.id"
-#define kParametersLocalIcloudDateIdentifierKey     @"app.icloud.timestamp"
-#define kParametersLocalServerInstallIdentifierKey  @"app.server.id"
+#define kParametersLocalInstallIdentifierKey @"app.install.id"
+#define kParametersLocalInstallDateIdentifierKey @"app.install.timestamp"
+#define kParametersLocalIcloudIdentifierKey @"app.icloud.id"
+#define kParametersLocalIcloudDateIdentifierKey @"app.icloud.timestamp"
+#define kParametersLocalServerInstallIdentifierKey @"app.server.id"
 
-#define kParametersPoolWebserviceMaxKey             @"app.executor.maxpool"
-#define kParametersSystemCurrentAppVersionKey       @"app.version.current"
-#define kParametersSystemPreviousAppVersionKey      @"app.version.previous"
+#define kParametersPoolWebserviceMaxKey @"app.executor.maxpool"
+#define kParametersSystemCurrentAppVersionKey @"app.version.current"
+#define kParametersSystemPreviousAppVersionKey @"app.version.previous"
 
-#define kParametersIDsPatternKey                    @"app.ids.pattern"
-#define kParametersIDsPatternValue                  @"s,da,ada,did,cus,tath,dla,dre,dtz,osv,de,apv,apc,bid,pl,lvl,mlvl,pid,plv,brv,attid_e"
+#define kParametersIDsPatternKey @"app.ids.pattern"
+#define kParametersIDsPatternValue \
+    @"s,da,ada,did,cus,tath,dla,dre,dtz,osv,de,apv,apc,bid,pl,lvl,mlvl,pid,plv,brv,attid_e"
 
-#define kParametersAdvancedIDsPatternKey            @"app.ids.pattern_advanced"
-#define kParametersAdvancedIDsPatternValue          @"dty,sop"
+#define kParametersAdvancedIDsPatternKey @"app.ids.pattern_advanced"
+#define kParametersAdvancedIDsPatternValue @"dty,sop"
 
-#define kParametersCustomUserIDKey                  @"app.id.custom"
-#define kParametersAppLanguageKey                   @"app.language"
-#define kParametersAppRegionKey                     @"app.region"
-#define kParametersAppProfileVersionKey             @"app.profile.version"
+#define kParametersCustomUserIDKey @"app.id.custom"
+#define kParametersAppLanguageKey @"app.language"
+#define kParametersAppRegionKey @"app.region"
+#define kParametersAppProfileVersionKey @"app.profile.version"
 
-#define kParametersDateFormat                       @"yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'"
+#define kParametersDateFormat @"yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'"
 
 // Push keys
-#define kParametersPushTokenKey                     @"push.token"
-#define kParametersPushTokenIsProductionKey         @"push.token.isproduction"
+#define kParametersPushTokenKey @"push.token"
+#define kParametersPushTokenIsProductionKey @"push.token.isproduction"
 
 // Display receipt keys (sharing with extensions)
-#define kParametersDisplayReceiptLastApiKey         @"batch_shared_apikey"
-#define kParametersDisplayReceiptInstallIdKey       @"batch_shared_installid"
-#define kParametersDisplayReceiptCustomIdKey        @"batch_shared_customid"
-#define kParametersDisplayReceiptOptOutKey          @"batch_shared_optout"
+#define kParametersDisplayReceiptLastApiKey @"batch_shared_apikey"
+#define kParametersDisplayReceiptInstallIdKey @"batch_shared_installid"
+#define kParametersDisplayReceiptCustomIdKey @"batch_shared_customid"
+#define kParametersDisplayReceiptOptOutKey @"batch_shared_optout"
 
 // Latest notification authorization status sent to the server
-#define kParametersNotificationAuthSentStatusKey    @"notification.auth.sentstatus"
-#define kParametersAppNotificationSettingsKey       @"notification.auth.appsettings"
+#define kParametersNotificationAuthSentStatusKey @"notification.auth.sentstatus"
+#define kParametersAppNotificationSettingsKey @"notification.auth.appsettings"
 
 // Tracker parameters.
 
-#define kParametersTrackerStateKey                  @"tracker.state"
-#define kParametersTrackerStateValue                @2
+#define kParametersTrackerStateKey @"tracker.state"
+#define kParametersTrackerStateValue @2
 
-#define kParametersTrackerDBLimitKey                @"tracker.db.limit"
-#define kParametersTrackerDBLimitValue              @10000
+#define kParametersTrackerDBLimitKey @"tracker.db.limit"
+#define kParametersTrackerDBLimitValue @10000
 
-#define kParametersTrackerInitialDelayKey           @"tracker.delay.initial"
-#define kParametersTrackerInitialDelayValue         @10
+#define kParametersTrackerInitialDelayKey @"tracker.delay.initial"
+#define kParametersTrackerInitialDelayValue @10
 
-#define kParametersTrackerMaxDelayKey               @"tracker.delay.max"
-#define kParametersTrackerMaxDelayValue             @120
+#define kParametersTrackerMaxDelayKey @"tracker.delay.max"
+#define kParametersTrackerMaxDelayValue @120
 
-#define kParametersTrackerWebserviceEventLimitKey   @"tracker.ws.limit"
+#define kParametersTrackerWebserviceEventLimitKey @"tracker.ws.limit"
 #define kParametersTrackerWebserviceEventLimitValue @20
 
-#define kParametersTrackerDBVersion                 @"tracker.db.version"
+#define kParametersTrackerDBVersion @"tracker.db.version"
 
 // Inbox Parameters.
 
-#define kParametersInboxDBVersion                   @"inbox.db.version"
+#define kParametersInboxDBVersion @"inbox.db.version"
 
 // User profile
-#define kParametersUserProfileDataVersionKey        @"user_profile.data.version"
-#define kParametersUserProfileTransactionIDKey      @"user_profile.trid"
-#define kParametersUserProfileDBVersion             @"user_profile.db.version"
-#define kParametersUserStartCheckInitialDelay       @1000
+#define kParametersUserProfileDataVersionKey @"user_profile.data.version"
+#define kParametersUserProfileTransactionIDKey @"user_profile.trid"
+#define kParametersUserProfileDBVersion @"user_profile.db.version"
+#define kParametersUserStartCheckInitialDelay @1000
 
-#define kParametersInAppTrackerDBVersion            @"messaging.inapp.db.version"
+#define kParametersInAppTrackerDBVersion @"messaging.inapp.db.version"
 
-#define kParametersLocalCampaignsInitialWSDelayKey   @"lc.wsdelay.initial"
+#define kParametersLocalCampaignsInitialWSDelayKey @"lc.wsdelay.initial"
 #define kParametersLocalCampaignsInitialWSDelayValue @5
 
-#define kParametersServerTimestamp                  @"ws.server.timestamp"
-#define kParametersCipherV2LastFailure              @"ws.cipherv2.lastfailure"
-#define kCipherFallbackResetTime                    172800
-#define kCipherFallbackHTTPErrorCode                487
+#define kParametersServerTimestamp @"ws.server.timestamp"
+#define kParametersCipherV2LastFailure @"ws.cipherv2.lastfailure"
+#define kCipherFallbackResetTime 172800
+#define kCipherFallbackHTTPErrorCode 487
 
 // Webservice keys.
 
 // Maximum number of concurrent network requests for BAWebserviceClient
-#define kWebserviceClientExecutorMaxConcurrency     2
+#define kWebserviceClientExecutorMaxConcurrency 2
 
-#define kQueryWebserviceTypeStart                   @"START"
-#define kQueryWebserviceTypePush                    @"PUSH"
-#define kQueryWebserviceTypeTracking                @"TRACKING"
-#define kQueryWebserviceTypeAttributes              @"ATTRIBUTES"
-#define kQueryWebserviceTypeAttributesCheck         @"ATTRIBUTES_CHECK"
-#define kQueryWebserviceTypeLocalCampaigns          @"LOCAL_CAMPAIGNS"
+#define kQueryWebserviceTypeStart @"START"
+#define kQueryWebserviceTypePush @"PUSH"
+#define kQueryWebserviceTypeTracking @"TRACKING"
+#define kQueryWebserviceTypeAttributes @"ATTRIBUTES"
+#define kQueryWebserviceTypeAttributesCheck @"ATTRIBUTES_CHECK"
+#define kQueryWebserviceTypeLocalCampaigns @"LOCAL_CAMPAIGNS"
 
-#define kWebserviceKeyMainHeader                    @"header"
-#define kWebserviceKeyMainStatus                    @"status"
-#define kWebserviceKeyMainBody                      @"body"
-#define kWebserviceKeyQueryIdentifier               @"id"
-#define kWebserviceKeyTimestamp                     @"ts"
-#define kWebserviceKeyQueryType                     @"type"
+#define kWebserviceKeyMainHeader @"header"
+#define kWebserviceKeyMainStatus @"status"
+#define kWebserviceKeyMainBody @"body"
+#define kWebserviceKeyQueryIdentifier @"id"
+#define kWebserviceKeyTimestamp @"ts"
+#define kWebserviceKeyQueryType @"type"
 
 // Various keys used in queries
-#define kWebserviceKeyQuerySilentStart              @"silent"
+#define kWebserviceKeyQuerySilentStart @"silent"
 
-#define kWebserviceKeyQueryEvents                   @"evts"
+#define kWebserviceKeyQueryEvents @"evts"
 
-#define kWebserviceKeyQueryToken                    @"tok"
-#define kWebserviceKeyQueryProduction               @"prod"
-#define kWebserviceKeyQueryNotifType                @"nty"
+#define kWebserviceKeyQueryToken @"tok"
+#define kWebserviceKeyQueryProduction @"prod"
+#define kWebserviceKeyQueryNotifType @"nty"
 
-#define kWebserviceKeyPushBatchData                 @"com.batch"
-#define kWebserviceKeyPushDeeplink                  @"l"
-#define kWebserviceKeyDeeplinkOpenInApp             @"li"
-#define kWebserviceKeyPushId                        @"i"
-#define kWebserviceKeyPushOpenEventData             @"od"
-#define kWebserviceKeyPushType                      @"t"
-#define kWebserviceKeyPushExperiment                @"ex"
-#define kWebserviceKeyPushVariant                   @"va"
+#define kWebserviceKeyPushBatchData @"com.batch"
+#define kWebserviceKeyPushDeeplink @"l"
+#define kWebserviceKeyDeeplinkOpenInApp @"li"
+#define kWebserviceKeyPushId @"i"
+#define kWebserviceKeyPushOpenEventData @"od"
+#define kWebserviceKeyPushType @"t"
+#define kWebserviceKeyPushExperiment @"ex"
+#define kWebserviceKeyPushVariant @"va"
 
-#define kParametersWebserviceBase                   @"https://ws.batch.com"
-#define kParametersDisplayReceiptWebserviceBase     @"https://drws.batch.com"
-#define kParametersMetricWebserviceBase             @"https://wsmetrics.batch.com/api-sdk"
+#define kParametersWebserviceBase @"https://ws.batch.com"
+#define kParametersDisplayReceiptWebserviceBase @"https://drws.batch.com"
+#define kParametersMetricWebserviceBase @"https://wsmetrics.batch.com/api-sdk"
 
-#define kParametersWebserviceDomain                 kParametersWebserviceHost @"/i/"
+#define kParametersWebserviceDomain kParametersWebserviceHost @"/i/"
 
 // URL shortnames
-#define kParametersStartWebserviceShortname             @"st"
-#define kParametersPushWebserviceShortname              @"t"
-#define kParametersTrackingWebserviceShortname          @"tr"
-#define kParametersAttributesSendWebserviceShortname    @"ats"
-#define kParametersAttributesCheckWebserviceShortname   @"atc"
-#define kParametersInboxFetchWebserviceShortname        @"inbox"
-#define kParametersLocalCampaignsWebserviceShortname    @"local"
-#define kParametersLocalCampaignsJITWebserviceShortname    @"lc_jit"
-
+#define kParametersStartWebserviceShortname @"st"
+#define kParametersPushWebserviceShortname @"t"
+#define kParametersTrackingWebserviceShortname @"tr"
+#define kParametersAttributesSendWebserviceShortname @"ats"
+#define kParametersAttributesCheckWebserviceShortname @"atc"
+#define kParametersInboxFetchWebserviceShortname @"inbox"
+#define kParametersLocalCampaignsWebserviceShortname @"local"
+#define kParametersLocalCampaignsJITWebserviceShortname @"lc_jit"
 
 // start
-#define kParametersStartWebserviceURL               kParametersWebserviceDomain BAVersion @"/" kParametersStartWebserviceShortname
+#define kParametersStartWebserviceURL kParametersWebserviceDomain BAVersion @"/" kParametersStartWebserviceShortname
 
 // local campaigns
-#define kParametersLocalCampaignsWebserviceURL      kParametersWebserviceDomain BAVersion @"/" kParametersLocalCampaignsWebserviceShortname
-
+#define kParametersLocalCampaignsWebserviceURL \
+    kParametersWebserviceDomain BAVersion @"/" kParametersLocalCampaignsWebserviceShortname

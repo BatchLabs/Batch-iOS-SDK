@@ -2,7 +2,7 @@
 
 @interface BAInstallationID : NSObject
 
-+ (nullable NSString*)installationID;
++ (nullable NSString *)installationID;
 
 + (void)delete;
 

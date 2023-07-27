@@ -19,17 +19,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface BatchEventData ()
-{
-    @public
-    NSMutableDictionary<NSString*, BATTypedEventAttribute*>* _attributes;
-    NSMutableSet<NSString*>* _tags;
+@interface BatchEventData () {
+   @public
+    NSMutableDictionary<NSString *, BATTypedEventAttribute *> *_attributes;
+    NSMutableSet<NSString *> *_tags;
     BOOL _convertedFromLegacy;
 }
 
-- (void)_copyLegacyData:(NSDictionary*)data;
+- (void)_copyLegacyData:(NSDictionary *)data;
 
-- (NSDictionary<NSString*, NSObject*>*)_internalDictionaryRepresentation;
+- (NSDictionary<NSString *, NSObject *> *)_internalDictionaryRepresentation;
 
 @end
 
@@ -42,12 +41,11 @@ typedef NS_ENUM(NSUInteger, BAEventAttributeType) {
     BAEventAttributeTypeURL,
 };
 
-
 @interface BATTypedEventAttribute : NSObject
 
-+ (nonnull instancetype)attributeWithValue:(NSObject*)value type:(BAEventAttributeType)type;
++ (nonnull instancetype)attributeWithValue:(NSObject *)value type:(BAEventAttributeType)type;
 
-- (NSString*)typeSuffix;
+- (NSString *)typeSuffix;
 
 @property (nonatomic, nonnull) NSObject *value;
 

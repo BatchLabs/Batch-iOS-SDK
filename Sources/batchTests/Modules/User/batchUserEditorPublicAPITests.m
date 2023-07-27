@@ -26,6 +26,8 @@
     [editor setLanguage:@"fr"];
     [editor setRegion:@"fr"];
     [editor setIdentifier:@"foo"];
+    [editor setEmail:@"test@batch.com" error:nil];
+    [editor setEmailMarketingSubscriptionState:BatchEmailSubscriptionStateSubscribed];
     [editor setAttribute:@"foo" forKey:@"bar"];
     [editor setAttribute:nil forKey:@"bar"];
     [editor setBooleanAttribute:true forKey:@"bar" error:&fakeErr];
@@ -47,6 +49,8 @@
     OCMVerify([mockBackingEditor setLanguage:@"fr"]);
     OCMVerify([mockBackingEditor setRegion:@"fr"]);
     OCMVerify([mockBackingEditor setIdentifier:@"foo"]);
+    OCMVerify([mockBackingEditor setEmail:@"test@batch.com" error:nil]);
+    OCMVerify([mockBackingEditor setEmailMarketingSubscriptionState:BatchEmailSubscriptionStateSubscribed]);
     OCMVerify([mockBackingEditor setAttribute:@"foo" forKey:@"bar"]);
     OCMVerify([mockBackingEditor setAttribute:nil forKey:@"bar"]);
     OCMVerify([mockBackingEditor setBooleanAttribute:true forKey:@"bar" error:anyError]);

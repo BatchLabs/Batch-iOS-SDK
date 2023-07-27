@@ -11,7 +11,6 @@ fileprivate let invalidKeys = [
 ]
 
 class UserDataEditorTests: XCTestCase {
-
     func testModernAttributeMethods() throws {
         let datasource = MockUserDatasource()
         let url = URL(string: "https://batch.com")
@@ -53,7 +52,7 @@ class UserDataEditorTests: XCTestCase {
         try editor.setAttribute("foo", forKey: "stringattr")
         try editor.setAttribute(url!, forKey: "urlattr")
 
-        editor.writeToDatasource(changes: editor.operationQueue(), changeset: 1)
+        BAUserDataManager.writeToDatasource(changes: editor.operationQueue(), changeset: 1)
 
         datasource.verify()
     }
@@ -84,7 +83,7 @@ class UserDataEditorTests: XCTestCase {
         try editor.setAttribute(NSNumber(value: true), forKey: "boolattr")
         try editor.setAttribute(NSNumber(value: 1.234), forKey: "doubleattr")
         try editor.setAttribute(NSNumber(value: 1.234 as Float), forKey: "floatattr")
-        editor.writeToDatasource(changes: editor.operationQueue(), changeset: 1)
+        BAUserDataManager.writeToDatasource(changes: editor.operationQueue(), changeset: 1)
 
         datasource.verify()
     }
@@ -120,13 +119,12 @@ class UserDataEditorTests: XCTestCase {
             editor.removeTag("foo", fromCollection: key)
         }
 
-        editor.writeToDatasource(changes: editor.operationQueue(), changeset: 1)
+        BAUserDataManager.writeToDatasource(changes: editor.operationQueue(), changeset: 1)
 
         datasource.verify()
     }
 
     func testModernAttributeMethodErrors() {
-
         let url = URL(string: "https://batch.com")
 
         let datasource = MockUserDatasource()
@@ -171,20 +169,22 @@ class UserDataEditorTests: XCTestCase {
             assertThrowsError(code: .invalidKey, try editor.setAttribute(20 as Int, forKey: key))
             assertThrowsError(code: .invalidKey, try editor.setAttribute(20 as Int64, forKey: key))
             assertThrowsError(
-                code: .invalidKey, try editor.setAttribute(Date(timeIntervalSince1970: 12345), forKey: key))
+                code: .invalidKey, try editor.setAttribute(Date(timeIntervalSince1970: 12345), forKey: key)
+            )
             assertThrowsError(code: .invalidKey, try editor.setAttribute(1.234 as Double, forKey: key))
             assertThrowsError(code: .invalidKey, try editor.setAttribute(1.234 as Float, forKey: key))
             assertThrowsError(code: .invalidKey, try editor.setAttribute("foo", forKey: key))
             assertThrowsError(code: .invalidKey, try editor.setAttribute(url!, forKey: key))
-
         }
         assertThrowsError(
             code: .invalidValue,
             try editor.setAttribute(
                 "lorem ipsum dolor blalblablalbalblalbalbalb alblalbalbla lbal bla blablalbalblalbalbla balba",
-                forKey: "stringattr"))
+                forKey: "stringattr"
+            )
+        )
 
-        editor.writeToDatasource(changes: editor.operationQueue(), changeset: 1)
+        BAUserDataManager.writeToDatasource(changes: editor.operationQueue(), changeset: 1)
 
         datasource.verify()
     }
@@ -209,7 +209,7 @@ class UserDataEditorTests: XCTestCase {
         }
         editor.addTag("lorem ipsum dolor this is a way too long string blabla qsdqdsqdsdqsdqsdqsd", inCollection: "bar")
 
-        editor.writeToDatasource(changes: editor.operationQueue(), changeset: 1)
+        BAUserDataManager.writeToDatasource(changes: editor.operationQueue(), changeset: 1)
 
         datasource.verify()
     }
@@ -237,9 +237,29 @@ class UserDataEditorTests: XCTestCase {
         editor.clearTagCollection("foo")
         editor.removeAttribute(forKey: "foo")
 
-        editor.writeToDatasource(changes: editor.operationQueue(), changeset: 1)
+        BAUserDataManager.writeToDatasource(changes: editor.operationQueue(), changeset: 1)
 
         datasource.verify()
+    }
+
+    func testUserOperationQueue() {
+        do {
+            let editor = BAUserDataEditor()
+            try editor.setAttribute("test", forKey: "test")
+            editor.save()
+            try editor.setAttribute("test2", forKey: "test2")
+            editor.save()
+            XCTAssertEqual(editor.operationQueue().count, 2)
+        } catch {}
+    }
+
+    func testSetEmail() throws {
+        let editor = BAUserDataEditor()
+        assertThrowsError(code: .internal, try editor.setEmail("test@batch.com"))
+        editor.setIdentifier(nil)
+        assertThrowsError(code: .internal, try editor.setEmail("test@batch.com"))
+        editor.setIdentifier("testid")
+        assertThrowsError(code: .invalidValue, try editor.setEmail("test@batchcom"))
     }
 
     func assertThrowsError(

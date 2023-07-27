@@ -39,8 +39,9 @@
 
 /*!
  @method connectionDidFinishSuccessfully:
- @abstract Called when the connection did finish, telling if it succeeded (success is when the SDK managed to decrypt the answer, before parsing it).
- Note that this can be called before or after connectionDidFinishLoadingWithData: no guarantees about the order are made
+ @abstract Called when the connection did finish, telling if it succeeded (success is when the SDK managed to decrypt
+ the answer, before parsing it). Note that this can be called before or after connectionDidFinishLoadingWithData: no
+ guarantees about the order are made
  */
 - (void)connectionDidFinishSuccessfully:(BOOL)success;
 

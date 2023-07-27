@@ -227,10 +227,19 @@ static NSData *createRandomNSData() {
     XCTAssertEqual(data.length, 0);
 }
 
+- (void)testRandomData {
+    NSData *inputData = createRandomNSData();
+    NSData *compressedData = [BATGZIP dataByGzipping:inputData];
+    XCTAssertNotEqualObjects(inputData, compressedData);
+    NSData *outputData = [BATGZIP dataByGunzipping:compressedData];
+    XCTAssertEqualObjects(inputData, outputData);
+}
+
 - (void)testCompressionPerformance {
     NSData *inputData = createRandomNSData();
     [self measureBlock:^{
-      __unused NSData *compressedData = [BATGZIP dataByGzipping:inputData];
+      NSData *compressedData = [BATGZIP dataByGzipping:inputData];
+      XCTAssertNotNil(compressedData);
     }];
 }
 
@@ -238,7 +247,8 @@ static NSData *createRandomNSData() {
     NSData *inputData = createRandomNSData();
     NSData *compressedData = [BATGZIP dataByGzipping:inputData];
     [self measureBlock:^{
-      __unused NSData *outputData = [BATGZIP dataByGunzipping:compressedData];
+      NSData *outputData = [BATGZIP dataByGunzipping:compressedData];
+      XCTAssertNotNil(outputData);
     }];
 }
 

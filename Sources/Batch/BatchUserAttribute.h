@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+/// Types of user attribute
 typedef NS_ENUM(NSUInteger, BatchUserAttributeType) {
     BatchUserAttributeTypeString,
     BatchUserAttributeTypeLongLong,
@@ -17,44 +18,33 @@ typedef NS_ENUM(NSUInteger, BatchUserAttributeType) {
     BatchUserAttributeTypeURL
 };
 
-@interface BatchUserAttribute: NSObject
+/// Object used as value when using ``BatchUser/fetchAttributes:``
+@interface BatchUserAttribute : NSObject
 
-/**
- The value of the attribute. You can use the typed methods below to get a typed result.
- */
+/// The value of the attribute. You can use the typed methods below to get a typed result.
 @property (nonatomic, nonnull) id value;
 
-/**
- The type of the value for the attribute.
- */
+/// The type of the value for the attribute.
 @property (assign, nonatomic) BatchUserAttributeType type;
 
-/**
- Get the date value for date type attributes.
- 
- @return A date value or nil if the attribute is not a date.
- */
+/// Get the date value for date type attributes.
+///
+/// - Returns: A date value or nil if the attribute is not a date.
 - (nullable NSDate *)dateValue;
 
-/**
- Get the string value for string type attributes.
- 
- @return A string value or nil if the attribute is not a string.
- */
+/// Get the string value for string type attributes.
+///
+/// - Returns: A string value or nil if the attribute is not a string.
 - (nullable NSString *)stringValue;
 
-/**
- Get the number value for double, long long and bool type attributes.
- 
- @return A string value or nil if the attribute is not a number.
- */
+/// Get the number value for double, long long and bool type attributes.
+///
+/// - Returns: A number value or nil if the attribute is not a number.
 - (nullable NSNumber *)numberValue;
 
-/**
- Get the url value for url type attributes.
- 
- @return An url value or nil if the attribute is not an url.
- */
+/// Get the url value for url type attributes.
+///
+/// - Returns: An url value or nil if the attribute is not an url.
 - (nullable NSURL *)urlValue;
 
 @end

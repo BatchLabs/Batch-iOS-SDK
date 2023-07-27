@@ -7,8 +7,8 @@
 
 #import <Foundation/Foundation.h>
 
-#import <Batch/BAWebserviceCryptor.h>
 #import <Batch/BAWebserviceAESGCMCryptor.h>
+#import <Batch/BAWebserviceCryptor.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nonnull instancetype)init NS_UNAVAILABLE;
 
-- (nullable instancetype)initWithKey:(NSString*)key version:(NSString*)version NS_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithKey:(NSString *)key version:(NSString *)version NS_DESIGNATED_INITIALIZER;
 
 @end
 

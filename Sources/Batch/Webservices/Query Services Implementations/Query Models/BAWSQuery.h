@@ -30,7 +30,6 @@
 
 @end
 
-
 /*!
  @class BAWebserviceQuery
  @abstract Common queries implementation.
@@ -57,6 +56,6 @@
  */
 - (nonnull NSMutableDictionary *)objectToSend;
 
-- (nonnull instancetype)initWithType:(nonnull NSString*)string;
+- (nonnull instancetype)initWithType:(nonnull NSString *)string;
 
 @end

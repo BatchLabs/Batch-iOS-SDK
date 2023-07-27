@@ -8,8 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
-#import <Batch/BAWSQuery.h>
 #import <Batch/BALocalCampaignCountedEvent.h>
+#import <Batch/BAWSQuery.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param viewEvents : Array of viewEvents to forward to the server
  @return Instance or nil.
  */
-- (instancetype)initWithViewEvents:(nullable NSDictionary<NSString*, BALocalCampaignCountedEvent*>*)viewEvents;
+- (instancetype)initWithViewEvents:(nullable NSDictionary<NSString *, BALocalCampaignCountedEvent *> *)viewEvents;
 
 @end
 

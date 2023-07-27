@@ -11,19 +11,19 @@
 #import <Batch/BAOverlayedInjectable.h>
 
 #define bainjection_instance_singleton(initializer) \
-static id instance = nil; \
-static dispatch_once_t once; \
-dispatch_once(&once, ^{ \
-  instance = initializer; \
-}); \
-return instance;
+    static id instance = nil;                       \
+    static dispatch_once_t once;                    \
+    dispatch_once(&once, ^{                         \
+      instance = initializer;                       \
+    });                                             \
+    return instance;
 
 // Annotation that indicates that methods should be injected rather than initialized unless we're in a test case
-#define BATCH_USE_INJECTION_OUTSIDE_TESTS  
+#define BATCH_USE_INJECTION_OUTSIDE_TESTS
 
 /**
  Handles dependency injection for Batch
- 
+
  This class manages injectables, acts as a registry for them, initializes them, ...
  It also supports overlaying them for tests
  */
@@ -31,32 +31,30 @@ return instance;
 
 // Registry interaction
 
-+ (void)registerInjectable:(nonnull BAInjectable*)injectable
-               forProtocol:(nonnull Protocol*)protocol;
++ (void)registerInjectable:(nonnull BAInjectable *)injectable forProtocol:(nonnull Protocol *)protocol;
 
-+ (void)registerInjectable:(nonnull BAInjectable*)injectable
-                  forClass:(nonnull Class)classToRegister;
++ (void)registerInjectable:(nonnull BAInjectable *)injectable forClass:(nonnull Class)classToRegister;
 
 // Overlays
 
-+ (nonnull BAOverlayedInjectable*)overlayProtocol:(nonnull Protocol*)protocol
-                                         callback:(nonnull BAOverlayedInjectableCallback)callback;
++ (nonnull BAOverlayedInjectable *)overlayProtocol:(nonnull Protocol *)protocol
+                                          callback:(nonnull BAOverlayedInjectableCallback)callback;
 
-+ (nonnull BAOverlayedInjectable*)overlayProtocol:(nonnull Protocol*)protocol
-                                 returnedInstance:(nullable id)instanceToReturn;
++ (nonnull BAOverlayedInjectable *)overlayProtocol:(nonnull Protocol *)protocol
+                                  returnedInstance:(nullable id)instanceToReturn;
 
-+ (nonnull BAOverlayedInjectable*)overlayClass:(Class _Nonnull)classToOverlay
-                                      callback:(nonnull BAOverlayedInjectableCallback)callback;
++ (nonnull BAOverlayedInjectable *)overlayClass:(Class _Nonnull)classToOverlay
+                                       callback:(nonnull BAOverlayedInjectableCallback)callback;
 
-+ (nonnull BAOverlayedInjectable*)overlayClass:(Class _Nonnull)classToOverlay
-                              returnedInstance:(nullable id)instanceToReturn;
++ (nonnull BAOverlayedInjectable *)overlayClass:(Class _Nonnull)classToOverlay
+                               returnedInstance:(nullable id)instanceToReturn;
 
-+ (void)unregisterOverlay:(nonnull BAOverlayedInjectable*)overlay;
++ (void)unregisterOverlay:(nonnull BAOverlayedInjectable *)overlay;
 
 // Injection methods
 
 + (nullable id)injectClass:(Class _Nonnull)classToInject;
 
-+ (nullable id)injectProtocol:(nonnull Protocol*)protocolToInject;
++ (nullable id)injectProtocol:(nonnull Protocol *)protocolToInject;
 
 @end

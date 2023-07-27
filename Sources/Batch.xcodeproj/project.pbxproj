@@ -49,6 +49,9 @@
 		029B335E1A39A1F7006B9DC6 /* batchParametersTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 029B334E1A39A1F7006B9DC6 /* batchParametersTests.m */; };
 		029B335F1A39A1F7006B9DC6 /* batchPropertiesCenterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 029B334F1A39A1F7006B9DC6 /* batchPropertiesCenterTests.m */; };
 		029B33601A39A1F7006B9DC6 /* batchUserDefaultsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 029B33501A39A1F7006B9DC6 /* batchUserDefaultsTests.m */; };
+		1E104EAF28E6F43D00E998AE /* BAUserEmailSubscription.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E104EAD28E6F43D00E998AE /* BAUserEmailSubscription.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1E104EB028E6F43D00E998AE /* BAUserEmailSubscription.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E104EAE28E6F43D00E998AE /* BAUserEmailSubscription.m */; };
+		1E104EB628EB289400E998AE /* batchUserEmailSubscriptionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E104EB528EB289400E998AE /* batchUserEmailSubscriptionTests.m */; };
 		1E2C31B527CF740E00A4CB6E /* BAMetricRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E2C31B327CF740E00A4CB6E /* BAMetricRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1E2C31B627CF740E00A4CB6E /* BAMetricRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E2C31B427CF740E00A4CB6E /* BAMetricRegistry.m */; };
 		1E45578527CE1B510048D3A8 /* BALocalCampaignsJITService.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E45578327CE1B510048D3A8 /* BALocalCampaignsJITService.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -62,10 +65,9 @@
 		1EA42DFA26A85D7D004CC618 /* BADBGFindMyInstallationHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EA42DF726A84C71004CC618 /* BADBGFindMyInstallationHelper.m */; };
 		1EA42DFB26A85DF9004CC618 /* BADBGFindMyInstallationHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EA42DF926A84C99004CC618 /* BADBGFindMyInstallationHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1EA42E0426A9A736004CC618 /* FindMyInstallationHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EA42E0226A9A716004CC618 /* FindMyInstallationHelperTests.m */; };
-		1EC9657127AD7879007D66AD /* BALocalCampaignsGlobalCappings.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EC9656F27AD7879007D66AD /* BALocalCampaignsGlobalCappings.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1EC9657227AD7879007D66AD /* BALocalCampaignsGlobalCappings.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EC9657027AD7879007D66AD /* BALocalCampaignsGlobalCappings.m */; };
-		1EF1974427673BBE00386DF0 /* BAInjectionRegistrar.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EF1974227673BBE00386DF0 /* BAInjectionRegistrar.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1EF1974527673BBE00386DF0 /* BAInjectionRegistrar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EF1974327673BBE00386DF0 /* BAInjectionRegistrar.m */; };
+		1EB69D3B290C09B9003E1EF7 /* BAEmailUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB69D39290C09B9003E1EF7 /* BAEmailUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1EB69D3C290C09B9003E1EF7 /* BAEmailUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EB69D3A290C09B9003E1EF7 /* BAEmailUtils.m */; };
+		1EB69D3E290C0F5A003E1EF7 /* emailTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EB69D3D290C0F5A003E1EF7 /* emailTests.swift */; };
 		1EBDBC5F27146B8B006DC662 /* BAMetric.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EF8BA98271462D90063E117 /* BAMetric.m */; };
 		1EBDBC6027146C97006DC662 /* BAMetric.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EF8BA9A271462F80063E117 /* BAMetric.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1EBDBC6327157A3A006DC662 /* BACounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EBDBC6127157A3A006DC662 /* BACounter.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -80,9 +82,10 @@
 		1EBDBC8427188D40006DC662 /* metricTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EBDBC8327188D40006DC662 /* metricTests.m */; };
 		1EBDBC86271D9936006DC662 /* metricManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EBDBC85271D9936006DC662 /* metricManagerTests.m */; };
 		1EC803AB27D2477E00CCE8E5 /* localCampaignsManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EC803AA27D2477E00CCE8E5 /* localCampaignsManagerTests.swift */; };
+		1EC9657127AD7879007D66AD /* BALocalCampaignsGlobalCappings.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EC9656F27AD7879007D66AD /* BALocalCampaignsGlobalCappings.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1EC9657227AD7879007D66AD /* BALocalCampaignsGlobalCappings.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EC9657027AD7879007D66AD /* BALocalCampaignsGlobalCappings.m */; };
 		1EF1974427673BBE00386DF0 /* BAInjectionRegistrar.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EF1974227673BBE00386DF0 /* BAInjectionRegistrar.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1EF1974527673BBE00386DF0 /* BAInjectionRegistrar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EF1974327673BBE00386DF0 /* BAInjectionRegistrar.m */; };
-		5105747D21358C2A00789F86 /* batchLispTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5105747C21358C2A00789F86 /* batchLispTests.swift */; };
 		510BD5C522E0B4BA00D8CBA1 /* BAWSResponseAttributesCheck.m in Sources */ = {isa = PBXBuildFile; fileRef = 510BD5BD22E0B4BA00D8CBA1 /* BAWSResponseAttributesCheck.m */; };
 		510BD5C622E0B4BA00D8CBA1 /* BAWSResponseAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = 510BD5BE22E0B4BA00D8CBA1 /* BAWSResponseAttributes.m */; };
 		510BD5C722E0B4BA00D8CBA1 /* BAWSResponseAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 510BD5BF22E0B4BA00D8CBA1 /* BAWSResponseAttributes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -132,6 +135,8 @@
 		514FFCCE250903F3009D6A20 /* batchUNUserNotificationCenterDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 514FFCCD250903F3009D6A20 /* batchUNUserNotificationCenterDelegateTests.m */; };
 		51512E1825B1996B005D85C3 /* BATWebviewJavascriptBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 51512E1625B1996B005D85C3 /* BATWebviewJavascriptBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51512E1925B1996B005D85C3 /* BATWebviewJavascriptBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 51512E1725B1996B005D85C3 /* BATWebviewJavascriptBridge.m */; };
+		5157117229DAD6EC0002A9CD /* BATUserActivity.h in Headers */ = {isa = PBXBuildFile; fileRef = 5157117029DAD6EC0002A9CD /* BATUserActivity.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5157117329DAD6EC0002A9CD /* BATUserActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5157117129DAD6EC0002A9CD /* BATUserActivity.m */; };
 		5158BB7C22F1EFF200ED0C6C /* BAWebserviceClientExecutor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5158BB7A22F1EFF100ED0C6C /* BAWebserviceClientExecutor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5158BB7D22F1EFF200ED0C6C /* BAWebserviceClientExecutor.m in Sources */ = {isa = PBXBuildFile; fileRef = 5158BB7B22F1EFF100ED0C6C /* BAWebserviceClientExecutor.m */; };
 		5159B4DF25E0044C008082FA /* internalLoggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5159B4DE25E0044C008082FA /* internalLoggerTests.swift */; };
@@ -145,7 +150,6 @@
 		5162B2F52571561900607780 /* BAMSGWebviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5162B2F32571561900607780 /* BAMSGWebviewViewController.m */; };
 		5166D7D525ED3EEE00F36A5E /* BATMessagingCloseErrorCause.h in Headers */ = {isa = PBXBuildFile; fileRef = 5166D7D425ED3ED700F36A5E /* BATMessagingCloseErrorCause.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5166D7DF25ED464700F36A5E /* BATMessagingCloseErrorCause.m in Sources */ = {isa = PBXBuildFile; fileRef = 5166D7DE25ED464700F36A5E /* BATMessagingCloseErrorCause.m */; };
-		51675F0C21383D6A000E7B9F /* batchContextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51675F0B21383D6A000E7B9F /* batchContextTests.swift */; };
 		51696F7A25263BFC00951CA4 /* BAApplicationLifecycle.h in Headers */ = {isa = PBXBuildFile; fileRef = 51696F7825263BFC00951CA4 /* BAApplicationLifecycle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51696F7B25263BFC00951CA4 /* BAApplicationLifecycle.m in Sources */ = {isa = PBXBuildFile; fileRef = 51696F7925263BFC00951CA4 /* BAApplicationLifecycle.m */; };
 		516A3B8E22FC4A6400E6A2FD /* BAInjectionRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 516A3B8C22FC4A6400E6A2FD /* BAInjectionRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -350,15 +354,6 @@
 		517D709622BBC45900E374FB /* BADBGLCDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 51ECF38A2007DBF60086C9CC /* BADBGLCDetailsViewController.m */; };
 		517D709722BBC45900E374FB /* BADBGCustomDataViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 51E042AE200CF85A00B30D49 /* BADBGCustomDataViewController.m */; };
 		517D709822BBC45900E374FB /* BADBGCustomDataModels.m in Sources */ = {isa = PBXBuildFile; fileRef = 51E042B2200D000800B30D49 /* BADBGCustomDataModels.m */; };
-		517D709922BBC45900E374FB /* BALMetaContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 51675F0821383619000E7B9F /* BALMetaContext.m */; };
-		517D709A22BBC45900E374FB /* BALCachingContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 51675F0E213842B4000E7B9F /* BALCachingContext.m */; };
-		517D709B22BBC45900E374FB /* BALEventContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 51952CFF2139828900D8E357 /* BALEventContext.m */; };
-		517D709C22BBC45900E374FB /* BALNativeAttributeContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 51093AB121400FD200C4C1BA /* BALNativeAttributeContext.m */; };
-		517D709D22BBC45900E374FB /* BALUserAttributeContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 51F8403C214188040009DFB1 /* BALUserAttributeContext.m */; };
-		517D709E22BBC45900E374FB /* BALispParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 510574762135862000789F86 /* BALispParser.m */; };
-		517D709F22BBC45900E374FB /* BALOperators.m in Sources */ = {isa = PBXBuildFile; fileRef = 5105746F2135861F00789F86 /* BALOperators.m */; };
-		517D70A022BBC45900E374FB /* BALSExpression.m in Sources */ = {isa = PBXBuildFile; fileRef = 510574732135862000789F86 /* BALSExpression.m */; };
-		517D70A122BBC45900E374FB /* BALValues.m in Sources */ = {isa = PBXBuildFile; fileRef = 510574712135861F00789F86 /* BALValues.m */; };
 		517D70A222BBC45900E374FB /* BAWSQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = 02849A1E19B9EFBA0013408B /* BAWSQuery.m */; };
 		517D70A622BBC45900E374FB /* BAWSQueryPushToken.m in Sources */ = {isa = PBXBuildFile; fileRef = 02849A2619B9EFBA0013408B /* BAWSQueryPushToken.m */; };
 		517D70A822BBC45900E374FB /* BAWSQueryTracking.m in Sources */ = {isa = PBXBuildFile; fileRef = 02849A2C19B9EFBA0013408B /* BAWSQueryTracking.m */; };
@@ -526,16 +521,6 @@
 		517D716A22BBC50E00E374FB /* BADBGLCDetailsViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ECF3892007DBF60086C9CC /* BADBGLCDetailsViewController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517D716B22BBC50E00E374FB /* BADBGCustomDataViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E042AD200CF85A00B30D49 /* BADBGCustomDataViewController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517D716C22BBC50E00E374FB /* BADBGCustomDataModels.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E042B1200D000800B30D49 /* BADBGCustomDataModels.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		517D716D22BBC50E00E374FB /* BALMetaContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 51675F0721383619000E7B9F /* BALMetaContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		517D716E22BBC50E00E374FB /* BALCachingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 51675F0D213842B4000E7B9F /* BALCachingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		517D716F22BBC50E00E374FB /* BALEventContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 51952CFE2139828900D8E357 /* BALEventContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		517D717022BBC50E00E374FB /* BALNativeAttributeContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 51093AB021400FD200C4C1BA /* BALNativeAttributeContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		517D717122BBC50E00E374FB /* BALUserAttributeContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F8403B214188040009DFB1 /* BALUserAttributeContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		517D717222BBC50E00E374FB /* BALEvaluationContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 510574782135862000789F86 /* BALEvaluationContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		517D717322BBC50E00E374FB /* BALispParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 510574702135861F00789F86 /* BALispParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		517D717422BBC50E00E374FB /* BALOperators.h in Headers */ = {isa = PBXBuildFile; fileRef = 510574742135862000789F86 /* BALOperators.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		517D717522BBC50E00E374FB /* BALSExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 510574752135862000789F86 /* BALSExpression.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		517D717622BBC50E00E374FB /* BALValues.h in Headers */ = {isa = PBXBuildFile; fileRef = 510574772135862000789F86 /* BALValues.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517D717822BBC50E00E374FB /* BAWSQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = 02849A1D19B9EFBA0013408B /* BAWSQuery.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517D717C22BBC50E00E374FB /* BAWSQueryPushToken.h in Headers */ = {isa = PBXBuildFile; fileRef = 02849A2519B9EFBA0013408B /* BAWSQueryPushToken.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517D717E22BBC50E00E374FB /* BAWSQueryTracking.h in Headers */ = {isa = PBXBuildFile; fileRef = 02849A2B19B9EFBA0013408B /* BAWSQueryTracking.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -797,6 +782,9 @@
 		02F7846419B9EF5A0006FF07 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		02F7846B19B9EF5A0006FF07 /* BatchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BatchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		02F7846E19B9EF5A0006FF07 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1E104EAD28E6F43D00E998AE /* BAUserEmailSubscription.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAUserEmailSubscription.h; sourceTree = "<group>"; };
+		1E104EAE28E6F43D00E998AE /* BAUserEmailSubscription.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BAUserEmailSubscription.m; sourceTree = "<group>"; };
+		1E104EB528EB289400E998AE /* batchUserEmailSubscriptionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = batchUserEmailSubscriptionTests.m; path = User/batchUserEmailSubscriptionTests.m; sourceTree = "<group>"; };
 		1E2C31B327CF740E00A4CB6E /* BAMetricRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAMetricRegistry.h; sourceTree = "<group>"; };
 		1E2C31B427CF740E00A4CB6E /* BAMetricRegistry.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BAMetricRegistry.m; sourceTree = "<group>"; };
 		1E45578327CE1B510048D3A8 /* BALocalCampaignsJITService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BALocalCampaignsJITService.h; sourceTree = "<group>"; };
@@ -810,10 +798,9 @@
 		1EA42DF726A84C71004CC618 /* BADBGFindMyInstallationHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BADBGFindMyInstallationHelper.m; sourceTree = "<group>"; };
 		1EA42DF926A84C99004CC618 /* BADBGFindMyInstallationHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BADBGFindMyInstallationHelper.h; sourceTree = "<group>"; };
 		1EA42E0226A9A716004CC618 /* FindMyInstallationHelperTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FindMyInstallationHelperTests.m; sourceTree = "<group>"; };
-		1EC9656F27AD7879007D66AD /* BALocalCampaignsGlobalCappings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BALocalCampaignsGlobalCappings.h; sourceTree = "<group>"; };
-		1EC9657027AD7879007D66AD /* BALocalCampaignsGlobalCappings.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BALocalCampaignsGlobalCappings.m; sourceTree = "<group>"; };
-		1EF1974227673BBE00386DF0 /* BAInjectionRegistrar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAInjectionRegistrar.h; sourceTree = "<group>"; };
-		1EF1974327673BBE00386DF0 /* BAInjectionRegistrar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BAInjectionRegistrar.m; sourceTree = "<group>"; };
+		1EB69D39290C09B9003E1EF7 /* BAEmailUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAEmailUtils.h; sourceTree = "<group>"; };
+		1EB69D3A290C09B9003E1EF7 /* BAEmailUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BAEmailUtils.m; sourceTree = "<group>"; };
+		1EB69D3D290C0F5A003E1EF7 /* emailTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = emailTests.swift; sourceTree = "<group>"; };
 		1EBDBC6127157A3A006DC662 /* BACounter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BACounter.h; sourceTree = "<group>"; };
 		1EBDBC6227157A3A006DC662 /* BACounter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BACounter.m; sourceTree = "<group>"; };
 		1EBDBC652715B1B5006DC662 /* BAMetricProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAMetricProtocol.h; sourceTree = "<group>"; };
@@ -826,6 +813,8 @@
 		1EBDBC8327188D40006DC662 /* metricTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = metricTests.m; sourceTree = "<group>"; };
 		1EBDBC85271D9936006DC662 /* metricManagerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = metricManagerTests.m; sourceTree = "<group>"; };
 		1EC803AA27D2477E00CCE8E5 /* localCampaignsManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = localCampaignsManagerTests.swift; sourceTree = "<group>"; };
+		1EC9656F27AD7879007D66AD /* BALocalCampaignsGlobalCappings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BALocalCampaignsGlobalCappings.h; sourceTree = "<group>"; };
+		1EC9657027AD7879007D66AD /* BALocalCampaignsGlobalCappings.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BALocalCampaignsGlobalCappings.m; sourceTree = "<group>"; };
 		1EF1974227673BBE00386DF0 /* BAInjectionRegistrar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAInjectionRegistrar.h; sourceTree = "<group>"; };
 		1EF1974327673BBE00386DF0 /* BAInjectionRegistrar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BAInjectionRegistrar.m; sourceTree = "<group>"; };
 		1EF8BA98271462D90063E117 /* BAMetric.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BAMetric.m; sourceTree = "<group>"; };
@@ -846,18 +835,6 @@
 		51022DB01D23DA9700EDAA5C /* BAMSGStackViewHorizontalItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAMSGStackViewHorizontalItem.h; path = Batch/Modules/Messaging/UI/BAMSGStackViewHorizontalItem.h; sourceTree = SOURCE_ROOT; };
 		51022DB11D23DA9700EDAA5C /* BAMSGStackViewHorizontalItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BAMSGStackViewHorizontalItem.m; path = Batch/Modules/Messaging/UI/BAMSGStackViewHorizontalItem.m; sourceTree = SOURCE_ROOT; };
 		5103E4491F97B09E00155F6A /* BAMSGWindowHolder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAMSGWindowHolder.h; sourceTree = "<group>"; };
-		5105746F2135861F00789F86 /* BALOperators.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BALOperators.m; sourceTree = "<group>"; };
-		510574702135861F00789F86 /* BALispParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BALispParser.h; sourceTree = "<group>"; };
-		510574712135861F00789F86 /* BALValues.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BALValues.m; sourceTree = "<group>"; };
-		510574732135862000789F86 /* BALSExpression.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BALSExpression.m; sourceTree = "<group>"; };
-		510574742135862000789F86 /* BALOperators.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BALOperators.h; sourceTree = "<group>"; };
-		510574752135862000789F86 /* BALSExpression.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BALSExpression.h; sourceTree = "<group>"; };
-		510574762135862000789F86 /* BALispParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BALispParser.m; sourceTree = "<group>"; };
-		510574772135862000789F86 /* BALValues.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BALValues.h; sourceTree = "<group>"; };
-		510574782135862000789F86 /* BALEvaluationContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BALEvaluationContext.h; sourceTree = "<group>"; };
-		5105747C21358C2A00789F86 /* batchLispTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = batchLispTests.swift; sourceTree = "<group>"; };
-		51093AB021400FD200C4C1BA /* BALNativeAttributeContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BALNativeAttributeContext.h; sourceTree = "<group>"; };
-		51093AB121400FD200C4C1BA /* BALNativeAttributeContext.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BALNativeAttributeContext.m; sourceTree = "<group>"; };
 		510BD5BD22E0B4BA00D8CBA1 /* BAWSResponseAttributesCheck.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BAWSResponseAttributesCheck.m; sourceTree = "<group>"; };
 		510BD5BE22E0B4BA00D8CBA1 /* BAWSResponseAttributes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BAWSResponseAttributes.m; sourceTree = "<group>"; };
 		510BD5BF22E0B4BA00D8CBA1 /* BAWSResponseAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BAWSResponseAttributes.h; sourceTree = "<group>"; };
@@ -1040,6 +1017,8 @@
 		5155F7C51EF98C6C00929DD8 /* BACenterMulticastDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BACenterMulticastDelegate.m; sourceTree = "<group>"; };
 		51563B1B2164FA5600C4560E /* BAUserDataDiff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BAUserDataDiff.h; sourceTree = "<group>"; };
 		51563B1C2164FA5600C4560E /* BAUserDataDiff.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BAUserDataDiff.m; sourceTree = "<group>"; };
+		5157117029DAD6EC0002A9CD /* BATUserActivity.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BATUserActivity.h; sourceTree = "<group>"; };
+		5157117129DAD6EC0002A9CD /* BATUserActivity.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BATUserActivity.m; sourceTree = "<group>"; };
 		5158BB7A22F1EFF100ED0C6C /* BAWebserviceClientExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BAWebserviceClientExecutor.h; sourceTree = "<group>"; };
 		5158BB7B22F1EFF100ED0C6C /* BAWebserviceClientExecutor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BAWebserviceClientExecutor.m; sourceTree = "<group>"; };
 		5159B4DE25E0044C008082FA /* internalLoggerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = internalLoggerTests.swift; sourceTree = "<group>"; };
@@ -1068,11 +1047,6 @@
 		5162B2F32571561900607780 /* BAMSGWebviewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BAMSGWebviewViewController.m; sourceTree = "<group>"; };
 		5166D7D425ED3ED700F36A5E /* BATMessagingCloseErrorCause.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BATMessagingCloseErrorCause.h; sourceTree = "<group>"; };
 		5166D7DE25ED464700F36A5E /* BATMessagingCloseErrorCause.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BATMessagingCloseErrorCause.m; sourceTree = "<group>"; };
-		51675F0721383619000E7B9F /* BALMetaContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BALMetaContext.h; sourceTree = "<group>"; };
-		51675F0821383619000E7B9F /* BALMetaContext.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BALMetaContext.m; sourceTree = "<group>"; };
-		51675F0B21383D6A000E7B9F /* batchContextTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = batchContextTests.swift; sourceTree = "<group>"; };
-		51675F0D213842B4000E7B9F /* BALCachingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BALCachingContext.h; sourceTree = "<group>"; };
-		51675F0E213842B4000E7B9F /* BALCachingContext.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BALCachingContext.m; sourceTree = "<group>"; };
 		51696F7825263BFC00951CA4 /* BAApplicationLifecycle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAApplicationLifecycle.h; sourceTree = "<group>"; };
 		51696F7925263BFC00951CA4 /* BAApplicationLifecycle.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BAApplicationLifecycle.m; sourceTree = "<group>"; };
 		51697DCD22DC847D0043FE49 /* BAQueryWebserviceClientDatasource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAQueryWebserviceClientDatasource.h; sourceTree = "<group>"; };
@@ -1136,8 +1110,6 @@
 		5193FC9422F0830800F5C9B9 /* BAURLSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BAURLSession.m; sourceTree = "<group>"; };
 		5193FC9522F0830800F5C9B9 /* BAURLSessionProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BAURLSessionProtocol.h; sourceTree = "<group>"; };
 		5193FC9622F0830900F5C9B9 /* BAURLSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BAURLSession.h; sourceTree = "<group>"; };
-		51952CFE2139828900D8E357 /* BALEventContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BALEventContext.h; sourceTree = "<group>"; };
-		51952CFF2139828900D8E357 /* BALEventContext.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BALEventContext.m; sourceTree = "<group>"; };
 		51977ED620DBCE490046B40D /* BAPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BAPromise.h; sourceTree = "<group>"; };
 		51977ED720DBCE490046B40D /* BAPromise.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BAPromise.m; sourceTree = "<group>"; };
 		51977EDA20DC17040046B40D /* BAOptOutWebserviceClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAOptOutWebserviceClient.h; sourceTree = "<group>"; };
@@ -1286,8 +1258,6 @@
 		51F1FCFB20DAA0A7006EDE43 /* batchTaskDebouncerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = batchTaskDebouncerTest.swift; sourceTree = "<group>"; };
 		51F222AB1B4C16AC005DFBCE /* BatchLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchLogger.h; path = Batch/BatchLogger.h; sourceTree = SOURCE_ROOT; };
 		51F58E35257FAA31000DE3E0 /* BAMessagingAnalyticsDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAMessagingAnalyticsDelegate.h; sourceTree = "<group>"; };
-		51F8403B214188040009DFB1 /* BALUserAttributeContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BALUserAttributeContext.h; sourceTree = "<group>"; };
-		51F8403C214188040009DFB1 /* BALUserAttributeContext.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BALUserAttributeContext.m; sourceTree = "<group>"; };
 		51F91A1E22DF1B00003A42F1 /* BAWebserviceURLBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAWebserviceURLBuilder.h; sourceTree = "<group>"; };
 		51F91A1F22DF1B00003A42F1 /* BAWebserviceURLBuilder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BAWebserviceURLBuilder.m; sourceTree = "<group>"; };
 		51FCC9312577EF9C00FA76C6 /* BAMSGActivityIndicatorView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAMSGActivityIndicatorView.h; sourceTree = "<group>"; };
@@ -1423,7 +1393,6 @@
 				518E383A1EA8AADC009AB274 /* Inbox */,
 				51AE9EA120D930240084CF14 /* Opt Out */,
 				51ECF37420065AF40086C9CC /* Debug */,
-				5105746E2135860500789F86 /* Lisp */,
 			);
 			path = Modules;
 			sourceTree = "<group>";
@@ -1453,6 +1422,8 @@
 				51B5E4881C849D8900047F6E /* BABundleInfo.m */,
 				51AE746620850217005186D7 /* BAInstallationID.h */,
 				51AE746720850217005186D7 /* BAInstallationID.m */,
+				5157117029DAD6EC0002A9CD /* BATUserActivity.h */,
+				5157117129DAD6EC0002A9CD /* BATUserActivity.m */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -1654,7 +1625,6 @@
 				629EF3BB243E2590006A47CC /* Inbox */,
 				62579A0E235DBBA30018B26C /* EventDispatcher */,
 				5122032422CA5BD6001A505F /* Messaging */,
-				5105747B21358C1900789F86 /* Lisp */,
 				51A214EF25CC6073003FD6A6 /* Local Campaigns */,
 				51BD1924202074D200C2524D /* Actions */,
 				02849BDB19B9FA2D0013408B /* Core */,
@@ -1938,34 +1908,10 @@
 				517EAE411C1890540058D288 /* BAUserAttribute.h */,
 				517EAE421C1890540058D288 /* BAUserAttribute.m */,
 				51A31D811E27DC8B004CDD65 /* BAUserDataEnums.h */,
+				1E104EAD28E6F43D00E998AE /* BAUserEmailSubscription.h */,
+				1E104EAE28E6F43D00E998AE /* BAUserEmailSubscription.m */,
 			);
 			path = User;
-			sourceTree = "<group>";
-		};
-		5105746E2135860500789F86 /* Lisp */ = {
-			isa = PBXGroup;
-			children = (
-				51675F0621383113000E7B9F /* Evaluation Contexts */,
-				510574782135862000789F86 /* BALEvaluationContext.h */,
-				510574702135861F00789F86 /* BALispParser.h */,
-				510574762135862000789F86 /* BALispParser.m */,
-				510574742135862000789F86 /* BALOperators.h */,
-				5105746F2135861F00789F86 /* BALOperators.m */,
-				510574752135862000789F86 /* BALSExpression.h */,
-				510574732135862000789F86 /* BALSExpression.m */,
-				510574772135862000789F86 /* BALValues.h */,
-				510574712135861F00789F86 /* BALValues.m */,
-			);
-			path = Lisp;
-			sourceTree = "<group>";
-		};
-		5105747B21358C1900789F86 /* Lisp */ = {
-			isa = PBXGroup;
-			children = (
-				5105747C21358C2A00789F86 /* batchLispTests.swift */,
-				51675F0B21383D6A000E7B9F /* batchContextTests.swift */,
-			);
-			path = Lisp;
 			sourceTree = "<group>";
 		};
 		510BD5B822E0A55200D8CBA1 /* Query Services Implementations */ = {
@@ -2090,6 +2036,7 @@
 				51B4F4FF25D3F76F0077E948 /* osHelperTests.swift */,
 				515A74942510BE2200F05E80 /* swizzlingTests.m */,
 				515A74962510C17800F05E80 /* swiftSwizzling.swift */,
+				1EB69D3D290C0F5A003E1EF7 /* emailTests.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -2187,6 +2134,7 @@
 				93C78F5E220AE4120082A6F7 /* batchUserTests.m */,
 				51242703244D8F9700025DA3 /* batchUserDataEditorTests.swift */,
 				51E22DC62451CA3C00D02CA8 /* batchUserEditorPublicAPITests.m */,
+				1E104EB528EB289400E998AE /* batchUserEmailSubscriptionTests.m */,
 			);
 			name = User;
 			sourceTree = "<group>";
@@ -2352,6 +2300,8 @@
 				93F04586224B7E8E0006C41A /* BADateFormatting.m */,
 				51D3E79C2328EF7100DF82AF /* BAWindowHelper.h */,
 				51D3E79D2328EF7100DF82AF /* BAWindowHelper.m */,
+				1EB69D39290C09B9003E1EF7 /* BAEmailUtils.h */,
+				1EB69D3A290C09B9003E1EF7 /* BAEmailUtils.m */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -2372,23 +2322,6 @@
 				5161B0A724C71195003F36E7 /* webserviceHMACTests.swift */,
 			);
 			path = HMAC;
-			sourceTree = "<group>";
-		};
-		51675F0621383113000E7B9F /* Evaluation Contexts */ = {
-			isa = PBXGroup;
-			children = (
-				51675F0721383619000E7B9F /* BALMetaContext.h */,
-				51675F0821383619000E7B9F /* BALMetaContext.m */,
-				51675F0D213842B4000E7B9F /* BALCachingContext.h */,
-				51675F0E213842B4000E7B9F /* BALCachingContext.m */,
-				51952CFE2139828900D8E357 /* BALEventContext.h */,
-				51952CFF2139828900D8E357 /* BALEventContext.m */,
-				51093AB021400FD200C4C1BA /* BALNativeAttributeContext.h */,
-				51093AB121400FD200C4C1BA /* BALNativeAttributeContext.m */,
-				51F8403B214188040009DFB1 /* BALUserAttributeContext.h */,
-				51F8403C214188040009DFB1 /* BALUserAttributeContext.m */,
-			);
-			path = "Evaluation Contexts";
 			sourceTree = "<group>";
 		};
 		5169F9441F20C21F00274FF9 /* Persistence */ = {
@@ -2918,18 +2851,8 @@
 				517D716A22BBC50E00E374FB /* BADBGLCDetailsViewController.h in Headers */,
 				517D716B22BBC50E00E374FB /* BADBGCustomDataViewController.h in Headers */,
 				517D716C22BBC50E00E374FB /* BADBGCustomDataModels.h in Headers */,
-				517D716D22BBC50E00E374FB /* BALMetaContext.h in Headers */,
 				510BD5D722E0B4D500D8CBA1 /* BAWSQueryAttributes.h in Headers */,
-				517D716E22BBC50E00E374FB /* BALCachingContext.h in Headers */,
-				517D716F22BBC50E00E374FB /* BALEventContext.h in Headers */,
-				517D717022BBC50E00E374FB /* BALNativeAttributeContext.h in Headers */,
-				517D717122BBC50E00E374FB /* BALUserAttributeContext.h in Headers */,
-				517D717222BBC50E00E374FB /* BALEvaluationContext.h in Headers */,
-				517D717322BBC50E00E374FB /* BALispParser.h in Headers */,
-				517D717422BBC50E00E374FB /* BALOperators.h in Headers */,
-				517D717522BBC50E00E374FB /* BALSExpression.h in Headers */,
 				5171445B22DCA29D001E99D7 /* BAStandardQueryWebserviceIdentifiersProvider.h in Headers */,
-				517D717622BBC50E00E374FB /* BALValues.h in Headers */,
 				517D717822BBC50E00E374FB /* BAWSQuery.h in Headers */,
 				517D717C22BBC50E00E374FB /* BAWSQueryPushToken.h in Headers */,
 				517D717E22BBC50E00E374FB /* BAWSQueryTracking.h in Headers */,
@@ -3036,6 +2959,9 @@
 				1EBDBC76271709D1006DC662 /* BAMetricManager.h in Headers */,
 				1E45578527CE1B510048D3A8 /* BALocalCampaignsJITService.h in Headers */,
 				1E2C31B527CF740E00A4CB6E /* BAMetricRegistry.h in Headers */,
+				5157117229DAD6EC0002A9CD /* BATUserActivity.h in Headers */,
+				1EB69D3B290C09B9003E1EF7 /* BAEmailUtils.h in Headers */,
+				1E104EAF28E6F43D00E998AE /* BAUserEmailSubscription.h in Headers */,
 				1EBDBC662715B2A2006DC662 /* BAMetricProtocol.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3125,7 +3051,7 @@
 					517D701722BBC34A00E374FB = {
 						CreatedOnToolsVersion = 11.0;
 						DevelopmentTeam = U5K2ETC2Y6;
-						LastSwiftMigration = 1320;
+						LastSwiftMigration = 1410;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -3185,7 +3111,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# workaround for bitcode generation problem with Xcode 7.3\nunset TOOLCHAINS\n\nexport CONFIGURATION=Release\n\n# define output folder environment variable\nUNIVERSAL_OUTPUTFOLDER=${PROJECT_DIR}/universal/Batch.embeddedframework\n\n# Step 1. Build Device and Simulator versions\nxcodebuild OTHER_CFLAGS=\"-fembed-bitcode\" -target Batch ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk iphoneos  BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\"\nxcodebuild OTHER_CFLAGS=\"-fembed-bitcode\" -target Batch ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk iphonesimulator BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\"\n\n# Remove the old output folder\nrm -rf \"${UNIVERSAL_OUTPUTFOLDER}\"\n\n# Recreate it\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}\"\n\n# Copy the generated framework\ncp -R \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/Batch.framework\" \"${UNIVERSAL_OUTPUTFOLDER}/\"\n\n# Remove the old binary\nrm \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/Batch\"\n\n# Extract Intel slices from the simulator binary\n# We can't support arm64 and arm64e for silicon macs in a fat framework, lipo will fail\nSIMULATOR_FRAMEWORK_PATH=\"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/Batch.framework/Batch\"\nlipo -extract \"i386\" -output \"${SIMULATOR_FRAMEWORK_PATH}-i386\" \"${SIMULATOR_FRAMEWORK_PATH}\"\nlipo -extract \"x86_64\" -output \"${SIMULATOR_FRAMEWORK_PATH}-x86_64\" \"${SIMULATOR_FRAMEWORK_PATH}\"\n\n# Create universal binary file using lipo\nlipo -create -output \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/Batch\" \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/Batch.framework/Batch\" \"${SIMULATOR_FRAMEWORK_PATH}-i386\" \"${SIMULATOR_FRAMEWORK_PATH}-x86_64\" \n\n# make sure the resource directory exists\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}/Batch.bundle\"\nrm -R \"${UNIVERSAL_OUTPUTFOLDER}/Batch.bundle/\"\n\n# Move ressources.\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/en.lproj/\" #this may not exist\ncp -R \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/en.lproj/\" \"${UNIVERSAL_OUTPUTFOLDER}/Batch.bundle/\"\nrm -R \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/en.lproj/\"\ntouch \"${UNIVERSAL_OUTPUTFOLDER}/Batch.bundle/.gitignore\"\n\n# Clean up framework for public use\ncd \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/\"\nsh ${PROJECT_DIR}/../Tools/strip_public_swift_framework.sh\n\n";
+			shellScript = "# workaround for bitcode generation problem with Xcode 7.3\nunset TOOLCHAINS\n\nexport CONFIGURATION=Release\n\n# define output folder environment variable\nUNIVERSAL_OUTPUTFOLDER=${PROJECT_DIR}/universal/Batch.embeddedframework\n\n# Step 1. Build Device and Simulator versions\nxcodebuild OTHER_CFLAGS=\"-fembed-bitcode\" -target Batch ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk iphoneos  BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\"\nxcodebuild OTHER_CFLAGS=\"-fembed-bitcode\" -target Batch ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk iphonesimulator BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\"\n\n# Remove the old output folder\nrm -rf \"${UNIVERSAL_OUTPUTFOLDER}\"\n\n# Recreate it\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}\"\n\n# Copy the generated framework\ncp -R \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/Batch.framework\" \"${UNIVERSAL_OUTPUTFOLDER}/\"\n\n# Remove the old binary\nrm \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/Batch\"\n\n# Extract Intel slices from the simulator binary\n# We can't support arm64 and arm64e for silicon macs in a fat framework, lipo will fail\nSIMULATOR_FRAMEWORK_PATH=\"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/Batch.framework/Batch\"\nlipo -extract \"x86_64\" -output \"${SIMULATOR_FRAMEWORK_PATH}-x86_64\" \"${SIMULATOR_FRAMEWORK_PATH}\"\n\n# Create universal binary file using lipo\nlipo -create -output \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/Batch\" \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/Batch.framework/Batch\" \"${SIMULATOR_FRAMEWORK_PATH}-x86_64\" \n\n# make sure the resource directory exists\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}/Batch.bundle\"\nrm -R \"${UNIVERSAL_OUTPUTFOLDER}/Batch.bundle/\"\n\n# Move ressources.\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/en.lproj/\" #this may not exist\ncp -R \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/en.lproj/\" \"${UNIVERSAL_OUTPUTFOLDER}/Batch.bundle/\"\nrm -R \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/en.lproj/\"\ntouch \"${UNIVERSAL_OUTPUTFOLDER}/Batch.bundle/.gitignore\"\n\n# Clean up framework for public use\ncd \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/\"\nsh ${PROJECT_DIR}/../Tools/Scripts/strip_public_swift_framework.sh\n";
 		};
 		516BBC0B22BD0D2900742649 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3199,7 +3125,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# workaround for bitcode generation problem with Xcode 7.3\nunset TOOLCHAINS\n\nexport CONFIGURATION=Release\n\n# define output folder environment variable\nARCHIVES_OUTPUTFOLDER=${PROJECT_DIR}/universal/Archives\nDSYMS_OUTPUTFOLDER=${PROJECT_DIR}/universal/dSYMs\nXCFRAMEWORK_OUTPUT=${PROJECT_DIR}/universal/Batch.xcframework\n\n# Create the output folders\nmkdir -p \"${ARCHIVES_OUTPUTFOLDER}\"\nmkdir -p \"${DSYMS_OUTPUTFOLDER}\"\nrm -f \"${DSYMS_OUTPUTFOLDER}/*.dSYM\"\n\n# Step 1. Build Device, Simulator and macOS versions\nxcodebuild archive -scheme Batch -destination \"generic/platform=iOS\" -configuration ${CONFIGURATION} -archivePath \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphoneos.xcarchive\" SKIP_INSTALL=NO ONLY_ACTIVE_ARCH=NO OTHER_CFLAGS=\"-fembed-bitcode\" ARCHS=\"armv7 arm64 arm64e\" VALID_ARCHS=\"armv7 arm64 arm64e\"\nxcodebuild archive -scheme Batch -destination \"generic/platform=iOS Simulator\" -configuration ${CONFIGURATION} -archivePath \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphonesimulator.xcarchive\" SKIP_INSTALL=NO ONLY_ACTIVE_ARCH=NO OTHER_CFLAGS=\"-fembed-bitcode\"\nxcodebuild archive -scheme Batch -destination \"platform=macOS\" -configuration ${CONFIGURATION} -archivePath \"${ARCHIVES_OUTPUTFOLDER}/Batch-macos.xcarchive\" SKIP_INSTALL=NO ONLY_ACTIVE_ARCH=NO OTHER_CFLAGS=\"-fembed-bitcode\"\n\n# Step 2. Copy the dSYMs\n\ncp -a \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphoneos.xcarchive/dSYMs/Batch.framework.dSYM\" \"${DSYMS_OUTPUTFOLDER}/Batch_iphoneos.framework.dSYM\"\ncp -a \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphonesimulator.xcarchive/dSYMs/Batch.framework.dSYM\" \"${DSYMS_OUTPUTFOLDER}/Batch_iphonesimulator.framework.dSYM\"\ncp -a \"${ARCHIVES_OUTPUTFOLDER}/Batch-macos.xcarchive/dSYMs/Batch.framework.dSYM\" \"${DSYMS_OUTPUTFOLDER}/Batch_macos.framework.dSYM\"\n\n# Step 3. Clean up the frameworks\n\npushd\n\ncd \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphoneos.xcarchive/Products/Library/Frameworks/Batch.framework/\"\nsh ${PROJECT_DIR}/../Tools/strip_public_swift_framework.sh\n\ncd \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphonesimulator.xcarchive/Products/Library/Frameworks/Batch.framework/\"\nsh ${PROJECT_DIR}/../Tools/strip_public_swift_framework.sh\n\ncd \"${ARCHIVES_OUTPUTFOLDER}/Batch-macos.xcarchive/Products/Library/Frameworks/Batch.framework/Versions/A/\"\nsh ${PROJECT_DIR}/../Tools/strip_public_swift_framework.sh\n\n## 3.1: Fix Xcode not creating the \"PrivateHeaders\" folder, which can break Azure Pipelines\n## https://github.com/bamlab/react-native-batch-push/issues/67\nmkdir \"PrivateHeaders\"\n\npopd\n\n# Step 4. Make the xcframework\n# Remove the old xcframework\nrm -rf \"${XCFRAMEWORK_OUTPUT}\"\n\n# Build the xcframework\n\nxcodebuild -create-xcframework \\\n    -framework \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphoneos.xcarchive/Products/Library/Frameworks/Batch.framework\" \\\n    -framework \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphonesimulator.xcarchive/Products/Library/Frameworks/Batch.framework\" \\\n    -framework \"${ARCHIVES_OUTPUTFOLDER}/Batch-macos.xcarchive/Products/Library/Frameworks/Batch.framework\" \\\n    -output \"${XCFRAMEWORK_OUTPUT}\"\n";
+			shellScript = "# workaround for bitcode generation problem with Xcode 7.3\nunset TOOLCHAINS\n\nexport CONFIGURATION=Release\n\n# define output folder environment variable\nARCHIVES_OUTPUTFOLDER=${PROJECT_DIR}/universal/Archives\nDSYMS_OUTPUTFOLDER=${PROJECT_DIR}/universal/dSYMs\nXCFRAMEWORK_OUTPUT=${PROJECT_DIR}/universal/Batch.xcframework\n\n# Create the output folders\nmkdir -p \"${ARCHIVES_OUTPUTFOLDER}\"\nmkdir -p \"${DSYMS_OUTPUTFOLDER}\"\nrm -f \"${DSYMS_OUTPUTFOLDER}/*.dSYM\"\n\n# Step 1. Build Device, Simulator and macOS versions\nxcodebuild archive -scheme Batch -destination \"generic/platform=iOS\" -configuration ${CONFIGURATION} -archivePath \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphoneos.xcarchive\" SKIP_INSTALL=NO ONLY_ACTIVE_ARCH=NO OTHER_CFLAGS=\"-fembed-bitcode\" ARCHS=\"arm64 arm64e\" VALID_ARCHS=\"arm64 arm64e\"\nxcodebuild archive -scheme Batch -destination \"generic/platform=iOS Simulator\" -configuration ${CONFIGURATION} -archivePath \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphonesimulator.xcarchive\" SKIP_INSTALL=NO ONLY_ACTIVE_ARCH=NO OTHER_CFLAGS=\"-fembed-bitcode\"\nxcodebuild archive -scheme Batch -destination \"platform=macOS\" -configuration ${CONFIGURATION} -archivePath \"${ARCHIVES_OUTPUTFOLDER}/Batch-macos.xcarchive\" SKIP_INSTALL=NO ONLY_ACTIVE_ARCH=NO OTHER_CFLAGS=\"-fembed-bitcode\"\n\n# Step 2. Copy the dSYMs\n\ncp -a \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphoneos.xcarchive/dSYMs/Batch.framework.dSYM\" \"${DSYMS_OUTPUTFOLDER}/Batch_iphoneos.framework.dSYM\"\ncp -a \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphonesimulator.xcarchive/dSYMs/Batch.framework.dSYM\" \"${DSYMS_OUTPUTFOLDER}/Batch_iphonesimulator.framework.dSYM\"\ncp -a \"${ARCHIVES_OUTPUTFOLDER}/Batch-macos.xcarchive/dSYMs/Batch.framework.dSYM\" \"${DSYMS_OUTPUTFOLDER}/Batch_macos.framework.dSYM\"\n\n# Step 3. Clean up the frameworks\n\npushd\n\ncd \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphoneos.xcarchive/Products/Library/Frameworks/Batch.framework/\"\nsh ${PROJECT_DIR}/../Tools/Scripts/strip_public_swift_framework.sh\n\ncd \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphonesimulator.xcarchive/Products/Library/Frameworks/Batch.framework/\"\nsh ${PROJECT_DIR}/../Tools/Scripts/strip_public_swift_framework.sh\n\ncd \"${ARCHIVES_OUTPUTFOLDER}/Batch-macos.xcarchive/Products/Library/Frameworks/Batch.framework/Versions/A/\"\nsh ${PROJECT_DIR}/../Tools/Scripts/strip_public_swift_framework.sh\n\n## 3.1: Fix Xcode not creating the \"PrivateHeaders\" folder, which can break Azure Pipelines\n## https://github.com/bamlab/react-native-batch-push/issues/67\nmkdir \"PrivateHeaders\"\n\npopd\n\n# Step 4. Make the xcframework\n# Remove the old xcframework\nrm -rf \"${XCFRAMEWORK_OUTPUT}\"\n\n# Build the xcframework\n\nxcodebuild -create-xcframework \\\n    -framework \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphoneos.xcarchive/Products/Library/Frameworks/Batch.framework\" \\\n    -framework \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphonesimulator.xcarchive/Products/Library/Frameworks/Batch.framework\" \\\n    -framework \"${ARCHIVES_OUTPUTFOLDER}/Batch-macos.xcarchive/Products/Library/Frameworks/Batch.framework\" \\\n    -output \"${XCFRAMEWORK_OUTPUT}\"\n";
 		};
 		516C406723D9FD63000C11CF /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3217,7 +3143,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "cd ${PROJECT_DIR}\nenv -i HOME=\"$HOME\" bash -l -c ./generate_private_umbrella_header.sh\n";
+			shellScript = "cd ${PROJECT_DIR}\nenv -i HOME=\"$HOME\" bash -l -c ../Tools/Scripts/generate_private_umbrella_header.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -3232,6 +3158,7 @@
 				6295B154243F44520065059E /* inboxFetchWebserviceClientTests.m in Sources */,
 				51B4F50025D3F76F0077E948 /* osHelperTests.swift in Sources */,
 				62579A11235DBF7C0018B26C /* pushEventPayloadTests.m in Sources */,
+				1EB69D3E290C0F5A003E1EF7 /* emailTests.swift in Sources */,
 				1EBDBC8427188D40006DC662 /* metricTests.m in Sources */,
 				51ACA05D2166193D006FAD04 /* batchUserDiffTests.swift in Sources */,
 				515A74972510C17800F05E80 /* swiftSwizzling.swift in Sources */,
@@ -3240,7 +3167,6 @@
 				51DD79BC25D2BE0F005E8D62 /* webviewBridgeLegacyTests.swift in Sources */,
 				51F1FCFC20DAA0A7006EDE43 /* batchTaskDebouncerTest.swift in Sources */,
 				5192784A25D1764D005C43B4 /* webviewJavascriptBridgeTests.swift in Sources */,
-				5105747D21358C2A00789F86 /* batchLispTests.swift in Sources */,
 				51E22DC72451CA3C00D02CA8 /* batchUserEditorPublicAPITests.m in Sources */,
 				1EA32C6027B524600085D133 /* localCampaignsSQLTrackerTests.m in Sources */,
 				51C6A47225CA99DF00B07AB6 /* batchTestsBootstrap.m in Sources */,
@@ -3254,6 +3180,7 @@
 				51ECC06D22D4F8C800F1C5EC /* webserviceAESGCMCryptorTests.m in Sources */,
 				1EA42E0426A9A736004CC618 /* FindMyInstallationHelperTests.m in Sources */,
 				1EBDBC86271D9936006DC662 /* metricManagerTests.m in Sources */,
+				1E104EB628EB289400E998AE /* batchUserEmailSubscriptionTests.m in Sources */,
 				628C158F24AB8E990026C4EC /* inboxSyncWebserviceClientTests.m in Sources */,
 				5192785025D17B80005C43B4 /* XCTest+BAPromise.swift in Sources */,
 				5159B4ED25E01BA9008082FA /* loggerSetupTests.m in Sources */,
@@ -3263,7 +3190,6 @@
 				629B42AE249119860025411E /* gzipTests.m in Sources */,
 				02849BFD19B9FA2D0013408B /* batchCoreTests.m in Sources */,
 				518D887023560C79007BF341 /* messagingAnalyticsDeduplicatingDelegateTests.swift in Sources */,
-				51675F0C21383D6A000E7B9F /* batchContextTests.swift in Sources */,
 				514BA4A027D257F100B93FAF /* inboxFetcherTests.swift in Sources */,
 				939E058A222D2CC700E8D32D /* batchUserTests.m in Sources */,
 				510D906F24C83A81005981AC /* shaTests.swift in Sources */,
@@ -3404,6 +3330,7 @@
 				517D702222BBC45900E374FB /* BatchUserProfile.m in Sources */,
 				517D702322BBC45900E374FB /* BatchInbox.m in Sources */,
 				517D702422BBC45900E374FB /* BatchPush.m in Sources */,
+				5157117329DAD6EC0002A9CD /* BATUserActivity.m in Sources */,
 				517D702522BBC45900E374FB /* BatchUser.m in Sources */,
 				517CC28825B6DAC200A3F380 /* BATWebviewBridgeLegacyWKHandler.m in Sources */,
 				517D702622BBC45900E374FB /* BatchUserAttribute.m in Sources */,
@@ -3462,6 +3389,7 @@
 				517D705722BBC45900E374FB /* BATrackerSender.m in Sources */,
 				517D705822BBC45900E374FB /* BATrackerSignpostHelper.m in Sources */,
 				517D705B22BBC45900E374FB /* BAMessagingCenter.m in Sources */,
+				1E104EB028E6F43D00E998AE /* BAUserEmailSubscription.m in Sources */,
 				51379B8022FC5C0200AB7B82 /* BAInjectableImplementations.m in Sources */,
 				517D705C22BBC45900E374FB /* BADelegatedUIAlertController.m in Sources */,
 				517D705D22BBC45900E374FB /* BABatchMessagingDelegateWrapper.m in Sources */,
@@ -3527,6 +3455,7 @@
 				629B42A52490D8FA0025411E /* BATGZIP.m in Sources */,
 				629B42A12490C9120025411E /* BAWebserviceAESGCMGzipCryptor.m in Sources */,
 				517D708A22BBC45900E374FB /* BAUserDataBuiltinActions.m in Sources */,
+				1EB69D3C290C09B9003E1EF7 /* BAEmailUtils.m in Sources */,
 				517D708B22BBC45900E374FB /* BAInbox.m in Sources */,
 				517D708C22BBC45900E374FB /* BAInboxFetchWebserviceClient.m in Sources */,
 				6231A5252458171100AFFA3D /* BAWebserviceJsonClient.m in Sources */,
@@ -3548,15 +3477,6 @@
 				517D709722BBC45900E374FB /* BADBGCustomDataViewController.m in Sources */,
 				627278E524A4FDA80067F036 /* BAInboxSyncWebserviceClient.m in Sources */,
 				517D709822BBC45900E374FB /* BADBGCustomDataModels.m in Sources */,
-				517D709922BBC45900E374FB /* BALMetaContext.m in Sources */,
-				517D709A22BBC45900E374FB /* BALCachingContext.m in Sources */,
-				517D709B22BBC45900E374FB /* BALEventContext.m in Sources */,
-				517D709C22BBC45900E374FB /* BALNativeAttributeContext.m in Sources */,
-				517D709D22BBC45900E374FB /* BALUserAttributeContext.m in Sources */,
-				517D709E22BBC45900E374FB /* BALispParser.m in Sources */,
-				517D709F22BBC45900E374FB /* BALOperators.m in Sources */,
-				517D70A022BBC45900E374FB /* BALSExpression.m in Sources */,
-				517D70A122BBC45900E374FB /* BALValues.m in Sources */,
 				517D70A222BBC45900E374FB /* BAWSQuery.m in Sources */,
 				620F175224488AFB00D046D5 /* BADisplayReceiptCenter.m in Sources */,
 				510BD5C622E0B4BA00D8CBA1 /* BAWSResponseAttributes.m in Sources */,
@@ -3628,12 +3548,14 @@
 		02849C3419BA00350013408B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEFINES_MODULE = NO;
 			};
 			name = Debug;
 		};
 		02849C3519BA00350013408B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEFINES_MODULE = NO;
 			};
 			name = Release;
 		};
@@ -3686,7 +3608,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -3738,7 +3660,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -3762,7 +3684,7 @@
 				);
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Batch/**";
 				INFOPLIST_FILE = batchTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3794,7 +3716,7 @@
 				GCC_PREFIX_HEADER = "$(SOURCE_ROOT)/Batch/batch-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Batch/**";
 				INFOPLIST_FILE = batchTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3900,7 +3822,7 @@
 				INFOPLIST_PREFIX_HEADER = Batch/Versions.h;
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3914,7 +3836,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 5.7;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -3925,7 +3847,6 @@
 				"ARCHS[sdk=iphoneos*]" = (
 					"$(ARCHS_STANDARD)",
 					arm64e,
-					armv7s,
 				);
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -3952,7 +3873,7 @@
 				INFOPLIST_PREFIX_HEADER = Batch/Versions.h;
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3965,7 +3886,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				STRIP_STYLE = debugging;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 5.7;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

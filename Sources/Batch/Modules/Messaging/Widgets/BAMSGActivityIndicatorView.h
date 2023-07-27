@@ -5,8 +5,8 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
 #import <Batch/BAMSGStylableView.h>
+#import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -23,7 +23,8 @@ typedef NS_ENUM(NSUInteger, BAMSGActivityIndicatorViewColor) {
 @interface BAMSGActivityIndicatorView : UIActivityIndicatorView <BAMSGStylableView>
 
 - (instancetype)initWithPreferredSize:(BAMSGActivityIndicatorViewSize)size NS_DESIGNATED_INITIALIZER;
-- (instancetype)initWithActivityIndicatorStyle:(UIActivityIndicatorViewStyle)style __attribute__((deprecated("Use initWithPreferredSize:"))) NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithActivityIndicatorStyle:(UIActivityIndicatorViewStyle)style
+    __attribute__((deprecated("Use initWithPreferredSize:")))NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithFrame:(CGRect)frame NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithCoder:(NSCoder *)coder NS_DESIGNATED_INITIALIZER;
 

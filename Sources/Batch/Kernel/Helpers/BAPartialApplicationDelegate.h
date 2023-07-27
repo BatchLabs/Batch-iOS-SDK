@@ -20,18 +20,28 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo;
 
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
+- (void)application:(UIApplication *)application
+    didReceiveRemoteNotification:(NSDictionary *)userInfo
+          fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
-- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings NS_AVAILABLE_IOS(8_0);
+- (void)application:(UIApplication *)application
+    didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings NS_AVAILABLE_IOS(8_0);
 
 #pragma clang diagnostic pop
 
-- (void)application:(UIApplication *)application handleActionWithIdentifier:(nullable NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void (^)(void))completionHandler;
+- (void)application:(UIApplication *)application
+    handleActionWithIdentifier:(nullable NSString *)identifier
+         forRemoteNotification:(NSDictionary *)userInfo
+             completionHandler:(void (^)(void))completionHandler;
 
-- (void)application:(UIApplication *)application handleActionWithIdentifier:(nullable NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo withResponseInfo:(NSDictionary *)responseInfo completionHandler:(void (^)(void))completionHandler;
+- (void)application:(UIApplication *)application
+    handleActionWithIdentifier:(nullable NSString *)identifier
+         forRemoteNotification:(NSDictionary *)userInfo
+              withResponseInfo:(NSDictionary *)responseInfo
+             completionHandler:(void (^)(void))completionHandler;
 
 @end
 

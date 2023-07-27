@@ -9,9 +9,9 @@
 
 #import <Batch/BACenterMulticastDelegate.h>
 
+#import <Batch/BALocalCampaignSignalProtocol.h>
 #import <Batch/BALocalCampaignsManager.h>
 #import <Batch/BALocalCampaignsTracker.h>
-#import <Batch/BALocalCampaignSignalProtocol.h>
 
 @class BatchEventData;
 
@@ -43,24 +43,26 @@
 
 /**
  Called when an internal event is tracked
- Will perform a quick check using a cache, and if there's a potentially wanted event, will submit the task to an queue so that
- the checks required do not block the thread
+ Will perform a quick check using a cache, and if there's a potentially wanted event, will submit the task to an queue
+ so that the checks required do not block the thread
  */
-- (void)processTrackerPrivateEventNamed:(nonnull NSString*)name;
+- (void)processTrackerPrivateEventNamed:(nonnull NSString *)name;
 
 /**
  Called when a public event is tracked
- Will perform a quick check using a cache, and if there's a potentially wanted event, will submit the task to an queue so that
- the checks required do not block the thread
+ Will perform a quick check using a cache, and if there's a potentially wanted event, will submit the task to an queue
+ so that the checks required do not block the thread
  */
-- (void)processTrackerPublicEventNamed:(nonnull NSString*)name label:(nullable NSString*)label data:(nullable BatchEventData*)data;
+- (void)processTrackerPublicEventNamed:(nonnull NSString *)name
+                                 label:(nullable NSString *)label
+                                  data:(nullable BatchEventData *)data;
 
 /**
  Notify this module of the display of an In-App Campaign.
 
  Used for example for increasing the view count of a campaign, in order to be able to make the capping work.
  */
-- (void)didPerformCampaignOutputWithIdentifier:(nonnull NSString*)identifier eventData:(nullable NSObject*)eventData;
+- (void)didPerformCampaignOutputWithIdentifier:(nonnull NSString *)identifier eventData:(nullable NSObject *)eventData;
 
 /**
  Handle the WS response payload:
@@ -68,14 +70,14 @@
   - Write it on disk if valid
   - Emit the campaigns loaded signal
  */
-- (void)handleWebserviceResponsePayload:(nonnull NSDictionary*)payload;
+- (void)handleWebserviceResponsePayload:(nonnull NSDictionary *)payload;
 
 /**
  Notify this module that the local campaigns webservice has finished with success or not.
- 
+
  Used to release the signal queue.
  */
--(void)localCampaignsWebserviceDidFinish;
+- (void)localCampaignsWebserviceDidFinish;
 
 /**
  Trigger a WS call to refresh the campaigns

@@ -2,6 +2,6 @@
 
 @interface BADBGModule : NSObject
 
-+ (UIViewController*)debugViewController;
++ (UIViewController *)debugViewController;
 
 @end

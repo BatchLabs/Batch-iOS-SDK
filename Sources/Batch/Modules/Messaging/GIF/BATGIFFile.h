@@ -4,8 +4,8 @@
 NS_ASSUME_NONNULL_BEGIN
 typedef NS_ENUM(NSInteger, BATGIFError) {
     BATGIFErrorCouldNotCreateImageSource, // CoreGraphics failed to create the source
-    BATGIFErrorNotAGif, // Source is not a GIF
-    BATGIFErrorAnimationNotNeeded, // Animation is not needed (not more than 1 frame)
+    BATGIFErrorNotAGif,                   // Source is not a GIF
+    BATGIFErrorAnimationNotNeeded,        // Animation is not needed (not more than 1 frame)
 };
 
 /**
@@ -47,27 +47,28 @@ typedef NS_ENUM(NSUInteger, BATGIFCacheSize) {
 
 /**
  Checks if the given NSData might be a gif
- 
+
  Note: this is a quick check. -initWithData:error: might still fail.
  */
-+ (BOOL)isPotentiallyAGif:(NSData*)data;
++ (BOOL)isPotentiallyAGif:(NSData *)data;
 
-@property (readonly) NSUInteger frameCount; // Number of frames available. This reflects the number of frames we were able to decode from the GIF, not the number it told it had
+@property (readonly) NSUInteger frameCount; // Number of frames available. This reflects the number of frames we were
+                                            // able to decode from the GIF, not the number it told it had
 
 /**
  Make a new BATGIFFile from the given data.
  This is an expensive operation that should not be done on the main thread
  */
-- (nullable instancetype)initWithData:(NSData*)data error:(NSError**)error;
+- (nullable instancetype)initWithData:(NSData *)data error:(NSError **)error;
 
 /**
  Get the frame at an index.
  */
-- (BATGIFFrame*)frameAtIndex:(NSUInteger)index;
+- (BATGIFFrame *)frameAtIndex:(NSUInteger)index;
 
 /**
  Consume the frame at an index.
- 
+
  The cache will consider this frame and all the ones before it consumed (if all frames don't fit in memory).
  It is also going to start caching next ones in the background.
  */
@@ -76,7 +77,7 @@ typedef NS_ENUM(NSUInteger, BATGIFCacheSize) {
 /**
  Warn that a frame will be displayed (but not yet consumed).
  The difference between this method and "consumeFrameAtIndex" is that the frame will NOT be attempted to be freed.
- 
+
  Call this method when you're about to display the frame at the specified index, so that
  this class may take this opportunity to add more in the cache.
  */

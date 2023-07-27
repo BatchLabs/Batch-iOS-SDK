@@ -31,6 +31,6 @@
  */
 - (nonnull instancetype)initWithVersion:(long long)version
                              attributes:(nonnull NSDictionary *)attributes
-                                andTags:(nonnull NSDictionary< NSString*, NSSet< NSString* >* >*)tags;
+                                andTags:(nonnull NSDictionary<NSString *, NSSet<NSString *> *> *)tags;
 
 @end

@@ -11,7 +11,7 @@
 
 #import <Batch/BatchInbox.h>
 
-@interface BatchInboxNotificationContentMessage()
+@interface BatchInboxNotificationContentMessage ()
 
 - (nonnull instancetype)initWithBody:(nonnull NSString *)body
                                title:(nullable NSString *)title
@@ -19,7 +19,7 @@
 
 @end
 
-@interface BatchInboxNotificationContent()
+@interface BatchInboxNotificationContent ()
 
 - (nullable instancetype)initWithInternalIdentifier:(nonnull NSString *)identifier
                                          rawPayload:(nonnull NSDictionary *)rawPayload

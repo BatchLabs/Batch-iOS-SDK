@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)init NS_UNAVAILABLE;
 
-- (instancetype)initWithKey:(NSString*)key version:(NSString*)version NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithKey:(NSString *)key version:(NSString *)version NS_DESIGNATED_INITIALIZER;
 
 @end
 

@@ -16,8 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface BAPushTokenServiceDatasource : NSObject <BAQueryWebserviceClientDatasource>
 
-- (instancetype)initWithToken:(NSString *)token
-    usesProductionEnvironment:(BOOL)usesProductionEnvironment;
+- (instancetype)initWithToken:(NSString *)token usesProductionEnvironment:(BOOL)usesProductionEnvironment;
 
 @end
 

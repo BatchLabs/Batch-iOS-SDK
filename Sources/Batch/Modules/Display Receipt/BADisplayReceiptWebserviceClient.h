@@ -12,7 +12,7 @@
 @interface BADisplayReceiptWebserviceClient : BAWebserviceMsgPackClient <BAConnectionDelegate>
 
 - (nullable instancetype)initWithReceipts:(nonnull NSArray *)receipts
-                                  success:(void (^ _Nullable)(void))successHandler
-                                    error:(void (^ _Nullable)(NSError* _Nonnull error))errorHandler;
+                                  success:(void (^_Nullable)(void))successHandler
+                                    error:(void (^_Nullable)(NSError *_Nonnull error))errorHandler;
 
 @end

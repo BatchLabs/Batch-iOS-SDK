@@ -11,9 +11,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @required
 
-- (void)persistCampaigns:(nonnull NSDictionary*)rawCampaignsData;
+- (void)persistCampaigns:(nonnull NSDictionary *)rawCampaignsData;
 
-- (nullable NSDictionary*)loadCampaignsWithError:(NSError**)error;
+- (nullable NSDictionary *)loadCampaignsWithError:(NSError **)error;
 
 - (void)deleteCampaigns;
 

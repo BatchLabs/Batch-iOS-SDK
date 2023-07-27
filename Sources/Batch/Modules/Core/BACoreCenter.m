@@ -37,9 +37,10 @@
 
 #import <Batch/BAWindowHelper.h>
 
+#import <Batch/BAApplicationLifecycle.h>
 #import <Batch/BAEventDispatcherCenter.h>
 #import <Batch/BAInjection.h>
-#import <Batch/BAApplicationLifecycle.h>
+#import <Batch/BATUserActivity.h>
 
 #define LOGGER_DOMAIN @"Core"
 
@@ -164,6 +165,13 @@
 - (void)excecuteStartWithAPIKey:(NSString *)key {
     NSString *apiKey =
         [key stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLPathAllowedCharacterSet];
+
+    if ([[UIApplication sharedApplication] delegate] == NULL) {
+        [BALogger publicForDomain:nil
+                          message:@"⚠️ Shared UIApplicationDelegate is not ready. If you'r using SwiftUI please "
+                                  @"ensure to set an explicite delegate. For more info, see documentation: "
+                                  @"https://doc.batch.com/ios/sdk-integration/initial-setup/#your-first-start"];
+    }
 
     // Try to save the developper key.
     NSError *e = [self.configuration setDevelopperKey:apiKey];
@@ -381,7 +389,9 @@
     @try {
         UIViewController *targetVC = [[BAWindowHelper keyWindow] rootViewController];
         if (targetVC.presentedViewController != nil) {
-            targetVC = targetVC.presentedViewController;
+            while (targetVC.presentedViewController) {
+                targetVC = targetVC.presentedViewController;
+            }
         }
 
         SFSafariViewController *safari = [[SFSafariViewController alloc] initWithURL:deeplinkURL];
@@ -441,14 +451,18 @@
                      message:@"Transferring universal link '%@' to UIApplication", URL.absoluteString];
 
     // Transferring url to application:continueUserActivity:restorationHandler or scene:continueUserActivity:
-    NSUserActivity *userActivity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
+    BATUserActivity *userActivity = [[BATUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
     userActivity.webpageURL = URL;
-    
+    // Telling Batch about this is only needed on SwiftUI apps
+    if ([BAApplicationLifecycle applicationUsesSwiftUILifecycle]) {
+        userActivity.hasUniversalLink = true;
+    }
+
     Boolean errorAlreadyLogged = false;
-    
+
     if (@available(iOS 13.0, *)) {
         if ([BAApplicationLifecycle applicationUsesUIScene]) {
-            UIScene* scene = [[UIApplication sharedApplication].connectedScenes allObjects].firstObject;
+            UIScene *scene = [[UIApplication sharedApplication].connectedScenes allObjects].firstObject;
             id<UISceneDelegate> sceneDelegate = [scene delegate];
             if ([sceneDelegate respondsToSelector:@selector(scene:continueUserActivity:)]) {
                 [sceneDelegate scene:scene continueUserActivity:userActivity];
@@ -461,7 +475,7 @@
             }
         }
     }
-    
+
     id<UIApplicationDelegate> appDelegate = [UIApplication sharedApplication].delegate;
     if ([appDelegate respondsToSelector:@selector(application:continueUserActivity:restorationHandler:)]) {
         [appDelegate application:[UIApplication sharedApplication]
@@ -476,7 +490,6 @@
     }
 
     return NO;
-    
 }
 
 // Check for potential incompatibilities/misconfigurations, and warn the developer

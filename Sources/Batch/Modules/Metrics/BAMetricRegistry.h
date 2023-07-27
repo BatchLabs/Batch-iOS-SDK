@@ -4,10 +4,9 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <Batch/BAObservation.h>
 #import <Batch/BACounter.h>
-
+#import <Batch/BAObservation.h>
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,14 +15,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonnull, readonly, class) BAMetricRegistry *instance;
 
 /// Observe local campaigns JIT response time
-- (BAObservation*)localCampaignsJITResponseTime;
+- (BAObservation *)localCampaignsJITResponseTime;
 
 /// Count local campaign ws calls by status ("OK", "KO")
-- (BACounter*)localCampaignsJITCount;
+- (BACounter *)localCampaignsJITCount;
 
 /// Observe local campaigns sync response time
-- (BAObservation*)localCampaignsSyncResponseTime;
-
+- (BAObservation *)localCampaignsSyncResponseTime;
 
 @end
 

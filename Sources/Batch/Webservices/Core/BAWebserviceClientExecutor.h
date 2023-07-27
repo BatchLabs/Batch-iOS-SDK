@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)sharedInstance;
 
-- (void)addClient:(BAWebserviceClient*)client;
+- (void)addClient:(BAWebserviceClient *)client;
 
 @end
 

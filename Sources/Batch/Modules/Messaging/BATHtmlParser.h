@@ -9,8 +9,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NSDictionary<NSString*, NSString*> BATTextTransformAttributes;
-typedef NSMutableDictionary<NSString*, NSString*> BATMutableTextTransformAttributes;
+typedef NSDictionary<NSString *, NSString *> BATTextTransformAttributes;
+typedef NSMutableDictionary<NSString *, NSString *> BATMutableTextTransformAttributes;
 
 typedef NS_OPTIONS(NSUInteger, BATTextModifiers) {
     BATTextModifierNone = 0,
@@ -25,7 +25,9 @@ typedef NS_OPTIONS(NSUInteger, BATTextModifiers) {
 
 @interface BATTextTransform : NSObject
 
-- (instancetype)initWithLocation:(NSUInteger)location modifiers:(BATTextModifiers)modifiers attributes:(BATTextTransformAttributes*)attributes;
+- (instancetype)initWithLocation:(NSUInteger)location
+                       modifiers:(BATTextModifiers)modifiers
+                      attributes:(BATTextTransformAttributes *)attributes;
 
 - (void)setEndLocation:(NSUInteger)endLocation;
 
@@ -33,7 +35,7 @@ typedef NS_OPTIONS(NSUInteger, BATTextModifiers) {
 
 @property BATTextModifiers modifiers;
 
-@property (nullable) BATTextTransformAttributes* attributes;
+@property (nullable) BATTextTransformAttributes *attributes;
 
 @end
 
@@ -42,16 +44,16 @@ typedef NS_OPTIONS(NSUInteger, BATTextModifiers) {
 /**
  Unstyled text
  */
-@property (readonly) NSString* text;
+@property (readonly) NSString *text;
 
 /**
  Transformation list
  */
-@property (readonly) NSArray<BATTextTransform*>* transforms;
+@property (readonly) NSArray<BATTextTransform *> *transforms;
 
-- (instancetype)initWithString:(NSString*)string;
+- (instancetype)initWithString:(NSString *)string;
 
-- (nullable NSError*)parse;
+- (nullable NSError *)parse;
 
 @end
 

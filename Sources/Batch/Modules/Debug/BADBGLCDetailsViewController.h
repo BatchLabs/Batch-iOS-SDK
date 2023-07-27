@@ -4,6 +4,6 @@
 
 @interface BADBGLCDetailsViewController : UITableViewController
 
-- (void)setCampaign:(BALocalCampaign*)campaign;
+- (void)setCampaign:(BALocalCampaign *)campaign;
 
 @end

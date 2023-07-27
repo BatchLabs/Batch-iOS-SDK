@@ -10,7 +10,7 @@
 
 #import <Batch/BatchCore.h>
 
-extern NSString * _Nonnull const kBATConfigurationChangedNotification;
+extern NSString *_Nonnull const kBATConfigurationChangedNotification;
 
 @protocol BatchLoggerDelegate;
 
@@ -89,13 +89,13 @@ extern NSString * _Nonnull const kBATConfigurationChangedNotification;
  @method setAssociatedDomains
  @abstract Set the associated domains
  */
-- (void)setAssociatedDomains:(nonnull NSArray<NSString*> *)domains;
+- (void)setAssociatedDomains:(nonnull NSArray<NSString *> *)domains;
 
 /*!
  @method associatedDomains
  @abstract Get the associated domains
  */
-- (nullable NSArray<NSString*> *)associatedDomains;
+- (nullable NSArray<NSString *> *)associatedDomains;
 
 /**
  Developer's deeplink delegate

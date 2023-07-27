@@ -11,7 +11,7 @@
 
 /**
  Floating banner
- 
+
  Format meant to be displayed in its own window, rather than modally.
  Usually vertically attached to a side of the screen
  */

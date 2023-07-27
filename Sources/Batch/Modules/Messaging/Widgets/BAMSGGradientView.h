@@ -11,13 +11,16 @@
 
 @protocol BAMSGGradientBackgroundProtocol <NSObject>
 
-- (void)setBackgroundGradient:(float)angle colors:(NSArray*)colors locations:(NSArray*)locations;
+- (void)setBackgroundGradient:(float)angle colors:(NSArray *)colors locations:(NSArray *)locations;
 
 @end
 
 @interface BAMSGGradientView : UIView <BAMSGGradientBackgroundProtocol, BAMSGPasstroughProtocol>
 
-+ (void)setupGradientLayer:(CAGradientLayer*)layer withAngle:(float)angle colors:(NSArray<UIColor*>*)colors locations:(NSArray<NSNumber*>*)locations;
++ (void)setupGradientLayer:(CAGradientLayer *)layer
+                 withAngle:(float)angle
+                    colors:(NSArray<UIColor *> *)colors
+                 locations:(NSArray<NSNumber *> *)locations;
 
 @property BOOL touchPassthrough;
 

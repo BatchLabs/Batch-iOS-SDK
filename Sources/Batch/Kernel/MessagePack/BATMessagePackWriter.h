@@ -21,7 +21,7 @@ typedef enum : NSInteger {
 ///     NSData
 ///     NSArray
 ///     NSDictionary
-+ (BOOL)canPackArray:(nullable NSArray*)array;
++ (BOOL)canPackArray:(nullable NSArray *)array;
 
 /// Returns whether a dictionary is packable or not.
 /// The keys should conform to NSCopying, but only the following types are supported:
@@ -35,7 +35,7 @@ typedef enum : NSInteger {
 ///     NSData
 ///     NSArray
 ///     NSDictionary
-+ (BOOL)canPackDictionary:(nullable NSDictionary<id<NSCopying>, id>*)dictionary;
++ (BOOL)canPackDictionary:(nullable NSDictionary<id<NSCopying>, id> *)dictionary;
 
 /// Write nil.
 - (void)writeNil;
@@ -72,27 +72,27 @@ typedef enum : NSInteger {
 
 /// Write a number or nil.
 /// @param number number to pack
-- (BOOL)writeNumber:(nullable NSNumber*)number error:(NSError * _Nullable * _Nullable)error;
+- (BOOL)writeNumber:(nullable NSNumber *)number error:(NSError *_Nullable *_Nullable)error;
 
 /// Write an array length header.
 /// This method takes an NSUInteger for convinence, as it is
 /// [NSArray count]'s type, but MessagePack arrays cannot store
 /// more than UINT32_MAX elements.
 /// @param size size of the array. Must not be greater than UINT32_MAX
-- (BOOL)writeArraySize:(NSUInteger)size error:(NSError * _Nullable * _Nullable)error;
+- (BOOL)writeArraySize:(NSUInteger)size error:(NSError *_Nullable *_Nullable)error;
 
 /// Write an NSArray or nil.
 /// Note that not all kind of values can be packed. Call +(BOOL)canPackArray:(NSArray*)array
 /// if you want to know beforehand.
 /// @param array array to write
-- (BOOL)writeArray:(nullable NSArray*)array error:(NSError * _Nullable * _Nullable)error;
+- (BOOL)writeArray:(nullable NSArray *)array error:(NSError *_Nullable *_Nullable)error;
 
 /// Write a dictionary (map) size header.
 /// A map's size is the number of key/value pairs.
 /// This method takes an NSUInteger for convinence, but MessagePack arrays cannot store
 /// more than UINT32_MAX tuples.
 /// @param size length of the map. Must not be greater than UINT32_MAX
-- (BOOL)writeDictionarySize:(NSUInteger)size error:(NSError * _Nullable * _Nullable)error;
+- (BOOL)writeDictionarySize:(NSUInteger)size error:(NSError *_Nullable *_Nullable)error;
 
 /// Write an NSDictionary or nil.
 /// Note that not all kind of values can be packed. Call +(BOOL)canPackDictionary:(NSDictionary*)dictionary
@@ -102,16 +102,17 @@ typedef enum : NSInteger {
 ///     NSNumber (for bools, integers and decimals)
 ///     NSString
 /// @param dictionary dictionary to write
-- (BOOL)writeDictionary:(nullable NSDictionary<id<NSCopying>, id>*)dictionary error:(NSError * _Nullable * _Nullable)error;
+- (BOOL)writeDictionary:(nullable NSDictionary<id<NSCopying>, id> *)dictionary
+                  error:(NSError *_Nullable *_Nullable)error;
 
 /// Write a NSData or nil.
-- (BOOL)writeData:(nullable NSData*)data error:(NSError * _Nullable * _Nullable)error;
+- (BOOL)writeData:(nullable NSData *)data error:(NSError *_Nullable *_Nullable)error;
 
 /// Write a String or nil.
-- (BOOL)writeString:(nullable NSString*)string error:(NSError * _Nullable * _Nullable)error;
+- (BOOL)writeString:(nullable NSString *)string error:(NSError *_Nullable *_Nullable)error;
 
 /// The MessagePack data. Makes a copy on read, so you may want to cache this instead of repeatedly accessing it.
-@property (nonnull, readonly) NSData* data;
+@property (nonnull, readonly) NSData *data;
 
 @end
 

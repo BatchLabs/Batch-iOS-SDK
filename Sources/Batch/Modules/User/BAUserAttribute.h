@@ -14,7 +14,8 @@
 
 + (nonnull instancetype)attributeWithValue:(nonnull id)value type:(BAUserAttributeType)type;
 
-+ (nonnull NSDictionary<NSString*, id>*)serverJsonRepresentationForAttributes:(nullable NSDictionary<NSString*, BAUserAttribute*>*)attributes;
++ (nonnull NSDictionary<NSString *, id> *)serverJsonRepresentationForAttributes:
+    (nullable NSDictionary<NSString *, BAUserAttribute *> *)attributes;
 
 @property (nonatomic, nonnull) id value;
 
@@ -22,5 +23,5 @@
 
 @end
 
-typedef NSDictionary<NSString*, BAUserAttribute*> BAUserAttributes;
-typedef NSDictionary<NSString*, NSSet<NSString*>*> BAUserTagCollections;
+typedef NSDictionary<NSString *, BAUserAttribute *> BAUserAttributes;
+typedef NSDictionary<NSString *, NSSet<NSString *> *> BAUserTagCollections;

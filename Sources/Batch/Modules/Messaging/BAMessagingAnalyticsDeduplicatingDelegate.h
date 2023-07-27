@@ -5,8 +5,8 @@
 
 #import <Foundation/Foundation.h>
 
-#import <Batch/BAMessagingAnalyticsDelegate.h>
 #import <Batch/BAInjection.h>
+#import <Batch/BAMessagingAnalyticsDelegate.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,7 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 ///  This class is the one that gets injected for the BAMessagingAnalyticsDelegate protocol
 @interface BAMessagingAnalyticsDeduplicatingDelegate : NSObject <BAMessagingAnalyticsDelegate>
 
-- (instancetype)initWithWrappedDelegate:(nonnull id<BAMessagingAnalyticsDelegate>)delegate BATCH_USE_INJECTION_OUTSIDE_TESTS;
+- (instancetype)initWithWrappedDelegate:(nonnull id<BAMessagingAnalyticsDelegate>)delegate
+    BATCH_USE_INJECTION_OUTSIDE_TESTS;
 
 @end
 

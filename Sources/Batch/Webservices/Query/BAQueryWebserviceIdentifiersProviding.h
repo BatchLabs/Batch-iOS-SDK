@@ -9,6 +9,6 @@
  */
 @protocol BAQueryWebserviceIdentifiersProviding <NSObject>
 
-- (NSDictionary<NSString*, NSString*>*)identifiers;
+- (NSDictionary<NSString *, NSString *> *)identifiers;
 
 @end

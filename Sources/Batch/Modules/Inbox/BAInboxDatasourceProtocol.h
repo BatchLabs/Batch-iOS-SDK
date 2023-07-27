@@ -5,10 +5,10 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <Batch/BAInbox.h>
-#import <Batch/BAInboxWebserviceResponse.h>
 #import <Batch/BAInboxWebserviceClientType.h>
+#import <Batch/BAInboxWebserviceResponse.h>
+#import <Foundation/Foundation.h>
 
 /*!
  @protocol BAInboxDatasourceProtocol
@@ -32,19 +32,22 @@
 @method notifications:withFetcherId
 @abstract Get a list of notifications
 */
--(nonnull NSArray<BAInboxNotificationContent*> *)notifications:(nonnull NSArray<NSString*> *)notificaitonIds withFetcherId:(long long)fetcherId;
+- (nonnull NSArray<BAInboxNotificationContent *> *)notifications:(nonnull NSArray<NSString *> *)notificaitonIds
+                                                   withFetcherId:(long long)fetcherId;
 
 /*!
 @method candidateNotificationsFromCursor:limit:fetcherId
 @abstract Get candidates notifcations from cache
 */
--(nullable NSArray<BAInboxCandidateNotification*> *)candidateNotificationsFromCursor:(nullable NSString *)cursor limit:(NSUInteger)limit fetcherId:(long long)fetcherId;
+- (nullable NSArray<BAInboxCandidateNotification *> *)candidateNotificationsFromCursor:(nullable NSString *)cursor
+                                                                                 limit:(NSUInteger)limit
+                                                                             fetcherId:(long long)fetcherId;
 
 /*!
 @method createFetcherIdWith:identifier
 @abstract Create or get the corresponding fetcher in db
 */
-- (long long)createFetcherIdWith:(BAInboxWebserviceClientType)type identifier:(nonnull NSString*)identifier;
+- (long long)createFetcherIdWith:(BAInboxWebserviceClientType)type identifier:(nonnull NSString *)identifier;
 
 /*!
 @method insertResponse:withFetcherId
@@ -62,36 +65,36 @@
 @method updateNotification:withFetcherId
 @abstract Update the notification from a payload
 */
--(nullable NSString *)updateNotification:(nonnull NSDictionary *)dictionary withFetcherId:(long long)fetcherId;
+- (nullable NSString *)updateNotification:(nonnull NSDictionary *)dictionary withFetcherId:(long long)fetcherId;
 
 /*!
 @method markAsDeleted
 @abstract Mark a notification as deleted
 */
--(BOOL)markAsDeleted:(nonnull NSString*)notificationId;
+- (BOOL)markAsDeleted:(nonnull NSString *)notificationId;
 
 /*!
 @method markAsRead
 @abstract Mark a notification as read
 */
--(BOOL)markAsRead:(nonnull NSString*)notificationId;
+- (BOOL)markAsRead:(nonnull NSString *)notificationId;
 
 /*!
 @method markAllAsRead:withFetcherId
 @abstract Mark all notifications before a specified time as read
 */
--(BOOL)markAllAsRead:(long long)time withFetcherId:(long long)fetcherId;
+- (BOOL)markAllAsRead:(long long)time withFetcherId:(long long)fetcherId;
 
 /*!
 @method deleteNotifications
 @abstract Delete notifications
 */
--(BOOL)deleteNotifications:(nonnull NSArray<NSString*> *)notificaitonIds;
+- (BOOL)deleteNotifications:(nonnull NSArray<NSString *> *)notificaitonIds;
 
 /*!
 @method cleanDatabase
 @abstract Clean old notifications from the database
 */
--(BOOL)cleanDatabase;
+- (BOOL)cleanDatabase;
 
 @end

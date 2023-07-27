@@ -434,6 +434,7 @@ NSInteger const BatchMessageGlobalActionIndex = -1;
     self = [super initWithPayload:castedMessage];
     if (self) {
         _pushPayload = payload;
+        _isDisplayedFromInbox = false;
 
         // Read the extra non-ui related keys in the landing payload for compatibility
         NSString *identifier = castedMessage[@"id"];
@@ -466,6 +467,10 @@ NSInteger const BatchMessageGlobalActionIndex = -1;
 
 - (void)printGenericDebugLog:(NSString *)msg {
     [BALogger debugForDomain:@"BatchPushMessage" message:@"Error while decoding payload: %@", msg];
+}
+
+- (void)setIsDisplayedFromInbox:(BOOL)isDisplayedFromInbox {
+    _isDisplayedFromInbox = isDisplayedFromInbox;
 }
 
 @end
@@ -516,6 +521,10 @@ NSInteger const BatchMessageGlobalActionIndex = -1;
                                          boldFont:boldFont
                                        italicFont:italicFont
                                    boldItalicFont:boldItalicFont];
+}
+
++ (void)setEnableDynamicType:(BOOL)enableDynamicType {
+    [[BAMessagingCenter instance] setEnableDynamicType:enableDynamicType];
 }
 
 + (nullable BatchPushMessage *)messageFromPushPayload:(nonnull NSDictionary *)userData {

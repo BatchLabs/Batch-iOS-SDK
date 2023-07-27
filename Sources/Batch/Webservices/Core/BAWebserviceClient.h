@@ -22,9 +22,8 @@ typedef NS_ENUM(NSUInteger, BAWebserviceClientRequestMethod) {
  */
 @interface BAWebserviceClient : NSOperation <BAConnectionDelegate>
 
-
 - (nullable instancetype)initWithMethod:(BAWebserviceClientRequestMethod)method
-                                    URL:(nullable NSURL*)url
+                                    URL:(nullable NSURL *)url
                             contentType:(BAConnectionContentType)contentType
                                delegate:(nullable id<BAConnectionDelegate>)delegate;
 
@@ -50,18 +49,18 @@ typedef NS_ENUM(NSUInteger, BAWebserviceClientRequestMethod) {
 /*
  Query parameters to add
  */
-- (nonnull NSMutableDictionary<NSString *, NSString *>*)queryParameters;
+- (nonnull NSMutableDictionary<NSString *, NSString *> *)queryParameters;
 
 /*
  Body parameters to add
  Unused for GET requests
  */
-- (nullable NSData *)requestBody:(NSError * _Nullable * _Nullable)error;
+- (nullable NSData *)requestBody:(NSError *_Nullable *_Nullable)error;
 
 /*
  Additional HTTP headers
  */
-- (nonnull NSMutableDictionary<NSString *, NSString *>*)requestHeaders;
+- (nonnull NSMutableDictionary<NSString *, NSString *> *)requestHeaders;
 
 /*
  Cryptor factory to use when sending/receiving data

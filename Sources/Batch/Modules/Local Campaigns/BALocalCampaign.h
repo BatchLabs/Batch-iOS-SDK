@@ -5,17 +5,16 @@
 //  Copyright © 2016 Batch. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <Batch/BALocalCampaignOutputProtocol.h>
 #import <Batch/BALocalCampaignTrackerProtocol.h>
 #import <Batch/BALocalCampaignTriggerProtocol.h>
-#import <Batch/BALocalCampaignOutputProtocol.h>
 #import <Batch/BATZAwareDate.h>
+#import <Foundation/Foundation.h>
 
 /**
  Represents an local campaign
  */
 @interface BALocalCampaign : NSObject
-
 
 /**
  Campaign ID, used to track views and capping
@@ -41,7 +40,7 @@
 /**
  Minimum messaging API level
  Optional (0 = ignored)
- 
+
  The minimum messaging API level required to display this campaign (shouldn't be confused with the SDK API level)
  */
 @property (assign) NSInteger minimumAPILevel;
@@ -49,15 +48,16 @@
 /**
  Maximum messaging API level
  Optional (0 = ignored)
- 
- The maximum messaging API level that shouldn't be exceeded to display this campaign (shouldn't be confused with the SDK API level)
+
+ The maximum messaging API level that shouldn't be exceeded to display this campaign (shouldn't be confused with the SDK
+ API level)
  */
 @property (assign) NSInteger maximumAPILevel;
 
 /**
  Priority
  Optional
- 
+
  Priority score: the higher, the more likely it is to be shown to the user
  Used as a "last resort" method to pick the most appropriate In-App campaign
  */
@@ -65,7 +65,7 @@
 
 /**
  Campaign start date
- 
+
  If the device date is earlier than this date, the campaign should not be displayed
  */
 @property (nonnull, strong) BATZAwareDate *startDate;
@@ -73,7 +73,7 @@
 /**
  Campaign end date
  Optional
- 
+
  If it is defined and the device date is later than this date, the campaign should not be displayed
  */
 @property (nullable, strong) BATZAwareDate *endDate;
@@ -81,7 +81,7 @@
 /**
  "Hard" capping
  Optional (0 = ignored)
- 
+
  Number of times a user can view this campaign before being uneligible
  */
 @property (assign) NSInteger capping;
@@ -94,15 +94,15 @@
 
 /**
  Triggers
- 
+
  Triggers that will trigger the display of the campaign. For example: event-based trigger.
  */
-@property (nonnull, strong) NSArray<id<BALocalCampaignTriggerProtocol>>* triggers;
+@property (nonnull, strong) NSArray<id<BALocalCampaignTriggerProtocol>> *triggers;
 
 /**
  Persist
  Optional (default = yes)
- 
+
  Whether this campaign should be persisted on disk or not.
  */
 @property (assign) BOOL persist;
@@ -120,7 +120,7 @@
 /**
  Requires Just In Time Sync
  Optional (default = false)
- 
+
  Whether this campaign should be verified by the server before being displayed.
  */
 @property (assign) BOOL requiresJustInTimeSync;

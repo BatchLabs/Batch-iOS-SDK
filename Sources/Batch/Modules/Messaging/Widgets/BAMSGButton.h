@@ -11,6 +11,9 @@
 
 @interface BAMSGButton : UIButton <BAMSGStylableView>
 
-+ (void)setFontOverride:(nullable UIFont*)font boldFont:(nullable UIFont*)boldFont italicFont:(nullable UIFont*)italicFont boldItalicFont:(nullable UIFont*)boldItalicFont;
++ (void)setFontOverride:(nullable UIFont *)font
+               boldFont:(nullable UIFont *)boldFont
+             italicFont:(nullable UIFont *)italicFont
+         boldItalicFont:(nullable UIFont *)boldItalicFont;
 
 @end

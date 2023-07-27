@@ -18,12 +18,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface BAEventTrackerService : NSObject <BAQueryWebserviceClientDatasource, BAQueryWebserviceClientDelegate>
 
-- (instancetype)initWithEvents:(NSArray*)events;
+- (instancetype)initWithEvents:(NSArray *)events;
 
 /**
  Note that a promise-enabled service will NOT notify the scheduler of success
  */
-- (instancetype)initWithEvents:(NSArray*)events promises:(nullable NSArray *)promises;
+- (instancetype)initWithEvents:(NSArray *)events promises:(nullable NSArray *)promises;
 
 @end
 

@@ -15,23 +15,24 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol BAMessagingAnalyticsDelegate
 
-- (void)messageShown:(BAMSGMessage* _Nonnull)message;
+- (void)messageShown:(BAMSGMessage *_Nonnull)message;
 
-- (void)messageClosed:(BAMSGMessage* _Nonnull)message;
+- (void)messageClosed:(BAMSGMessage *_Nonnull)message;
 
-- (void)message:(BAMSGMessage* _Nonnull)message closedByError:(BATMessagingCloseErrorCause)cause NS_SWIFT_NAME(messageClosed(_:byError:));
+- (void)message:(BAMSGMessage *_Nonnull)message
+    closedByError:(BATMessagingCloseErrorCause)cause NS_SWIFT_NAME(messageClosed(_:byError:));
 
-- (void)messageDismissed:(BAMSGMessage* _Nonnull)message;
+- (void)messageDismissed:(BAMSGMessage *_Nonnull)message;
 
 - (void)messageButtonClicked:(BAMSGMessage *_Nonnull)message ctaIndex:(NSInteger)ctaIndex action:(BAMSGCTA *)action;
 
-- (void)messageAutomaticallyClosed:(BAMSGMessage* _Nonnull)message;
+- (void)messageAutomaticallyClosed:(BAMSGMessage *_Nonnull)message;
 
 - (void)messageGlobalTapActionTriggered:(BAMSGMessage *_Nonnull)message action:(BAMSGAction *)action;
 
 - (void)messageWebViewClickTracked:(BAMSGMessage *_Nonnull)message
-                            action:(BAMSGAction*)action
-               analyticsIdentifier:(NSString*)analyticsID;
+                            action:(BAMSGAction *)action
+               analyticsIdentifier:(NSString *)analyticsID;
 
 @end
 

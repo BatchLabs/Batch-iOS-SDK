@@ -15,11 +15,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @required
 
-- (void)webserviceClientWillStart:(BAQueryWebserviceClient*)client;
+- (void)webserviceClientWillStart:(BAQueryWebserviceClient *)client;
 
-- (void)webserviceClient:(BAQueryWebserviceClient*)client didFailWithError:(NSError *)error;
+- (void)webserviceClient:(BAQueryWebserviceClient *)client didFailWithError:(NSError *)error;
 
-- (void)webserviceClient:(BAQueryWebserviceClient*)client didSucceedWithResponses:(NSArray<id<BAWSResponse>> *)responses;
+- (void)webserviceClient:(BAQueryWebserviceClient *)client
+    didSucceedWithResponses:(NSArray<id<BAWSResponse>> *)responses;
 
 @end
 

@@ -22,7 +22,7 @@ typedef NS_ENUM(NSUInteger, BAMSGPannableAnchoredContainerVerticalAnchor) {
  The biggest visible view displayed.
  This is used for automatic dismissal based on hiding a percentage of the visible view's height.
  Overriding this is useful when the container view is mostly transparent
- 
+
  If not set, dismissal will only be based on velocity
  */
 @property (weak, nullable) UIView *biggestUserVisibleView;

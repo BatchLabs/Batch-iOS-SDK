@@ -1,4 +1,6 @@
 #import <Batch/BAMSGOverlayWindow.h>
+#import <Batch/BAWindowHelper.h>
+#import <SafariServices/SafariServices.h>
 
 @implementation BAMSGOverlayWindow
 
@@ -13,6 +15,12 @@
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
     // Do not call [super hitTest] as Apple may slip some UIViews between our view controller's view
     // and the window that don't return nil when hit tested, which beaks touch passthrough
+
+    // Workaround to dimiss the presented banner when a safari view controller is presenting.
+    UIViewController *frontmostViewController = [BAWindowHelper frontmostViewController];
+    if ([frontmostViewController isKindOfClass:SFSafariViewController.class]) {
+        [self dismissAnimated];
+    }
     UIView *hitView = [self.rootViewController.view hitTest:point withEvent:event];
     if (hitView == nil) {
         return nil;

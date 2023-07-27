@@ -49,7 +49,8 @@ typedef NS_ENUM(NSUInteger, BAWSResponseAttrCheckAction) {
 
 /*!
  @property time
- @abstract Returned time to wait in ms. Only when action = RECHECK or RESEND. Default value is 15000 for RECHECK, 0 for RESEND
+ @abstract Returned time to wait in ms. Only when action = RECHECK or RESEND. Default value is 15000 for RECHECK, 0 for
+ RESEND
  */
 @property (readonly) NSNumber *time;
 

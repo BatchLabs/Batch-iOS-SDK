@@ -24,7 +24,8 @@
 /*!
  @property customIdentifier
  @abstract Access a custom user identifier to Batch, you should use this method if you have your own login system.
- @warning  Be carefull: Do not use it if you don't know what you are doing, giving a bad custom user ID can result in failure into offer delivery and restore.
+ @warning  Be carefull: Do not use it if you don't know what you are doing, giving a bad custom user ID can result in
+ failure into offer delivery and restore.
  */
 @property (strong, nonatomic, nullable) NSString *customIdentifier;
 
@@ -48,14 +49,14 @@
  @discussion You can call this method from any thread.
  @return The unique instance of this object. @see BatchUserProfile
  */
-+ (BAUserProfile * _Nonnull)defaultUserProfile __attribute__((warn_unused_result));
++ (BAUserProfile *_Nonnull)defaultUserProfile __attribute__((warn_unused_result));
 
 /*!
  @method dictionaryRepresentation
  @abstract Key-Value dictionary representation of a user profile.
  @return The dictionary representation.
  */
-- (NSDictionary * _Nonnull)dictionaryRepresentation __attribute__((warn_unused_result));
+- (NSDictionary *_Nonnull)dictionaryRepresentation __attribute__((warn_unused_result));
 
 /*!
 @method incrementVersion

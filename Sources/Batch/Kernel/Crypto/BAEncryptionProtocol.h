@@ -65,5 +65,4 @@
  */
 - (nullable NSData *)decryptData:(nullable NSData *)crypted;
 
-
 @end

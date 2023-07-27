@@ -8,32 +8,31 @@
 
 #import <Foundation/Foundation.h>
 
-typedef NS_ENUM(NSInteger, BAInternalFailReason)
-{
+typedef NS_ENUM(NSInteger, BAInternalFailReason) {
     /*!
      A network problem occurred.
      */
-    BAInternalFailReasonNetworkError             = -10,
-    
+    BAInternalFailReasonNetworkError = -10,
+
     /*!
      Invalid API key.
      */
-    BAInternalFailReasonInvalidAPIKey            = -20,
-    
+    BAInternalFailReasonInvalidAPIKey = -20,
+
     /*!
      Deactivated API Key.
      */
-    BAInternalFailReasonDeactivatedAPIKey        = -30,
-    
+    BAInternalFailReasonDeactivatedAPIKey = -30,
+
     /*!
      Another problem occurred. A retry can succeed
      */
-    BAInternalFailReasonUnexpectedError          = -50,
-    
+    BAInternalFailReasonUnexpectedError = -50,
+
     /*!
      Batch has been globally opted out from
      */
-    BAInternalFailReasonOptedOut                 = -60
+    BAInternalFailReasonOptedOut = -60
 };
 typedef NSInteger BatchFailReason;
 

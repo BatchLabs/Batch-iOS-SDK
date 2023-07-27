@@ -1,5 +1,5 @@
-#import <Foundation/Foundation.h>
 #import <Batch/BATGIFFile.h>
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -8,7 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol BATGIFAnimatorDelegate <NSObject>
 
 @required
-- (void)animator:(BATGIFAnimator*)animator needsToDisplayImage:(UIImage*)image;
+- (void)animator:(BATGIFAnimator *)animator needsToDisplayImage:(UIImage *)image;
 
 @end
 
@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property NSUInteger framerate;
 
-- (instancetype)initWithFile:(BATGIFFile*)file;
+- (instancetype)initWithFile:(BATGIFFile *)file;
 
 - (void)startAnimating;
 

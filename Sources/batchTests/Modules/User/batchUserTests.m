@@ -61,15 +61,26 @@
     [_editor setAttribute:[NSDate new] forKey:@"today"];
     [_editor setAttribute:@3.2 forKey:@"float_value"];
     [_editor setAttribute:@5 forKey:@"int_value"];
-    [_editor save];
 
     XCTestExpectation *exp = [self expectationWithDescription:@"testing attributes read"];
+    [_editor save:^{
+      [exp fulfill];
+    }];
+
+    [self waitForExpectationsWithTimeout:2
+                                 handler:^(NSError *_Nullable error) {
+                                   if (error != nil) {
+                                       XCTFail("Expectation Failed with error: %@", error);
+                                   }
+                                 }];
+
+    XCTestExpectation *exp1 = [self expectationWithDescription:@"testing attributes read"];
 
     __block NSDictionary<NSString *, BatchUserAttribute *> *fetchedAttributes = nil;
 
     [BatchUser fetchAttributes:^(NSDictionary<NSString *, BatchUserAttribute *> *_Nullable attributes) {
       fetchedAttributes = attributes;
-      [exp fulfill];
+      [exp1 fulfill];
     }];
 
     [self waitForExpectationsWithTimeout:1
@@ -94,15 +105,26 @@
     [_editor addTag:@"tag_2" inCollection:@"collection_1"];
     [_editor addTag:@"tag_3" inCollection:@"collection_2"];
     [_editor addTag:@"TAG_4" inCollection:@"collection_3"];
-    [_editor save];
 
     XCTestExpectation *exp = [self expectationWithDescription:@"testing tag read"];
+    [_editor save:^{
+      [exp fulfill];
+    }];
+
+    [self waitForExpectationsWithTimeout:2
+                                 handler:^(NSError *_Nullable error) {
+                                   if (error != nil) {
+                                       XCTFail("Expectation Failed with error: %@", error);
+                                   }
+                                 }];
+
+    XCTestExpectation *exp1 = [self expectationWithDescription:@"testing tag read"];
 
     __block NSDictionary<NSString *, NSSet<NSString *> *> *fetchedTags = nil;
 
     [BatchUser fetchTagCollections:^(NSDictionary<NSString *, NSSet<NSString *> *> *_Nullable tags) {
       fetchedTags = tags;
-      [exp fulfill];
+      [exp1 fulfill];
     }];
 
     [self waitForExpectationsWithTimeout:1
@@ -143,7 +165,7 @@
       [exp1 fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1
+    [self waitForExpectationsWithTimeout:2
                                  handler:^(NSError *_Nullable error) {
                                    if (error != nil) {
                                        XCTFail("Expectation Failed with error: %@", error);
@@ -167,7 +189,7 @@
       [exp2 fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1
+    [self waitForExpectationsWithTimeout:2
                                  handler:^(NSError *_Nullable error) {
                                    if (error != nil) {
                                        XCTFail("Expectation Failed with error: %@", error);
@@ -219,7 +241,7 @@
       [exp1 fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1
+    [self waitForExpectationsWithTimeout:2
                                  handler:^(NSError *_Nullable error) {
                                    if (error != nil) {
                                        XCTFail("Expectation Failed with error: %@", error);

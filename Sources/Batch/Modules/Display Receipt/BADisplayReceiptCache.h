@@ -17,9 +17,9 @@
 + (nullable NSArray<NSURL *> *)cachedFiles;
 
 // MARK: Methods updating user defaults
-+ (void)saveApiKey:(nonnull NSString*)value;
++ (void)saveApiKey:(nonnull NSString *)value;
 + (nullable NSString *)apiKey;
-+ (void)saveLastInstallId:(nonnull NSString*)value;
++ (void)saveLastInstallId:(nonnull NSString *)value;
 + (nullable NSString *)lastInstallId;
 + (void)saveIsOptOut:(BOOL)value;
 + (BOOL)isOptOut;

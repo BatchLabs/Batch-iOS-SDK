@@ -11,7 +11,7 @@
 
 /**
  Represents an signal
- 
+
  A signal is anything that happens during the lifecycle of an app that
  can trigger a local campaign
  */

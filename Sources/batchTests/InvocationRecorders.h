@@ -7,7 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)proxyWithObject:(id)object;
 
-@property (readonly) NSSet<NSString*>* proxy_invokedSelectors;
+@property (readonly) NSSet<NSString *> *proxy_invokedSelectors;
 
 @end
 
@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 // Methods must be recorded manually
 @interface InvocationRecordingObject : NSObject
 
-@property (readonly) NSSet<NSString*>* invokedSelectors;
+@property (readonly) NSSet<NSString *> *invokedSelectors;
 
 - (void)recordSelector:(SEL)selector;
 

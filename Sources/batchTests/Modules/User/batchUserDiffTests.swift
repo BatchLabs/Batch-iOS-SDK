@@ -11,7 +11,7 @@ import XCTest
 
 class BatchUserDiffTests: XCTestCase {
     func testAttributesDiff() {
-        let date = Date(timeIntervalSince1970: 123456)
+        let date = Date(timeIntervalSince1970: 123_456)
         let newAttributes: [String: BAUserAttribute] = [
             "c.integer": BAUserAttribute(value: 2, type: .longLong),
             "c.string": BAUserAttribute(value: "foo", type: .string),
@@ -31,14 +31,16 @@ class BatchUserDiffTests: XCTestCase {
             [
                 "c.integer": BAUserAttribute(value: 2, type: .longLong),
                 "c.string": BAUserAttribute(value: "foo", type: .string),
-            ])
+            ]
+        )
 
         XCTAssertEqual(
             diff.removed,
             [
                 "c.removed": BAUserAttribute(value: "removed", type: .string),
                 "c.string": BAUserAttribute(value: "foobar", type: .string),
-            ])
+            ]
+        )
 
         XCTAssertTrue(diff.hasChanges())
 
@@ -72,7 +74,8 @@ class BatchUserDiffTests: XCTestCase {
                 "updated_one": ["baz"],
                 "added_one": ["bar"],
                 "newtags": ["added", "collection"],
-            ])
+            ]
+        )
 
         XCTAssertEqual(
             diff.removed,
@@ -80,7 +83,8 @@ class BatchUserDiffTests: XCTestCase {
                 "removed": ["ved", "remo"],
                 "removed_one": ["foo"],
                 "updated_one": ["bar"],
-            ])
+            ]
+        )
 
         XCTAssertTrue(diff.hasChanges())
 
@@ -90,28 +94,28 @@ class BatchUserDiffTests: XCTestCase {
     }
 
     func testEventSerialization() {
-
         let newCollections: [String: Set<String>] = [
-            "newtags": ["new"]
+            "newtags": ["new"],
         ]
 
         let oldCollections: [String: Set<String>] = [
-            "oldtags": ["old"]
+            "oldtags": ["old"],
         ]
 
         let newAttributes: [String: BAUserAttribute] = [
-            "c.new": BAUserAttribute(value: "newvalue", type: .string)
+            "c.new": BAUserAttribute(value: "newvalue", type: .string),
         ]
 
         let attributeTimestamp = 12_345_678
         let oldAttributes: [String: BAUserAttribute] = [
-            "c.old": BAUserAttribute(value: Date(timeIntervalSince1970: 12_345_678), type: .date)
+            "c.old": BAUserAttribute(value: Date(timeIntervalSince1970: 12_345_678), type: .date),
         ]
 
         let serializedDiff = BAUserDataDiffTransformer.eventParameters(
             fromAttributes: BAUserAttributesDiff(newAttributes: newAttributes, previous: oldAttributes),
             tagCollections: BAUserTagCollectionsDiff(newTagCollections: newCollections, previous: oldCollections),
-            version: 2)
+            version: 2
+        )
 
         XCTAssertEqual(serializedDiff["version"] as? Int, 2)
         XCTAssertEqual(
@@ -119,13 +123,14 @@ class BatchUserDiffTests: XCTestCase {
             [
                 "t.newtags": ["new"],
                 "new.s": "newvalue",
-            ] as NSDictionary)
+            ] as NSDictionary
+        )
         XCTAssertEqual(
             serializedDiff["removed"] as! NSDictionary,
             [
                 "t.oldtags": ["old"],
                 "old.t": attributeTimestamp * 1000,
-            ] as NSDictionary)
-
+            ] as NSDictionary
+        )
     }
 }

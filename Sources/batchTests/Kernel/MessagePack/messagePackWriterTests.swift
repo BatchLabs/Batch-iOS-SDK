@@ -5,7 +5,6 @@ import XCTest
 // swiftlint:disable force_cast
 
 final class MessagePackWriterTests: XCTestCase {
-
     func testNil() {
         assertPack("C0") { $0.writeNil() }
     }
@@ -37,10 +36,12 @@ final class MessagePackWriterTests: XCTestCase {
 
         try assertPack("CE80000000") { try $0.write(2_147_483_648 as NSNumber) }
 
-        try assertPack("CF7FFFFFFFFFFFFFFF") { try $0.write(9_223_372_036_854_775_807 as NSNumber) }  // Max Int
+        // Max Int
+        try assertPack("CF7FFFFFFFFFFFFFFF") { try $0.write(9_223_372_036_854_775_807 as NSNumber) }
         try assertPack("CF8000000000000000") { try $0.write(UInt(9_223_372_036_854_775_808) as NSNumber) }
 
-        try assertPack("CFFFFFFFFFFFFFFFFF") { try $0.write(UInt(18_446_744_073_709_551_615) as NSNumber) }  // Max UInt
+        // Max UInt
+        try assertPack("CFFFFFFFFFFFFFFFFF") { try $0.write(UInt(18_446_744_073_709_551_615) as NSNumber) }
 
         // Extra pack tests that use different codepaths
         assertPack("7F") { $0.writeUnsignedInt(127) }
@@ -128,7 +129,8 @@ final class MessagePackWriterTests: XCTestCase {
         XCTAssertEqual(
             Data(hexString: expected), writer.data,
             "Expected \(expected.uppercased()) Packed \(writer.data.hexString.uppercased())",
-            file: file, line: line)
+            file: file, line: line
+        )
     }
 
     func assertPack(
@@ -141,6 +143,7 @@ final class MessagePackWriterTests: XCTestCase {
         XCTAssertEqual(
             Data(hexString: expected), data,
             "Expected \(expected.uppercased()) Packed \(data.hexString.uppercased())",
-            file: file, line: line)
+            file: file, line: line
+        )
     }
 }

@@ -8,8 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
-#import <Batch/BAStatus.h>
 #import <Batch/BAConfiguration.h>
+#import <Batch/BAStatus.h>
 
 #import <Batch/BACenterMulticastDelegate.h>
 
@@ -95,21 +95,22 @@
  - Device model
  - Device brand
  - Carrier name
- 
+
  Setting this to false have a negative impact on core Batch features
  You should only use it if you know what you are doing.
- 
+
  @param use :   YES if Batch can try to use advanced device information, NO if you don't
- @warning Disabling this does not automatically disable IDFA collection, pleaseuse the appropriate methods to control this.
+ @warning Disabling this does not automatically disable IDFA collection, pleaseuse the appropriate methods to control
+ this.
  */
 + (void)setUseAdvancedDeviceInformation:(BOOL)use;
 
 /**
  Opens the given deeplink. Allows for developers to override the behavior using a deeplink delegate.
- 
+
  @param deeplink Doesn't need to be a valid NSURL, as it can be overriden.
  @param inApp Set to YES to open the url in app using a SFSafariViewController if available.
  */
-- (void)openDeeplink:(NSString*)deeplink inApp:(BOOL)inApp;
+- (void)openDeeplink:(NSString *)deeplink inApp:(BOOL)inApp;
 
 @end

@@ -3,7 +3,7 @@
 @interface BADBGCustomDataTagCollection : NSObject
 
 @property NSString *collectionName;
-@property NSArray<NSString*> *tags;
+@property NSArray<NSString *> *tags;
 
 @end
 

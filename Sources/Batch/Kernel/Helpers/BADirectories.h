@@ -52,13 +52,11 @@
  */
 + (NSString *)pathForAppCacheDirectory;
 
-
 /*!
  @method pathForAppCacheDirectory
  @abstract The method to get the path to the shared directory with group name.
  @return The path to the shared directory
  */
-+ (NSURL *)pathForAppSharedDirectoryWithGroup:(NSString*)group;
-
++ (NSURL *)pathForAppSharedDirectoryWithGroup:(NSString *)group;
 
 @end

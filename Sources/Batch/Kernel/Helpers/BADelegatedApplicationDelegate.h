@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Class that gets swizzled in place of the UIApplication delegate and forwards the methods to another delegate
 /// before calling the original implementation
-@interface BADelegatedApplicationDelegate: NSObject
+@interface BADelegatedApplicationDelegate : NSObject
 
 /// Whether this instance has already swizzled the delegate
 @property (readonly) BOOL didSwizzle;
@@ -37,7 +37,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*!
  @method swizzleAppDelegate:
- @abstract Swizzle the current [UIApplication sharedApplication].delegate class. Note that calling this method multiple times is an error. Make sure to set a `batchDelegate` on this object to be informed of the calls.
+ @abstract Swizzle the current [UIApplication sharedApplication].delegate class. Note that calling this method multiple
+ times is an error. Make sure to set a `batchDelegate` on this object to be informed of the calls.
  @return Whether the operation succeeded
  */
 - (BOOL)swizzleAppDelegate;

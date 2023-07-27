@@ -9,7 +9,6 @@ import Batch.Batch_Private
 import XCTest
 
 class batchTaskDebouncerTest: XCTestCase {
-
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -39,7 +38,7 @@ class batchTaskDebouncerTest: XCTestCase {
         // Maybe we also could measure the elapsed time?
         var callCounter = 0
         let expectation = self.expectation(description: "Debounced task executed")
-        var debouncer: BATaskDebouncer? = nil
+        var debouncer: BATaskDebouncer?
         debouncer = BATaskDebouncer(delay: 0.2, queue: DispatchQueue.global(qos: .default)) {
             callCounter = callCounter + 1
             if callCounter >= 3 {
@@ -47,7 +46,6 @@ class batchTaskDebouncerTest: XCTestCase {
             } else {
                 debouncer?.schedule()
             }
-
         }
         debouncer?.schedule()
         debouncer?.schedule()

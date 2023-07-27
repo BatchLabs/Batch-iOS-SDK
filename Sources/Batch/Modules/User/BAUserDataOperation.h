@@ -9,8 +9,7 @@
 #import <Foundation/Foundation.h>
 
 // Inspired by NSBlockOperation, but supports returning a value
-@interface BAUserDataOperation : NSObject
-{
+@interface BAUserDataOperation : NSObject {
     BOOL (^_operationBlock)(void);
 }
 

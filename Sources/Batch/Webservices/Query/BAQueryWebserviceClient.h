@@ -8,10 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-#import <Batch/BAWebserviceJsonClient.h>
 #import <Batch/BAConnectionDelegate.h>
-#import <Batch/BAWSResponse.h>
 #import <Batch/BAWSQuery.h>
+#import <Batch/BAWSResponse.h>
+#import <Batch/BAWebserviceJsonClient.h>
 
 #import <Batch/BAQueryWebserviceClientDatasource.h>
 #import <Batch/BAQueryWebserviceClientDelegate.h>

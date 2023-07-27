@@ -45,7 +45,8 @@
  @abstract Set the custom user identifier to Batch, you should use this method if you have your own login system.
  @discussion You can call this method from any thread.
  @param identifier  :   The unique user identifier.
- @warning  Be carefull: Do not use it if you don't know what you are doing, giving a bad custom user ID can result in failure into offer delivery and restore.
+ @warning  Be carefull: Do not use it if you don't know what you are doing, giving a bad custom user ID can result in
+ failure into offer delivery and restore.
  */
 + (void)setCustomUserIdentifier:(NSString *)identifier;
 

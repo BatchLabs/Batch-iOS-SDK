@@ -7,8 +7,8 @@
 
 #import <Batch/BatchEventDispatcher.h>
 #import <Batch/BatchMessaging.h>
-#import <Batch/BatchMessagingPrivate.h>
 #import <Batch/BatchMessagingModels.h>
+#import <Batch/BatchMessagingPrivate.h>
 
 @interface BAPushEventPayload : NSObject <BatchEventDispatcherPayload>
 
@@ -19,6 +19,6 @@
 @property (readonly, nullable) NSDictionary *notificationUserInfo;
 @property (readonly, nullable) NSString *webViewAnalyticsIdentifier;
 
-- (nonnull instancetype)initWithUserInfo:(nonnull NSDictionary*)userInfo;
+- (nonnull instancetype)initWithUserInfo:(nonnull NSDictionary *)userInfo;
 
 @end

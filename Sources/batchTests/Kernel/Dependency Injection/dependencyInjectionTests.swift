@@ -10,7 +10,6 @@ import Foundation
 import XCTest
 
 class dependencyInjectionTests: XCTestCase {
-
     func testInstanceInjection() throws {
         let registry = BAInjectionRegistry()
 
@@ -120,9 +119,9 @@ class dependencyInjectionTests: XCTestCase {
         // Also register another class to make sure we don't fuck with it
         registry.register(injectable: BAInjectable(instance: injectionTestClass()), forClass: injectionTestClass.self)
 
-        var injectedClass: injectionOffsetableTestClass = injectionOffsetableTestClass(offset: 10)
+        var injectedClass = injectionOffsetableTestClass(offset: 10)
         var injectedProtocol: injectionTestProtocol = injectionTestClass()
-        var injectedUntouchedClass: injectionTestClass = injectionTestClass()
+        var injectedUntouchedClass = injectionTestClass()
 
         func refreshInjections() throws {
             injectedClass = try XCTUnwrap(
@@ -145,7 +144,7 @@ class dependencyInjectionTests: XCTestCase {
         // You can also manually release it.
 
         autoreleasepool {
-            overlay = registry.overlayClass(injectionOffsetableTestClass.self) { (original: Any?) -> Any? in
+            overlay = registry.overlayClass(injectionOffsetableTestClass.self) { (_: Any?) -> Any? in
                 return injectionOffsetableTestClassMock(offset: 0)
             }
 
@@ -157,7 +156,7 @@ class dependencyInjectionTests: XCTestCase {
         }
 
         // Manual releasing
-        overlay = registry.overlayProtocol(injectionTestProtocol.self) { (original: Any?) -> Any? in
+        overlay = registry.overlayProtocol(injectionTestProtocol.self) { (_: Any?) -> Any? in
             return injectionTestClassMock()
         }
 
@@ -178,7 +177,7 @@ class dependencyInjectionTests: XCTestCase {
         XCTAssertEqual(1, injectedUntouchedClass.echo(1))
 
         // Test that nil values work
-        overlay = registry.overlayClass(injectionOffsetableTestClass.self) { (original: Any?) -> Any? in
+        overlay = registry.overlayClass(injectionOffsetableTestClass.self) { (_: Any?) -> Any? in
             return nil
         }
 
@@ -193,7 +192,6 @@ protocol injectionTestProtocol {
 }
 
 class injectionTestClass: NSObject, injectionTestProtocol {
-
     @objc
     func echo(_ i: Int) -> Int {
         return i
@@ -201,7 +199,6 @@ class injectionTestClass: NSObject, injectionTestProtocol {
 }
 
 class injectionOffsetableTestClass: NSObject, injectionTestProtocol {
-
     let offset: Int
 
     init(offset: Int) {
@@ -216,17 +213,15 @@ class injectionOffsetableTestClass: NSObject, injectionTestProtocol {
 }
 
 class injectionTestClassMock: NSObject, injectionTestProtocol {
-
     @objc
-    func echo(_ i: Int) -> Int {
+    func echo(_: Int) -> Int {
         return 80
     }
 }
 
 class injectionOffsetableTestClassMock: injectionOffsetableTestClass {
-
     @objc
-    override func echo(_ i: Int) -> Int {
+    override func echo(_: Int) -> Int {
         return 90
     }
 }

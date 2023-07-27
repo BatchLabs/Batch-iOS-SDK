@@ -28,7 +28,6 @@
  @param version     :   Database version
  @return Instance or nil.
  */
-- (nonnull instancetype)initWithTransactionID:(nonnull NSString *)transaction
-                                   andVersion:(long long)version;
+- (nonnull instancetype)initWithTransactionID:(nonnull NSString *)transaction andVersion:(long long)version;
 
 @end

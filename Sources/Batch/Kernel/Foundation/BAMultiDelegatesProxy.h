@@ -24,7 +24,8 @@
 /*!
  @property mainDelegate
  @abstract Original delegate.
- @discussion Main delegate is like any other delegate but it's used to get the value for method which need something to return.
+ @discussion Main delegate is like any other delegate but it's used to get the value for method which need something to
+ return.
  */
 @property (nonatomic, strong, readonly) id mainDelegate;
 

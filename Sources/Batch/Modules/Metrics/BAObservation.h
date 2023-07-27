@@ -4,8 +4,8 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <Batch/BAMetric.h>
+#import <Foundation/Foundation.h>
 @interface BAObservation : BAMetric
 
 /// Increment the observation value

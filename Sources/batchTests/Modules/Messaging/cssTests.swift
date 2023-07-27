@@ -9,7 +9,6 @@ import Batch.Batch_Private
 import XCTest
 
 class cssTests: XCTestCase {
-
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -59,5 +58,4 @@ class cssTests: XCTestCase {
         XCTAssertFalse(env.environmentMatchesQuery("@media android and (max-height:600)"))
         XCTAssertFalse(env.environmentMatchesQuery("@media ios and (max-height:599)"))
     }
-
 }

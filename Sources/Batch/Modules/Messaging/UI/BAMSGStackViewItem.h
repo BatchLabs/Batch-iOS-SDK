@@ -5,23 +5,23 @@
 //  Copyright © 2016 Batch. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <Batch/BACSS.h>
+#import <Foundation/Foundation.h>
 
 @import UIKit;
 
 @interface BAMSGStackViewItem : NSObject
 
-@property (nonnull) BACSSRules* rules;
-@property (nullable) UIView* view;
+@property (nonnull) BACSSRules *rules;
+@property (nullable) UIView *view;
 @property BOOL attachToParentBottom;
 
-- (nonnull NSArray<NSLayoutConstraint*>*)computeConstraints;
+- (nonnull NSArray<NSLayoutConstraint *> *)computeConstraints;
 
 // "Private" properties, that will be set by the stack view
-@property (nullable, weak) UIView* previousView;
-@property (nullable, weak) UIView* nextView;
-@property (nullable, weak) UIView* parentView;
+@property (nullable, weak) UIView *previousView;
+@property (nullable, weak) UIView *nextView;
+@property (nullable, weak) UIView *parentView;
 
 @end
 

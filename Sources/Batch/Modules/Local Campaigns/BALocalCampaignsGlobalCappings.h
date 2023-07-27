@@ -15,7 +15,7 @@
 @property (nullable) NSNumber *session;
 
 /// List of time-based cappings
-@property (nullable) NSArray<BALocalCampaignsTimeBasedCapping *>* timeBasedCappings;
+@property (nullable) NSArray<BALocalCampaignsTimeBasedCapping *> *timeBasedCappings;
 
 @end
 
@@ -31,6 +31,4 @@
 /// Capping duration ( in seconds )
 @property (nullable) NSNumber *duration;
 
-
 @end
-

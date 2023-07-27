@@ -7,6 +7,7 @@
 
 #import <Batch/BAMSGLabel.h>
 #import <Batch/BAMSGStylableView.h>
+#import <Batch/BAMessagingCenter.h>
 
 @interface BAMSGLabel () {
     float lineHeightMultiply;
@@ -41,7 +42,10 @@ static UIFont *sBAMSGLabelBoldItalicFontOverride = nil;
         _padding = UIEdgeInsetsZero;
 
         self.lineBreakMode = NSLineBreakByWordWrapping;
-
+        self.adjustsFontForContentSizeCategory = [BAMessagingCenter instance].enableDynamicType;
+        if (@available(iOS 15.0, *)) {
+            self.maximumContentSizeCategory = UIContentSizeCategoryExtraExtraExtraLarge;
+        }
         lineHeightMultiply = 0;
         lineHeightAdd = 0;
         letterSpacing = 0;
@@ -114,7 +118,6 @@ static UIFont *sBAMSGLabelBoldItalicFontOverride = nil;
             lineHeightAdd = [value floatValue];
         }
     }
-
     UIFont *customFont = [BAMSGStylableViewHelper fontFromRules:rules
                                                        baseFont:sBAMSGLabelFontOverride
                                                    baseBoldFont:sBAMSGLabelBoldFontOverride];

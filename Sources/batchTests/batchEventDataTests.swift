@@ -16,7 +16,7 @@ class BatchEventDataTests: XCTestCase {
         data.add(tag: "BAR")
         data.add(tag: "baz")
 
-        let now = Date(timeIntervalSince1970: 1589466748.930)
+        let now = Date(timeIntervalSince1970: 1_589_466_748.930)
         let url = URL(string: "https://batch.com")
         data.put(1, forKey: "int")
         data.put(1.0 as Float, forKey: "float")
@@ -50,7 +50,7 @@ class BatchEventDataTests: XCTestCase {
     func testSizeLimits() {
         let data = BatchEventData()
 
-        for i in 0...20 {
+        for i in 0 ... 20 {
             data.add(tag: String(i))
             data.put(i, forKey: String(i))
         }
@@ -68,7 +68,7 @@ class BatchEventDataTests: XCTestCase {
         // Issue #57
         let data = BatchEventData()
 
-        for i in 0...14 {
+        for i in 0 ... 14 {
             data.put(i, forKey: String(i))
         }
         data.put("foobar", forKey: "2")
@@ -90,7 +90,8 @@ class BatchEventDataTests: XCTestCase {
 
         data.put(
             "A way too long string that goes for quiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiite too long"
-                + "Lorem ipsum dolor and other various stuff.", forKey: "string")
+                + "Lorem ipsum dolor and other various stuff.", forKey: "string"
+        )
         data.put("foobar", forKey: "invalid_key%%%")
         data.put("foobar", forKey: "key_that_is_too_long_really_it_should_be_more_than_thirty_chars")
         data.put(URL(string: "batch.com")!, forKey: "url_without_scheme")
@@ -160,7 +161,7 @@ class BatchEventDataTests: XCTestCase {
             "FViUCTCzfE",
         ]
 
-        let legacyData: [String: String] = unorderedKeys.reduce(into: [:]) { (data, key) in
+        let legacyData: [String: String] = unorderedKeys.reduce(into: [:]) { data, key in
             data[key] = value
         }
 
@@ -174,9 +175,9 @@ class BatchEventDataTests: XCTestCase {
 
         XCTAssertEqual(15, attributeKeys.count)
 
-        let expectedConvertedKeys = unorderedKeys.map({ "\($0.lowercased()).s" }).sorted().prefix(10)
-        expectedConvertedKeys.forEach({
+        let expectedConvertedKeys = unorderedKeys.map { "\($0.lowercased()).s" }.sorted().prefix(10)
+        expectedConvertedKeys.forEach {
             XCTAssertTrue(attributeKeys.contains($0))
-        })
+        }
     }
 }

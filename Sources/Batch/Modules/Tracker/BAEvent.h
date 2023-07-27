@@ -14,13 +14,12 @@
  @enum BAEventState
  @abstract Event state
  */
-enum
-{
-    BAEventStateAll             = -1, // Value not meant to be stored in SQLite
-    BAEventStateNew             = 0,
-    BAEventStateSending         = 1,
-    BAEventStateSent            = 2,
-    BAEventStateOld             = 3
+enum {
+    BAEventStateAll = -1, // Value not meant to be stored in SQLite
+    BAEventStateNew = 0,
+    BAEventStateSending = 1,
+    BAEventStateSent = 2,
+    BAEventStateOld = 3
 };
 
 /*!
@@ -110,21 +109,35 @@ typedef NSInteger BAEventState;
  @param parameters  :   Event parameters
  @return Instance.
  */
-- (instancetype)initWithName:(NSString *)name andParameters:(NSDictionary *)parameters __attribute__((warn_unused_result));
+- (instancetype)initWithName:(NSString *)name
+               andParameters:(NSDictionary *)parameters __attribute__((warn_unused_result));
 
 /*!
  @method initWithIdentifier:name:date:parameters:state:andTick:
  @abstract Constructor from the SQL representation.
  @return Instance.
  */
-- (instancetype)initWithIdentifier:(NSString *)identifier name:(NSString *)name date:(NSString *)date parameters:(NSString *)parameters state:(BAEventState)state session:(NSString*)session andTick:(long long)tick __attribute__((warn_unused_result));
+- (instancetype)initWithIdentifier:(NSString *)identifier
+                              name:(NSString *)name
+                              date:(NSString *)date
+                        parameters:(NSString *)parameters
+                             state:(BAEventState)state
+                           session:(NSString *)session
+                           andTick:(long long)tick __attribute__((warn_unused_result));
 
 /*!
  @method initWithIdentifier:name:date:secureDate:parameters:state:andTick:
  @abstract Constructor from the SQL representation.
  @return Instance.
  */
-- (instancetype)initWithIdentifier:(NSString *)identifier name:(NSString *)name date:(NSString *)date secureDate:(NSString *)secureDate parameters:(NSString *)parameters state:(BAEventState)state session:(NSString*)session andTick:(long long)tick __attribute__((warn_unused_result));
+- (instancetype)initWithIdentifier:(NSString *)identifier
+                              name:(NSString *)name
+                              date:(NSString *)date
+                        secureDate:(NSString *)secureDate
+                        parameters:(NSString *)parameters
+                             state:(BAEventState)state
+                           session:(NSString *)session
+                           andTick:(long long)tick __attribute__((warn_unused_result));
 
 /*!
  @method eventWithName:
@@ -141,21 +154,35 @@ typedef NSInteger BAEventState;
  @param parameters  :   Event parameters
  @return Instance.
  */
-+ (instancetype)eventWithName:(NSString *)name andParameters:(NSDictionary *)parameters __attribute__((warn_unused_result));
++ (instancetype)eventWithName:(NSString *)name
+                andParameters:(NSDictionary *)parameters __attribute__((warn_unused_result));
 
 /*!
  @method eventWithIdentifier:name:date:parameters:state:andTick:
  @abstract Constructor from the SQL representation.
  @return Instance.
  */
-+ (instancetype)eventWithIdentifier:(NSString *)identifier name:(NSString *)name date:(NSString *)date parameters:(NSString *)parameters state:(BAEventState)state session:(NSString*)session andTick:(long long)tick __attribute__((warn_unused_result));
++ (instancetype)eventWithIdentifier:(NSString *)identifier
+                               name:(NSString *)name
+                               date:(NSString *)date
+                         parameters:(NSString *)parameters
+                              state:(BAEventState)state
+                            session:(NSString *)session
+                            andTick:(long long)tick __attribute__((warn_unused_result));
 
 /*!
  @method eventWithIdentifier:name:date:secureDate:parameters:state:andTick:
  @abstract Constructor from the SQL representation.
  @return Instance.
  */
-+ (instancetype)eventWithIdentifier:(NSString *)identifier name:(NSString *)name date:(NSString *)date secureDate:(NSString *)secureDate parameters:(NSString *)parameters state:(BAEventState)state session:(NSString*)session andTick:(long long)tick __attribute__((warn_unused_result));
++ (instancetype)eventWithIdentifier:(NSString *)identifier
+                               name:(NSString *)name
+                               date:(NSString *)date
+                         secureDate:(NSString *)secureDate
+                         parameters:(NSString *)parameters
+                              state:(BAEventState)state
+                            session:(NSString *)session
+                            andTick:(long long)tick __attribute__((warn_unused_result));
 
 /*!
  @method identifiersOfEvents:
@@ -166,7 +193,6 @@ typedef NSInteger BAEventState;
 + (NSArray *)identifiersOfEvents:(NSArray *)events __attribute__((warn_unused_result));
 
 @end
-
 
 /**
  A collapsable event is an event that only keeps the last occurrence in the database

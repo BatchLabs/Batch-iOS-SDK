@@ -15,19 +15,18 @@
 @property (assign) CGSize viewSize;
 @property (assign) BOOL darkMode;
 
-- (BOOL)environmentMatchesQuery:(NSString*)query;
+- (BOOL)environmentMatchesQuery:(NSString *)query;
 
 @end
-
 
 @interface BACSSDOMNode : NSObject
 
 @property NSString *type;
 @property NSString *identifier;
-@property NSArray<NSString*> *classes;
+@property NSArray<NSString *> *classes;
 @property BACSSDOMNode *parentNode;
 
-- (BOOL)matchesSelector:(NSString*)selector;
+- (BOOL)matchesSelector:(NSString *)selector;
 
 @end
 
@@ -43,7 +42,7 @@
  @property rulesets
  @abstract All rulesets contained in the document
  */
-@property NSMutableArray<BACSSRuleset*> *rulesets;
+@property NSMutableArray<BACSSRuleset *> *rulesets;
 
 @end
 
@@ -63,7 +62,7 @@
 
 @property NSString *selector;
 
-@property NSMutableArray<BACSSDeclaration*> *declarations;
+@property NSMutableArray<BACSSDeclaration *> *declarations;
 
 @end
 
@@ -73,20 +72,20 @@
  @property rulesets
  @abstract All rulesets contained in the document
  */
-@property NSMutableArray<BACSSRuleset*> *rulesets;
+@property NSMutableArray<BACSSRuleset *> *rulesets;
 
 /*!
  @property mediaQueries
  @abstract All media queries contained in the document
  */
-@property NSMutableArray<BACSSMediaQuery*> *mediaQueries;
+@property NSMutableArray<BACSSMediaQuery *> *mediaQueries;
 
-typedef NSDictionary<NSString*, NSString*> BACSSRules;
+typedef NSDictionary<NSString *, NSString *> BACSSRules;
 
-- (BACSSRules*)flatRulesForNode:(BACSSDOMNode*)node withEnvironment:(BACSSEnvironment*)environment;
+- (BACSSRules *)flatRulesForNode:(BACSSDOMNode *)node withEnvironment:(BACSSEnvironment *)environment;
 
-- (NSArray<BACSSDeclaration*>*)rulesForNode:(BACSSDOMNode*)node withEnvironment:(BACSSEnvironment*)environment;
+- (NSArray<BACSSDeclaration *> *)rulesForNode:(BACSSDOMNode *)node withEnvironment:(BACSSEnvironment *)environment;
 
-- (BACSSRules*)flatRulesFromCSSDeclarations:(NSArray<BACSSDeclaration*>*)declarations;
+- (BACSSRules *)flatRulesFromCSSDeclarations:(NSArray<BACSSDeclaration *> *)declarations;
 
 @end

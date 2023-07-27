@@ -1,35 +1,35 @@
-#import <UIKit/UIKit.h>
-#import <Batch/BatchMessaging.h>
 #import <Batch/BACSS.h>
 #import <Batch/BACSSParser.h>
-#import <Batch/BAMSGStackView.h>
-#import <Batch/BAMSGMessage.h>
 #import <Batch/BAMSGAction.h>
-#import <Batch/BAMSGPannableAnchoredContainerView.h>
-#import <Batch/BAMSGWindowHolder.h>
-#import <Batch/BAMSGViewController.h>
-#import <Batch/BatchMessagingModels.h>
+#import <Batch/BAMSGMessage.h>
 #import <Batch/BAMSGOverlayWindow.h>
+#import <Batch/BAMSGPannableAnchoredContainerView.h>
+#import <Batch/BAMSGStackView.h>
+#import <Batch/BAMSGViewController.h>
+#import <Batch/BAMSGWindowHolder.h>
+#import <Batch/BatchMessaging.h>
+#import <Batch/BatchMessagingModels.h>
+#import <UIKit/UIKit.h>
 
 /**
  Handles banner display
- 
+
  This is also the view controller used for Modal view, as they're basically a centered banner.
  Sadly, we don't have a better name for it, so we'll call it banner. Sorry.
  */
-@interface BAMSGBaseBannerViewController: BAMSGViewController <BatchMessagingViewController,
-BAMSGStackViewDelegate,
-BAMSGPannableContainerViewDelegate,
-BAMSGWindowHolder,
-UIGestureRecognizerDelegate>
+@interface BAMSGBaseBannerViewController : BAMSGViewController <BatchMessagingViewController,
+                                                                BAMSGStackViewDelegate,
+                                                                BAMSGPannableContainerViewDelegate,
+                                                                BAMSGWindowHolder,
+                                                                UIGestureRecognizerDelegate>
 
 @property (nullable) NSString *titleText;
 @property (nullable) NSString *bodyText;
 @property (nullable) BAMSGHTMLText *bodyHtml;
-@property            BAMSGBannerCTADirection ctaStackDirection;
+@property BAMSGBannerCTADirection ctaStackDirection;
 @property (nullable) BAMSGAction *globalTapAction;
-@property            NSTimeInterval globalTapDelay;
-@property            BOOL allowSwipeToDismiss;
+@property NSTimeInterval globalTapDelay;
+@property BOOL allowSwipeToDismiss;
 @property (nullable) NSString *imageURL;
 @property (nullable) NSString *imageDescription;
 
@@ -38,10 +38,10 @@ UIGestureRecognizerDelegate>
 
 @property (nullable) BAMSGMessageBaseBanner *messageDescription;
 
-- (nonnull instancetype)initWithStyleRules:(nonnull BACSSDocument*)style;
+- (nonnull instancetype)initWithStyleRules:(nonnull BACSSDocument *)style;
 
 - (BOOL)canBeClosed;
 
-- (void)didDetectGlobalTap:(nullable UIGestureRecognizer*)gestureRecognizer;
+- (void)didDetectGlobalTap:(nullable UIGestureRecognizer *)gestureRecognizer;
 
 @end

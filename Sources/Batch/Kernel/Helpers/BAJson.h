@@ -16,43 +16,42 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Serialize a Foundation object into a NSString.
  */
-+ (nullable NSString*)serialize:(nonnull id)object error:(NSError**)error;
++ (nullable NSString *)serialize:(nonnull id)object error:(NSError **)error;
 
 /**
  Serialize a Foundation object into a NSData.
  */
-+ (nullable NSData*)serializeData:(nonnull id)object error:(NSError**)error;
++ (nullable NSData *)serializeData:(nonnull id)object error:(NSError **)error;
 
 /**
  Deserialize a JSON NSString into a Foundation object.
  */
-+ (nullable id)deserialize:(nonnull NSString*)json error:(NSError**)error;
++ (nullable id)deserialize:(nonnull NSString *)json error:(NSError **)error;
 
 /**
  Deserialize a JSON NSString into a NSArray.
  */
-+ (nullable NSArray*)deserializeAsArray:(nonnull NSString*)json error:(NSError**)error;
++ (nullable NSArray *)deserializeAsArray:(nonnull NSString *)json error:(NSError **)error;
 
 /**
  Deserialize a JSON NSString into a NSDictionary.
  */
-+ (nullable NSDictionary*)deserializeAsDictionary:(nonnull NSString*)json error:(NSError**)error;
++ (nullable NSDictionary *)deserializeAsDictionary:(nonnull NSString *)json error:(NSError **)error;
 
 /**
  Deserialize a JSON NSData into a Foundation object.
  */
-+ (nullable id)deserializeData:(nonnull NSData*)jsonData  error:(NSError**)error;
++ (nullable id)deserializeData:(nonnull NSData *)jsonData error:(NSError **)error;
 
 /**
  Deserialize a JSON NSData into a NSArray.
  */
-+ (nullable NSArray*)deserializeDataAsArray:(nonnull NSData*)jsonData error:(NSError**)error;
++ (nullable NSArray *)deserializeDataAsArray:(nonnull NSData *)jsonData error:(NSError **)error;
 
 /**
  Deserialize a JSON NSData into a NSDictionary.
  */
-+ (nullable NSDictionary*)deserializeDataAsDictionary:(nonnull NSData*)jsonData error:(NSError**)error;
-
++ (nullable NSDictionary *)deserializeDataAsDictionary:(nonnull NSData *)jsonData error:(NSError **)error;
 
 @end
 

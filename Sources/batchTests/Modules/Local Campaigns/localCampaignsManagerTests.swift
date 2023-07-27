@@ -8,11 +8,11 @@ import Batch
 import XCTest
 
 class localCampaignsManagerTests: XCTestCase {
-
     private let dateProvider = BASecureDateProvider()
 
     private let manager = BALocalCampaignsManager(
-        dateProvider: BASystemDateProvider(), viewTracker: BALocalCampaignsSQLTracker())
+        dateProvider: BASystemDateProvider(), viewTracker: BALocalCampaignsSQLTracker()
+    )
 
     func testEligibleCampaignsSortedByPriority() {
         let campaigns: [BALocalCampaign] = [
@@ -53,12 +53,11 @@ class localCampaignsManagerTests: XCTestCase {
 
     func testIsJITServiceAvailable() {
         XCTAssertTrue(manager.isJITServiceAvailable())
-        manager.setValue((dateProvider.currentDate().timeIntervalSince1970 + 30), forKey: "_nextAvailableJITTimestamp")
+        manager.setValue(dateProvider.currentDate().timeIntervalSince1970 + 30, forKey: "_nextAvailableJITTimestamp")
         XCTAssertFalse(manager.isJITServiceAvailable())
     }
 
     func testSyncedJITCampaignState() {
-
         let dateProvider = BAMutableDateProvider(timestamp: 0)
         let manager = BALocalCampaignsManager(dateProvider: dateProvider, viewTracker: BALocalCampaignsSQLTracker())
 
@@ -85,7 +84,6 @@ class localCampaignsManagerTests: XCTestCase {
 
         dateProvider.setTime(30)
         XCTAssertEqual(BATSyncedJITCampaignState.requiresSync, manager.syncedJITCampaignState(campaign))
-
     }
 
     private func createFakeCampaignWith(priority: Int, jit: Bool) -> BALocalCampaign {

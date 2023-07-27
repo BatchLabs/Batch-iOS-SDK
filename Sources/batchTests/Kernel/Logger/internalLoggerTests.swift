@@ -8,13 +8,12 @@ import Batch.Batch_Private
 import XCTest
 
 class internalLoggerTests: XCTestCase {
-
     static let expectedPublicLog = "[Batch] - sample log"
     static let expectedInternalLog = "[Batch-Internal] - sample internal log"
 
     fileprivate let loggerDelegate = MockLoggerDelegate()
 
-    var previousLoggerDelegateSource: BALoggerDelegateSource? = nil
+    var previousLoggerDelegateSource: BALoggerDelegateSource?
 
     override func setUp() {
         loggerDelegate.reset()

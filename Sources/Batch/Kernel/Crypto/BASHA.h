@@ -14,12 +14,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Returns the raw SHA256 of a given NSData
  */
-+ (nullable NSData*)sha256HashOf:(nullable NSData*)data;
++ (nullable NSData *)sha256HashOf:(nullable NSData *)data;
 
 /**
  Returns the raw SHA1 of a given NSData
  */
-+ (nullable NSData*)sha1HashOf:(nullable NSData*)data;
++ (nullable NSData *)sha1HashOf:(nullable NSData *)data;
 
 @end
 

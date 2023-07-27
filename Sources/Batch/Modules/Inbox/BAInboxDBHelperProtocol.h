@@ -5,9 +5,9 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
+#import <Batch/BAInbox.h>
 #import <Foundation/Foundation.h>
 #import <sqlite3.h>
-#import <Batch/BAInbox.h>
 
 /*!
  @protocol BAInboxDBHelperProtocol
@@ -30,7 +30,8 @@
  @param statement precompiled statement to bind the notification
  @return YES if insertion has been populated, NO otherwise.
  */
-- (BOOL)bindNotification:(BAInboxNotificationContent*)notification withStatement:(sqlite3_stmt **)statement __attribute__((warn_unused_result));
+- (BOOL)bindNotification:(BAInboxNotificationContent *)notification
+           withStatement:(sqlite3_stmt **)statement __attribute__((warn_unused_result));
 
 /*!
 @method insertFetchersStatementDescriptions
@@ -45,6 +46,8 @@
  @param statement precompiled statement to bind the notification
  @return YES if insertion has been populated, NO otherwise.
  */
-- (BOOL)bindFetcherNotification:(BAInboxNotificationContent*)notification withFetcherId:(long long)fetcherId statement:(sqlite3_stmt **)statement __attribute__((warn_unused_result));
- 
+- (BOOL)bindFetcherNotification:(BAInboxNotificationContent *)notification
+                  withFetcherId:(long long)fetcherId
+                      statement:(sqlite3_stmt **)statement __attribute__((warn_unused_result));
+
 @end

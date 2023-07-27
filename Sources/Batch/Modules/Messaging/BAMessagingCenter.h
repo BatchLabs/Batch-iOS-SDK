@@ -8,19 +8,19 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-#import <Batch/BatchMessaging.h>
-#import <Batch/BAMSGMessage.h>
 #import <Batch/BABatchMessagingDelegateWrapper.h>
 #import <Batch/BACenterMulticastDelegate.h>
-#import <Batch/BAMSGOverlayWindow.h>
 #import <Batch/BAMSGBannerViewController.h>
+#import <Batch/BAMSGMessage.h>
 #import <Batch/BAMSGModalViewController.h>
+#import <Batch/BAMSGOverlayWindow.h>
 #import <Batch/BAMessagingAnalyticsDelegate.h>
+#import <Batch/BatchMessaging.h>
 
 #import <Batch/BAInjection.h>
 
-extern NSString * _Nonnull const kBATMessagingMessageDidAppear;
-extern NSString * _Nonnull const kBATMessagingMessageDidDisappear;
+extern NSString *_Nonnull const kBATMessagingMessageDidAppear;
+extern NSString *_Nonnull const kBATMessagingMessageDidDisappear;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -36,6 +36,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nullable) BAMSGOverlayWindow *shownWindow;
 
+@property (readonly) BOOL enableDynamicType;
+
 + (instancetype _Nonnull)instance BATCH_USE_INJECTION_OUTSIDE_TESTS;
 
 - (void)setDelegate:(id<BatchMessagingDelegate> _Nullable)delegate;
@@ -48,14 +50,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)hasPendingMessage;
 
-- (BatchMessage* _Nullable)popPendingMessage;
+- (BatchMessage *_Nullable)popPendingMessage;
 
 - (BOOL)showPendingMessage;
 
-- (void)setFontOverride:(nullable UIFont*)font boldFont:(nullable UIFont*)boldFont;
+- (void)setFontOverride:(nullable UIFont *)font boldFont:(nullable UIFont *)boldFont;
 
-- (void)setFontOverride:(nullable UIFont*)font boldFont:(nullable UIFont*)boldFont italicFont:(nullable UIFont*)italicFont boldItalicFont:(nullable UIFont*)boldItalicFont;
+- (void)setFontOverride:(nullable UIFont *)font
+               boldFont:(nullable UIFont *)boldFont
+             italicFont:(nullable UIFont *)italicFont
+         boldItalicFont:(nullable UIFont *)boldItalicFont;
 
+- (void)setEnableDynamicType:(BOOL)enableDynamicType;
 
 /**
  Process an in-app message (which is the marketing name for landing output of a local campaign)
@@ -64,30 +70,32 @@ NS_ASSUME_NONNULL_BEGIN
 
  @param message In-App message to display
  */
-- (void)handleInAppMessage:(nonnull BatchInAppMessage*)message;
+- (void)handleInAppMessage:(nonnull BatchInAppMessage *)message;
 
-- (UIViewController* _Nullable)loadViewControllerForMessage:(BatchMessage* _Nonnull)message
-                                                      error:(NSError * _Nullable * _Nullable)error;
+- (UIViewController *_Nullable)loadViewControllerForMessage:(BatchMessage *_Nonnull)message
+                                                      error:(NSError *_Nullable *_Nullable)error;
 
-- (BOOL)presentMessagingViewController:(nonnull UIViewController*)vc error:(NSError**)error;
+- (BOOL)presentMessagingViewController:(nonnull UIViewController *)vc error:(NSError **)error;
 
 /*
  Same as the non internal method, but removes automatic mode checks and does the actual work
  */
-- (UIViewController* _Nullable)internalLoadViewControllerForMessage:(BatchMessage* _Nonnull)message
-                                                              error:(NSError * _Nullable * _Nullable)error;
+- (UIViewController *_Nullable)internalLoadViewControllerForMessage:(BatchMessage *_Nonnull)message
+                                                              error:(NSError *_Nullable *_Nullable)error;
 
-- (void)performAction:(nonnull BAMSGAction*)action
+- (void)performAction:(nonnull BAMSGAction *)action
                source:(nullable id<BatchUserActionSource>)source
           actionIndex:(NSInteger)index
     messageIdentifier:(nullable NSString *)identifier;
 
-- (void)performAction:(nonnull BAMSGAction*)action
-               source:(nullable id<BatchUserActionSource>)source
-   webViewAnalyticsID:(nullable NSString *)analyticsID
-    messageIdentifier:(nullable NSString *)identifier;
+- (void)performAction:(nonnull BAMSGAction *)action
+                source:(nullable id<BatchUserActionSource>)source
+    webViewAnalyticsID:(nullable NSString *)analyticsID
+     messageIdentifier:(nullable NSString *)identifier;
 
-- (BAPromise*)dismissWindow:(nullable BAMSGOverlayWindow*)window;
+- (BAPromise *)dismissWindow:(nullable BAMSGOverlayWindow *)window;
+
+- (void)presentLandingMessage:(BatchMessage *_Nonnull)message bypassDnD:(BOOL)bypassDnD;
 
 @end
 

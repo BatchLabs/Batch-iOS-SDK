@@ -9,11 +9,11 @@
 
 typedef NS_ENUM(NSUInteger, BACSSSpecialTokenKind) {
     BACSSSpecialTokenKindUnknown = 0,
-    BACSSSpecialTokenKindBlockStart = 1, // {
-    BACSSSpecialTokenKindBlockEnd = 2, // }
-    BACSSSpecialTokenKindPropertyEnd = 3, // ;
+    BACSSSpecialTokenKindBlockStart = 1,        // {
+    BACSSSpecialTokenKindBlockEnd = 2,          // }
+    BACSSSpecialTokenKindPropertyEnd = 3,       // ;
     BACSSSpecialTokenKindPropertySeparator = 4, // :
-    BACSSSpecialTokenKindNewline = 5 // \n
+    BACSSSpecialTokenKindNewline = 5            // \n
 };
 
 @interface BACSSSpecialToken : NSObject

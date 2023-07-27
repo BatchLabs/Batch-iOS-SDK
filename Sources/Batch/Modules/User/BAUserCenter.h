@@ -6,8 +6,8 @@
 //  Copyright (c) 2015 Batch SDK. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <Batch/BACenterMulticastDelegate.h>
+#import <Foundation/Foundation.h>
 
 @interface BAUserCenter : NSObject <BACenterProtocol>
 

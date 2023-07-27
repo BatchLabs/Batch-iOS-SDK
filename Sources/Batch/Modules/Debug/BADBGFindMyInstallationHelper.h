@@ -4,6 +4,6 @@
 
 @property (class) BOOL enablesFindMyInstallation;
 
-- (nonnull instancetype)initWithPasteboard:(nonnull UIPasteboard*)pasteboard;
+- (nonnull instancetype)initWithPasteboard:(nonnull UIPasteboard *)pasteboard;
 
 @end

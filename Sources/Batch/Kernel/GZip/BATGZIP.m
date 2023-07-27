@@ -48,8 +48,13 @@
         zstream.next_out = outputBuffer;
         result = deflate(&zstream, Z_FINISH);
         if (result != Z_OK && result != Z_STREAM_END) {
-            [BALogger debugForDomain:LOCAL_DEBUG_DOMAIN
-                             message:@"Gzip error: deflating didn't return Z_OK | Z_STREAM_END, bailing."];
+            // See decompression for more info about what we do with Z_BUF_ERROR
+            if (result != Z_BUF_ERROR || zstream.avail_out != 0) {
+                [BALogger
+                    debugForDomain:LOCAL_DEBUG_DOMAIN
+                           message:@"Gzip error: deflating didn't return Z_OK | Z_STREAM_END | Z_BUF_ERROR, bailing."];
+                return nil;
+            }
         }
         // avail_out is the number of bytes that zlib didn't use in the buffer
         [outputData appendBytes:outputBuffer length:CHUNK_SIZE - zstream.avail_out];
@@ -97,8 +102,15 @@
         zstream.next_out = outputBuffer;
         result = inflate(&zstream, Z_FINISH);
         if (result != Z_OK && result != Z_STREAM_END) {
-            [BALogger debugForDomain:LOCAL_DEBUG_DOMAIN
-                             message:@"Gzip error: inflating didn't return Z_OK | Z_STREAM_END, bailing."];
+            // Z_BUF_ERROR means that zlib couln't find anything to inflate, but that doesn't mean that we have
+            // to stop, as compressed data might be found down the road. If avail_out was 0 we can continue as it means
+            // that zlib is progressing. Condition is an inverted (result == Z_BUF_ERROR && avail_out == 0)
+            if (result != Z_BUF_ERROR || zstream.avail_out != 0) {
+                [BALogger
+                    debugForDomain:LOCAL_DEBUG_DOMAIN
+                           message:@"Gzip error: inflating didn't return Z_OK | Z_STREAM_END | Z_BUF_ERROR, bailing."];
+                return nil;
+            }
         }
         // avail_out is the number of bytes that zlib didn't use in the buffer
         [outputData appendBytes:outputBuffer length:CHUNK_SIZE - zstream.avail_out];

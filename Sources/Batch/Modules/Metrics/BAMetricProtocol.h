@@ -9,10 +9,10 @@
 
 @required
 /// Initialize a new metric child
--(id)newChild:(NSMutableArray<NSString*> *)labels;
+- (id)newChild:(NSMutableArray<NSString *> *)labels;
 
 @required
 /// Reset metric values
--(void)reset;
+- (void)reset;
 
 @end

@@ -8,8 +8,8 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-#import <Batch/BAMSGStylableView.h>
 #import <Batch/BAMSGGradientView.h>
+#import <Batch/BAMSGStylableView.h>
 
 @interface BAMSGImageView : BAMSGGradientImageView <BAMSGStylableView>
 

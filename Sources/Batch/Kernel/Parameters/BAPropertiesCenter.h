@@ -5,9 +5,9 @@
 //  Copyright (c) 2012 Batch SDK. All rights reserved.
 //
 
+#import <Batch/BANotificationAuthorization.h>
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import <Batch/BANotificationAuthorization.h>
 
 /*!
  @class BAPropertiesCenter

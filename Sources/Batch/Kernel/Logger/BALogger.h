@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Batch SDK. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <Batch/BALoggerProtocol.h>
+#import <Foundation/Foundation.h>
 
 #pragma mark -
 #pragma mark BALoggerLevel
@@ -17,20 +17,18 @@
  @abstract Log level.
  @discussion Types that will be used to log.
  */
-enum
-{
-    BALoggerLevelNone      = 1 << 0,
-    BALoggerLevelPublic    = 1 << 1,
-    BALoggerLevelError     = 1 << 2,
-    BALoggerLevelWarning   = 1 << 3,
-    BALoggerLevelDebug     = 1 << 4,
-    BALoggerLevelAll       = BALoggerLevelPublic | BALoggerLevelError | BALoggerLevelWarning | BALoggerLevelDebug
+enum {
+    BALoggerLevelNone = 1 << 0,
+    BALoggerLevelPublic = 1 << 1,
+    BALoggerLevelError = 1 << 2,
+    BALoggerLevelWarning = 1 << 3,
+    BALoggerLevelDebug = 1 << 4,
+    BALoggerLevelAll = BALoggerLevelPublic | BALoggerLevelError | BALoggerLevelWarning | BALoggerLevelDebug
 };
 /*!
  @typedef BALoggerLevel
  */
 typedef NSUInteger BALoggerLevel;
-
 
 #pragma mark -
 #pragma mark BALogger
@@ -62,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param formatstring    :   Formated string and it's optional arguments.
  @param ...             :   Formated string parameters.
  */
-+ (void)publicForDomain:(nullable NSString *)name message:(NSString *)formatstring,... NS_FORMAT_FUNCTION(2,3);
++ (void)publicForDomain:(nullable NSString *)name message:(NSString *)formatstring, ... NS_FORMAT_FUNCTION(2, 3);
 
 /*!
  @method errorForDomain:message:…
@@ -71,7 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param formatstring    :   Formated string and it's optional arguments.
  @param ...             :   Formated string parameters.
  */
-+ (void)errorForDomain:(nullable NSString *)name message:(NSString *)formatstring,... NS_FORMAT_FUNCTION(2,3);
++ (void)errorForDomain:(nullable NSString *)name message:(NSString *)formatstring, ... NS_FORMAT_FUNCTION(2, 3);
 
 /*!
  @method warningForDomain:message:…
@@ -80,7 +78,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param formatstring    :   Formated string and it's optional arguments.
  @param ...             :   Formated string parameters.
  */
-+ (void)warningForDomain:(nullable NSString *)name message:(NSString *)formatstring,... NS_FORMAT_FUNCTION(2,3);
++ (void)warningForDomain:(nullable NSString *)name message:(NSString *)formatstring, ... NS_FORMAT_FUNCTION(2, 3);
 
 /*!
  @method debugForDomain:message:…
@@ -89,24 +87,28 @@ NS_ASSUME_NONNULL_BEGIN
  @param formatstring    :   Formated string and it's optional arguments.
  @param ...             :   Formated string parameters.
  */
-+ (void)debugForDomain:(nullable NSString *)name message:(NSString *)formatstring,... NS_FORMAT_FUNCTION(2,3);
++ (void)debugForDomain:(nullable NSString *)name message:(NSString *)formatstring, ... NS_FORMAT_FUNCTION(2, 3);
 
 /** delegateSource is weak-referenced, make sure you hold a strong reference to it. */
-+ (void)setLoggerDelegateSource:(id <BALoggerDelegateSource> _Nullable)delegateSource;
++ (void)setLoggerDelegateSource:(id<BALoggerDelegateSource> _Nullable)delegateSource;
 
 #pragma mark - Swift only methods
 
 /// See publicForDomain:message:
-+ (void)__SWIFT_publicForDomain:(nullable NSString *)domain message:(NSString *)message NS_SWIFT_NAME(public(domain:message:));
++ (void)__SWIFT_publicForDomain:(nullable NSString *)domain
+                        message:(NSString *)message NS_SWIFT_NAME(public(domain:message:));
 
 /// See errorForDomain:message:
-+ (void)__SWIFT_errorForDomain:(nullable NSString *)domain message:(NSString *)message NS_SWIFT_NAME(error(domain:message:));
++ (void)__SWIFT_errorForDomain:(nullable NSString *)domain
+                       message:(NSString *)message NS_SWIFT_NAME(error(domain:message:));
 
 /// See warningForDomain:message:
-+ (void)__SWIFT_warningForDomain:(nullable NSString *)domain message:(NSString *)message NS_SWIFT_NAME(warning(domain:message:));
++ (void)__SWIFT_warningForDomain:(nullable NSString *)domain
+                         message:(NSString *)message NS_SWIFT_NAME(warning(domain:message:));
 
 /// See debugForDomain:message:
-+ (void)__SWIFT_debugForDomain:(nullable NSString *)domain message:(NSString *)message NS_SWIFT_NAME(debug(domain:message:));
++ (void)__SWIFT_debugForDomain:(nullable NSString *)domain
+                       message:(NSString *)message NS_SWIFT_NAME(debug(domain:message:));
 
 @end
 

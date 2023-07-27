@@ -18,6 +18,7 @@ class webviewUtilsTests: XCTestCase {
         XCTAssertEqual("foo", BATWebviewUtils.analyticsId(forURL: "https://batch.com/index.html?batchAnalyticsID=foo"))
         XCTAssertEqual("foo", BATWebviewUtils.analyticsId(forURL: "https://batch.com/?test=test&batchAnalyticsID=foo"))
         XCTAssertEqual(
-            "space example", BATWebviewUtils.analyticsId(forURL: "https://batch.com/?batchAnalyticsID=space%20example"))
+            "space example", BATWebviewUtils.analyticsId(forURL: "https://batch.com/?batchAnalyticsID=space%20example")
+        )
     }
 }

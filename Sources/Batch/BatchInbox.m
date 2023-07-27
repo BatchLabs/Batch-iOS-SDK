@@ -9,10 +9,13 @@
 #import <Batch/BatchInbox.h>
 
 #import <Batch/BAInbox.h>
+#import <Batch/BAMessagingCenter.h>
 #import <Batch/BATJsonDictionary.h>
 #import <Batch/BatchInboxPrivate.h>
+#import <Batch/BatchMessagingPrivate.h>
 
 #define DEBUG_DOMAIN @"BatchInboxFetcher"
+#define LOGGER_DOMAIN @"BatchInboxNotificationContent"
 
 @interface BatchInboxFetcher ()
 
@@ -304,6 +307,20 @@
 
 - (void)_markAsDeleted {
     _isDeleted = true;
+}
+
+- (BOOL)hasLandingMessage {
+    return [BatchMessaging messageFromPushPayload:_payload] != nil;
+}
+
+- (void)displayLandingMessage {
+    BatchPushMessage *message = [BatchMessaging messageFromPushPayload:_payload];
+    [message setIsDisplayedFromInbox:true];
+    if (message) {
+        [[BAMessagingCenter instance] presentLandingMessage:message bypassDnD:true];
+    } else {
+        [BALogger debugForDomain:LOGGER_DOMAIN message:@"No landing message is attached."];
+    }
 }
 
 @end

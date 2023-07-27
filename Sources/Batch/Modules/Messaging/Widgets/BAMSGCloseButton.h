@@ -5,8 +5,8 @@
 //  Copyright © 2016 Batch. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
 #import <Batch/BAMSGStylableView.h>
+#import <UIKit/UIKit.h>
 
 @interface BAMSGCloseButton : UIButton <BAMSGStylableView>
 
@@ -17,6 +17,7 @@
 @property (nonatomic) BOOL showBorder;
 
 - (void)prepareCountdown;
-- (void)animateCountdownForDuration:(CFTimeInterval)duration completionHandler:(nullable void (^)(void))completionHandler;
+- (void)animateCountdownForDuration:(CFTimeInterval)duration
+                  completionHandler:(nullable void (^)(void))completionHandler;
 
 @end

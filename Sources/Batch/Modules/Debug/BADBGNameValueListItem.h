@@ -1,6 +1,6 @@
 #import <UIKit/UIKit.h>
 
-@interface BADBGNameValueCell: UITableViewCell
+@interface BADBGNameValueCell : UITableViewCell
 @end
 
 @interface BADBGNameValueListItem : NSObject

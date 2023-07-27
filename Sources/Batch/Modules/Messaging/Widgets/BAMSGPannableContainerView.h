@@ -9,7 +9,7 @@
 
 @protocol BAMSGPannableContainerViewDelegate <NSObject>
 
-- (void)pannableContainerWasDismissed:(BAMSGBaseContainerView* _Nonnull)container;
+- (void)pannableContainerWasDismissed:(BAMSGBaseContainerView *_Nonnull)container;
 
 @end
 

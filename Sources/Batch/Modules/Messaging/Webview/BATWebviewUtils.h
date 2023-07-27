@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface BATWebviewUtils : NSObject
 
 // Returns the value of the "batchAnalyticsID" get parameter in an URL if available
-+ (nullable NSString*)analyticsIdForURL:(nonnull NSString*)url;
++ (nullable NSString *)analyticsIdForURL:(nonnull NSString *)url;
 
 @end
 
