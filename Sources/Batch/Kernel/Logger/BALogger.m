@@ -32,7 +32,7 @@ __weak static id<BALoggerDelegateSource> BALoggerDelegateSource;
     NSString *statement = [[NSString alloc] initWithFormat:formatstring arguments:arglist];
     va_end(arglist);
 
-    [BALogger logMessage:statement domain:name internal:false];
+    [BALogger logMessage:statement domain:name internal:false level:OS_LOG_TYPE_INFO];
 }
 
 // Log the message using an error tag.
@@ -43,7 +43,7 @@ __weak static id<BALoggerDelegateSource> BALoggerDelegateSource;
         NSString *statement = [[NSString alloc] initWithFormat:formatstring arguments:arglist];
         va_end(arglist);
 
-        [BALogger logMessage:statement domain:name internal:true];
+        [BALogger logMessage:statement domain:name internal:true level:OS_LOG_TYPE_FAULT];
     }
 }
 
@@ -55,7 +55,7 @@ __weak static id<BALoggerDelegateSource> BALoggerDelegateSource;
         NSString *statement = [[NSString alloc] initWithFormat:formatstring arguments:arglist];
         va_end(arglist);
 
-        [BALogger logMessage:statement domain:name internal:true];
+        [BALogger logMessage:statement domain:name internal:true level:OS_LOG_TYPE_ERROR];
     }
 }
 
@@ -67,7 +67,7 @@ __weak static id<BALoggerDelegateSource> BALoggerDelegateSource;
         NSString *statement = [[NSString alloc] initWithFormat:formatstring arguments:arglist];
         va_end(arglist);
 
-        [BALogger logMessage:statement domain:name internal:true];
+        [BALogger logMessage:statement domain:name internal:true level:OS_LOG_TYPE_DEBUG];
     }
 }
 
@@ -139,7 +139,7 @@ __weak static id<BALoggerDelegateSource> BALoggerDelegateSource;
 }
 
 // Private method that do the NSLog().
-+ (void)logMessage:(NSString *)message domain:(NSString *)domain internal:(BOOL)internal {
++ (void)logMessage:(NSString *)message domain:(NSString *)domain internal:(BOOL)internal level:(os_log_type_t)level {
     if ([BANullHelper isNull:message] == YES) {
         return;
     }
@@ -150,7 +150,7 @@ __weak static id<BALoggerDelegateSource> BALoggerDelegateSource;
         domain = [NSString stringWithFormat:@"%@ - ", domain];
     }
 
-    [[BALogger sharedLogger] logMessage:message subsystem:domain internal:internal];
+    [[BALogger sharedLogger] logMessage:message subsystem:domain internal:internal level:level];
 
     [BALoggerDelegateSource.loggerDelegate
         logWithMessage:[NSString

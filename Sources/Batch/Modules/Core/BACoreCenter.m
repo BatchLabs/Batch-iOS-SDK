@@ -96,10 +96,6 @@
     return [[BACoreCenter instance] executeIsDevelopmentMode];
 }
 
-+ (void)setUseIDFA:(BOOL)use {
-    [[BACoreCenter instance] setUseIDFA:use];
-}
-
 + (void)setUseAdvancedDeviceInformation:(BOOL)use {
     [[BACoreCenter instance] setUseAdvancedDeviceInformation:use];
 }
@@ -354,11 +350,6 @@
     }
 
     return [self.configuration developmentMode];
-}
-
-// Set if Batch can try to use IDFA (default = YES)
-- (void)setUseIDFA:(BOOL)use {
-    [self.configuration setUseIDFA:use];
 }
 
 - (void)setUseAdvancedDeviceInformation:(BOOL)use {

@@ -79,15 +79,6 @@
 + (void)openURLWithUIApplication:(NSURL *)URL;
 
 /*!
- @method setUseIDFA:
- @abstract Set if Batch can try to use IDFA (default = YES)
- @discussion Setting this to NO have a negative impact on offer delivery and restore.
- @param use :   YES if Batch can try to use the IDFA, NO if you don't want Batch to use the IDFA.
- @warning You should only use it if you know what you are doing.
- */
-+ (void)setUseIDFA:(BOOL)use;
-
-/*!
  @method setUseAdvancedDeviceInformation:
  @abstract Set if Batch can use advanced device identifiers (default = YES)
  @discussion Advanced device identifiers include information about the device itself, but nothing that
@@ -99,9 +90,7 @@
  Setting this to false have a negative impact on core Batch features
  You should only use it if you know what you are doing.
 
- @param use :   YES if Batch can try to use advanced device information, NO if you don't
- @warning Disabling this does not automatically disable IDFA collection, pleaseuse the appropriate methods to control
- this.
+ @param use :   YES if Batch can try to use advanced device information, NO if you don't want to
  */
 + (void)setUseAdvancedDeviceInformation:(BOOL)use;
 

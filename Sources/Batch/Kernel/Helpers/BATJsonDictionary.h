@@ -24,14 +24,14 @@ NS_ASSUME_NONNULL_BEGIN
 
  NSNull values will be returned as nil.
  */
-- (nullable id)objectForKey:(NSString *)key kindOfClass:(Class)class allowNil:(BOOL)allowNil error:(NSError **)error;
+- (nullable id)objectForKey:(NSString *)key kindOfClass:(Class)clazz allowNil:(BOOL)allowNil error:(NSError **)error;
 
 /**
  Get an object for the given key, check if it an instance of the wanted class and return it as is if it does.
  If an error occurs, or if the value is nil/nonexistent/[NSNull null], the return value will be the fallback.
 
  */
-- (nullable id)objectForKey:(NSString *)key kindOfClass:(Class)class fallback:(nullable id)fallback;
+- (nullable id)objectForKey:(NSString *)key kindOfClass:(Class)clazz fallback:(nullable id)fallback;
 
 /**
  Writes the specified error in the error pointer, and return nil.

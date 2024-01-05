@@ -94,15 +94,6 @@ static NSArray *kPluginsList = nil;
     }
 }
 
-// Set if Batch can try to use IDFA (default = YES)
-+ (void)setUseIDFA:(BOOL)use {
-    for (id<BACenterProtocol> plugin in kPluginsList) {
-        if ([plugin respondsToSelector:@selector(setUseIDFA:)]) {
-            [plugin setUseIDFA:use];
-        }
-    }
-}
-
 + (void)setUseAdvancedDeviceInformation:(BOOL)use {
     for (id<BACenterProtocol> plugin in kPluginsList) {
         if ([plugin respondsToSelector:@selector(setUseAdvancedDeviceInformation:)]) {

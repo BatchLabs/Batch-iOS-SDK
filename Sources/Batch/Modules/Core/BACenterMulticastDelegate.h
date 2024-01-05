@@ -51,15 +51,6 @@
 + (void)setCustomUserIdentifier:(NSString *)identifier;
 
 /*!
- @method setUseIDFA:
- @abstract Set if Batch can try to use IDFA (default = YES)
- @discussion Setting this to NO have a negative impact on offer delivery and restore.
- @param use :   YES if Batch can try to use the IDFA, NO if you don't want Batch to use the IDFA.
- @warning You should only use it if you know what you are doing.
- */
-+ (void)setUseIDFA:(BOOL)use;
-
-/*!
  @method setUseAdvancedDeviceInformation:
  @abstract Set if Batch can try to use advanced device information (default = YES)
  @warning You should only use it if you know what you are doing.

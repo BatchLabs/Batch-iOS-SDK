@@ -43,12 +43,12 @@
     return sharedInstance;
 }
 
-// Set if Batch can try to use IDFA (default = YES)
+// Set if Batch can try to use IDFA. Deprecated.
 + (void)setUseIDFA:(BOOL)use {
-    [BACenterMulticastDelegate setUseIDFA:use];
+    [BALogger publicForDomain:nil message:@"Ignoring 'setUseIDFA' API call: Batch has removed support for IDFA."];
 }
 
-+ (void)setLoggerDelegate:(id<BatchLoggerDelegate>)loggerDelegate NS_AVAILABLE_IOS(8_0) {
++ (void)setLoggerDelegate:(id<BatchLoggerDelegate>)loggerDelegate {
     [[[BACoreCenter instance] configuration] setLoggerDelegate:loggerDelegate];
 }
 

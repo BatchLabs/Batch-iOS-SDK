@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
 - (void)application:(UIApplication *)application
-    didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings NS_AVAILABLE_IOS(8_0);
+    didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings;
 
 #pragma clang diagnostic pop
 

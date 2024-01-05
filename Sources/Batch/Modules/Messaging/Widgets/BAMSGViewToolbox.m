@@ -21,44 +21,42 @@
     // as we can't only rely on useSafeArea
     BOOL addedSafeAreaConstraints = false;
 
-    if (@available(iOS 11, *)) {
-        if (useSafeArea) {
-            addedSafeAreaConstraints = true;
-            UILayoutGuide *safeGuide = superview.safeAreaLayoutGuide;
-            NSMutableArray<NSLayoutConstraint *> *safeLayoutConstraints = [NSMutableArray new];
-            [safeLayoutConstraints addObject:[NSLayoutConstraint constraintWithItem:view
-                                                                          attribute:NSLayoutAttributeTop
-                                                                          relatedBy:NSLayoutRelationEqual
-                                                                             toItem:safeGuide
-                                                                          attribute:NSLayoutAttributeTop
-                                                                         multiplier:1.0
-                                                                           constant:0]];
+    if (useSafeArea) {
+        addedSafeAreaConstraints = true;
+        UILayoutGuide *safeGuide = superview.safeAreaLayoutGuide;
+        NSMutableArray<NSLayoutConstraint *> *safeLayoutConstraints = [NSMutableArray new];
+        [safeLayoutConstraints addObject:[NSLayoutConstraint constraintWithItem:view
+                                                                      attribute:NSLayoutAttributeTop
+                                                                      relatedBy:NSLayoutRelationEqual
+                                                                         toItem:safeGuide
+                                                                      attribute:NSLayoutAttributeTop
+                                                                     multiplier:1.0
+                                                                       constant:0]];
 
-            [safeLayoutConstraints addObject:[NSLayoutConstraint constraintWithItem:view
-                                                                          attribute:NSLayoutAttributeBottom
-                                                                          relatedBy:NSLayoutRelationEqual
-                                                                             toItem:safeGuide
-                                                                          attribute:NSLayoutAttributeBottom
-                                                                         multiplier:1.0
-                                                                           constant:0]];
+        [safeLayoutConstraints addObject:[NSLayoutConstraint constraintWithItem:view
+                                                                      attribute:NSLayoutAttributeBottom
+                                                                      relatedBy:NSLayoutRelationEqual
+                                                                         toItem:safeGuide
+                                                                      attribute:NSLayoutAttributeBottom
+                                                                     multiplier:1.0
+                                                                       constant:0]];
 
-            [safeLayoutConstraints addObject:[NSLayoutConstraint constraintWithItem:view
-                                                                          attribute:NSLayoutAttributeLeft
-                                                                          relatedBy:NSLayoutRelationEqual
-                                                                             toItem:safeGuide
-                                                                          attribute:NSLayoutAttributeLeft
-                                                                         multiplier:1.0
-                                                                           constant:0]];
+        [safeLayoutConstraints addObject:[NSLayoutConstraint constraintWithItem:view
+                                                                      attribute:NSLayoutAttributeLeft
+                                                                      relatedBy:NSLayoutRelationEqual
+                                                                         toItem:safeGuide
+                                                                      attribute:NSLayoutAttributeLeft
+                                                                     multiplier:1.0
+                                                                       constant:0]];
 
-            [safeLayoutConstraints addObject:[NSLayoutConstraint constraintWithItem:view
-                                                                          attribute:NSLayoutAttributeRight
-                                                                          relatedBy:NSLayoutRelationEqual
-                                                                             toItem:safeGuide
-                                                                          attribute:NSLayoutAttributeRight
-                                                                         multiplier:1.0
-                                                                           constant:0]];
-            [NSLayoutConstraint activateConstraints:safeLayoutConstraints];
-        }
+        [safeLayoutConstraints addObject:[NSLayoutConstraint constraintWithItem:view
+                                                                      attribute:NSLayoutAttributeRight
+                                                                      relatedBy:NSLayoutRelationEqual
+                                                                         toItem:safeGuide
+                                                                      attribute:NSLayoutAttributeRight
+                                                                     multiplier:1.0
+                                                                       constant:0]];
+        [NSLayoutConstraint activateConstraints:safeLayoutConstraints];
     }
 
     if (!addedSafeAreaConstraints) {
@@ -84,12 +82,10 @@
         } else {
             return [UIWindow new].bounds.size;
         }
-    } else if (@available(iOS 9, *)) {
+    } else {
         // On iOS 9, iPads support split screen, so init a UIWindow, which will have the split's size, and read it
         // iOS 8 would have a 0 sized UIWindow
         return [UIWindow new].bounds.size;
-    } else {
-        return [UIScreen mainScreen].bounds.size;
     }
 }
 

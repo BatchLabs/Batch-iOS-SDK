@@ -22,9 +22,7 @@
     UNAuthorizationOptions options = [self systemOptionsForBatchTypes:notifType];
 
     if (providesSettings) {
-        if (@available(iOS 12.0, *)) {
-            options |= UNAuthorizationOptionProvidesAppNotificationSettings;
-        }
+        options |= UNAuthorizationOptionProvidesAppNotificationSettings;
     }
 
     [self requestAuthorization:options];
@@ -32,17 +30,15 @@
 
 - (void)registerForProvisionalNotifications:(BatchNotificationType)notifType
                providesNotificationSettings:(BOOL)providesSettings {
-    if (@available(iOS 12.0, *)) {
-        UNAuthorizationOptions options = [self systemOptionsForBatchTypes:notifType];
+    UNAuthorizationOptions options = [self systemOptionsForBatchTypes:notifType];
 
-        options |= UNAuthorizationOptionProvisional;
+    options |= UNAuthorizationOptionProvisional;
 
-        if (providesSettings) {
-            options |= UNAuthorizationOptionProvidesAppNotificationSettings;
-        }
-
-        [self requestAuthorization:options];
+    if (providesSettings) {
+        options |= UNAuthorizationOptionProvidesAppNotificationSettings;
     }
+
+    [self requestAuthorization:options];
 }
 
 - (void)registerCategories:(NSSet *)categories {
@@ -95,9 +91,7 @@
         retOptions |= UNAuthorizationOptionCarPlay;
     }
     if (batchTypes & BatchNotificationTypeCritical) {
-        if (@available(iOS 12.0, *)) {
-            retOptions |= UNAuthorizationOptionCriticalAlert;
-        }
+        retOptions |= UNAuthorizationOptionCriticalAlert;
     }
 
     return retOptions;

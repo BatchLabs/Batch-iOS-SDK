@@ -85,7 +85,7 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 /// You can call this method from any thread.
 /// - Warning: __Deprecated:__ This method is deprectaed. You don't need to do anything else besides removing this call,
 /// Batch Push will still work as expected.
-+ (void)setupPush NS_AVAILABLE_IOS(8_0)
++ (void)setupPush
     __attribute__((deprecated("setupPush is deprecated. You don't need to do anything else besides removing this call, "
                               "Batch Push will still work as expected.")));
 
@@ -95,7 +95,7 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 /// system settings. Default value is: `BatchNotificationTypeBadge | BatchNotificationTypeSound |
 /// BatchNotificationTypeAlert`.
 /// - Parameter type: A bit mask specifying the types of notifications the app accepts.
-+ (void)setRemoteNotificationTypes:(BatchNotificationType)type NS_AVAILABLE_IOS(8_0);
++ (void)setRemoteNotificationTypes:(BatchNotificationType)type;
 
 /// Method to trigger the iOS popup that asks the user if they wants to allow notifications to be displayed, then
 /// get a Push token.
@@ -105,7 +105,7 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 /// You should call this at a strategic moment, like at the end of your welcome.
 ///
 /// Batch will automatically ask for a push token when the user replies.
-+ (void)requestNotificationAuthorization NS_AVAILABLE_IOS(8_0);
++ (void)requestNotificationAuthorization;
 
 /// Method to ask iOS for a provisional notification authorization.
 ///
@@ -116,15 +116,15 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 /// from the statusbar when unlocked.
 ///
 /// This method does nothing on iOS 11 or lower.
-+ (void)requestProvisionalNotificationAuthorization NS_AVAILABLE_IOS(8_0);
++ (void)requestProvisionalNotificationAuthorization;
 
 /// Ask iOS to refresh the push token. If the app didn't prompt the user for consent yet, this will not be done.
 ///
 /// You should call this at the start of your app, to make sure Batch always gets a valid token after app updates.
-+ (void)refreshToken NS_AVAILABLE_IOS(8_0);
++ (void)refreshToken;
 
 /// Open the system settings on your applications' notification settings.
-+ (void)openSystemNotificationSettings NS_AVAILABLE_IOS(8_0);
++ (void)openSystemNotificationSettings;
 
 /// Method to trigger the iOS popup that asks the user if they wants to allow Push Notifications, then get a Push token.
 /// (Deprecated)
@@ -135,7 +135,7 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 /// Equivalent to calling ``BatchPush/requestNotificationAuthorization``
 /// - Warning: __Deprecated:__ This method is deprectaed. Use ``BatchPush/requestNotificationAuthorization`` and
 /// ``BatchPush/refreshToken`` separately. More info in our documentation.
-+ (void)registerForRemoteNotifications NS_AVAILABLE_IOS(8_0)__attribute__((
++ (void)registerForRemoteNotifications __attribute__((
     deprecated("Use requestNotificationAuthorization and refreshToken separately. More info in our documentation.")));
 
 /// Method to trigger the iOS popup that asks the user if they want to allow Push Notifications and register to APNS.
@@ -152,8 +152,8 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 /// - Warning: __Deprecated:__ Use ``BatchPush/setNotificationsCategories:`` and
 /// ``BatchPush/registerForRemoteNotifications`` separately.
 + (void)registerForRemoteNotificationsWithCategories:(nullable NSSet *)categories
-    NS_AVAILABLE_IOS(8_0)
-        __attribute__((deprecated("Use setNotificationCategories and registerForRemoteNotifications separately.")));
+
+    __attribute__((deprecated("Use setNotificationCategories and registerForRemoteNotifications separately.")));
 
 /// Set the notification action categories to iOS.
 ///
@@ -164,19 +164,19 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 /// groups of actions a notification may include. If you try to register `UIUserNotificationCategory` instances on iOS
 /// 10, Batch will automatically do a best effort conversion to `UNNotificationCategory`. If you don't want this
 /// behaviour, please use the standard `UIApplication` methods.
-+ (void)setNotificationsCategories:(nullable NSSet *)categories NS_AVAILABLE_IOS(8_0);
++ (void)setNotificationsCategories:(nullable NSSet *)categories;
 
 /// Clear the application's badge on the homescreen.
 ///
 /// You do not need to call this if you already called ``BatchPush/dismissNotifications``.
-+ (void)clearBadge NS_AVAILABLE_IOS(8_0);
++ (void)clearBadge;
 
 /// Clear the app's notifications in the notification center. Also clears your badge.
 ///
 /// Call this when you want to remove the notifications. Your badge is removed afterwards, so if you want one, you need
 /// to set it up again.
 /// - Important: Be careful, this method also clears your badge.
-+ (void)dismissNotifications NS_AVAILABLE_IOS(8_0);
++ (void)dismissNotifications;
 
 /// Set whether Batch Push should automatically try to handle deeplinks.
 ///
@@ -190,13 +190,13 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 /// - Important: If Batch is set to handle your deeplinks, it will *automatically* call the fetch completion handler (if
 /// applicable) with `UIBackgroundFetchResultNewData.
 /// - Parameter handleDeeplinks: Whether Batch should handle deeplinks automatically.
-+ (void)enableAutomaticDeeplinkHandling:(BOOL)handleDeeplinks NS_AVAILABLE_IOS(8_0);
++ (void)enableAutomaticDeeplinkHandling:(BOOL)handleDeeplinks;
 
 /// Get Batch Push's deeplink from a notification's userInfo.
 ///
 /// - Parameter userData The notification's payload.
 /// - Returns: Batch's Deeplink, or nil if not found.
-+ (nullable NSString *)deeplinkFromUserInfo:(nonnull NSDictionary *)userData NS_AVAILABLE_IOS(8_0);
++ (nullable NSString *)deeplinkFromUserInfo:(nonnull NSDictionary *)userData;
 
 /// Get the last known push token.
 ///
@@ -204,7 +204,7 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 /// - Important: The returned token might be outdated and invalid if this method is called too early in your application
 /// lifecycle.
 /// - Returns: A push token, nil if unavailable.
-+ (nullable NSString *)lastKnownPushToken NS_AVAILABLE_IOS(8_0);
++ (nullable NSString *)lastKnownPushToken;
 
 /// Disable the push's automatic integration.
 ///
@@ -212,7 +212,7 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 /// `UNUserNotificationCenterDelegate` calls to Batch. If you don't, some parts of the SDK and Dashboard will break.
 /// Calling this method automatically calls `disableAutomaticNotificationCenterIntegration`.
 /// - Important: This must be called before you start Batch, or it will have no effect.
-+ (void)disableAutomaticIntegration NS_AVAILABLE_IOS(8_0);
++ (void)disableAutomaticIntegration;
 
 /// Registers a device token to Batch.
 ///
@@ -220,7 +220,7 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 /// - Important: If you didn't call ``BatchPush/disableAutomaticIntegration``, this method will have no effect.
 /// If you called it but don't implement this method, Batch's push features will __NOT__ work.
 /// - Parameter token: The untouched `deviceToken` NSData argument given to you in the application delegate method.
-+ (void)handleDeviceToken:(nonnull NSData *)token NS_AVAILABLE_IOS(8_0);
++ (void)handleDeviceToken:(nonnull NSData *)token;
 
 /// Check if the received push is a Batch one.
 ///
@@ -229,7 +229,7 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 /// - Parameter  userInfo: The untouched `userInfo` NSDictionary argument given to you in the application delegate
 /// method.
 /// - Returns: Wheter it is a Batch'sPush. If it returns true, you should not handle the push.
-+ (BOOL)isBatchPush:(nonnull NSDictionary *)userInfo NS_AVAILABLE_IOS(8_0);
++ (BOOL)isBatchPush:(nonnull NSDictionary *)userInfo;
 
 /// Make Batch process a notification. (Deprecated)
 ///
@@ -255,8 +255,7 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 ///   - userInfo: The untouched `userInfo` NSDictionary argument given to you in the application delegate method.
 ///   - identifier: The action's identifier. Used for tracking purposes: it can match your raw action name, or be a more
 ///   user-friendly string.
-+ (void)handleNotification:(nonnull NSDictionary *)userInfo
-          actionIdentifier:(nullable NSString *)identifier NS_AVAILABLE_IOS(8_0);
++ (void)handleNotification:(nonnull NSDictionary *)userInfo actionIdentifier:(nullable NSString *)identifier;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -289,7 +288,7 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 + (void)handleUserNotificationCenter:(nonnull UNUserNotificationCenter *)center
              willPresentNotification:(nonnull UNNotification *)notification
        willShowSystemForegroundAlert:(BOOL)willShowSystemForegroundAlert
-    NS_AVAILABLE_IOS(10_0)NS_SWIFT_NAME(handle(userNotificationCenter:willPresent:willShowSystemForegroundAlert:));
+    NS_SWIFT_NAME(handle(userNotificationCenter:willPresent:willShowSystemForegroundAlert:));
 
 /// Make Batch process a background notification open/action.
 ///
@@ -299,8 +298,8 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 ///   - center: Original center argument.
 ///   - response: Original response argument.
 + (void)handleUserNotificationCenter:(nonnull UNUserNotificationCenter *)center
-      didReceiveNotificationResponse:(nonnull UNNotificationResponse *)response NS_AVAILABLE_IOS(10_0)
-                                         NS_SWIFT_NAME(handle(userNotificationCenter:didReceive:));
+      didReceiveNotificationResponse:(nonnull UNNotificationResponse *)response
+    NS_SWIFT_NAME(handle(userNotificationCenter:didReceive:));
 
 @end
 

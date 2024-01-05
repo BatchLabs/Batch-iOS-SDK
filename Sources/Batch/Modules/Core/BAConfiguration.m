@@ -22,9 +22,6 @@ NSString *const kBATConfigurationChangedNotification = @"ConfigurationChangedNot
     // Application developper key.
     NSString *_developperKey;
 
-    // Use IDFA.
-    BOOL _idfa;
-
     // Use advanced device information.
     BOOL _advancedDeviceInformation;
 
@@ -45,9 +42,6 @@ NSString *const kBATConfigurationChangedNotification = @"ConfigurationChangedNot
         return nil;
     }
 
-    // Default use the IDFA.
-    _idfa = YES;
-
     // We allow advanced device information (aka advenced identifiers) by default
     _advancedDeviceInformation = YES;
 
@@ -56,17 +50,6 @@ NSString *const kBATConfigurationChangedNotification = @"ConfigurationChangedNot
 
 #pragma mark -
 #pragma mark Public methods
-
-// Set the IDFA use condition.
-- (void)setUseIDFA:(BOOL)useIDFA {
-    _idfa = useIDFA;
-    [[BANotificationCenter defaultCenter] postNotificationName:kBATConfigurationChangedNotification object:nil];
-}
-
-// Condition to use the IDFA.
-- (BOOL)useIDFA {
-    return _idfa;
-}
 
 - (void)setUseAdvancedDeviceInformation:(BOOL)use {
     _advancedDeviceInformation = use;

@@ -486,14 +486,7 @@ static NSString *kBAMSGInterstitialViewControllerHeroConstraint = @"BAMainHeroCo
     NSLayoutAttribute matchingAlignAttr = alignAttr;
     id alignView;
     if (marginUseSafeArea != 0) {
-        if (@available(iOS 11.0, *)) {
-            alignView = parentView.safeAreaLayoutGuide;
-        } else if (alignAttr == NSLayoutAttributeTop) {
-            alignView = self.topLayoutGuide;
-            matchingAlignAttr = NSLayoutAttributeBottom;
-        } else {
-            alignView = parentView;
-        }
+        alignView = parentView.safeAreaLayoutGuide;
     } else {
         alignView = parentView;
     }
@@ -742,14 +735,7 @@ static NSString *kBAMSGInterstitialViewControllerHeroConstraint = @"BAMainHeroCo
     NSLayoutAttribute matchingAlignAttr = alignAttr;
     id edgeAlignView;
     if (alignAttrPadding != 0) {
-        if (@available(iOS 11.0, *)) {
-            edgeAlignView = parentView.safeAreaLayoutGuide;
-        } else if (alignAttr == NSLayoutAttributeTop) {
-            edgeAlignView = self.topLayoutGuide;
-            matchingAlignAttr = NSLayoutAttributeBottom;
-        } else {
-            edgeAlignView = parentView;
-        }
+        edgeAlignView = parentView.safeAreaLayoutGuide;
     } else {
         edgeAlignView = parentView;
     }
@@ -790,23 +776,21 @@ static NSString *kBAMSGInterstitialViewControllerHeroConstraint = @"BAMainHeroCo
     // previous versions of the SDK that already applied the margin after the safe area
     if (hAlignAttr == NSLayoutAttributeCenterX) {
         if (margin.left != 0 && margin.right != 0) {
-            if (@available(iOS 11.0, *)) {
-                [constraints addObject:[NSLayoutConstraint constraintWithItem:innerView
-                                                                    attribute:NSLayoutAttributeLeft
-                                                                    relatedBy:NSLayoutRelationGreaterThanOrEqual
-                                                                       toItem:parentView.safeAreaLayoutGuide
-                                                                    attribute:NSLayoutAttributeLeft
-                                                                   multiplier:1.0
-                                                                     constant:margin.left]];
+            [constraints addObject:[NSLayoutConstraint constraintWithItem:innerView
+                                                                attribute:NSLayoutAttributeLeft
+                                                                relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                                                   toItem:parentView.safeAreaLayoutGuide
+                                                                attribute:NSLayoutAttributeLeft
+                                                               multiplier:1.0
+                                                                 constant:margin.left]];
 
-                [constraints addObject:[NSLayoutConstraint constraintWithItem:innerView
-                                                                    attribute:NSLayoutAttributeRight
-                                                                    relatedBy:NSLayoutRelationLessThanOrEqual
-                                                                       toItem:parentView.safeAreaLayoutGuide
-                                                                    attribute:NSLayoutAttributeRight
-                                                                   multiplier:1.0
-                                                                     constant:-margin.right]];
-            }
+            [constraints addObject:[NSLayoutConstraint constraintWithItem:innerView
+                                                                attribute:NSLayoutAttributeRight
+                                                                relatedBy:NSLayoutRelationLessThanOrEqual
+                                                                   toItem:parentView.safeAreaLayoutGuide
+                                                                attribute:NSLayoutAttributeRight
+                                                               multiplier:1.0
+                                                                 constant:-margin.right]];
         }
 
         [constraints addObject:[NSLayoutConstraint constraintWithItem:innerView
@@ -827,11 +811,7 @@ static NSString *kBAMSGInterstitialViewControllerHeroConstraint = @"BAMainHeroCo
 
         id hEdgeAlignView;
         if (hAlignAttrPadding != 0) {
-            if (@available(iOS 11.0, *)) {
-                hEdgeAlignView = parentView.safeAreaLayoutGuide;
-            } else {
-                hEdgeAlignView = parentView;
-            }
+            hEdgeAlignView = parentView.safeAreaLayoutGuide;
         } else {
             hEdgeAlignView = parentView;
         }
@@ -912,65 +892,44 @@ static NSString *kBAMSGInterstitialViewControllerHeroConstraint = @"BAMainHeroCo
                                                                       views:NSDictionaryOfVariableBindings(innerView)]];
 
     if (useSafeArea) {
-        if (@available(iOS 11.0, *)) {
-            UILayoutGuide *safeGuide = parentView.safeAreaLayoutGuide;
-            NSMutableArray<NSLayoutConstraint *> *safeLayoutConstraints = [NSMutableArray new];
-            [safeLayoutConstraints
-                addObject:[NSLayoutConstraint constraintWithItem:innerView
-                                                       attribute:NSLayoutAttributeTop
-                                                       relatedBy:NSLayoutRelationEqual
-                                                          toItem:safeGuide
-                                                       attribute:NSLayoutAttributeTop
-                                                      multiplier:1.0
-                                                        constant:usePaddingForSafeArea ? padding.top : 0]];
-            [safeLayoutConstraints
-                addObject:[NSLayoutConstraint constraintWithItem:innerView
-                                                       attribute:NSLayoutAttributeBottom
-                                                       relatedBy:NSLayoutRelationEqual
-                                                          toItem:safeGuide
-                                                       attribute:NSLayoutAttributeBottom
-                                                      multiplier:1.0
-                                                        constant:usePaddingForSafeArea ? -padding.bottom : 0]];
-            [safeLayoutConstraints
-                addObject:[NSLayoutConstraint constraintWithItem:innerView
-                                                       attribute:NSLayoutAttributeLeft
-                                                       relatedBy:NSLayoutRelationEqual
-                                                          toItem:safeGuide
-                                                       attribute:NSLayoutAttributeLeft
-                                                      multiplier:1.0
-                                                        constant:usePaddingForSafeArea ? padding.left : 0]];
-            [safeLayoutConstraints
-                addObject:[NSLayoutConstraint constraintWithItem:innerView
-                                                       attribute:NSLayoutAttributeRight
-                                                       relatedBy:NSLayoutRelationEqual
-                                                          toItem:safeGuide
-                                                       attribute:NSLayoutAttributeRight
-                                                      multiplier:1.0
-                                                        constant:usePaddingForSafeArea ? -padding.right : 0]];
-            for (NSLayoutConstraint *c in safeLayoutConstraints) {
-                c.priority = 1000;
-            }
-            [NSLayoutConstraint activateConstraints:safeLayoutConstraints];
-        } else if (shouldUseTopGuide) {
-            // topLayoutGuide is only allowed if:
-            //  - shouldUseTopGuide is true
-            //  - useSafeArea is true
-            // shouldUseTopGuide is a hint given by the caller, since only the view highest on the screen should use
-            // that as the topLayoutGuide depends on the view controller. The safe area guide is WAY better, as it works
-            // in every view no matter where they are on the screen, so the burden of figuring that out is not on us.
-            // It's complex and hardly maintainable, but this whole class is like that anyway, so enjoy changing that
-            // and be sure you test on iOS 8,9,10,11. Yes, all of them :)
-            NSLayoutConstraint *topGuideConstraint =
-                [NSLayoutConstraint constraintWithItem:innerView
-                                             attribute:NSLayoutAttributeTop
-                                             relatedBy:NSLayoutRelationGreaterThanOrEqual
-                                                toItem:self.topLayoutGuide
-                                             attribute:NSLayoutAttributeBottom
-                                            multiplier:1.0
-                                              constant:usePaddingForSafeArea ? padding.top : 0];
-            topGuideConstraint.priority = 1000;
-            [NSLayoutConstraint activateConstraints:@[ topGuideConstraint ]];
+        UILayoutGuide *safeGuide = parentView.safeAreaLayoutGuide;
+        NSMutableArray<NSLayoutConstraint *> *safeLayoutConstraints = [NSMutableArray new];
+        [safeLayoutConstraints
+            addObject:[NSLayoutConstraint constraintWithItem:innerView
+                                                   attribute:NSLayoutAttributeTop
+                                                   relatedBy:NSLayoutRelationEqual
+                                                      toItem:safeGuide
+                                                   attribute:NSLayoutAttributeTop
+                                                  multiplier:1.0
+                                                    constant:usePaddingForSafeArea ? padding.top : 0]];
+        [safeLayoutConstraints
+            addObject:[NSLayoutConstraint constraintWithItem:innerView
+                                                   attribute:NSLayoutAttributeBottom
+                                                   relatedBy:NSLayoutRelationEqual
+                                                      toItem:safeGuide
+                                                   attribute:NSLayoutAttributeBottom
+                                                  multiplier:1.0
+                                                    constant:usePaddingForSafeArea ? -padding.bottom : 0]];
+        [safeLayoutConstraints
+            addObject:[NSLayoutConstraint constraintWithItem:innerView
+                                                   attribute:NSLayoutAttributeLeft
+                                                   relatedBy:NSLayoutRelationEqual
+                                                      toItem:safeGuide
+                                                   attribute:NSLayoutAttributeLeft
+                                                  multiplier:1.0
+                                                    constant:usePaddingForSafeArea ? padding.left : 0]];
+        [safeLayoutConstraints
+            addObject:[NSLayoutConstraint constraintWithItem:innerView
+                                                   attribute:NSLayoutAttributeRight
+                                                   relatedBy:NSLayoutRelationEqual
+                                                      toItem:safeGuide
+                                                   attribute:NSLayoutAttributeRight
+                                                  multiplier:1.0
+                                                    constant:usePaddingForSafeArea ? -padding.right : 0]];
+        for (NSLayoutConstraint *c in safeLayoutConstraints) {
+            c.priority = 1000;
         }
+        [NSLayoutConstraint activateConstraints:safeLayoutConstraints];
     }
 
     [NSLayoutConstraint activateConstraints:constraints];

@@ -5,8 +5,8 @@
 //  Copyright © 2016 Batch. All rights reserved.
 //
 
-@import Foundation;
-@import UIKit;
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 #import <Batch/BAMSGStylableView.h>
 

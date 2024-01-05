@@ -106,8 +106,7 @@
     [self fetchUN:completionHandler];
 }
 
-- (void)fetchUN:(void (^_Nullable)(BANotificationAuthorizationSettings *_Nonnull))completionHandler
-    NS_AVAILABLE_IOS(10.0) {
+- (void)fetchUN:(void (^_Nullable)(BANotificationAuthorizationSettings *_Nonnull))completionHandler {
     [[UNUserNotificationCenter currentNotificationCenter]
         getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings *_Nonnull settings) {
           BANotificationAuthorizationSettings *baSettings = [BANotificationAuthorizationSettings new];

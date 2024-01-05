@@ -14,7 +14,6 @@
 #import <Batch/BABundleInfo.h>
 #import <Batch/BADBGFindMyInstallationHelper.h>
 #import <Batch/BANotificationAuthorization.h>
-#import <Batch/BATrackingAuthorization.h>
 
 @implementation BAStatus {
     // Initialization.
@@ -47,8 +46,6 @@
     _sessionManager = [BASessionManager new];
 
     _notificationAuthorization = [BANotificationAuthorization new];
-
-    _trackingAuthorization = [BATrackingAuthorization new];
 
     _installationIdHelper = [BADBGFindMyInstallationHelper new];
 

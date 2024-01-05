@@ -99,7 +99,6 @@
 #import <Batch/BAInboxSQLiteDatasource.h>
 #import <Batch/BATUserActivity.h>
 #import <Batch/BABundleInfo.h>
-#import <Batch/BATrackingAuthorization.h>
 #import <Batch/BAUserProfile.h>
 #import <Batch/BACenterMulticastDelegate.h>
 #import <Batch/BASessionManager.h>

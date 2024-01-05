@@ -44,6 +44,13 @@
 @property (strong, nonatomic, nullable) NSString *region;
 
 /*!
+ @property attributionID
+ @abstract The user attribution identifier.
+ @discussion Set to nil to reset the setting.
+ */
+@property (strong, nonatomic, nullable) NSString *attributionID;
+
+/*!
  @method defaultUserProfile
  @abstract Access the default user profile object.
  @discussion You can call this method from any thread.
@@ -63,5 +70,7 @@
 @abstract Increment the current version of user profile and send it to the server.
 */
 - (void)incrementVersion;
+
+- (void)sendAttributionIDChangedEvent;
 
 @end

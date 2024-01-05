@@ -136,12 +136,33 @@
     if (![BANullHelper isNull:identifier] && [identifier isKindOfClass:[NSString class]] &&
         [identifier length] > 1024) {
         [BALogger publicForDomain:PUBLIC_DOMAIN
-                          message:@"setIdentifier called with identifier region (must be less 1024 chars)"];
+                          message:@"setIdentifier called with invalid identifier (must be less 1024 chars)"];
         return;
     }
 
     _updatedFields[IDENTIFIER_INDEX] = YES;
     _userFields[IDENTIFIER_INDEX] = identifier;
+}
+
+- (void)setAttributionIdentifier:(nullable NSString *)attributionID {
+    if (![BANullHelper isNull:attributionID] && [attributionID isKindOfClass:[NSString class]] &&
+        [[NSUUID alloc] initWithUUIDString:attributionID] == nil) {
+        [BALogger
+            publicForDomain:PUBLIC_DOMAIN
+                    message:
+                        @"setAttributionIdentifier called with invalid attribution identifier (must be a valid UUID)"];
+        return;
+    }
+
+    [self addfirstToQueueSynchronized:^BOOL {
+      BAUserProfile *userProfile = [BAUserProfile defaultUserProfile];
+      NSString *oldAttributionID = userProfile.attributionID;
+      userProfile.attributionID = attributionID;
+      if (![oldAttributionID isEqualToString:attributionID]) {
+          [userProfile sendAttributionIDChangedEvent];
+      }
+      return YES;
+    }];
 }
 
 - (BOOL)setEmail:(nullable NSString *)email error:(NSError **)error {
@@ -581,6 +602,12 @@
 - (void)addToQueueSynchronized:(BOOL (^)(void))operationBlock {
     @synchronized(_operationQueue) {
         [_operationQueue addObject:operationBlock];
+    }
+}
+
+- (void)addfirstToQueueSynchronized:(BOOL (^)(void))operationBlock {
+    @synchronized(_operationQueue) {
+        [_operationQueue insertObject:operationBlock atIndex:0];
     }
 }
 

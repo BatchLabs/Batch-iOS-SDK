@@ -79,10 +79,11 @@ NSString *const BAMSGWebviewDevMenuReload = @"Reload";
 
     CGRect windowFrame = [BAWindowHelper keyWindow].frame;
     _webView = [[WKWebView alloc] initWithFrame:windowFrame configuration:[self webViewConfiguration]];
-    // Back up the original value in case Apple changes it in an iOS release
-    if (@available(iOS 11.0, *)) {
-        _originalWebViewScrollBehaviour = _webView.scrollView.contentInsetAdjustmentBehavior;
+    if (@available(iOS 16.4, *)) {
+        _webView.inspectable = true;
     }
+    // Back up the original value in case Apple changes it in an iOS release
+    _originalWebViewScrollBehaviour = _webView.scrollView.contentInsetAdjustmentBehavior;
     _webView.clipsToBounds = YES;
     [_webView setOpaque:NO];
     _webView.backgroundColor = [UIColor clearColor];
@@ -305,42 +306,33 @@ NSString *const BAMSGWebviewDevMenuReload = @"Reload";
     // - Parse viewport-fit
     // - Apply the viewport-fit value natively on the scrollview
     // (Note that at this point: maybe implement a way of toggling which workaround we want to try?)
-    //
-    // On iOS 10, we must revert to the older workaround
 
-    if (@available(iOS 11.0, *)) {
-        __weak BAMSGWebviewViewController *weakSelf = self;
+    __weak BAMSGWebviewViewController *weakSelf = self;
 
-        NSString *viewportExtractionJavascript =
-            @"document.querySelector('meta[name=\"viewport\"]').getAttribute(\"content\")";
-        [_webView
-            evaluateJavaScript:viewportExtractionJavascript
-             completionHandler:^(id _Nullable result, NSError *_Nullable error) {
-               BOOL isViewportCover = false;
-               if ([result isKindOfClass:NSString.class]) {
-                   NSString *stringResult = (NSString *)result;
-                   if ([stringResult rangeOfString:@"viewport-fit=cover" options:NSCaseInsensitiveSearch].location !=
-                       NSNotFound) {
-                       isViewportCover = true;
-                   }
-               }
+    NSString *viewportExtractionJavascript =
+        @"document.querySelector('meta[name=\"viewport\"]').getAttribute(\"content\")";
+    [_webView evaluateJavaScript:viewportExtractionJavascript
+               completionHandler:^(id _Nullable result, NSError *_Nullable error) {
+                 BOOL isViewportCover = false;
+                 if ([result isKindOfClass:NSString.class]) {
+                     NSString *stringResult = (NSString *)result;
+                     if ([stringResult rangeOfString:@"viewport-fit=cover" options:NSCaseInsensitiveSearch].location !=
+                         NSNotFound) {
+                         isViewportCover = true;
+                     }
+                 }
 
-               [BALogger debugForDomain:@"WebView" message:@"Viewport-fit is cover: %i", isViewportCover];
+                 [BALogger debugForDomain:@"WebView" message:@"Viewport-fit is cover: %i", isViewportCover];
 
-               BAMSGWebviewViewController *strongSelf = weakSelf;
-               if (strongSelf != nil) {
-                   strongSelf->_webView.scrollView.contentInsetAdjustmentBehavior =
-                       isViewportCover ? UIScrollViewContentInsetAdjustmentNever
-                                       : strongSelf->_originalWebViewScrollBehaviour;
-                   [strongSelf->_webView setAlpha:1];
-                   [strongSelf->_webView setNeedsLayout];
-               }
-             }];
-    } else {
-        [self scheduleWebViewRelayouts];
-        [_webView setAlpha:1];
-        [_webView setNeedsLayout];
-    }
+                 BAMSGWebviewViewController *strongSelf = weakSelf;
+                 if (strongSelf != nil) {
+                     strongSelf->_webView.scrollView.contentInsetAdjustmentBehavior =
+                         isViewportCover ? UIScrollViewContentInsetAdjustmentNever
+                                         : strongSelf->_originalWebViewScrollBehaviour;
+                     [strongSelf->_webView setAlpha:1];
+                     [strongSelf->_webView setNeedsLayout];
+                 }
+               }];
 }
 
 - (void)setupWebviewSettings {

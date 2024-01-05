@@ -199,16 +199,11 @@ NSString *const BatchPushUserDidAcceptKey = @"BatchPushUserDidAcceptKey";
     if (self.showForegroundNotifications) {
         options = UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound;
 
-        // TODO: Remove ifdef once we Xcode 12 supports macOS 11 Big Sur
-#ifdef __IPHONE_14_0
         if (@available(iOS 14.0, *)) {
             options = options | UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner;
         } else {
             options = options | UNNotificationPresentationOptionAlert;
         }
-#else
-        options = options | UNNotificationPresentationOptionAlert;
-#endif
     }
 
     if (completionHandler) {

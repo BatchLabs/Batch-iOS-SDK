@@ -151,12 +151,9 @@ NSString *const kBATOptOutWipeDataKey = @"wipe_data";
     NSMutableDictionary *data = [NSMutableDictionary new];
 
     data[@"di"] = [[BAPropertiesCenter valueForShortName:@"di"] uppercaseString];
-#if BATCH_ENABLE_IDFA
     data[@"idfa"] = [BAPropertiesCenter valueForShortName:@"idfa"];
-#endif
     data[@"cus"] = [BAPropertiesCenter valueForShortName:@"cus"];
     data[@"tok"] = [BAPropertiesCenter valueForShortName:@"tok"];
-
     return data;
 }
 

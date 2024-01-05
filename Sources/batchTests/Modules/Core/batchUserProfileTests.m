@@ -138,6 +138,18 @@
     [profile setRegion:nil];
     region = [profile region];
     XCTAssertNil(region, @"Region not nil.");
+
+    NSString *attributionID = [profile attributionID];
+    XCTAssertNil(attributionID, @"Attribution identifier not nil: %@.", attributionID);
+
+    [profile setAttributionID:@"batch.attribution.id"];
+    attributionID = [profile attributionID];
+    XCTAssertNotNil(attributionID, @"Failed to get the attribution identifier.");
+    XCTAssertTrue([@"batch.attribution.id" isEqualToString:attributionID], @"Attribution identifier not stored.");
+
+    [profile setAttributionID:nil];
+    attributionID = [profile attributionID];
+    XCTAssertNil(attributionID, @"Attribution identifier not nil.");
 }
 
 - (void)testVersion {

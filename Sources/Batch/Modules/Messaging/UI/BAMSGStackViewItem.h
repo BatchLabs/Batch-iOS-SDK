@@ -7,8 +7,7 @@
 
 #import <Batch/BACSS.h>
 #import <Foundation/Foundation.h>
-
-@import UIKit;
+#import <UIKit/UIKit.h>
 
 @interface BAMSGStackViewItem : NSObject
 

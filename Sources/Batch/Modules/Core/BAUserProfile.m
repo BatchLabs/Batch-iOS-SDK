@@ -89,6 +89,12 @@ static const int currentVersion = 1;
     }
 }
 
+- (void)sendAttributionIDChangedEvent {
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    params[@"attribution_id"] = self.attributionID != nil ? self.attributionID : [NSNull null];
+    [BATrackerCenter trackPrivateEvent:@"_ATTRIBUTION_ID_CHANGED" parameters:params];
+}
+
 #pragma mark -
 #pragma mark Properties override methods
 
@@ -142,6 +148,21 @@ static const int currentVersion = 1;
     }
 }
 
+/*** Attribution Identifier ***/
+
+- (NSString *)attributionID {
+    return [BAParameter objectForKey:kParametersAttributionIDKey fallback:nil];
+}
+
+- (void)setAttributionID:(NSString *)attributionID {
+    NSError *error = [self updateValue:attributionID forKey:kParametersAttributionIDKey];
+
+    if (error != nil) {
+        [BALogger errorForDomain:@"UserProfile"
+                         message:@"Error changing the attribution identifier: %@", [error localizedDescription]];
+    }
+}
+
 #pragma mark -
 #pragma mark NSCoding archive methods
 
@@ -168,5 +189,4 @@ static const int currentVersion = 1;
 
     return self;
 }
-
 @end

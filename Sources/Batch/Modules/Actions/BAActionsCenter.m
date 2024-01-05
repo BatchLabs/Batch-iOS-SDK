@@ -296,9 +296,7 @@ NSString *const kBAActionGroupName = @"batch.group";
                                                 return;
                                             }
                                         }
-                                        if (@available(iOS 10.3, *)) {
-                                            [SKStoreReviewController requestReview];
-                                        }
+                                        [SKStoreReviewController requestReview];
                                       }];
 }
 
@@ -367,15 +365,11 @@ NSString *const kBAActionGroupName = @"batch.group";
 - (void)doSmartReoptin {
     [[UNUserNotificationCenter currentNotificationCenter]
         getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings *_Nonnull settings) {
-          if (settings.authorizationStatus == UNAuthorizationStatusNotDetermined) {
+          if (settings.authorizationStatus == UNAuthorizationStatusNotDetermined ||
+              settings.authorizationStatus == UNAuthorizationStatusProvisional) {
               [BatchPush requestNotificationAuthorization];
           } else if (settings.authorizationStatus == UNAuthorizationStatusDenied) {
               [[BAPushCenter instance] openSystemNotificationSettings];
-          } else if (@available(iOS 12.0, *)) {
-              // Should be a || higher, but the @available macro does not allow that
-              if (settings.authorizationStatus == UNAuthorizationStatusProvisional) {
-                  [BatchPush requestNotificationAuthorization];
-              }
           }
         }];
 }

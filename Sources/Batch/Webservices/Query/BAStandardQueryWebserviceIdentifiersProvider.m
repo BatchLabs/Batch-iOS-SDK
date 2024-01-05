@@ -53,12 +53,6 @@
         [idsToFetch addObjectsFromArray:advancedIds];
     }
 
-    // As of 1.17, "idfa" isn't hardcoded in the pattern anymore
-    // Add it to the list of IDs to be fetched if we have compile-time support for it
-#if BATCH_ENABLE_IDFA
-    [idsToFetch addObject:@"idfa"];
-#endif
-
     // Add references.
     for (NSString *idName in idsToFetch) {
         if (![BANullHelper isStringEmpty:idName]) {

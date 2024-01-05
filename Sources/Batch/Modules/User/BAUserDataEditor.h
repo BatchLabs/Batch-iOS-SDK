@@ -17,6 +17,8 @@
 
 - (void)setIdentifier:(nullable NSString *)identifier;
 
+- (void)setAttributionIdentifier:(nullable NSString *)attributionID;
+
 - (BOOL)setEmail:(nullable NSString *)email error:(NSError *_Nullable *_Nullable)error;
 
 - (void)setEmailMarketingSubscriptionState:(BatchEmailSubscriptionState)state;

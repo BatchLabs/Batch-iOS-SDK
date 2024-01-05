@@ -23,15 +23,6 @@
     }                                         \
     *error = nil;
 
-// Enable IDFA related code
-// Even though IDFA collection is based on AdSupport being linked to the app,
-// some users might want to remove all IDFA references from the code.
-// This is a quick hack until we properly move towards IDFA collection into a plugin.
-// Note: this does NOT remove AppTrackingTransparency related code
-#ifndef BATCH_ENABLE_IDFA
-#define BATCH_ENABLE_IDFA 1
-#endif
-
 // BAVersion, BALevel and BAMessagingLevel have moved into Version.h and have been renamed
 // Their values are not documented there because the Info.plist header parser is pretty dumb and will include comments
 // If you need to get the user facing BAVersion, use BACoreCenter.sdkVersion
@@ -67,8 +58,7 @@
 #define kParametersSystemPreviousAppVersionKey @"app.version.previous"
 
 #define kParametersIDsPatternKey @"app.ids.pattern"
-#define kParametersIDsPatternValue \
-    @"s,da,ada,did,cus,tath,dla,dre,dtz,osv,de,apv,apc,bid,pl,lvl,mlvl,pid,plv,brv,attid_e"
+#define kParametersIDsPatternValue @"s,da,did,cus,idfa,dla,dre,dtz,osv,de,apv,apc,bid,pl,lvl,mlvl,pid,plv,brv"
 
 #define kParametersAdvancedIDsPatternKey @"app.ids.pattern_advanced"
 #define kParametersAdvancedIDsPatternValue @"dty,sop"
@@ -76,6 +66,8 @@
 #define kParametersCustomUserIDKey @"app.id.custom"
 #define kParametersAppLanguageKey @"app.language"
 #define kParametersAppRegionKey @"app.region"
+#define kParametersAttributionIDKey @"app.id.attribution"
+
 #define kParametersAppProfileVersionKey @"app.profile.version"
 
 #define kParametersDateFormat @"yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'"

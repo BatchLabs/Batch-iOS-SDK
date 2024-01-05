@@ -19,7 +19,10 @@
     return self;
 }
 
-- (void)logMessage:(NSString *)message subsystem:(NSString *)subsystem internal:(BOOL)internal {
+- (void)logMessage:(NSString *)message
+         subsystem:(NSString *)subsystem
+          internal:(BOOL)internal
+             level:(os_log_type_t)level {
     if ((!internal && _coreLogObject == nil) || (internal && _internalLogObject == nil)) {
         NSLog(@"[%@] - %@%@", internal ? @"Batch-Internal" : @"Batch", subsystem, message);
         return;
@@ -33,8 +36,16 @@
         return;
     }
 
-    os_log(internal ? _internalLogObject : _coreLogObject, "%{public}s%{public}s",
-           [subsystem cStringUsingEncoding:NSUTF8StringEncoding], [message cStringUsingEncoding:NSUTF8StringEncoding]);
+    if (@available(iOS 17.0, *)) {
+        os_log_with_type(internal ? _internalLogObject : _coreLogObject, level, "%{public}s %{public}s%{public}s",
+                         [internal ? @"[Batch-Internal]" : @"[Batch]" cStringUsingEncoding:NSUTF8StringEncoding],
+                         [subsystem cStringUsingEncoding:NSUTF8StringEncoding],
+                         [message cStringUsingEncoding:NSUTF8StringEncoding]);
+    } else {
+        os_log_with_type(internal ? _internalLogObject : _coreLogObject, level, "%{public}s%{public}s",
+                         [subsystem cStringUsingEncoding:NSUTF8StringEncoding],
+                         [message cStringUsingEncoding:NSUTF8StringEncoding]);
+    }
 }
 
 @end

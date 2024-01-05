@@ -36,7 +36,7 @@
 @property (nonatomic) NSLayoutConstraint *enteringBottomConstraint;
 @property (nonatomic) UIControl *tapControl;
 @property NSTimeInterval lastViewAppearanceUptime;
-@property (nonatomic) UINotificationFeedbackGenerator *hapticFeedbackGenerator NS_AVAILABLE_IOS(10_0);
+@property (nonatomic) UINotificationFeedbackGenerator *hapticFeedbackGenerator;
 @property (nonatomic) NSLayoutConstraint *ratioConstraint;
 @property (nonatomic) BOOL imageIsLoaded;
 
@@ -223,8 +223,8 @@
     } else {
         // Set content view ratio to value found in message
         CGFloat imageRatio = _message.imageSize.height / _message.imageSize.width;
-        if (CGSizeEqualToSize(_message.imageSize,
-                              CGSizeZero)) { // we use a 3:2 portrait ratio while image is being downloaded
+        // We use a 3:2 portrait ratio while image is being downloaded
+        if (CGSizeEqualToSize(_message.imageSize, CGSizeZero)) {
             imageRatio = 1.5;
         }
 
@@ -261,15 +261,13 @@
                                                                constant:0]];
 
         // Make sure that the close button doesn't go under the safe area
-        if (@available(iOS 11.0, *)) {
-            [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_contentView
-                                                                  attribute:NSLayoutAttributeTop
-                                                                  relatedBy:NSLayoutRelationGreaterThanOrEqual
-                                                                     toItem:self.view.safeAreaLayoutGuide
-                                                                  attribute:NSLayoutAttributeTop
-                                                                 multiplier:1
-                                                                   constant:20]];
-        }
+        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_contentView
+                                                              attribute:NSLayoutAttributeTop
+                                                              relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                                                 toItem:self.view.safeAreaLayoutGuide
+                                                              attribute:NSLayoutAttributeTop
+                                                             multiplier:1
+                                                               constant:20]];
 
         // Center content view vertically
         NSLayoutConstraint *verticalContentViewConstraint =
@@ -345,6 +343,12 @@
 }
 
 - (void)updateRatioConstraintWithRatio:(CGFloat)ratio {
+    // Use a safe value to avoid a crash if the image width is zero (autolayout requires multipliers to
+    // be finite). It will display improperly though. Maybe we should just dismiss the view here?
+    if (!isfinite(ratio)) {
+        ratio = 1.5f;
+    }
+
     if (_ratioConstraint != nil) {
         _ratioConstraint.active = false;
     }

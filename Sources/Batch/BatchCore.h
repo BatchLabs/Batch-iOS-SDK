@@ -53,7 +53,7 @@ typedef NS_ENUM(NSUInteger, BatchOptOutNetworkErrorPolicy) {
 /// ``Batch/BatchPush/disableAutomaticIntegration`` before this method, and follow the "Manual Integration" advanced.
 /// - Parameters:
 ///    - key: Your APP's API Key, LIVE or DEV. You can find it on your dashboard.
-+ (void)startWithAPIKey:(NSString *_Nonnull)key NS_AVAILABLE_IOS(8_0);
++ (void)startWithAPIKey:(NSString *_Nonnull)key;
 
 /// Handles an URL, if applicable.
 ///
@@ -70,15 +70,17 @@ typedef NS_ENUM(NSUInteger, BatchOptOutNetworkErrorPolicy) {
 
 /// Access the default user profile object.
 ///
+/// - Deprecated: Please use Batch User instead
 /// - Returns: An instance of ``BatchUserProfile``, or nil
 + (BatchUserProfile *_Nullable)defaultUserProfile
     __attribute__((warn_unused_result, deprecated("Please use Batch User instead")))NS_AVAILABLE_IOS(8_0);
 
-///  Control whether Batch should try to use the IDFA or if you forbid it to. (default = YES)
-/// - Warning: If you disable this, you might not be able to use IDFA based debugging in your dashboard.
+///  As Batch has removed support for automatic IDFA collection, this method does nothing. The SDK will not collect the
+///  IDFA from the system.
+/// - Warning: This method has been deprecated
 /// - Parameters:
-///     - use: YES if Batch can try to use the IDFA, NO if you don't want Batch to use the IDFA.
-+ (void)setUseIDFA:(BOOL)use NS_AVAILABLE_IOS(8_0);
+///     - use: This parameter doesn't do anything
++ (void)setUseIDFA:(BOOL)use __attribute__((deprecated));
 
 /// Set if Batch can use advanced device identifiers (default = YES)
 ///
@@ -87,18 +89,16 @@ typedef NS_ENUM(NSUInteger, BatchOptOutNetworkErrorPolicy) {
 /// - Device model
 /// - Device brand
 /// - Carrier name
-/// - Important: Disabling this does not automatically disable IDFA collection, please use the appropriate methods to
-/// control this.
 /// - Parameters:
 ///   - use: YES if Batch can try to use advanced device information, NO if you don't
-+ (void)setUseAdvancedDeviceInformation:(BOOL)use NS_AVAILABLE_IOS(8_0);
++ (void)setUseAdvancedDeviceInformation:(BOOL)use;
 
 /// Set if Batch should send its logs to a custom object of yours.
 ///
 /// - Important: Be careful with your implementation: setting this can impact stability and performance. You should only
 /// use it if you know what you are doing.
 /// - Parameter loggerDelegate: An object implementing ``Batch/BatchLoggerDelegate``. Weakly retained.
-+ (void)setLoggerDelegate:(id<BatchLoggerDelegate> _Nullable)loggerDelegate NS_AVAILABLE_IOS(8_0);
++ (void)setLoggerDelegate:(id<BatchLoggerDelegate> _Nullable)loggerDelegate;
 
 /// Get the debug view controller.
 ///
@@ -208,7 +208,7 @@ typedef NS_ENUM(NSUInteger, BatchOptOutNetworkErrorPolicy) {
 /// - Important: Make sure to only include the desired subdomain and the top-level domain. Don’t include path and query
 /// components or a trailing slash (/).
 /// - Parameter domains: An array of your supported associated domains.
-+ (void)setAssociatedDomains:(NSArray<NSString *> *_Nonnull)domains NS_AVAILABLE_IOS(8_0);
++ (void)setAssociatedDomains:(NSArray<NSString *> *_Nonnull)domains;
 
 @end
 

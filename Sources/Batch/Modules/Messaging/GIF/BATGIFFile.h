@@ -12,7 +12,7 @@ typedef NS_ENUM(NSInteger, BATGIFError) {
  Cache sizes. Note that an extra frame will be held at all times : the current frame.
  Meaning that if you have a cache size of 2, 3 frames will be held in memory at all times.
  */
-typedef NS_ENUM(NSUInteger, BATGIFCacheSize) {
+typedef NS_ENUM(NSInteger, BATGIFCacheSize) {
     BATGIFCacheSizeUndefined = -1,
     BATGIFCacheSizeNoCache = 0,
     BATGIFCacheSizeNormal = 10,

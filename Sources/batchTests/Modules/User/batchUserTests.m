@@ -26,10 +26,16 @@
 - (instancetype)initWithSuiteName:(NSString *_Nullable)suiteName;
 @end
 
-@implementation batchUserTests
+@implementation batchUserTests {
+    id trackerCenterMock;
+}
 
 - (void)setUp {
     [super setUp];
+
+    // Mock tracker center
+    trackerCenterMock = OCMClassMock([BATrackerCenter class]);
+    OCMStub([trackerCenterMock instance]).andReturn(trackerCenterMock);
 
     // Mock data source to set a test specific database
     BAUserSQLiteDatasource *dataSourceToUse =
@@ -52,7 +58,7 @@
 
 - (void)tearDown {
     [super tearDown];
-
+    [trackerCenterMock stopMocking];
     self.datasourceOverlay = nil;
 }
 
@@ -252,6 +258,49 @@
     XCTAssertNil([BatchUser region]);
     XCTAssertNil([BatchUser language]);
     XCTAssertNil([BatchUser identifier]);
+}
+
+- (void)testAttributionIDChangedEvent {
+    // Ensure event is not sent when attribution id is not a valid UUID
+    XCTestExpectation *exp1 = [self expectationWithDescription:@"Wait for editor stacking operations"];
+    [_editor setAttributionIdentifier:@"WRONG-UUID"];
+    OCMReject([trackerCenterMock trackPrivateEvent:@"_ATTRIBUTION_ID_CHANGED"
+                                        parameters:@{@"attribution_id" : @"WRONG-UUID"}]);
+    [_editor save:^{
+      [exp1 fulfill];
+    }];
+    [self waitForExpectations:@[ exp1 ] timeout:3.0];
+
+    // Ensure event is sent when attribution id is a valid UUID
+    XCTestExpectation *exp2 = [self expectationWithDescription:@"Wait for editor stacking operations"];
+    [_editor setAttributionIdentifier:@"EA7583CD-A667-48BC-B806-42ECB2B48606"];
+    OCMExpect([trackerCenterMock trackPrivateEvent:@"_ATTRIBUTION_ID_CHANGED"
+                                        parameters:@{@"attribution_id" : @"EA7583CD-A667-48BC-B806-42ECB2B48606"}]);
+    [_editor save:^{
+      [exp2 fulfill];
+    }];
+    [self waitForExpectations:@[ exp2 ] timeout:3.0];
+
+    // Ensure event is not sent when attribution id did not changed
+    [_editor setAttributionIdentifier:@"EA7583CD-A667-48BC-B806-42ECB2B48606"];
+    OCMReject([trackerCenterMock trackPrivateEvent:@"_ATTRIBUTION_ID_CHANGED"
+                                        parameters:@{@"attribution_id" : @"EA7583CD-A667-48BC-B806-42ECB2B48606"}]);
+    XCTestExpectation *exp3 = [self expectationWithDescription:@"Wait for editor stacking operations"];
+    [_editor save:^{
+      [exp3 fulfill];
+    }];
+    [self waitForExpectations:@[ exp3 ] timeout:3.0];
+
+    // Ensure event is sent when attribution id is nil (reset)
+    XCTestExpectation *exp4 = [self expectationWithDescription:@"Wait for editor stacking operations"];
+    [_editor setAttributionIdentifier:nil];
+    OCMExpect([trackerCenterMock trackPrivateEvent:@"_ATTRIBUTION_ID_CHANGED"
+                                        parameters:@{@"attribution_id" : [NSNull null]}]);
+    [_editor save:^{
+      [exp4 fulfill];
+    }];
+    [self waitForExpectations:@[ exp4 ] timeout:3.0];
+    OCMVerifyAll(trackerCenterMock);
 }
 
 @end

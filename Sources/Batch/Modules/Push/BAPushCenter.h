@@ -144,7 +144,7 @@ extern NSString *const kBATPushOpenedNotificationOriginatesFromAppDelegate;
  @abstract Get Batch Push's deeplink from a notification's userInfo.
  @return Batch's Deeplink, or nil if not found.
  */
-+ (NSString *)deeplinkFromUserInfo:(NSDictionary *)userData NS_AVAILABLE_IOS(8_0);
++ (NSString *)deeplinkFromUserInfo:(NSDictionary *)userData;
 
 /*!
  @method disableAutomaticIntegration
@@ -207,7 +207,7 @@ extern NSString *const kBATPushOpenedNotificationOriginatesFromAppDelegate;
  */
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-+ (void)handleRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings NS_AVAILABLE_IOS(8_0);
++ (void)handleRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings;
 #pragma clang diagnostic pop
 
 /**
@@ -221,7 +221,7 @@ extern NSString *const kBATPushOpenedNotificationOriginatesFromAppDelegate;
  */
 + (void)handleUserNotificationCenter:(UNUserNotificationCenter *)center
              willPresentNotification:(UNNotification *)notification
-       willShowSystemForegroundAlert:(BOOL)willShowSystemForegroundAlert NS_AVAILABLE_IOS(10_0);
+       willShowSystemForegroundAlert:(BOOL)willShowSystemForegroundAlert;
 
 /**
  Make Batch process a background notification open/action. You should call this method if you set your own
@@ -231,7 +231,7 @@ extern NSString *const kBATPushOpenedNotificationOriginatesFromAppDelegate;
  @param response     Original response argument
  */
 + (void)handleUserNotificationCenter:(UNUserNotificationCenter *)center
-      didReceiveNotificationResponse:(UNNotificationResponse *)response NS_AVAILABLE_IOS(10_0);
+      didReceiveNotificationResponse:(UNNotificationResponse *)response;
 
 /**
  Make Batch process a notification payload

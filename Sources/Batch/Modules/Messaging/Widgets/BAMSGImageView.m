@@ -111,9 +111,7 @@
     borderRadius = 0;
     _roundedCorners = UIRectCornerAllCorners;
 
-    if (@available(iOS 11.0, *)) {
-        [self setAccessibilityIgnoresInvertColors:YES];
-    }
+    [self setAccessibilityIgnoresInvertColors:YES];
 }
 
 - (void)setImage:(UIImage *)image {

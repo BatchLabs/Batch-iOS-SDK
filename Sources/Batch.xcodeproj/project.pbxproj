@@ -104,6 +104,7 @@
 		510BD5DC22E0B4D500D8CBA1 /* BAWSQueryStart.m in Sources */ = {isa = PBXBuildFile; fileRef = 510BD5D422E0B4D500D8CBA1 /* BAWSQueryStart.m */; };
 		510D906F24C83A81005981AC /* shaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510D906E24C83A81005981AC /* shaTests.swift */; };
 		510FFEE822FD800700BBF277 /* dependencyInjectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510FFEE622FD7FE500BBF277 /* dependencyInjectionTests.swift */; };
+		51103A792A7405B50082987C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 51103A782A7405B40082987C /* PrivacyInfo.xcprivacy */; };
 		511B91FE22CE32A3002BC4A8 /* Batch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 517D701822BBC34A00E374FB /* Batch.framework */; };
 		511B920322CE416D002BC4A8 /* BAWebserviceCryptorFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 511B920122CE416D002BC4A8 /* BAWebserviceCryptorFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		511B920422CE416D002BC4A8 /* BAWebserviceCryptorFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 511B920222CE416D002BC4A8 /* BAWebserviceCryptorFactory.m */; };
@@ -117,8 +118,6 @@
 		5127299E23FD720E00999505 /* BATMessagePackWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5127299C23FD720E00999505 /* BATMessagePackWriter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5127299F23FD720E00999505 /* BATMessagePackWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5127299D23FD720E00999505 /* BATMessagePackWriter.m */; };
 		512EA4E523BE37F300B7DBB1 /* pushTokenServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512EA4E423BE37F300B7DBB1 /* pushTokenServiceTests.swift */; };
-		513175DC2524BC30001D0033 /* BATrackingAuthorization.h in Headers */ = {isa = PBXBuildFile; fileRef = 513175DA2524BC30001D0033 /* BATrackingAuthorization.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		513175DD2524BC30001D0033 /* BATrackingAuthorization.m in Sources */ = {isa = PBXBuildFile; fileRef = 513175DB2524BC30001D0033 /* BATrackingAuthorization.m */; };
 		513347902507D7DB005A89AB /* jsonTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5133478F2507D7DB005A89AB /* jsonTests.m */; };
 		51379B7F22FC5C0200AB7B82 /* BAInjectableImplementations.h in Headers */ = {isa = PBXBuildFile; fileRef = 51379B7D22FC5C0200AB7B82 /* BAInjectableImplementations.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51379B8022FC5C0200AB7B82 /* BAInjectableImplementations.m in Sources */ = {isa = PBXBuildFile; fileRef = 51379B7E22FC5C0200AB7B82 /* BAInjectableImplementations.m */; };
@@ -853,6 +852,7 @@
 		510BD5D422E0B4D500D8CBA1 /* BAWSQueryStart.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BAWSQueryStart.m; sourceTree = "<group>"; };
 		510D906E24C83A81005981AC /* shaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = shaTests.swift; sourceTree = "<group>"; };
 		510FFEE622FD7FE500BBF277 /* dependencyInjectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = dependencyInjectionTests.swift; sourceTree = "<group>"; };
+		51103A782A7405B40082987C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		511074631C208B7800BFC215 /* BAUserDataServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BAUserDataServices.h; sourceTree = "<group>"; };
 		511074641C208B7800BFC215 /* BAUserDataServices.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BAUserDataServices.m; sourceTree = "<group>"; };
 		511074691C208F6300BFC215 /* BAUserDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAUserDataManager.h; path = Batch/Modules/User/BAUserDataManager.h; sourceTree = SOURCE_ROOT; };
@@ -905,8 +905,6 @@
 		5130B5EA1DBA6F5300874EFF /* BACSSImportProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BACSSImportProvider.h; path = Batch/Modules/Messaging/CSS/BACSSImportProvider.h; sourceTree = SOURCE_ROOT; };
 		5130B5EC1DBA6FA600874EFF /* BACSSBuiltinImportProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BACSSBuiltinImportProvider.h; path = Batch/Modules/Messaging/CSS/BACSSBuiltinImportProvider.h; sourceTree = SOURCE_ROOT; };
 		5130B5ED1DBA6FA600874EFF /* BACSSBuiltinImportProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BACSSBuiltinImportProvider.m; path = Batch/Modules/Messaging/CSS/BACSSBuiltinImportProvider.m; sourceTree = SOURCE_ROOT; };
-		513175DA2524BC30001D0033 /* BATrackingAuthorization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BATrackingAuthorization.h; sourceTree = "<group>"; };
-		513175DB2524BC30001D0033 /* BATrackingAuthorization.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BATrackingAuthorization.m; sourceTree = "<group>"; };
 		5133478F2507D7DB005A89AB /* jsonTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = jsonTests.m; sourceTree = "<group>"; };
 		51379B7D22FC5C0200AB7B82 /* BAInjectableImplementations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAInjectableImplementations.h; sourceTree = "<group>"; };
 		51379B7E22FC5C0200AB7B82 /* BAInjectableImplementations.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BAInjectableImplementations.m; sourceTree = "<group>"; };
@@ -1416,8 +1414,6 @@
 				028499FB19B9EFBA0013408B /* BAStatus.m */,
 				51A21AFD20ED0167007917E0 /* BANotificationAuthorization.h */,
 				51A21AFC20ED0167007917E0 /* BANotificationAuthorization.m */,
-				513175DA2524BC30001D0033 /* BATrackingAuthorization.h */,
-				513175DB2524BC30001D0033 /* BATrackingAuthorization.m */,
 				51B5E4871C849D8900047F6E /* BABundleInfo.h */,
 				51B5E4881C849D8900047F6E /* BABundleInfo.m */,
 				51AE746620850217005186D7 /* BAInstallationID.h */,
@@ -1806,6 +1802,7 @@
 				5190F1CA253491530014E5BA /* Versions.h */,
 				51BB37AB1E918D3600D9A142 /* Batch.modulemap */,
 				02F7846419B9EF5A0006FF07 /* Info.plist */,
+				51103A782A7405B40082987C /* PrivacyInfo.xcprivacy */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -2936,7 +2933,6 @@
 				5127299E23FD720E00999505 /* BATMessagePackWriter.h in Headers */,
 				51696F7A25263BFC00951CA4 /* BAApplicationLifecycle.h in Headers */,
 				5145C78224C1F0BE004A89FE /* BAConnectionContentType.h in Headers */,
-				513175DC2524BC30001D0033 /* BATrackingAuthorization.h in Headers */,
 				5190F1E8253495B30014E5BA /* Versions.h in Headers */,
 				5162B2F42571561900607780 /* BAMSGWebviewViewController.h in Headers */,
 				51FCC9332577EF9C00FA76C6 /* BAMSGActivityIndicatorView.h in Headers */,
@@ -3034,7 +3030,7 @@
 		02F7845719B9EF5A0006FF07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1200;
+				LastUpgradeCheck = 1500;
 				ORGANIZATIONNAME = Batch.com;
 				TargetAttributes = {
 					02849C3219BA00350013408B = {
@@ -3093,6 +3089,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51103A792A7405B50082987C /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3119,13 +3116,15 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
+			inputFileListPaths = (
+			);
 			inputPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# workaround for bitcode generation problem with Xcode 7.3\nunset TOOLCHAINS\n\nexport CONFIGURATION=Release\n\n# define output folder environment variable\nARCHIVES_OUTPUTFOLDER=${PROJECT_DIR}/universal/Archives\nDSYMS_OUTPUTFOLDER=${PROJECT_DIR}/universal/dSYMs\nXCFRAMEWORK_OUTPUT=${PROJECT_DIR}/universal/Batch.xcframework\n\n# Create the output folders\nmkdir -p \"${ARCHIVES_OUTPUTFOLDER}\"\nmkdir -p \"${DSYMS_OUTPUTFOLDER}\"\nrm -f \"${DSYMS_OUTPUTFOLDER}/*.dSYM\"\n\n# Step 1. Build Device, Simulator and macOS versions\nxcodebuild archive -scheme Batch -destination \"generic/platform=iOS\" -configuration ${CONFIGURATION} -archivePath \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphoneos.xcarchive\" SKIP_INSTALL=NO ONLY_ACTIVE_ARCH=NO OTHER_CFLAGS=\"-fembed-bitcode\" ARCHS=\"arm64 arm64e\" VALID_ARCHS=\"arm64 arm64e\"\nxcodebuild archive -scheme Batch -destination \"generic/platform=iOS Simulator\" -configuration ${CONFIGURATION} -archivePath \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphonesimulator.xcarchive\" SKIP_INSTALL=NO ONLY_ACTIVE_ARCH=NO OTHER_CFLAGS=\"-fembed-bitcode\"\nxcodebuild archive -scheme Batch -destination \"platform=macOS\" -configuration ${CONFIGURATION} -archivePath \"${ARCHIVES_OUTPUTFOLDER}/Batch-macos.xcarchive\" SKIP_INSTALL=NO ONLY_ACTIVE_ARCH=NO OTHER_CFLAGS=\"-fembed-bitcode\"\n\n# Step 2. Copy the dSYMs\n\ncp -a \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphoneos.xcarchive/dSYMs/Batch.framework.dSYM\" \"${DSYMS_OUTPUTFOLDER}/Batch_iphoneos.framework.dSYM\"\ncp -a \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphonesimulator.xcarchive/dSYMs/Batch.framework.dSYM\" \"${DSYMS_OUTPUTFOLDER}/Batch_iphonesimulator.framework.dSYM\"\ncp -a \"${ARCHIVES_OUTPUTFOLDER}/Batch-macos.xcarchive/dSYMs/Batch.framework.dSYM\" \"${DSYMS_OUTPUTFOLDER}/Batch_macos.framework.dSYM\"\n\n# Step 3. Clean up the frameworks\n\npushd\n\ncd \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphoneos.xcarchive/Products/Library/Frameworks/Batch.framework/\"\nsh ${PROJECT_DIR}/../Tools/Scripts/strip_public_swift_framework.sh\n\ncd \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphonesimulator.xcarchive/Products/Library/Frameworks/Batch.framework/\"\nsh ${PROJECT_DIR}/../Tools/Scripts/strip_public_swift_framework.sh\n\ncd \"${ARCHIVES_OUTPUTFOLDER}/Batch-macos.xcarchive/Products/Library/Frameworks/Batch.framework/Versions/A/\"\nsh ${PROJECT_DIR}/../Tools/Scripts/strip_public_swift_framework.sh\n\n## 3.1: Fix Xcode not creating the \"PrivateHeaders\" folder, which can break Azure Pipelines\n## https://github.com/bamlab/react-native-batch-push/issues/67\nmkdir \"PrivateHeaders\"\n\npopd\n\n# Step 4. Make the xcframework\n# Remove the old xcframework\nrm -rf \"${XCFRAMEWORK_OUTPUT}\"\n\n# Build the xcframework\n\nxcodebuild -create-xcframework \\\n    -framework \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphoneos.xcarchive/Products/Library/Frameworks/Batch.framework\" \\\n    -framework \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphonesimulator.xcarchive/Products/Library/Frameworks/Batch.framework\" \\\n    -framework \"${ARCHIVES_OUTPUTFOLDER}/Batch-macos.xcarchive/Products/Library/Frameworks/Batch.framework\" \\\n    -output \"${XCFRAMEWORK_OUTPUT}\"\n";
+			shellScript = "# workaround for bitcode generation problem with Xcode 7.3\nunset TOOLCHAINS\n\nexport CONFIGURATION=Release\n\n# define output folder environment variable\nARCHIVES_OUTPUTFOLDER=${PROJECT_DIR}/universal/Archives\nDSYMS_OUTPUTFOLDER=${PROJECT_DIR}/universal/dSYMs\nXCFRAMEWORK_OUTPUT=${PROJECT_DIR}/universal/Batch.xcframework\n\n# Create the output folders\nmkdir -p \"${ARCHIVES_OUTPUTFOLDER}\"\nmkdir -p \"${DSYMS_OUTPUTFOLDER}\"\nrm -f \"${DSYMS_OUTPUTFOLDER}/*.dSYM\"\n\n# Step 1. Build Device, Simulator and macOS versions\nxcodebuild archive -scheme Batch -destination \"generic/platform=iOS\" -configuration ${CONFIGURATION} -archivePath \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphoneos.xcarchive\" SKIP_INSTALL=NO ONLY_ACTIVE_ARCH=NO OTHER_CFLAGS=\"-fembed-bitcode\" ARCHS=\"arm64 arm64e\" VALID_ARCHS=\"arm64 arm64e\"\nxcodebuild archive -scheme Batch -destination \"generic/platform=iOS Simulator\" -configuration ${CONFIGURATION} -archivePath \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphonesimulator.xcarchive\" SKIP_INSTALL=NO ONLY_ACTIVE_ARCH=NO OTHER_CFLAGS=\"-fembed-bitcode\"\nxcodebuild archive -scheme Batch -destination \"platform=macOS\" -configuration ${CONFIGURATION} -archivePath \"${ARCHIVES_OUTPUTFOLDER}/Batch-macos.xcarchive\" SKIP_INSTALL=NO ONLY_ACTIVE_ARCH=NO OTHER_CFLAGS=\"-fembed-bitcode\"\n\n# Step 2. Copy the dSYMs\n\ncp -a \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphoneos.xcarchive/dSYMs/Batch.framework.dSYM\" \"${DSYMS_OUTPUTFOLDER}/Batch_iphoneos.framework.dSYM\"\ncp -a \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphonesimulator.xcarchive/dSYMs/Batch.framework.dSYM\" \"${DSYMS_OUTPUTFOLDER}/Batch_iphonesimulator.framework.dSYM\"\ncp -a \"${ARCHIVES_OUTPUTFOLDER}/Batch-macos.xcarchive/dSYMs/Batch.framework.dSYM\" \"${DSYMS_OUTPUTFOLDER}/Batch_macos.framework.dSYM\"\n\n# Step 3. Clean up the frameworks\n\npushd .\n\ncd \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphoneos.xcarchive/Products/Library/Frameworks/Batch.framework/\"\nsh ${PROJECT_DIR}/../Tools/Scripts/strip_public_swift_framework.sh\n\ncd \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphonesimulator.xcarchive/Products/Library/Frameworks/Batch.framework/\"\nsh ${PROJECT_DIR}/../Tools/Scripts/strip_public_swift_framework.sh\n\ncd \"${ARCHIVES_OUTPUTFOLDER}/Batch-macos.xcarchive/Products/Library/Frameworks/Batch.framework/Versions/A/\"\nsh ${PROJECT_DIR}/../Tools/Scripts/strip_public_swift_framework.sh\n\n## 3.1: Fix Xcode not creating the \"PrivateHeaders\" folder, which can break Azure Pipelines\n## https://github.com/bamlab/react-native-batch-push/issues/67\nmkdir \"PrivateHeaders\"\n\npopd\n\n# Step 4. Make the xcframework\n# Remove the old xcframework\nrm -rf \"${XCFRAMEWORK_OUTPUT}\"\n\n# Build the xcframework\n\npushd .\ncd \"${PROJECT_DIR}/universal\"\nxcodebuild -create-xcframework \\\n    -framework \"Archives/Batch-iphoneos.xcarchive/Products/Library/Frameworks/Batch.framework\" \\\n    -framework \"Archives/Batch-iphonesimulator.xcarchive/Products/Library/Frameworks/Batch.framework\" \\\n    -framework \"Archives/Batch-macos.xcarchive/Products/Library/Frameworks/Batch.framework\" \\\n    -output \"Batch.xcframework\"\n\n# Sign it for distribution\n# (Apple Enterprise Account)\n\nif [ \"$BATCHSDK_SIGN_XCFRAMEWORK\" == \"1\" ]\nthen\n    echo \"Signing Batch.xcframework\"\n    codesign --timestamp -v --sign \"iPhone Distribution: IMEDIAPP\" \"${XCFRAMEWORK_OUTPUT}\"\nfi\n";
 		};
 		516C406723D9FD63000C11CF /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3450,7 +3449,6 @@
 				517D708722BBC45900E374FB /* BAUserAttribute.m in Sources */,
 				517D708822BBC45900E374FB /* BAUserDataServices.m in Sources */,
 				1E45578627CE1B510048D3A8 /* BALocalCampaignsJITService.m in Sources */,
-				513175DD2524BC30001D0033 /* BATrackingAuthorization.m in Sources */,
 				517D708922BBC45900E374FB /* BAActionsCenter.m in Sources */,
 				629B42A52490D8FA0025411E /* BATGZIP.m in Sources */,
 				629B42A12490C9120025411E /* BAWebserviceAESGCMGzipCryptor.m in Sources */,
@@ -3563,6 +3561,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -3608,7 +3607,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -3622,6 +3621,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -3660,7 +3660,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -3684,7 +3684,7 @@
 				);
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Batch/**";
 				INFOPLIST_FILE = batchTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3716,7 +3716,7 @@
 				GCC_PREFIX_HEADER = "$(SOURCE_ROOT)/Batch/batch-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Batch/**";
 				INFOPLIST_FILE = batchTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3809,12 +3809,14 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = U5K2ETC2Y6;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_PREFIX_HEADER = "$(SOURCE_ROOT)/Batch/batch-Prefix.pch";
 				INFOPLIST_FILE = Batch/Info.plist;
@@ -3822,7 +3824,7 @@
 				INFOPLIST_PREFIX_HEADER = Batch/Versions.h;
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3830,6 +3832,8 @@
 				);
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = Batch/Batch.modulemap;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.batch.Batch;
@@ -3856,6 +3860,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = YES;
 				DEFINES_MODULE = YES;
@@ -3864,6 +3869,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREFIX_HEADER = "$(SOURCE_ROOT)/Batch/batch-Prefix.pch";
@@ -3873,7 +3879,7 @@
 				INFOPLIST_PREFIX_HEADER = Batch/Versions.h;
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3881,11 +3887,12 @@
 				);
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = Batch/Batch.modulemap;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.batch.Batch;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
-				STRIP_STYLE = debugging;
 				SWIFT_VERSION = 5.7;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

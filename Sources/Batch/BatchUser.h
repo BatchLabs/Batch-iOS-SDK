@@ -236,6 +236,11 @@ typedef NS_ENUM(NSUInteger, BatchEmailSubscriptionState) {
 /// - Parameter identifier: User identifier.
 - (void)setIdentifier:(nullable NSString *)identifier;
 
+/// Set the user attribution identifier.
+///
+/// - Parameter attributionID: A valid UUID string or null to reset.
+- (void)setAttributionIdentifier:(nullable NSString *)attributionID;
+
 /// Set the user email.
 ///
 /// - Important: This method requires to already have a registered identifier for the user

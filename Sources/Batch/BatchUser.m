@@ -233,6 +233,10 @@ NSErrorDomain const BatchUserDataEditorErrorDomain = @"com.batch.ios.userdataedi
     [_backingImpl setIdentifier:identifier];
 }
 
+- (void)setAttributionIdentifier:(nullable NSString *)attributionID {
+    [_backingImpl setAttributionIdentifier:attributionID];
+}
+
 - (BOOL)setEmail:(nullable NSString *)email error:(NSError **)error {
     return [_backingImpl setEmail:email error:error];
 }

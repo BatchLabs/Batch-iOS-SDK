@@ -157,11 +157,7 @@ handler without having to eval anything
 
 // Method that facilitates testing the attribution ID handling
 - (nullable NSString *)readAttributionIDFromSDK {
-#if BATCH_ENABLE_IDFA
     return [BAPropertiesCenter valueForShortName:@"idfa"];
-#else
-    return nil;
-#endif
 }
 
 - (BAPromise<NSString *> *)attributionID {
@@ -169,9 +165,7 @@ handler without having to eval anything
     // TODO: Wall this behind a compilation flag
     NSString *identifier = [self readAttributionIDFromSDK];
     if ([BANullHelper isStringEmpty:identifier]) {
-        [promise
-            reject:[self makePublicError:@"Not available: User denied permission to use it, application cannot use it "
-                                         @"due to missing framework or it was disabled in Batch's configuration."]];
+        [promise reject:[self makePublicError:@"No attribution identifier found."]];
     } else {
         [promise resolve:identifier];
     }

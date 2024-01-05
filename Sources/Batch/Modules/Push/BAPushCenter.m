@@ -597,7 +597,7 @@ NSString *const kBATPushOpenedNotificationOriginatesFromAppDelegate = @"is_from_
 
 + (void)handleUserNotificationCenter:(UNUserNotificationCenter *)center
              willPresentNotification:(UNNotification *)notification
-       willShowSystemForegroundAlert:(BOOL)willShowSystemForegroundAlert NS_AVAILABLE_IOS(10_0);
+       willShowSystemForegroundAlert:(BOOL)willShowSystemForegroundAlert;
 {
     if ([[BAOptOut instance] isOptedOut]) {
         [BALogger debugForDomain:@"Push"
@@ -675,7 +675,7 @@ NSString *const kBATPushOpenedNotificationOriginatesFromAppDelegate = @"is_from_
 #pragma clang diagnostic ignored "-Wdeprecated-implementations"
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (void)application:(UIApplication *)application
-    didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings NS_AVAILABLE_IOS(8_0)
+    didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
 #pragma clang diagnostic pop
 {
     [self internalHandleRegisterUserNotificationSettings:notificationSettings];

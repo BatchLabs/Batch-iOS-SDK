@@ -24,7 +24,7 @@
 
     // Gesture recognizer state dependent variable
     BOOL _shouldDismiss;
-    UIImpactFeedbackGenerator *_hapticFeedbackGenerator NS_AVAILABLE_IOS(10_0);
+    UIImpactFeedbackGenerator *_hapticFeedbackGenerator;
     CGPoint _linkedViewInitialOffset;
     CGFloat _initialAlpha;
     CGFloat _linkedViewInitialAlpha;

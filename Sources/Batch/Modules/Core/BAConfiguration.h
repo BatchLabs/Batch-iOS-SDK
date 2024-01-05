@@ -22,20 +22,6 @@ extern NSString *_Nonnull const kBATConfigurationChangedNotification;
 @interface BAConfiguration : NSObject
 
 /*!
- @method setUseIDFA:
- @abstract Set the IDFA use condition.
- @param useIDFA    :   YES to allow use of the IDFA, NO otherwise.
- */
-- (void)setUseIDFA:(BOOL)useIDFA;
-
-/*!
- @method useIDFA
- @abstract Condition to use the IDFA.
- @return YES if Batch can use the IDFA, NO otherwise.
- */
-- (BOOL)useIDFA __attribute__((warn_unused_result));
-
-/*!
  @method setUseAdvancedDeviceInformation:
  @abstract Set the advanced device information use condition.
  @param use    :   YES to allow use of advanced device information, NO otherwise.

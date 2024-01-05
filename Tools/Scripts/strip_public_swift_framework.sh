@@ -11,16 +11,16 @@
 ## 6/ It removes the Batch.Swift module
 
 ## 1/
-rm Headers/Batch-Swift.h
+rm Headers/Batch-Swift.h 2>/dev/null
 
 ## 2/
-rm -r PrivateHeaders
+rm -r PrivateHeaders 2>/dev/null
 
 ## 3/
-rm -r _CodeSignature
+rm -r _CodeSignature 2>/dev/null
 
 ## 4/
-rm -r Modules/Batch.swiftmodule
+rm -r Modules/Batch.swiftmodule 2>/dev/null
 
 ## 5/
 perl -pi -000 -e "s/\\/\\/#start-remove-prod.*#end-remove-prod//s" Modules/module.modulemap

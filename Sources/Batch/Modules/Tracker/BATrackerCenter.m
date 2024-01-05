@@ -137,10 +137,7 @@
     _flushing = NO;
     _started = NO;
     _optOutModule = [BAOptOut instance];
-
-    if (@available(iOS 12.0, *)) {
-        _signpostHelper = [BATrackerSignpostHelper new];
-    }
+    _signpostHelper = [BATrackerSignpostHelper new];
 
     return self;
 }

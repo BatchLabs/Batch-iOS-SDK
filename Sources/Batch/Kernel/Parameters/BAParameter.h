@@ -28,11 +28,11 @@
  @method objectForKey:fallback:
  @abstract Return the value for the givent key, fallback otherwise.
  @param key        :   The key to get the value from.
- @param class      : The kind of class the result should be
+ @param clazz      : The kind of class the result should be
  @param fallback   :   The fallback returned if anything goes wrong.
  @return the value if any and of the right class, fallback otherwise
  */
-+ (nullable id)objectForKey:(nonnull NSString *)key kindOfClass:(nonnull Class)class fallback:(nullable id)fallback;
++ (nullable id)objectForKey:(nonnull NSString *)key kindOfClass:(nonnull Class)clazz fallback:(nullable id)fallback;
 
 /*!
  @method setValue:forKey:saved:

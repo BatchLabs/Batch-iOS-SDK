@@ -17,7 +17,6 @@
 #import <Batch/BANotificationAuthorization.h>
 #import <Batch/BAOSHelper.h>
 #import <Batch/BAThreading.h>
-#import <Batch/BATrackingAuthorization.h>
 
 #import <CommonCrypto/CommonCrypto.h>
 
@@ -69,18 +68,13 @@
         @"di" : @"localInstallation",
         @"cus" : @"customIdentifier",
         @"tok" : @"pushToken",
-#if BATCH_ENABLE_IDFA
         @"idfa" : @"attributionID",
-#endif
-        @"attid_e" : @"isAttributionIdEnabled",
-        @"tath" : @"trackingAuthorizationStatus",
         @"dre" : @"deviceRegion",
         @"dla" : @"deviceLanguage",
         @"dtz" : @"deviceTimezone",
         @"are" : @"applicationRegion",
         @"ala" : @"applicationLanguage",
         @"da" : @"deviceDate",
-        @"ada" : @"appInstallDate",
         @"did" : @"sdkInstallDate",
         @"dty" : @"deviceType",
         @"osv" : @"deviceOSVersion",
@@ -166,24 +160,8 @@
     return nil;
 }
 
-#if BATCH_ENABLE_IDFA
 - (NSString *)attributionID {
-    return [BACoreCenter instance].status.trackingAuthorization.attributionIdentifier.UUIDString;
-}
-#endif
-
-- (NSString *)isAttributionIdEnabled {
-#if BATCH_ENABLE_IDFA
-    return @"1";
-#else
-    return @"0";
-#endif
-}
-
-- (NSString *)trackingAuthorizationStatus {
-    BATrackingAuthorizationStatus status =
-        [BACoreCenter instance].status.trackingAuthorization.trackingAuthorizationStatus;
-    return [NSString stringWithFormat:@"%lu", (unsigned long)status];
+    return [BAParameter objectForKey:kParametersAttributionIDKey fallback:nil];
 }
 
 // MCC+MNC
@@ -216,16 +194,6 @@
 - (NSString *)deviceDate {
     NSDate *currentDate = [NSDate date];
     return [self.dateFormatter stringFromDate:currentDate];
-}
-
-- (NSString *)appInstallDate {
-    NSDate *lastInstallDate = [[[NSFileManager defaultManager] attributesOfItemAtPath:NSTemporaryDirectory() error:nil]
-        objectForKey:NSFileCreationDate];
-    if (lastInstallDate == nil) {
-        return nil;
-    }
-
-    return [self.dateFormatter stringFromDate:lastInstallDate];
 }
 
 - (NSString *)sdkInstallDate {
