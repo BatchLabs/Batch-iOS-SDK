@@ -3012,6 +3012,7 @@
 				517D701422BBC34A00E374FB /* Sources */,
 				517D701522BBC34A00E374FB /* Frameworks */,
 				517D701622BBC34A00E374FB /* Resources */,
+				5113932C2BA3011B00DB58CE /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -3109,6 +3110,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# workaround for bitcode generation problem with Xcode 7.3\nunset TOOLCHAINS\n\nexport CONFIGURATION=Release\n\n# define output folder environment variable\nUNIVERSAL_OUTPUTFOLDER=${PROJECT_DIR}/universal/Batch.embeddedframework\n\n# Step 1. Build Device and Simulator versions\nxcodebuild OTHER_CFLAGS=\"-fembed-bitcode\" -target Batch ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk iphoneos  BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\"\nxcodebuild OTHER_CFLAGS=\"-fembed-bitcode\" -target Batch ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk iphonesimulator BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\"\n\n# Remove the old output folder\nrm -rf \"${UNIVERSAL_OUTPUTFOLDER}\"\n\n# Recreate it\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}\"\n\n# Copy the generated framework\ncp -R \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/Batch.framework\" \"${UNIVERSAL_OUTPUTFOLDER}/\"\n\n# Remove the old binary\nrm \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/Batch\"\n\n# Extract Intel slices from the simulator binary\n# We can't support arm64 and arm64e for silicon macs in a fat framework, lipo will fail\nSIMULATOR_FRAMEWORK_PATH=\"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/Batch.framework/Batch\"\nlipo -extract \"x86_64\" -output \"${SIMULATOR_FRAMEWORK_PATH}-x86_64\" \"${SIMULATOR_FRAMEWORK_PATH}\"\n\n# Create universal binary file using lipo\nlipo -create -output \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/Batch\" \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/Batch.framework/Batch\" \"${SIMULATOR_FRAMEWORK_PATH}-x86_64\" \n\n# make sure the resource directory exists\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}/Batch.bundle\"\nrm -R \"${UNIVERSAL_OUTPUTFOLDER}/Batch.bundle/\"\n\n# Move ressources.\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/en.lproj/\" #this may not exist\ncp -R \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/en.lproj/\" \"${UNIVERSAL_OUTPUTFOLDER}/Batch.bundle/\"\nrm -R \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/en.lproj/\"\ntouch \"${UNIVERSAL_OUTPUTFOLDER}/Batch.bundle/.gitignore\"\n\n# Clean up framework for public use\ncd \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/\"\nsh ${PROJECT_DIR}/../Tools/Scripts/strip_public_swift_framework.sh\n";
+		};
+		5113932C2BA3011B00DB58CE /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "# Work around an issue where release builds of Batch on Xcode 15.3 need to have\n# a very high Deployment target to pass validation\n# https://github.com/BatchLabs/Batch-iOS-SDK/issues/35\n# We can't override this when building so we need to patch the plist before it's bundled\n# in the xcframework or signed\nif [[ -z \"${IS_MACCATALYST}\" ]]; then\n    # We are NOT in a catalyst environment: we only want to patch iOS/visionOS builds\n    # We also do not want to patch simulator builds\n    if [[ ${SDK_NAME} != *\"simulator\"* ]]; then\n        echo \"Patching MinimumOSVersion to 100.0\"\n        plutil -replace MinimumOSVersion -string 100.0 \"${BUILT_PRODUCTS_DIR}/Batch.framework/Info.plist\"\n    fi\nfi\n    \n";
 		};
 		516BBC0B22BD0D2900742649 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
