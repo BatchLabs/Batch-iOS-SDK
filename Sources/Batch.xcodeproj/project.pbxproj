@@ -3127,7 +3127,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "# Work around an issue where release builds of Batch on Xcode 15.3 need to have\n# a very high Deployment target to pass validation\n# https://github.com/BatchLabs/Batch-iOS-SDK/issues/35\n# We can't override this when building so we need to patch the plist before it's bundled\n# in the xcframework or signed\nif [[ -z \"${IS_MACCATALYST}\" ]]; then\n    # We are NOT in a catalyst environment: we only want to patch iOS/visionOS builds\n    # We also do not want to patch simulator builds\n    if [[ ${SDK_NAME} != *\"simulator\"* ]]; then\n        echo \"Patching MinimumOSVersion to 100.0\"\n        plutil -replace MinimumOSVersion -string 100.0 \"${BUILT_PRODUCTS_DIR}/Batch.framework/Info.plist\"\n    fi\nfi\n    \n";
+			shellScript = "# Work around an issue where release builds of Batch on Xcode 15.3 need to have\n# a very high Deployment target to pass validation\n# https://github.com/BatchLabs/Batch-iOS-SDK/issues/35\n# We can't override this when building so we need to patch the plist before it's bundled\n# in the xcframework or signed\nINFO_PLIST_FILE=\"${BUILT_PRODUCTS_DIR}/Batch.framework/Info.plist\"\nif [ -f \"$INFO_PLIST_FILE\" ]; then   \n    # We are NOT in a catalyst environment: we only want to patch iOS/visionOS builds\n    # We also do not want to patch simulator builds\n    if [[ ${SDK_NAME} != *\"simulator\"* ]]; then\n        echo \"Patching MinimumOSVersion to 100.0\"\n        plutil -replace MinimumOSVersion -string 100.0 $INFO_PLIST_FILE\n    fi\nfi\n    \n";
 		};
 		516BBC0B22BD0D2900742649 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
