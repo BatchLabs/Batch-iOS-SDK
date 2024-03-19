@@ -35,7 +35,7 @@ jobs:
             `xcrun -find docc` process-archive transform-for-static-hosting  build/Release-iphoneos/Batch.doccarchive --hosting-base-path Batch-iOS-SDK --output-path ../docs
      
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: './docs'
       - name: Deploy to GitHub Pages
