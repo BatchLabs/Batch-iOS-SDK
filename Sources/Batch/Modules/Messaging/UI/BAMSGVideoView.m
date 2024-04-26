@@ -24,8 +24,12 @@
         self.translatesAutoresizingMaskIntoConstraints = NO;
 
         player = [AVPlayer playerWithURL:url];
+
+#if !TARGET_OS_VISION
         // Disallow airplay, we really want to "sandbox" this
         player.allowsExternalPlayback = NO;
+#endif
+
         // Required to loop the video
         player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
         // Try not to interrupt the music

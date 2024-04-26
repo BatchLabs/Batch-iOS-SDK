@@ -43,7 +43,6 @@
 #import <Batch/BAWebserviceMsgPackClient.h>
 #import <Batch/BAGETWebserviceClient.h>
 #import <Batch/BAResponseHelper.h>
-#import <Batch/BAWebserviceMetrics.h>
 #import <Batch/BAWebserviceURLBuilder.h>
 #import <Batch/BAQueryWebserviceClient.h>
 #import <Batch/BAQueryWebserviceIdentifiersProviding.h>
@@ -51,10 +50,8 @@
 #import <Batch/BAQueryWebserviceClientDelegate.h>
 #import <Batch/BAQueryWebserviceClientDatasource.h>
 #import <Batch/BALocalCampaignsJITService.h>
-#import <Batch/BatchEventDataPrivate.h>
-#import <Batch/BatchPushPrivate.h>
+#import <Batch/BatchEventAttributesPrivate.h>
 #import <Batch/BatchMessagingPrivate.h>
-#import <Batch/Versions.h>
 #import <Batch/BANotificationCenter.h>
 #import <Batch/BatchInboxPrivate.h>
 #import <Batch/BatchUserAttributePrivate.h>
@@ -123,9 +120,8 @@
 #import <Batch/BAEventDBHelperProtocol.h>
 #import <Batch/BAUserDataManager.h>
 #import <Batch/BAUserDataOperation.h>
-#import <Batch/BAUserDataEditor.h>
 #import <Batch/BAUserDataEnums.h>
-#import <Batch/BAUserEmailSubscription.h>
+#import <Batch/BAInstallDataEditor.h>
 #import <Batch/BAUserAttribute.h>
 #import <Batch/BAUserDataDiff.h>
 #import <Batch/BAUserDatasourceProtocol.h>
@@ -233,7 +229,6 @@
 #import <Batch/BAReachabilityHelper.h>
 #import <Batch/BAReachability.h>
 #import <Batch/BAParameter.h>
-#import <Batch/BANetworkParameters.h>
 #import <Batch/BAUserDefaults.h>
 #import <Batch/BAPropertiesCenter.h>
 #import <Batch/BATMessagePackWriter.h>
@@ -243,7 +238,6 @@
 #import <Batch/BAThreading.h>
 #import <Batch/BANullHelper.h>
 #import <Batch/BARandom.h>
-#import <Batch/BAEmailUtils.h>
 #import <Batch/BAWindowHelper.h>
 #import <Batch/BAJson.h>
 #import <Batch/BADateFormatting.h>

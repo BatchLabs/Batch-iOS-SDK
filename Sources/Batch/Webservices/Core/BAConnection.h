@@ -144,7 +144,7 @@ typedef NSInteger BAConnectionErrorCause;
 - (void)configureWithMethod:(BAConnectionMethod)method
                         url:(nonnull NSURL *)url
                        body:(nullable NSData *)body
-             cryptorFactory:(nullable id<BAWebserviceCryptorFactoryProtocol>)cryptorFactory;
+             cryptorFactory:(nullable Class<BAWebserviceCryptorFactoryProtocol>)cryptorFactory;
 
 - (void)start;
 

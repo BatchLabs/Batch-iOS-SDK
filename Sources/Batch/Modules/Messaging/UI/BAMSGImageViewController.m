@@ -15,6 +15,7 @@
 #import <Batch/BAMSGViewToolbox.h>
 #import <Batch/BAMessagingCenter.h>
 #import <Batch/BAUptimeProvider.h>
+#import <Batch/Batch-Swift.h>
 #import <Batch/BatchMessagingPrivate.h>
 
 @interface BAMSGTapControl : UIControl
@@ -36,7 +37,7 @@
 @property (nonatomic) NSLayoutConstraint *enteringBottomConstraint;
 @property (nonatomic) UIControl *tapControl;
 @property NSTimeInterval lastViewAppearanceUptime;
-@property (nonatomic) UINotificationFeedbackGenerator *hapticFeedbackGenerator;
+@property (nonatomic) BATNotificationFeedbackGenerator *hapticFeedbackGenerator;
 @property (nonatomic) NSLayoutConstraint *ratioConstraint;
 @property (nonatomic) BOOL imageIsLoaded;
 
@@ -53,7 +54,7 @@
         _lastViewAppearanceUptime = 0;
         _imageIsLoaded = false;
 
-        _hapticFeedbackGenerator = [[UINotificationFeedbackGenerator alloc] init];
+        _hapticFeedbackGenerator = [[BATNotificationFeedbackGenerator alloc] init];
         [_hapticFeedbackGenerator prepare];
 
         self.modalPresentationStyle = UIModalPresentationCustom;
@@ -216,8 +217,8 @@
         [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.closeButton
                                                               attribute:NSLayoutAttributeTop
                                                               relatedBy:NSLayoutRelationEqual
-                                                                 toItem:self.topLayoutGuide
-                                                              attribute:NSLayoutAttributeBottom
+                                                                 toItem:self.view.safeAreaLayoutGuide
+                                                              attribute:NSLayoutAttributeTop
                                                              multiplier:1
                                                                constant:10]];
     } else {
@@ -375,7 +376,7 @@
         return;
     }
 
-    [_hapticFeedbackGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
+    [_hapticFeedbackGenerator notificationOccurred:BATNotificationFeedbackTypeSuccess];
 
     if (self.message.globalTapAction != nil) {
         [[self _doDismissSelfModal] then:^(NSObject *_Nullable value) {

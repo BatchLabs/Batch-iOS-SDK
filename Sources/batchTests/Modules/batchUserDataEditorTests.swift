@@ -42,7 +42,7 @@ class UserDataEditorTests: XCTestCase {
             datasource.setURLAttribute(Arg.eq(url!), forKey: Arg.eq("urlattr"))
         )
 
-        let editor = BAUserDataEditor()
+        let editor = BAInstallDataEditor()
         try editor.setAttribute(true, forKey: "boolattr")
         try editor.setAttribute(20 as Int, forKey: "intattr")
         try editor.setAttribute(20 as Int64, forKey: "longlongattr")
@@ -77,7 +77,7 @@ class UserDataEditorTests: XCTestCase {
             datasource.setDoubleAttribute(Arg.eq(Double(1.234 as Float)), forKey: Arg.eq("floatattr"))
         )
 
-        let editor = BAUserDataEditor()
+        let editor = BAInstallDataEditor()
         try editor.setAttribute(NSNumber(value: 21), forKey: "numberattr")
         try editor.setAttribute(NSNumber(value: Int64.max), forKey: "numberlongattr")
         try editor.setAttribute(NSNumber(value: true), forKey: "boolattr")
@@ -109,7 +109,7 @@ class UserDataEditorTests: XCTestCase {
             count: 1
         )
 
-        let editor = BAUserDataEditor()
+        let editor = BAInstallDataEditor()
         editor.removeTag("f0o", fromCollection: "bar")
         editor.removeAttribute(forKey: "f0obar")
 
@@ -163,7 +163,7 @@ class UserDataEditorTests: XCTestCase {
             count: 0
         )
 
-        let editor = BAUserDataEditor()
+        let editor = BAInstallDataEditor()
         for key in invalidKeys {
             assertThrowsError(code: .invalidKey, try editor.setAttribute(true, forKey: key))
             assertThrowsError(code: .invalidKey, try editor.setAttribute(20 as Int, forKey: key))
@@ -202,10 +202,10 @@ class UserDataEditorTests: XCTestCase {
             count: 0
         )
 
-        let editor = BAUserDataEditor()
+        let editor = BAInstallDataEditor()
         for key in invalidKeys {
             editor.addTag("foo", inCollection: key)
-            editor.setAttribute("2" as NSString, forKey: key)
+            try? editor.setAttribute("2", forKey: key)
         }
         editor.addTag("lorem ipsum dolor this is a way too long string blabla qsdqdsqdsdqsdqsdqsd", inCollection: "bar")
 
@@ -231,7 +231,7 @@ class UserDataEditorTests: XCTestCase {
             datasource.removeAttributeNamed(Arg.eq("foo"))
         )
 
-        let editor = BAUserDataEditor()
+        let editor = BAInstallDataEditor()
         editor.clearAttributes()
         editor.clearTags()
         editor.clearTagCollection("foo")
@@ -244,7 +244,7 @@ class UserDataEditorTests: XCTestCase {
 
     func testUserOperationQueue() {
         do {
-            let editor = BAUserDataEditor()
+            let editor = BAInstallDataEditor()
             try editor.setAttribute("test", forKey: "test")
             editor.save()
             try editor.setAttribute("test2", forKey: "test2")
@@ -253,125 +253,16 @@ class UserDataEditorTests: XCTestCase {
         } catch {}
     }
 
-    func testSetEmail() throws {
-        let editor = BAUserDataEditor()
-        assertThrowsError(code: .internal, try editor.setEmail("test@batch.com"))
-        editor.setIdentifier(nil)
-        assertThrowsError(code: .internal, try editor.setEmail("test@batch.com"))
-        editor.setIdentifier("testid")
-        assertThrowsError(code: .invalidValue, try editor.setEmail("test@batchcom"))
-    }
-
     func assertThrowsError(
-        code: BatchUserDataEditorError.Code, _ expression: @escaping @autoclosure () throws -> Void,
+        code: BAInstallDataEditorError.Code, _ expression: @escaping @autoclosure () throws -> Void,
         file: StaticString = #filePath, line: UInt = #line
     ) {
         XCTAssertThrowsError(try expression(), file: file, line: line) { err in
-            if let err = err as? BatchUserDataEditorError {
+            if let err = err as? BAInstallDataEditorError {
                 XCTAssertEqual(err.code, code, file: file, line: line)
             } else {
-                XCTFail("Error should be a BatchUserDataEditorError", file: file, line: line)
+                XCTFail("Error should be a BAInstallDataEditorError", file: file, line: line)
             }
         }
-    }
-}
-
-class MockUserDatasource: Mock, BAUserDatasourceProtocol {
-    func close() {
-        super.call()
-    }
-
-    func clear() {
-        super.call()
-    }
-
-    func acquireTransactionLock(withChangeset changeset: Int64) -> Bool {
-        super.call(changeset)
-        return true
-    }
-
-    func commitTransaction() -> Bool {
-        super.call()
-        return true
-    }
-
-    func rollbackTransaction() -> Bool {
-        super.call()
-        return true
-    }
-
-    func setLongLongAttribute(_ attribute: Int64, forKey key: String) -> Bool {
-        super.call(attribute, key)
-        return true
-    }
-
-    func setDoubleAttribute(_ attribute: Double, forKey key: String) -> Bool {
-        super.call(attribute, key)
-        return true
-    }
-
-    func setBoolAttribute(_ attribute: Bool, forKey key: String) -> Bool {
-        super.call(attribute, key)
-        return true
-    }
-
-    func setStringAttribute(_ attribute: String, forKey key: String) -> Bool {
-        super.call(attribute, key)
-        return true
-    }
-
-    func setDateAttribute(_ attribute: Date, forKey key: String) -> Bool {
-        super.call(attribute, key)
-        return true
-    }
-
-    func setURLAttribute(_ attribute: URL, forKey key: String) -> Bool {
-        super.call(attribute, key)
-        return true
-    }
-
-    func removeAttributeNamed(_ attribute: String) -> Bool {
-        super.call(attribute)
-        return true
-    }
-
-    func addTag(_ tag: String, toCollection collection: String) -> Bool {
-        super.call(tag, collection)
-        return true
-    }
-
-    func removeTag(_ tag: String, fromCollection collection: String) -> Bool {
-        super.call(tag, collection)
-        return true
-    }
-
-    func clearTags() -> Bool {
-        super.call()
-        return true
-    }
-
-    func clearTags(fromCollection collection: String) -> Bool {
-        super.call(collection)
-        return true
-    }
-
-    func clearAttributes() -> Bool {
-        super.call()
-        return true
-    }
-
-    func attributes() -> [String: BAUserAttribute] {
-        super.call()
-        return [:]
-    }
-
-    func tagCollections() -> [String: Set<String>] {
-        super.call()
-        return [:]
-    }
-
-    func printDebugDump() -> String {
-        super.call()
-        return "mock"
     }
 }

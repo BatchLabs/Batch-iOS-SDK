@@ -12,23 +12,17 @@
 @implementation BAApplicationLifecycle
 
 + (BOOL)applicationUsesSwiftUILifecycle {
-    if (@available(iOS 13.0, *)) {
-        UIScene *scene = UIApplication.sharedApplication.connectedScenes.allObjects.firstObject;
-        id<UISceneDelegate> delegate = scene.delegate;
-        if (delegate == nil) {
-            return false;
-        }
-        // Expected name is SwiftUI.AppSceneDelegate but we expect it to change
-        return [NSStringFromClass([delegate class]) hasPrefix:@"SwiftUI."];
+    UIScene *scene = UIApplication.sharedApplication.connectedScenes.allObjects.firstObject;
+    id<UISceneDelegate> delegate = scene.delegate;
+    if (delegate == nil) {
+        return false;
     }
-    return false;
+    // Expected name is SwiftUI.AppSceneDelegate but we expect it to change
+    return [NSStringFromClass([delegate class]) hasPrefix:@"SwiftUI."];
 }
 
 + (BOOL)applicationUsesUIScene {
-    if (@available(iOS 13.0, *)) {
-        return [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIApplicationSceneManifest"] != nil;
-    }
-    return false;
+    return [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIApplicationSceneManifest"] != nil;
 }
 
 + (BOOL)applicationImplementsUNDelegate {
@@ -36,10 +30,8 @@
 }
 
 + (BOOL)isApplicationUIOnScreen {
-    if (@available(iOS 13.0, *)) {
-        if ([self hasASceneInState:UISceneActivationStateForegroundActive]) {
-            return true;
-        }
+    if ([self hasASceneInState:UISceneActivationStateForegroundActive]) {
+        return true;
     }
     return UIApplication.sharedApplication.applicationState == UIApplicationStateActive;
 }
@@ -57,14 +49,12 @@
 }
 
 + (BOOL)hasASceneInForegroundState {
-    if (@available(iOS 13.0, *)) {
-        if ([self applicationUsesUIScene]) {
-            NSSet<UIScene *> *connectedScenes = UIApplication.sharedApplication.connectedScenes;
-            for (UIScene *scene in connectedScenes) {
-                if (scene.activationState == UISceneActivationStateForegroundActive ||
-                    scene.activationState == UISceneActivationStateForegroundInactive) {
-                    return true;
-                }
+    if ([self applicationUsesUIScene]) {
+        NSSet<UIScene *> *connectedScenes = UIApplication.sharedApplication.connectedScenes;
+        for (UIScene *scene in connectedScenes) {
+            if (scene.activationState == UISceneActivationStateForegroundActive ||
+                scene.activationState == UISceneActivationStateForegroundInactive) {
+                return true;
             }
         }
     }

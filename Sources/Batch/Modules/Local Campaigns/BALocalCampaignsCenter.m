@@ -19,7 +19,7 @@
 #import <Batch/BASessionManager.h>
 #import <Batch/BAThreading.h>
 #import <Batch/BATrackerCenter.h>
-#import <Batch/BatchEventData.h>
+#import <Batch/BatchEventAttributes.h>
 #import <Batch/BatchMessagingPrivate.h>
 
 #import <Batch/BALocalCampaignsFilePersistence.h>
@@ -104,12 +104,18 @@
     _persistenceQueue = dispatch_queue_create_with_target("com.batch.localcampaigns.persistence", DISPATCH_QUEUE_SERIAL,
                                                           dispatch_get_global_queue(QOS_CLASS_UTILITY, 0));
 
+#if TARGET_OS_VISION
+    [BALogger debugForDomain:LOGGER_DOMAIN
+                     message:@"Not registering Local Campaigns refresh: unsupported on visionOS."];
+    return;
+#else
     // New session is used to load the campaign cache, scheduling server refreshs
     // and emitting BANewSessionSignal
     [[BANotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(newSessionStartedNotification)
                                                  name:BATNewSessionStartedNotification
                                                object:nil];
+#endif
 }
 
 - (BALocalCampaignsManager *)campaignManager {
@@ -125,6 +131,10 @@
 }
 
 - (void)emitSignal:(id<BALocalCampaignSignalProtocol>)signal {
+#if TARGET_OS_VISION
+    [BALogger debugForDomain:LOGGER_DOMAIN message:@"Not handling Local Campaigns signal: unsupported on visionOS."];
+    return;
+#else
     if ([[BAOptOut instance] isOptedOut]) {
         [BALogger debugForDomain:LOGGER_DOMAIN message:@"Batch is opted-out from, not bubbling local campaigns signal"];
         return;
@@ -167,6 +177,7 @@
           [self electCampaignForSignal:signal];
       }
     });
+#endif
 }
 
 /**
@@ -273,8 +284,8 @@
 
 - (void)processTrackerPublicEventNamed:(nonnull NSString *)name
                                  label:(nullable NSString *)label
-                                  data:(nullable BatchEventData *)data {
-    [self emitSignal:[[BAPublicEventTrackedSignal alloc] initWithName:name label:label data:data]];
+                            attributes:(nullable BatchEventAttributes *)attributes {
+    [self emitSignal:[[BAPublicEventTrackedSignal alloc] initWithName:name label:label attributes:attributes]];
 }
 
 - (void)didPerformCampaignOutputWithIdentifier:(nonnull NSString *)identifier eventData:(nullable NSObject *)eventData {

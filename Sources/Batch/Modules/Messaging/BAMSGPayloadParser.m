@@ -9,6 +9,7 @@
 #import <Batch/BAMSGPayloadParser.h>
 #import <Batch/BATJsonDictionary.h>
 #import <Batch/BatchMessagingPrivate.h>
+#import <Batch/Versions.h>
 
 #define LOGGER_DOMAIN @"BAMSGPayloadParser"
 

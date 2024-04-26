@@ -66,11 +66,7 @@
     NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
     config.timeoutIntervalForResource = timeout;
     // Enforce TLS 1.2
-    if (@available(iOS 13, tvOS 13, watchOS 6, macOS 10.15, *)) {
-        config.TLSMinimumSupportedProtocolVersion = tls_protocol_version_TLSv12;
-    } else {
-        config.TLSMinimumSupportedProtocol = kTLSProtocol12;
-    }
+    config.TLSMinimumSupportedProtocolVersion = tls_protocol_version_TLSv12;
 
     NSURLSession *session = [NSURLSession sessionWithConfiguration:config delegate:nil delegateQueue:nil];
 

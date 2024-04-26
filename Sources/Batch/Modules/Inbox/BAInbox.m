@@ -315,7 +315,6 @@
                 [BATrackerCenter trackPrivateEvent:@"_INBOX_MARK_DELETED" parameters:eventData];
             }
             internalNotification.isDeleted = true;
-            [notification _markAsDeleted];
             [[BAInjection injectProtocol:@protocol(BAInboxDatasourceProtocol)]
                 markAsDeleted:internalNotification.identifiers.identifier];
             [_fetchedMessages removeObject:internalNotification];
@@ -474,6 +473,10 @@
     NSMutableArray<BatchInboxNotificationContent *> *models = [NSMutableArray new];
 
     for (BAInboxNotificationContent *privateModel in privateModels) {
+        if (privateModel.isDeleted) {
+            continue;
+        }
+
         BatchInboxNotificationContent *model =
             [[BatchInboxNotificationContent alloc] initWithInternalIdentifier:privateModel.identifiers.identifier
                                                                    rawPayload:privateModel.payload

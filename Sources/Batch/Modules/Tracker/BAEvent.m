@@ -184,6 +184,11 @@
     return [NSArray arrayWithArray:eventIDs];
 }
 
+- (NSString *)debugDescription {
+    return [NSString stringWithFormat:@"BAEvent(name: '%@', parameters count: %lu)", self.name,
+                                      (unsigned long)self.parametersDictionary.count];
+}
+
 @end
 
 @implementation BACollapsableEvent

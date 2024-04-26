@@ -8,9 +8,8 @@
 
 #import <Batch/BANullHelper.h>
 
-#include <Batch/Versions.h>
-
 #define ERROR_DOMAIN @"com.batch.ios"
+#define PROFILE_ERROR_DOMAIN @"com.batch.ios.profile"
 #define NETWORKING_ERROR_DOMAIN @"com.batch.ios.networking"
 #define MESSAGING_ERROR_DOMAIN @"com.batch.ios.messaging"
 #define WEBVIEW_ERROR_DOMAIN @"com.batch.ios.webview"
@@ -23,18 +22,6 @@
     }                                         \
     *error = nil;
 
-// BAVersion, BALevel and BAMessagingLevel have moved into Version.h and have been renamed
-// Their values are not documented there because the Info.plist header parser is pretty dumb and will include comments
-// If you need to get the user facing BAVersion, use BACoreCenter.sdkVersion
-
-// We need two intermedary function to make a quoted define from another define
-// One expands the macro parameter
-// The other adds the quotes
-// It would be simpler to quote this in Versions.h but the plist preprocessor is dumb
-#define BAStringifyValue(macro) #macro
-#define BAGetStringifiedMacro(macro) BAStringifyValue(macro)
-#define BASDKVersionNSString @BAGetStringifiedMacro(BASDKVersion)
-
 #define BAPrivateKeyStorage @"Pm1oZKMo"
 #define BAPrivateKeyWebservice @"wgHD"
 #define BAPrivateKeyWebserviceV2 @"jgfx"
@@ -46,27 +33,22 @@
 #define kParametersReadReceiptEventName @"_PUSH_RECEIVED"
 
 // Application parameters.
-
+#define kParametersProjectKey @"app.project.key"
 #define kParametersLocalInstallIdentifierKey @"app.install.id"
 #define kParametersLocalInstallDateIdentifierKey @"app.install.timestamp"
 #define kParametersLocalIcloudIdentifierKey @"app.icloud.id"
 #define kParametersLocalIcloudDateIdentifierKey @"app.icloud.timestamp"
-#define kParametersLocalServerInstallIdentifierKey @"app.server.id"
 
 #define kParametersPoolWebserviceMaxKey @"app.executor.maxpool"
 #define kParametersSystemCurrentAppVersionKey @"app.version.current"
 #define kParametersSystemPreviousAppVersionKey @"app.version.previous"
 
-#define kParametersIDsPatternKey @"app.ids.pattern"
-#define kParametersIDsPatternValue @"s,da,did,cus,idfa,dla,dre,dtz,osv,de,apv,apc,bid,pl,lvl,mlvl,pid,plv,brv"
-
-#define kParametersAdvancedIDsPatternKey @"app.ids.pattern_advanced"
-#define kParametersAdvancedIDsPatternValue @"dty,sop"
+#define kParametersSystemParameterPrefix @"app.system.param."
+#define kParametersDataCollectionConfigKey @"app.data.collection.config."
 
 #define kParametersCustomUserIDKey @"app.id.custom"
 #define kParametersAppLanguageKey @"app.language"
 #define kParametersAppRegionKey @"app.region"
-#define kParametersAttributionIDKey @"app.id.attribution"
 
 #define kParametersAppProfileVersionKey @"app.profile.version"
 
@@ -84,12 +66,8 @@
 
 // Latest notification authorization status sent to the server
 #define kParametersNotificationAuthSentStatusKey @"notification.auth.sentstatus"
-#define kParametersAppNotificationSettingsKey @"notification.auth.appsettings"
 
 // Tracker parameters.
-
-#define kParametersTrackerStateKey @"tracker.state"
-#define kParametersTrackerStateValue @2
 
 #define kParametersTrackerDBLimitKey @"tracker.db.limit"
 #define kParametersTrackerDBLimitValue @10000

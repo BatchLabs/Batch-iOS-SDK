@@ -155,21 +155,8 @@ handler without having to eval anything
     return [BAPromise resolved:[BAInstallationID installationID]];
 }
 
-// Method that facilitates testing the attribution ID handling
-- (nullable NSString *)readAttributionIDFromSDK {
-    return [BAPropertiesCenter valueForShortName:@"idfa"];
-}
-
 - (BAPromise<NSString *> *)attributionID {
-    BAPromise *promise = [BAPromise new];
-    // TODO: Wall this behind a compilation flag
-    NSString *identifier = [self readAttributionIDFromSDK];
-    if ([BANullHelper isStringEmpty:identifier]) {
-        [promise reject:[self makePublicError:@"No attribution identifier found."]];
-    } else {
-        [promise resolve:identifier];
-    }
-    return promise;
+    return [BAPromise rejected:[self makePublicError:@"Attribution identifier is not supported anymore"]];
 }
 
 - (BAPromise<NSString *> *)customRegion {

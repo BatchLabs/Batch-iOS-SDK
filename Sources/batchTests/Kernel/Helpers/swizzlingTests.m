@@ -214,7 +214,7 @@
     XCTAssertEqual(1, [applicationDelegate.invokedSelectors count]);
     // Optional methods aren't supposed to be implemented, so we expect less calls than all
     // that's supported by the delegate
-    XCTAssertEqual(4, [batchDelegateProxy.proxy_invokedSelectors count]);
+    XCTAssertEqual(2, [batchDelegateProxy.proxy_invokedSelectors count]);
 }
 
 - (void)testAllMethods {
@@ -240,8 +240,8 @@
     XCTAssertTrue([delegatedAppDelegate swizzleAppDelegate]);
 
     [self callAllDelegateMethodsOn:applicationDelegate applicationMock:uiApplicationMock];
-    XCTAssertEqual(7, [applicationDelegate.invokedSelectors count]);
-    XCTAssertEqual(7, [batchDelegateProxy.proxy_invokedSelectors count]);
+    XCTAssertEqual(2, [applicationDelegate.invokedSelectors count]);
+    XCTAssertEqual(2, [batchDelegateProxy.proxy_invokedSelectors count]);
 }
 
 - (void)callAllDelegateMethodsOn:(id<UIApplicationDelegate>)delegate applicationMock:(UIApplication *)application {
@@ -252,44 +252,6 @@
     if ([delegate respondsToSelector:@selector(application:didFailToRegisterForRemoteNotificationsWithError:)]) {
         [delegate application:application didFailToRegisterForRemoteNotificationsWithError:[self dummyError]];
     }
-
-    if ([delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]) {
-        [delegate application:application
-            didReceiveRemoteNotification:[NSDictionary new]
-                  fetchCompletionHandler:^(UIBackgroundFetchResult result){
-                  }];
-    }
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    if ([delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:)]) {
-        [delegate application:application didReceiveRemoteNotification:[NSDictionary new]];
-    }
-
-    if ([delegate respondsToSelector:@selector(application:didRegisterUserNotificationSettings:)]) {
-        id userNotificationSettings = OCMClassMock([UIUserNotificationSettings class]);
-        [delegate application:application didRegisterUserNotificationSettings:userNotificationSettings];
-    }
-
-    if ([delegate respondsToSelector:@selector(application:
-                                         handleActionWithIdentifier:forRemoteNotification:completionHandler:)]) {
-        [delegate application:application
-            handleActionWithIdentifier:@"foo"
-                 forRemoteNotification:[NSDictionary new]
-                     completionHandler:^{
-                     }];
-    }
-
-    if ([delegate respondsToSelector:@selector
-                  (application:handleActionWithIdentifier:forRemoteNotification:withResponseInfo:completionHandler:)]) {
-        [delegate application:application
-            handleActionWithIdentifier:@"foo"
-                 forRemoteNotification:[NSDictionary new]
-                      withResponseInfo:[NSDictionary new]
-                     completionHandler:^{
-                     }];
-    }
-#pragma clang diagnostic pop
 }
 
 - (NSError *)dummyError {
@@ -383,39 +345,9 @@
     _didFailToRegisterRecorded = true;
 }
 
-- (void)application:(nonnull UIApplication *)application didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo {
-}
-
-- (void)application:(nonnull UIApplication *)application
-    didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo
-          fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHandler {
-}
-
 - (void)application:(nonnull UIApplication *)application
     didRegisterForRemoteNotificationsWithDeviceToken:(nonnull NSData *)deviceToken {
     _didRegisterForRemoteNotificationsRecorded = true;
-}
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-
-- (void)application:(nonnull UIApplication *)application
-    didRegisterUserNotificationSettings:(nonnull UIUserNotificationSettings *)notificationSettings {
-}
-
-#pragma clang diagnostic pop
-
-- (void)application:(nonnull UIApplication *)application
-    handleActionWithIdentifier:(nullable NSString *)identifier
-         forRemoteNotification:(nonnull NSDictionary *)userInfo
-             completionHandler:(nonnull void (^)(void))completionHandler {
-}
-
-- (void)application:(nonnull UIApplication *)application
-    handleActionWithIdentifier:(nullable NSString *)identifier
-         forRemoteNotification:(nonnull NSDictionary *)userInfo
-              withResponseInfo:(nonnull NSDictionary *)responseInfo
-             completionHandler:(nonnull void (^)(void))completionHandler {
 }
 
 @end

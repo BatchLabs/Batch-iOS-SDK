@@ -42,6 +42,20 @@
 #import <Batch/BAInjection.h>
 #import <Batch/BATUserActivity.h>
 
+#import <Batch/Versions.h>
+
+// BAVersion, BALevel and BAMessagingLevel have moved into Version.h and have been renamed
+// Their values are not documented there because the Info.plist header parser is pretty dumb and will include comments
+// If you need to get the user facing BAVersion, use BACoreCenter.sdkVersion
+
+// We need two intermedary function to make a quoted define from another define
+// One expands the macro parameter
+// The other adds the quotes
+// It would be simpler to quote this in Versions.h but the plist preprocessor is dumb
+#define BAStringifyValue(macro) #macro
+#define BAGetStringifiedMacro(macro) BAStringifyValue(macro)
+#define BASDKVersionNSString @BAGetStringifiedMacro(BASDKVersion)
+
 #define LOGGER_DOMAIN @"Core"
 
 // Internal methods and parameters.
@@ -49,9 +63,6 @@
 
 // Activate the whole Batch system.
 - (void)excecuteStartWithAPIKey:(NSString *)key;
-
-// Test if Batch is running in development mode.
-- (BOOL)executeIsDevelopmentMode;
 
 // Resume any activity of BA.
 - (void)stop;
@@ -86,47 +97,34 @@
     [[BACoreCenter instance] excecuteStartWithAPIKey:key];
 }
 
-// Give the URL to Batch systems.
-+ (BOOL)handleURL:(NSURL *)url {
-    return NO;
-}
-
-// Test if Batch is running in development mode.
-+ (BOOL)isRunningInDevelopmentMode {
-    return [[BACoreCenter instance] executeIsDevelopmentMode];
-}
-
-+ (void)setUseAdvancedDeviceInformation:(BOOL)use {
-    [[BACoreCenter instance] setUseAdvancedDeviceInformation:use];
-}
-
 - (void)openDeeplink:(NSString *)deeplink inApp:(BOOL)inApp {
     id<BatchDeeplinkDelegate> developerDelegate = [self.configuration deeplinkDelegate];
 
-    if (developerDelegate != nil) {
-        [BALogger debugForDomain:LOGGER_DOMAIN
-                         message:@"Forwarding deeplink '%@' to developer implementation", deeplink];
+    dispatch_async(dispatch_get_main_queue(), ^{
+      if (developerDelegate != nil) {
+          [BALogger debugForDomain:LOGGER_DOMAIN
+                           message:@"Forwarding deeplink '%@' to developer implementation", deeplink];
 
-        dispatch_async(dispatch_get_main_queue(), ^{
           [developerDelegate openBatchDeeplink:deeplink];
-        });
-    } else {
-        NSURL *deeplinkURL = [NSURL URLWithString:deeplink];
-        if (deeplinkURL != nil) {
-            if ([self openUniversalLinkIfPossible:deeplinkURL]) {
-                // We successfully opened universal link
-                return;
-            }
-            if (!inApp || ![self openDeeplinkURLInAppIfPossible:deeplinkURL]) { // don't open in app OR tried to open in
-                                                                                // app but failed
-                // then open with UIApplication
-                [BACoreCenter openURLWithUIApplication:deeplinkURL];
-            }
-        } else {
-            [BALogger debugForDomain:LOGGER_DOMAIN
-                             message:@"Tried to open deeplink '%@', but failed to convert it to a NSURL", deeplink];
-        }
-    }
+      } else {
+          NSURL *deeplinkURL = [NSURL URLWithString:deeplink];
+          if (deeplinkURL != nil) {
+              if ([self openUniversalLinkIfPossible:deeplinkURL]) {
+                  // We successfully opened universal link
+                  return;
+              }
+              if (!inApp ||
+                  ![self openDeeplinkURLInAppIfPossible:deeplinkURL]) { // don't open in app OR tried to open in
+                  // app but failed
+                  // then open with UIApplication
+                  [BACoreCenter openURLWithUIApplication:deeplinkURL];
+              }
+          } else {
+              [BALogger debugForDomain:LOGGER_DOMAIN
+                               message:@"Tried to open deeplink '%@', but failed to convert it to a NSURL", deeplink];
+          }
+      }
+    });
 }
 
 #pragma mark -
@@ -236,43 +234,40 @@
     BOOL shouldWaitBeforeSendingStart = false;
 
     // Here be dragons, we're handling UIScene
-    if (@available(iOS 13.0, *)) {
-        if ([BAApplicationLifecycle applicationUsesUIScene]) {
-            // Check if it's a late call (like cordova, or just a bad integration), or if we're in
-            // application:didFinishLaunchingWithOptions:-ish
-            if (appState ==
-                    UIApplicationStateBackground && // Late starts (StateActive or StateInactive) should force a start
-                notification == nil                 // Only skip if we're not coming from a lifecycle notification
-            ) {
-                [BALogger debugForDomain:LOGGER_DOMAIN message:@"Waiting before tracking start"];
-                shouldWaitBeforeSendingStart = true;
-            }
+    if ([BAApplicationLifecycle applicationUsesUIScene]) {
+        // Check if it's a late call (like cordova, or just a bad integration), or if we're in
+        // application:didFinishLaunchingWithOptions:-ish
+        if (appState ==
+                UIApplicationStateBackground && // Late starts (StateActive or StateInactive) should force a start
+            notification == nil                 // Only skip if we're not coming from a lifecycle notification
+        ) {
+            [BALogger debugForDomain:LOGGER_DOMAIN message:@"Waiting before tracking start"];
+            shouldWaitBeforeSendingStart = true;
+        }
 
-            // Update isPotentiallyInBackgroundRefresh using UIScene if we're in an ambiguous state
-            // This should not be ambiguous thanks to checking for UIApplicationWillEnterForegroundNotification
-            // but lets make sure we're not misreporting silent starts
-            if (isPotentiallyInBackgroundRefresh) {
-                isPotentiallyInBackgroundRefresh = ![BAApplicationLifecycle hasASceneInForegroundState];
-            }
+        // Update isPotentiallyInBackgroundRefresh using UIScene if we're in an ambiguous state
+        // This should not be ambiguous thanks to checking for UIApplicationWillEnterForegroundNotification
+        // but lets make sure we're not misreporting silent starts
+        if (isPotentiallyInBackgroundRefresh) {
+            isPotentiallyInBackgroundRefresh = ![BAApplicationLifecycle hasASceneInForegroundState];
+        }
 
-            // Now, we need to handle restarting
-            // Don't restart if we're getting UIApplicationWillEnterForegroundNotification on the first launch
-            // This only happens in UIScene apps.
-            // We can't rely on the UIScene state alone, as it's the same for first foreground and following ones on iOS
-            // 13 (iOS 14 fixes this, but who knows what 15 will break). Note: this is a quick hack. We should rework
-            // this, and start to the session manager. This solution looks like it might break at any moment, it already
-            // changed between iOS 13 and 14.
-            //
-            // We DO need to send the start, as we skipped it the first time.
-            if (isRestartingFromWillEnterForeground && appState == UIApplicationStateInactive) {
-                [BALogger
-                    debugForDomain:LOGGER_DOMAIN
-                           message:
-                               @"Batch was asked to restart after UIApplicationWillEnterForegroundNotification but it "
+        // Now, we need to handle restarting
+        // Don't restart if we're getting UIApplicationWillEnterForegroundNotification on the first launch
+        // This only happens in UIScene apps.
+        // We can't rely on the UIScene state alone, as it's the same for first foreground and following ones on iOS
+        // 13 (iOS 14 fixes this, but who knows what 15 will break). Note: this is a quick hack. We should rework
+        // this, and start to the session manager. This solution looks like it might break at any moment, it already
+        // changed between iOS 13 and 14.
+        //
+        // We DO need to send the start, as we skipped it the first time.
+        if (isRestartingFromWillEnterForeground && appState == UIApplicationStateInactive) {
+            [BALogger
+                debugForDomain:LOGGER_DOMAIN
+                       message:@"Batch was asked to restart after UIApplicationWillEnterForegroundNotification but it "
                                @"looks like this is the app's first launch. Tracking start, but skipping other work."];
-                [self callStartWebserviceWithSilentStart:false];
-                return;
-            }
+            [self callStartWebserviceWithSilentStart:false];
+            return;
         }
     }
 
@@ -300,7 +295,7 @@
         [self callStartWebserviceWithSilentStart:isPotentiallyInBackgroundRefresh];
     }
 
-    if ([BACoreCenter isRunningInDevelopmentMode]) {
+    if ([self.configuration.developperKey hasPrefix:@"DEV"]) {
         [BALogger publicForDomain:nil message:@"Batch started with a DEV API key"];
     }
 
@@ -343,19 +338,6 @@
     });
 }
 
-// Test if Batch is running in development mode.
-- (BOOL)executeIsDevelopmentMode {
-    if ([self.status isRunning] == NO) {
-        return NO;
-    }
-
-    return [self.configuration developmentMode];
-}
-
-- (void)setUseAdvancedDeviceInformation:(BOOL)use {
-    [self.configuration setUseAdvancedDeviceInformation:use];
-}
-
 // Resume any activity of BA.
 - (void)stop {
     // Change status.
@@ -377,6 +359,11 @@
  @return YES if the URL was opened, NO if it couldn't.
  */
 - (BOOL)openDeeplinkURLInAppIfPossible:(NSURL *)deeplinkURL {
+#if TARGET_OS_VISION
+    // SFSafariViewController is not supported on visionOS: trying only adds bug.
+    // Safari is opened no matter what, skip the middleman.
+    return NO;
+#endif
     @try {
         UIViewController *targetVC = [[BAWindowHelper keyWindow] rootViewController];
         if (targetVC.presentedViewController != nil) {
@@ -412,8 +399,7 @@
 + (void)openURLWithUIApplication:(NSURL *)URL {
     [BALogger debugForDomain:LOGGER_DOMAIN message:@"Opening deeplink '%@' using UIApplication", URL.absoluteString];
 
-    UIApplication *sharedApplication = [UIApplication sharedApplication];
-    [sharedApplication openURL:URL options:@{} completionHandler:nil];
+    [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];
 }
 
 /**
@@ -451,27 +437,28 @@
 
     Boolean errorAlreadyLogged = false;
 
-    if (@available(iOS 13.0, *)) {
-        if ([BAApplicationLifecycle applicationUsesUIScene]) {
-            UIScene *scene = [[UIApplication sharedApplication].connectedScenes allObjects].firstObject;
-            id<UISceneDelegate> sceneDelegate = [scene delegate];
-            if ([sceneDelegate respondsToSelector:@selector(scene:continueUserActivity:)]) {
-                [sceneDelegate scene:scene continueUserActivity:userActivity];
-                return YES;
-            } else {
-                [BALogger debugForDomain:LOGGER_DOMAIN
-                                 message:@"It looks like scene:continueUserActivity: is not "
-                                         @"implemented, did you correctly add it to your SceneDelegate?"];
-                errorAlreadyLogged = true;
-            }
+    if ([BAApplicationLifecycle applicationUsesUIScene]) {
+        UIScene *scene = [[UIApplication sharedApplication].connectedScenes allObjects].firstObject;
+        id<UISceneDelegate> sceneDelegate = [scene delegate];
+        if ([sceneDelegate respondsToSelector:@selector(scene:continueUserActivity:)]) {
+            [sceneDelegate scene:scene continueUserActivity:userActivity];
+            return YES;
+        } else {
+            [BALogger debugForDomain:LOGGER_DOMAIN
+                             message:@"It looks like scene:continueUserActivity: is not "
+                                     @"implemented, did you correctly add it to your SceneDelegate?"];
+            errorAlreadyLogged = true;
         }
     }
 
     id<UIApplicationDelegate> appDelegate = [UIApplication sharedApplication].delegate;
-    if ([appDelegate respondsToSelector:@selector(application:continueUserActivity:restorationHandler:)]) {
-        [appDelegate application:[UIApplication sharedApplication]
+    UIApplication *currentApplication = [UIApplication sharedApplication];
+    if (currentApplication && [appDelegate respondsToSelector:@selector(application:
+                                                                  continueUserActivity:restorationHandler:)]) {
+        [appDelegate application:currentApplication
             continueUserActivity:userActivity
-              restorationHandler:nil];
+              restorationHandler:^(NSArray<id<UIUserActivityRestoring>> *_Nullable restorableObjects){
+              }];
         return YES;
     }
     if (!errorAlreadyLogged) {
@@ -497,15 +484,6 @@
                           message:@"⚠️ More info about the manual integration here: "
                                   @"https://batch.com/doc/ios/advanced/manual-integration.html"];
     }
-
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-      if (![BABundleInfo isSharedGroupConfigured]) {
-          [BALogger publicForDomain:nil
-                            message:@"⚠️ The App Group '%@' hasn't been configured. See the documentation for more "
-                                    @"info: https://doc.batch.com/ios/advanced/app-groups",
-                                    [BABundleInfo sharedGroupId]];
-      }
-    });
 }
 
 - (id<BatchLoggerDelegate>)loggerDelegate {

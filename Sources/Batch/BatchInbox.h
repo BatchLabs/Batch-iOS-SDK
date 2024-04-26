@@ -40,20 +40,6 @@
 /// notification is silent (shows nothing to the user).
 @property (nonatomic, readonly, nullable) BatchInboxNotificationContentMessage *message;
 
-///  Notification title, if present. (Deprecated)
-///
-/// - Warning: __Deprecated:__ The title should be accessed via the message property.
-@property (nonatomic, readonly, nullable) NSString *title
-    __attribute__((deprecated("The title should be accessed via the message property")));
-
-/// Notification alert body. (Deprecated)
-///
-/// For compatibility, this will be the empty string when representing a silent notification, if their filtering has
-/// been disabled on the fetcher.
-/// - Warning: __Deprecated: __ The body should be accessed via the message property.
-@property (nonatomic, readonly, nonnull) NSString *body
-    __attribute__((deprecated("The body should be accessed via the message property")));
-
 /// URL of the rich notification attachment (image/audio/video).
 @property (nonatomic, readonly, nullable) NSURL *attachmentURL;
 
@@ -65,14 +51,6 @@
 
 /// Flag indicating whether this notification is unread or not.
 @property (nonatomic, readonly) BOOL isUnread;
-
-/// Flag indicating whether this notification is deleted or not. (Deprecated)
-///
-/// This might change if you hold a pointer to a notification that you asked to be deleted.
-/// - Warning: __Deprecated:__ You should refresh your copy of the data with
-/// ``BatchInboxFetcher/allFetchedNotifications`` after using ``BatchInboxFetcher/markNotificationAsDeleted:``.
-@property (nonatomic, readonly) BOOL isDeleted __attribute__((deprecated(
-    "You should refresh your copy of the data with allFetchedNotifications after using markNotificationAsDeleted.")));
 
 /// Flag indicating whether this notification is silent or not.
 @property (nonatomic, readonly) BOOL isSilent;

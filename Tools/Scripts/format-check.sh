@@ -25,4 +25,8 @@ SDK_FOLDER="../../sdk"
 find "${SDK_FOLDER}/Batch" "${SDK_FOLDER}/batchTests" -type f -name "*.[mh]" -not \( -path "${SDK_FOLDER}/Batch/Versions.h" \) -print0 | xargs -0 ${CLANGFORMAT} --dry-run --Werror -i
 
 # Format Swift code
-swift run -c release swiftformat --lint "${SDK_FOLDER}/Batch" "${SDK_FOLDER}/batchTests"
+if [ "${USE_SYSTEM_SWIFTFORMAT}" == "1" ]; then
+    swiftformat --lint "${SDK_FOLDER}/Batch" "${SDK_FOLDER}/batchTests"
+else
+    swift run -c release swiftformat --lint "${SDK_FOLDER}/Batch" "${SDK_FOLDER}/batchTests"
+fi

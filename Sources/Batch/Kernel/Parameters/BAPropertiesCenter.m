@@ -7,7 +7,6 @@
 
 #import <Batch/BAPropertiesCenter.h>
 
-#import <Batch/BANetworkParameters.h>
 #import <Batch/BAParameter.h>
 
 #import <Batch/BABundleInfo.h>
@@ -17,6 +16,7 @@
 #import <Batch/BANotificationAuthorization.h>
 #import <Batch/BAOSHelper.h>
 #import <Batch/BAThreading.h>
+#import <Batch/Versions.h>
 
 #import <CommonCrypto/CommonCrypto.h>
 
@@ -68,7 +68,6 @@
         @"di" : @"localInstallation",
         @"cus" : @"customIdentifier",
         @"tok" : @"pushToken",
-        @"idfa" : @"attributionID",
         @"dre" : @"deviceRegion",
         @"dla" : @"deviceLanguage",
         @"dtz" : @"deviceTimezone",
@@ -78,10 +77,6 @@
         @"did" : @"sdkInstallDate",
         @"dty" : @"deviceType",
         @"osv" : @"deviceOSVersion",
-        @"de" : @"density",
-        @"sw" : @"screenWidth",
-        @"sh" : @"screenHeight",
-        @"so" : @"screenOrientation",
         @"bid" : @"bundleID",
         @"pid" : @"applicationID",
         @"pl" : @"platform",
@@ -92,7 +87,6 @@
         @"plv" : @"pluginVersion",
         @"brv" : @"bridgeVersion",
         @"nty" : @"notifType",
-        @"sop" : @"simOperatorCode",
         @"s" : @"sessionIdentifier"
     };
 }
@@ -160,15 +154,6 @@
     return nil;
 }
 
-- (NSString *)attributionID {
-    return [BAParameter objectForKey:kParametersAttributionIDKey fallback:nil];
-}
-
-// MCC+MNC
-- (NSString *)simOperatorCode {
-    return [BANetworkParameters simOperatorCode];
-}
-
 - (NSString *)deviceRegion {
     return [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode];
 }
@@ -211,8 +196,10 @@
 }
 
 - (NSString *)deviceType {
-#if TARGET_OS_MACCATALYST
-    return [@"Mac - " stringByAppendingString:[BAOSHelper deviceCode]];
+#if TARGET_OS_VISION
+    return [@"visionOS - " stringByAppendingString:[BAOSHelper deviceCode]];
+#elif TARGET_OS_MACCATALYST
+    return [@"macOS - " stringByAppendingString:[BAOSHelper deviceCode]];
 #elif TARGET_OS_SIMULATOR
     return [@"Simulator - " stringByAppendingString:[BAOSHelper deviceCode]];
 #else
@@ -222,23 +209,6 @@
 
 - (NSString *)deviceOSVersion {
     return [[UIDevice currentDevice] systemVersion];
-}
-
-- (NSString *)density {
-    return [NSString stringWithFormat:@"%.1f", [[UIScreen mainScreen] scale]];
-}
-
-- (NSString *)screenWidth {
-    return [NSString stringWithFormat:@"%.1f", [[UIScreen mainScreen] bounds].size.width];
-}
-
-- (NSString *)screenHeight {
-    return [NSString stringWithFormat:@"%.1f", [[UIScreen mainScreen] bounds].size.height];
-}
-
-- (NSString *)screenOrientation {
-    BOOL isPortrait = UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]);
-    return [NSString stringWithFormat:@"%@", isPortrait ? @"P" : @"L"];
 }
 
 - (NSString *)bundleID {
@@ -349,12 +319,17 @@
     // Might not give the best result (false positives)
     __block int types = 0;
 
+    // No fallback on visionOS. I wish we could get rid of this codepath altogether but we can't.
+#if !TARGET_OS_VISION
+
     [BAThreading performBlockOnMainThread:^{
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
       types = (int)[[UIApplication sharedApplication] currentUserNotificationSettings].types;
 #pragma clang diagnostic pop
     }];
+
+#endif
 
     return [NSString stringWithFormat:@"%i", types];
 }

@@ -170,6 +170,14 @@ static NSString *kBAMSGInterstitialViewControllerHeroConstraint = @"BAMainHeroCo
     return guessedVC;
 }
 
+#if TARGET_OS_VISION
+- (UIContainerBackgroundStyle)preferredContainerBackgroundStyle {
+    // On visionOS, we do not want banners to appear on an opaque background blurring out the app beneath it.
+    // In an ideal world, we'd display the banners in dedicated windows, but for now this will have to do
+    return UIContainerBackgroundStyleHidden;
+}
+#endif
+
 - (BOOL)prefersStatusBarHidden {
     return false;
 }
@@ -871,17 +879,14 @@ static NSString *kBAMSGInterstitialViewControllerHeroConstraint = @"BAMainHeroCo
         }
     }
 
-    id topGuide = self.topLayoutGuide;
-
     // Padding goes before everything
-    [constraints
-        addObjectsFromArray:
-            [NSLayoutConstraint
-                constraintsWithVisualFormat:[NSString stringWithFormat:@"V:|-(==%f@800)-[innerView]-(==%f@800)-|",
-                                                                       padding.top, padding.bottom]
-                                    options:0
-                                    metrics:nil
-                                      views:NSDictionaryOfVariableBindings(topGuide, innerView)]];
+    [constraints addObjectsFromArray:[NSLayoutConstraint
+                                         constraintsWithVisualFormat:
+                                             [NSString stringWithFormat:@"V:|-(==%f@800)-[innerView]-(==%f@800)-|",
+                                                                        padding.top, padding.bottom]
+                                                             options:0
+                                                             metrics:nil
+                                                               views:NSDictionaryOfVariableBindings(innerView)]];
 
     [constraints
         addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:

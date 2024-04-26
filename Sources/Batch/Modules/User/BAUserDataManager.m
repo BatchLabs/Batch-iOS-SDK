@@ -178,13 +178,6 @@ static NSMutableArray<NSArray<BOOL (^)(void)> *> *operationsQueues;
     });
 }
 
-+ (void)printDebugInformation {
-    dispatch_async([BAUserDataManager sharedQueue], ^{
-      id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
-      [datasource printDebugDump];
-    });
-}
-
 + (void)clearData {
     [baUserDataManagerCheckScheduledLock lock];
     baUserDataManagerCheckScheduled = NO;
@@ -197,6 +190,52 @@ static NSMutableArray<NSArray<BOOL (^)(void)> *> *operationsQueues;
       id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
       [datasource clear];
     });
+}
+
++ (void)clearRemoteInstallationDataWithCompletion:(void (^)(void))completion {
+    // addOperationQueueAndSubmit is not thread safe, we need to use the queue
+    dispatch_async([BAUserDataManager sharedQueue], ^{
+      if (![self canSave]) {
+          if (completion != nil) {
+              completion();
+          }
+          return;
+      }
+      [BAUserDataManager _performClearRemoteInstallationDataWithCompletion:completion];
+    });
+}
+
+/// Thread unsafe method that performs the clear without any checks
+/// The only reason this exists is to write tests as BAUserDataManager is not easily testable at all
++ (void)_performClearRemoteInstallationDataWithCompletion:(void (^)(void))completion {
+    NSArray<BOOL (^)(void)> *applyQueue = @[
+        ^BOOL {
+          id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+          return [datasource clearTags];
+        },
+        ^BOOL {
+          id<BAUserDatasourceProtocol> datasource = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+          return [datasource clearAttributes];
+        }
+    ];
+    [BAUserDataManager addOperationQueueAndSubmit:applyQueue withCompletion:completion];
+}
+
++ (BOOL)canSave {
+    if (![[[BACoreCenter instance] status] isRunning]) {
+        [BALogger publicForDomain:PUBLIC_DOMAIN
+                          message:@"Batch must be started before changes to user data can be saved. The changes you've "
+                                  @"just tried to save have been discarded."];
+        return false;
+    }
+
+    if ([[BAOptOut instance] isOptedOut]) {
+        [BALogger publicForDomain:PUBLIC_DOMAIN
+                          message:@"Batch is Opted-Out from: BatchUserDataEditor changes cannot be saved"];
+        return false;
+    }
+
+    return true;
 }
 
 + (BOOL)writeChangesToDatasource:(NSArray<BOOL (^)(void)> *)applyQueue changeset:(long long)changeset {

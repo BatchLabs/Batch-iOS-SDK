@@ -90,7 +90,7 @@ typedef void (^BatchUserActionBlock)(NSString *_Nonnull identifier,
 @end
 
 /// BatchActions error code constants.
-enum {
+typedef NS_ENUM(NSInteger, BatchActionError) {
 
     /// Internal error
     BatchActionErrorUnknown = -1001,
@@ -101,6 +101,3 @@ enum {
     /// This action identifier is reserved and cannot be used. Note that actions cannot begin by "batch."
     BatchActionErrorReservedIdentifier = -1003
 };
-
-/// @typedef BatchActionError
-typedef NSInteger BatchActionError;

@@ -22,20 +22,6 @@ extern NSString *_Nonnull const kBATConfigurationChangedNotification;
 @interface BAConfiguration : NSObject
 
 /*!
- @method setUseAdvancedDeviceInformation:
- @abstract Set the advanced device information use condition.
- @param use    :   YES to allow use of advanced device information, NO otherwise.
- */
-- (void)setUseAdvancedDeviceInformation:(BOOL)use;
-
-/*!
- @method useAdvancedDeviceInformation
- @abstract Condition to use the advanced device information.
- @return YES if Batch can use advanced device information, NO otherwise.
- */
-- (BOOL)useAdvancedDeviceInformation __attribute__((warn_unused_result));
-
-/*!
  @method setDevelopperKey:
  @abstract Keep and check the developper key value.
  @param key :   The application developper private key.
@@ -49,13 +35,6 @@ extern NSString *_Nonnull const kBATConfigurationChangedNotification;
  @return The developper key string, nil otherwise.
  */
 - (nullable NSString *)developperKey __attribute__((warn_unused_result));
-
-/*!
- @method developmentMode
- @abstract Get the development mode.
- @return YES if in develpment mode, NO for release.
- */
-- (BOOL)developmentMode __attribute__((warn_unused_result));
 
 /*!
  @method setLoggerDelegate:
@@ -87,5 +66,17 @@ extern NSString *_Nonnull const kBATConfigurationChangedNotification;
  Developer's deeplink delegate
  */
 @property (weak, nonatomic, nullable) id<BatchDeeplinkDelegate> deeplinkDelegate;
+
+/*!
+ @method setDisabledMigrations
+ @abstract Set profile's data migration to disable
+ */
+- (void)setDisabledMigrations:(BatchMigration)migrations;
+
+/*!
+ @method isMigrationDisabledFor
+ @abstract Whether the given migration is disabled
+ */
+- (Boolean)isMigrationDisabledFor:(BatchMigration)migration;
 
 @end

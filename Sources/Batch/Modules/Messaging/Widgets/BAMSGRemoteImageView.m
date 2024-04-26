@@ -18,7 +18,8 @@
     [super setup];
 
     _activityIndicator =
-        [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+        [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleMedium];
+    _activityIndicator.color = [UIColor whiteColor];
     [_activityIndicator hidesWhenStopped];
     [self addSubview:_activityIndicator];
 

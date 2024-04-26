@@ -11,7 +11,6 @@
 #import <Batch/BAParameter.h>
 #import <Batch/BAPushCenter.h>
 #import <Batch/BatchPush.h>
-#import <Batch/BatchPushPrivate.h>
 
 NSString *const BatchPushReceivedNotification = @"BatchPushReceivedNotification";
 
@@ -27,24 +26,6 @@ NSString *const BatchPushUserDidAnswerAuthorizationRequestNotification =
 NSString *const BatchPushUserDidAcceptKey = @"BatchPushUserDidAcceptKey";
 
 @implementation BatchPush
-
-+ (BatchPushNotificationSettingStatus)notificationSettingStatus {
-    return [BANotificationAuthorization applicationSettings];
-}
-
-+ (void)setNotificationSettingStatus:(BatchPushNotificationSettingStatus)status {
-    switch (status) {
-        case BatchPushNotificationSettingStatusUndefined:
-        case BatchPushNotificationSettingStatusEnabled:
-        case BatchPushNotificationSettingStatusDisabled:
-            [[[[BACoreCenter instance] status] notificationAuthorization] setApplicationSettings:status
-                                                                                 skipServerEvent:false];
-            break;
-        default:
-            [BALogger errorForDomain:@"BatchPush" message:@"Invalid BatchPushNotificationSettingStatus value"];
-            break;
-    }
-}
 
 + (void)setupPush {
     // This used to set Batch Push's state to YES, but now we forcibly enable the push
@@ -64,11 +45,21 @@ NSString *const BatchPushUserDidAcceptKey = @"BatchPushUserDidAcceptKey";
 }
 
 + (void)requestNotificationAuthorization {
-    [[BAPushCenter instance] requestNotificationAuthorization];
+    [[BAPushCenter instance] requestNotificationAuthorizationWithCompletionHandler:nil];
+}
+
++ (void)requestNotificationAuthorizationWithCompletionHandler:
+    (void (^_Nullable)(BOOL granted, NSError *__nullable error))completionHandler {
+    [[BAPushCenter instance] requestNotificationAuthorizationWithCompletionHandler:completionHandler];
 }
 
 + (void)requestProvisionalNotificationAuthorization {
-    [[BAPushCenter instance] requestProvisionalNotificationAuthorization];
+    [[BAPushCenter instance] requestProvisionalNotificationAuthorizationWithCompletionHandler:nil];
+}
+
++ (void)requestProvisionalNotificationAuthorizationWithCompletionHandler:
+    (void (^_Nullable)(BOOL granted, NSError *__nullable error))completionHandler {
+    [[BAPushCenter instance] requestProvisionalNotificationAuthorizationWithCompletionHandler:completionHandler];
 }
 
 + (void)refreshToken {
@@ -77,20 +68,6 @@ NSString *const BatchPushUserDidAcceptKey = @"BatchPushUserDidAcceptKey";
 
 + (void)openSystemNotificationSettings {
     [[BAPushCenter instance] openSystemNotificationSettings];
-}
-
-// Call to trigger the iOS popup that asks the user if he wants to allow Push Notifications.
-+ (void)registerForRemoteNotifications {
-    [[BAPushCenter instance] requestNotificationAuthorization];
-}
-
-+ (void)registerForRemoteNotificationsWithCategories:(NSSet *)categories {
-    [BAPushCenter setNotificationsCategories:categories];
-    [[BAPushCenter instance] requestNotificationAuthorization];
-}
-
-+ (void)setNotificationsCategories:(NSSet *)categories {
-    [BAPushCenter setNotificationsCategories:categories];
 }
 
 // Clear the application's badge on the homescreen.
@@ -104,8 +81,12 @@ NSString *const BatchPushUserDidAcceptKey = @"BatchPushUserDidAcceptKey";
 }
 
 // Disable Batch's automatic deeplink handling
-+ (void)enableAutomaticDeeplinkHandling:(BOOL)handleDeeplinks {
-    [BAPushCenter enableAutomaticDeeplinkHandling:handleDeeplinks];
++ (void)setEnableAutomaticDeeplinkHandling:(BOOL)handleDeeplinks {
+    [[BAPushCenter instance] setHandleDeeplinks:handleDeeplinks];
+}
+
++ (BOOL)enableAutomaticDeeplinkHandling {
+    return [[BAPushCenter instance] handleDeeplinks];
 }
 
 + (NSString *)deeplinkFromUserInfo:(NSDictionary *)userInfo {
@@ -134,21 +115,6 @@ NSString *const BatchPushUserDidAcceptKey = @"BatchPushUserDidAcceptKey";
     return [BAPushCenter isBatchPush:userInfo];
 }
 
-+ (void)handleNotification:(NSDictionary *)userInfo {
-    [BAPushCenter handleNotification:userInfo];
-}
-
-+ (void)handleNotification:(NSDictionary *)userInfo actionIdentifier:(NSString *)identifier {
-    [BAPushCenter handleNotification:userInfo actionIdentifier:identifier];
-}
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-+ (void)handleRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
-    [BAPushCenter handleRegisterUserNotificationSettings:notificationSettings];
-}
-#pragma clang diagnostic pop
-
 + (void)handleUserNotificationCenter:(UNUserNotificationCenter *)center
              willPresentNotification:(UNNotification *)notification
        willShowSystemForegroundAlert:(BOOL)willShowSystemForegroundAlert {
@@ -160,6 +126,14 @@ NSString *const BatchPushUserDidAcceptKey = @"BatchPushUserDidAcceptKey";
 + (void)handleUserNotificationCenter:(UNUserNotificationCenter *)center
       didReceiveNotificationResponse:(UNNotificationResponse *)response {
     [BAPushCenter handleUserNotificationCenter:center didReceiveNotificationResponse:response];
+}
+
++ (BOOL)isBatchNotification:(nonnull UNNotification *)notification {
+    return [BAPushCenter isBatchPush:notification.request.content.userInfo];
+}
+
++ (nullable NSString *)deeplinkFromNotification:(nonnull UNNotification *)notification {
+    return [BAPushCenter deeplinkFromUserInfo:notification.request.content.userInfo];
 }
 
 @end
@@ -183,7 +157,7 @@ NSString *const BatchPushUserDidAcceptKey = @"BatchPushUserDidAcceptKey";
 - (instancetype)init {
     self = [super init];
     if (self) {
-        _showForegroundNotifications = false;
+        _showForegroundNotifications = true;
     }
     return self;
 }

@@ -6,6 +6,7 @@
 //
 
 #import <Batch/BAMSGPannableAlertContainerView.h>
+#import <Batch/Batch-Swift.h>
 
 // Various constants that define the alert pan look & feel
 #define ANIMATION_DURATION 0.5
@@ -24,7 +25,7 @@
 
     // Gesture recognizer state dependent variable
     BOOL _shouldDismiss;
-    UIImpactFeedbackGenerator *_hapticFeedbackGenerator;
+    BATImpactFeedbackGenerator *_hapticFeedbackGenerator;
     CGPoint _linkedViewInitialOffset;
     CGFloat _initialAlpha;
     CGFloat _linkedViewInitialAlpha;
@@ -73,7 +74,7 @@
 - (void)configureHapticFeedbackForState:(UIGestureRecognizerState)state {
     switch (state) {
         case UIGestureRecognizerStateBegan:
-            _hapticFeedbackGenerator = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleMedium];
+            _hapticFeedbackGenerator = [[BATImpactFeedbackGenerator alloc] initWithStyle:BATImpactFeedbackStyleMedium];
             [_hapticFeedbackGenerator prepare];
             break;
         case UIGestureRecognizerStateCancelled:

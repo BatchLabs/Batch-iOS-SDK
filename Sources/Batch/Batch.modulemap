@@ -7,7 +7,14 @@ framework module Batch {
     
     explicit module Core {
         header "BatchCore.h"
-        header "BatchUserProfile.h"
+        header "BatchDataCollectionConfig.h"
+        export *
+    }
+    
+    explicit module Profile {
+        header "BatchProfile.h"
+        header "BatchProfileEditor.h"
+        header "BatchEventAttributes.h"
         export *
     }
     
@@ -39,7 +46,6 @@ framework module Batch {
     
     explicit module User {
         header "BatchUser.h"
-        header "BatchEventData.h"
         header "BatchUserAttribute.h"
         export *
     }

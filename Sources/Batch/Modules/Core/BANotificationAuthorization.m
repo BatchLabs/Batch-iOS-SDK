@@ -7,14 +7,12 @@
 #import <Batch/BASessionManager.h>
 #import <Batch/BAThreading.h>
 #import <Batch/BATrackerCenter.h>
-#import <Batch/BatchPushPrivate.h>
 
 @implementation BANotificationAuthorizationSettings
 
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.applicationSetting = -1;
         self.status = BANotificationAuthorizationStatusWaitingForValue;
         self.types = BANotificationAuthorizationTypesNone;
     }
@@ -35,10 +33,6 @@
     }
 
     if (self.types != object.types) {
-        return false;
-    }
-
-    if (self.applicationSetting != object.applicationSetting) {
         return false;
     }
 
@@ -63,7 +57,6 @@
     return @{
         @"status" : @(self.status),
         @"types" : @(self.types),
-        @"app_setting" : @(self.applicationSetting),
     };
 }
 
@@ -83,19 +76,6 @@
                                                    object:nil];
     }
     return self;
-}
-
-+ (BatchPushNotificationSettingStatus)applicationSettings {
-    return [(NSNumber *)[BAParameter objectForKey:kParametersAppNotificationSettingsKey
-                                      kindOfClass:[NSNumber class]
-                                         fallback:@(BatchPushNotificationSettingStatusUndefined)] unsignedIntegerValue];
-}
-
-- (void)setApplicationSettings:(BatchPushNotificationSettingStatus)appSettings skipServerEvent:(BOOL)skipServerEvent {
-    [BAParameter setValue:@(appSettings) forKey:kParametersAppNotificationSettingsKey saved:true];
-    if (!skipServerEvent) {
-        [self settingsMayHaveChanged];
-    }
 }
 
 - (BOOL)shouldFetchSettings {
@@ -158,7 +138,6 @@
           }
 
           baSettings.types = types;
-          baSettings.applicationSetting = [BANotificationAuthorization applicationSettings];
 
           [self updateSettings:baSettings completionHandler:completionHandler];
         }];
@@ -231,7 +210,6 @@
 
         if ([types isKindOfClass:[NSNumber class]] && [status isKindOfClass:[NSNumber class]]) {
             BANotificationAuthorizationSettings *settings = [BANotificationAuthorizationSettings new];
-            settings.applicationSetting = [BANotificationAuthorization applicationSettings];
             settings.types = [types unsignedIntegerValue];
             settings.status = [status unsignedIntegerValue];
             return settings;

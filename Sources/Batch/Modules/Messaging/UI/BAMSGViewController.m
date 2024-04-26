@@ -137,18 +137,14 @@
 
     env.viewSize = [self computeViewSize];
 
-    if (@available(iOS 13.0, *)) {
-        switch ([self traitCollection].userInterfaceStyle) {
-            case UIUserInterfaceStyleDark:
-                env.darkMode = true;
-                break;
-            case UIUserInterfaceStyleLight:
-            case UIUserInterfaceStyleUnspecified:
-            default:
-                env.darkMode = false;
-        }
-    } else {
-        env.darkMode = false;
+    switch ([self traitCollection].userInterfaceStyle) {
+        case UIUserInterfaceStyleDark:
+            env.darkMode = true;
+            break;
+        case UIUserInterfaceStyleLight:
+        case UIUserInterfaceStyleUnspecified:
+        default:
+            env.darkMode = false;
     }
 
     return env;
@@ -190,7 +186,10 @@
                 _shouldHideStatusbar = YES;
             }
 
+#if !TARGET_OS_VISION
             [self setNeedsStatusBarAppearanceUpdate];
+#endif
+
             break; // We've only got one rule to check, no need to continue
         }
     }

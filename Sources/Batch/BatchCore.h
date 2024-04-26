@@ -6,8 +6,9 @@
 //  Copyright (c) Batch SDK. All rights reserved.
 //
 
+#import <Batch/BatchDataCollectionConfig.h>
 #import <Batch/BatchLogger.h>
-#import <Batch/BatchUserProfile.h>
+
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
@@ -22,8 +23,23 @@ typedef NS_ENUM(NSUInteger, BatchOptOutNetworkErrorPolicy) {
     BatchOptOutNetworkErrorPolicyCancel,
 };
 
+/// Batch migrations types
+typedef NS_OPTIONS(NSUInteger, BatchMigration) {
+    /// No migrations disabled
+    BatchMigrationNone = 0,
+
+    /// Whether Bath should automatically identify logged-in user when running the SDK v2 for the first time.
+    /// This mean user with a custom_user_id will be automatically attached a to a Profile and can be targeted within a
+    /// Project scope.
+    BatchMigrationCustomID = 1 << 0,
+
+    /// Whether Bath should automatically attach current installation's data (language/region/customDataAttributes...)
+    /// to the User's Profile when running the SDK v2 for the first time.
+    BatchMigrationCustomData = 1 << 1,
+};
+
 /// Batch's main entry point.
-@interface Batch : NSObject
+@interface BatchSDK : NSObject
 
 /// Use the deeplink delegate object to process deeplink open requests from Batch.
 ///
@@ -55,50 +71,12 @@ typedef NS_ENUM(NSUInteger, BatchOptOutNetworkErrorPolicy) {
 ///    - key: Your APP's API Key, LIVE or DEV. You can find it on your dashboard.
 + (void)startWithAPIKey:(NSString *_Nonnull)key;
 
-/// Handles an URL, if applicable.
-///
-/// Call this method in `application:openURL:sourceApplication:annotation:` of your `UIApplicationDelegate`
-/// - Parameters:
-///    - url: The URL given to you by iOS
-/// - Returns: YES if Batch performed an action with this URL, NO otherwise.
-+ (BOOL)handleURL:(NSURL *_Nonnull)url __attribute__((warn_unused_result))NS_AVAILABLE_IOS(8_0);
-
-/// Check if Batch is running in development mosde.
-///
-/// - Returns: YES if Batch is started __AND__ if it uses a development API key.
-+ (BOOL)isRunningInDevelopmentMode __attribute__((warn_unused_result))NS_AVAILABLE_IOS(8_0);
-
-/// Access the default user profile object.
-///
-/// - Deprecated: Please use Batch User instead
-/// - Returns: An instance of ``BatchUserProfile``, or nil
-+ (BatchUserProfile *_Nullable)defaultUserProfile
-    __attribute__((warn_unused_result, deprecated("Please use Batch User instead")))NS_AVAILABLE_IOS(8_0);
-
-///  As Batch has removed support for automatic IDFA collection, this method does nothing. The SDK will not collect the
-///  IDFA from the system.
-/// - Warning: This method has been deprecated
-/// - Parameters:
-///     - use: This parameter doesn't do anything
-+ (void)setUseIDFA:(BOOL)use __attribute__((deprecated));
-
-/// Set if Batch can use advanced device identifiers (default = YES)
-///
-/// Advanced device identifiers include information about the device itself, but nothing that directly identify the
-/// user, such as but not limited to:
-/// - Device model
-/// - Device brand
-/// - Carrier name
-/// - Parameters:
-///   - use: YES if Batch can try to use advanced device information, NO if you don't
-+ (void)setUseAdvancedDeviceInformation:(BOOL)use;
-
 /// Set if Batch should send its logs to a custom object of yours.
 ///
 /// - Important: Be careful with your implementation: setting this can impact stability and performance. You should only
 /// use it if you know what you are doing.
 /// - Parameter loggerDelegate: An object implementing ``Batch/BatchLoggerDelegate``. Weakly retained.
-+ (void)setLoggerDelegate:(id<BatchLoggerDelegate> _Nullable)loggerDelegate;
+@property (class, nullable) id<BatchLoggerDelegate> loggerDelegate;
 
 /// Get the debug view controller.
 ///
@@ -106,7 +84,7 @@ typedef NS_ENUM(NSUInteger, BatchOptOutNetworkErrorPolicy) {
 /// implementation more easily. If you want to make it accessible in production, you should hide it in a hard to
 /// reproduce sequence.
 /// - Note: Should be presented modally.
-+ (UIViewController *_Nullable)debugViewController;
++ (UIViewController *_Nullable)makeDebugViewController;
 
 /// Toogle whether internal logs should be logged or not.
 ///
@@ -117,20 +95,33 @@ typedef NS_ENUM(NSUInteger, BatchOptOutNetworkErrorPolicy) {
 /// - Parameter enableInternalLogs: Whether to enable development logs. Default: false (unless enabled via CLI).
 + (void)setInternalLogsEnabled:(BOOL)enableInternalLogs;
 
+/// Configure the SDK Automatic Data Collection.
+///
+/// - Parameter editor: A block that will be called with an instance of the automatic data collection configuration as a
+/// parameter. Modify the instance of the config to fine-tune the data you authorize to be tracked by Batch.
+/// - Note: Batch will persist the changes, so you can call this method at any time according to user consent.
+///  ```swift
+/// Batch.updateAutomaticDataCollection { config in
+///     config.setGeoIPEnabled(false) // Deny Batch from resolving the user's region from the ip address.
+///     config.setDeviceModelEnabled(true) // Authorize Batch to use the user's device model information.
+/// }
+/// ```
++ (void)updateAutomaticDataCollection:(_Nonnull BatchDataCollectionConfigEditor)editor;
+
 /// Opt-out from Batch SDK usage.
 ///
 /// - Important: Calling this method when Batch hasn't started does nothing: Please call
-/// ``Batch/Batch/startWithAPIKey:`` beforehand.
+/// ``Batch/BatchSDK/startWithAPIKey:`` beforehand.
 ///
 /// A push opt-out command will be sent to Batch's servers if the user is connected to the internet.
 /// If disconnected, notifications might not be disabled properly. Please use
-/// ``Batch/Batch/optOutWithCompletionHandler:``  to handle these cases more gracefully.
+/// ``Batch/BatchSDK/optOutWithCompletionHandler:``  to handle these cases more gracefully.
 ///
 /// Your app should be prepared to handle these cases. Some modules might behave unexpectedly when the SDK is opted out
 /// from.
 ///
 /// Opting out will:
-/// - Prevent ``Batch/Batch/startWithAPIKey:``  from starting the SDK
+/// - Prevent ``Batch/BatchSDK/startWithAPIKey:``  from starting the SDK
 /// - Disable any network capability from the SDK
 /// - Disable all In-App campaigns
 /// - Make the Inbox module return an error immediatly
@@ -140,30 +131,30 @@ typedef NS_ENUM(NSUInteger, BatchOptOutNetworkErrorPolicy) {
 /// Even if you opt-in afterwards, data generated (such as user data or tracked events) while opted out __WILL__ be
 /// lost.
 ///
-/// If you also want to delete user data, please see ``Batch/Batch/optOutAndWipeData``.
+/// If you also want to delete user data, please see ``Batch/BatchSDK/optOutAndWipeData``.
 + (void)optOut;
 
 /// Opt-out from Batch SDK and wipe data.
 ///
 /// - Important: Calling this method when Batch hasn't started does nothing: Please call
-/// ``Batch/Batch/startWithAPIKey:`` beforehand test.
+/// ``Batch/BatchSDK/startWithAPIKey:`` beforehand test.
 ///
 /// An installation data wipe command will be sent to Batch's servers if the user is connected to the internet.
 /// If disconnected, notifications might not be disabled properly. Please use
-/// ``Batch/Batch/optOutAndWipeDataWithCompletionHandler:`` to handle these cases more gracefully.
+/// ``Batch/BatchSDK/optOutAndWipeDataWithCompletionHandler:`` to handle these cases more gracefully.
 ///
-/// See ``Batch/Batch/optOut`` documentation for details.
+/// See ``Batch/BatchSDK/optOut`` documentation for details.
 ///
-/// - Note: Once opted out, ``Batch/Batch/startWithAPIKey:`` will essentially be a no-op. Your app should be prepared to
-/// handle these cases.
+/// - Note: Once opted out, ``Batch/BatchSDK/startWithAPIKey:`` will essentially be a no-op. Your app should be prepared
+/// to handle these cases.
 + (void)optOutAndWipeData;
 
 /// Opt-out from Batch SDK.
 ///
 /// - Important: Calling this method when Batch hasn't started does nothing: Please call
-/// ``Batch/Batch/startWithAPIKey:`` beforehand test.
+/// ``Batch/BatchSDK/startWithAPIKey:`` beforehand test.
 ///
-/// See ``Batch/Batch/optOut`` documentation for details.
+/// See ``Batch/BatchSDK/optOut`` documentation for details.
 ///
 /// Use the completion handler to be informed about whether the opt-out request has been successfully sent to the server
 /// or not. You'll also be able to control what to do in case of failure.
@@ -177,9 +168,9 @@ typedef NS_ENUM(NSUInteger, BatchOptOutNetworkErrorPolicy) {
 /// Opt-out from Batch SDK and wipe data.
 ///
 /// - Important: Calling this method when Batch hasn't started does nothing: Please call
-/// ``Batch/Batch/startWithAPIKey:`` beforehand test.
+/// ``Batch/BatchSDK/startWithAPIKey:`` beforehand test.
 ///
-/// See ``Batch/Batch/optOut`` documentation for details.
+/// See ``Batch/BatchSDK/optOut`` documentation for details.
 ///
 /// Use the completion handler to be informed about whether the opt-out request has been successfully sent to the server
 /// or not. You'll also be able to control what to do in case of failure.
@@ -192,13 +183,13 @@ typedef NS_ENUM(NSUInteger, BatchOptOutNetworkErrorPolicy) {
 
 /// Opt-in to Batch SDK.
 ///
-/// Useful if you called ``Batch/Batch/optOut``, ``Batch/Batch/optOutAndWipeData`` or opted out by default in your
+/// Useful if you called ``Batch/BatchSDK/optOut``, ``Batch/BatchSDK/optOutAndWipeData`` or opted out by default in your
 /// Info.plist.
-/// - Important: You will need to call ``Batch/Batch/startWithAPIKey:`` after this.
+/// - Important: You will need to call ``Batch/BatchSDK/startWithAPIKey:`` after this.
 + (void)optIn;
 
 /// Returns whether Batch has been opted out from or not
-+ (BOOL)isOptedOut;
+@property (readonly, class) BOOL isOptedOut;
 
 /// Set your list of associated domains, If your app handle universal links.
 ///
@@ -208,13 +199,31 @@ typedef NS_ENUM(NSUInteger, BatchOptOutNetworkErrorPolicy) {
 /// - Important: Make sure to only include the desired subdomain and the top-level domain. Don’t include path and query
 /// components or a trailing slash (/).
 /// - Parameter domains: An array of your supported associated domains.
-+ (void)setAssociatedDomains:(NSArray<NSString *> *_Nonnull)domains;
+@property (class, nonnull) NSArray<NSString *> *associatedDomains;
+
+/// Set data migrations you want to disable.
+///
+/// - Important: Make sure to call this method before ``Batch/BatchSDK/startWithAPIKey:``.
+/// - Parameter migrations: migrations to disable
+///
+/// ## Examples:
+/// ```swift
+///     /// Swift
+///     /// Disabling custom ID and Data migrations
+///     BatchSDK.setDisabledMigrations([.customID, .customData])
+/// ```
+/// ```objc
+///     /// Objective-C
+///     /// Disabling custom ID and Data migrations
+///     [BatchSDK setDisabledMigrations: BatchMigrationCustomID | BatchMigrationCustomData];
+/// ```
++ (void)setDisabledMigrations:(BatchMigration)migrations;
 
 @end
 
 /// BatchDeeplinkDelegate is the protocol to adopt when you want to set a deeplink delegate on the SDK.
 ///
-/// See ``Batch/Batch/deeplinkDelegate``  for more info.
+/// See ``Batch/BatchSDK/deeplinkDelegate``  for more info.
 @protocol BatchDeeplinkDelegate <NSObject>
 
 /// Method called when Batch needs to open a deeplink.

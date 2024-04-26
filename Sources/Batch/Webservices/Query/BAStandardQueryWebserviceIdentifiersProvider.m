@@ -11,6 +11,7 @@
 #import <Batch/BACoreCenter.h>
 #import <Batch/BAParameter.h>
 #import <Batch/BAPropertiesCenter.h>
+#import <Batch/Batch-Swift.h>
 
 @implementation BAStandardQueryWebserviceIdentifiersProvider
 
@@ -24,46 +25,7 @@
 }
 
 - (NSDictionary<NSString *, NSString *> *)identifiers {
-    NSMutableDictionary *ids = [[NSMutableDictionary alloc] init];
-    // Always add the installation id
-    NSString *di = [BAPropertiesCenter valueForShortName:@"di"];
-    if (![BANullHelper isStringEmpty:di]) {
-        ids[@"di"] = di;
-    }
-
-    // Grab the identifiers list.
-    NSString *idsList = [BAParameter objectForKey:kParametersIDsPatternKey fallback:kParametersIDsPatternValue];
-    NSArray *baseIds = [idsList componentsSeparatedByString:@","];
-
-    NSString *advancedIdsList = [BAParameter objectForKey:kParametersAdvancedIDsPatternKey
-                                                 fallback:kParametersAdvancedIDsPatternValue];
-    NSArray *advancedIds = nil;
-
-    if (![BANullHelper isStringEmpty:advancedIdsList] &&
-        [[BACoreCenter instance].configuration useAdvancedDeviceInformation]) {
-        advancedIds = [advancedIdsList componentsSeparatedByString:@","];
-    }
-
-    NSMutableArray<NSString *> *idsToFetch =
-        [[NSMutableArray alloc] initWithCapacity:(baseIds.count + advancedIds.count)];
-    if (baseIds) {
-        [idsToFetch addObjectsFromArray:baseIds];
-    }
-    if (advancedIds) {
-        [idsToFetch addObjectsFromArray:advancedIds];
-    }
-
-    // Add references.
-    for (NSString *idName in idsToFetch) {
-        if (![BANullHelper isStringEmpty:idName]) {
-            NSString *propertyValue = [BAPropertiesCenter valueForShortName:idName];
-            if (![BANullHelper isStringEmpty:propertyValue]) {
-                [ids setObject:propertyValue forKey:idName];
-            }
-        }
-    }
-
-    return ids;
+    return [[BATDataCollectionCenter sharedInstance] buildIdsForQuery];
 }
 
 @end

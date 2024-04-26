@@ -481,12 +481,24 @@ NSInteger const BatchMessageGlobalActionIndex = -1;
     [[BAMessagingCenter instance] setDelegate:delegate];
 }
 
++ (id<BatchMessagingDelegate> _Nullable)delegate {
+    return [[BAMessagingCenter instance] delegate];
+}
+
 + (void)setCanReconfigureAVAudioSession:(BOOL)canReconfigureAVAudioSession {
     [[BAMessagingCenter instance] setCanReconfigureAVAudioSession:canReconfigureAVAudioSession];
 }
 
++ (BOOL)canReconfigureAVAudioSession {
+    return [[BAMessagingCenter instance] canReconfigureAVAudioSession];
+}
+
 + (void)setAutomaticMode:(BOOL)automatic {
     [[BAMessagingCenter instance] setAutomaticMode:automatic];
+}
+
++ (BOOL)automaticMode {
+    return [[BAMessagingCenter instance] automaticMode];
 }
 
 + (BOOL)doNotDisturb {

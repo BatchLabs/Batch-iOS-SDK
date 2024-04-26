@@ -266,12 +266,9 @@
             [insertString appendString:[parameterNames objectAtIndex:i]];
         }
 
-        // LIKE should be read as LIKE "\_%"
-        NSString *selectSQL =
-            [NSString stringWithFormat:@"SELECT %@, %@ FROM %@ WHERE %@ IN (%d,%d) ORDER BY CASE WHEN %@ LIKE "
-                                       @"\"\\_%%\" ESCAPE '\\' THEN 1 ELSE 0 END DESC, %@ DESC",
-                                       COLUMN_DB_ID, insertString, TABLE_EVENTS, COLUMN_STATE, BAEventStateNew,
-                                       BAEventStateOld, COLUMN_NAME, COLUMN_DB_ID];
+        NSString *selectSQL = [NSString stringWithFormat:@"SELECT %@, %@ FROM %@ WHERE %@ IN (%d,%d) ORDER BY %@ ASC",
+                                                         COLUMN_DB_ID, insertString, TABLE_EVENTS, COLUMN_STATE,
+                                                         BAEventStateNew, BAEventStateOld, COLUMN_DB_ID];
         if (count > 0) {
             selectSQL = [NSString stringWithFormat:@"%@ LIMIT %lu", selectSQL, (unsigned long)count];
         }

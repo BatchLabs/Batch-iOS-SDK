@@ -24,7 +24,7 @@ extern NSString *_Nonnull const kBATMessagingMessageDidDisappear;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface BAMessagingCenter : NSObject <UIAlertViewDelegate, BACenterProtocol, BAMessagingAnalyticsDelegate>
+@interface BAMessagingCenter : NSObject <BACenterProtocol, BAMessagingAnalyticsDelegate>
 
 @property (readonly) BOOL automaticMode;
 
@@ -41,6 +41,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype _Nonnull)instance BATCH_USE_INJECTION_OUTSIDE_TESTS;
 
 - (void)setDelegate:(id<BatchMessagingDelegate> _Nullable)delegate;
+
+- (id<BatchMessagingDelegate> _Nullable)delegate;
 
 - (void)setImageDownloadTimeout:(NSTimeInterval)timeout;
 

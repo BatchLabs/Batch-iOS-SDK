@@ -89,21 +89,6 @@ static const NSString *DEFAULTS_VERSION_KEY = @"com.batch.defaults.version";
     [_defaults synchronize];
 }
 
-// Save a custom object implementing NSCoding.
-- (void)saveCustomObject:(id)object key:(NSString *)key {
-    NSData *encodedObject = [NSKeyedArchiver archivedDataWithRootObject:object];
-    [_defaults setObject:encodedObject forKey:key];
-    [_defaults synchronize];
-}
-
-// Load a custom object implementing NSCoding.
-- (id)loadCustomObjectWithKey:(NSString *)key {
-    NSData *encodedObject = [_defaults objectForKey:key];
-    id object = [NSKeyedUnarchiver unarchiveObjectWithData:encodedObject];
-
-    return object;
-}
-
 - (void)removeAllObjects {
     for (NSString *key in _defaults.dictionaryRepresentation.keyEnumerator) {
         [_defaults removeObjectForKey:key];

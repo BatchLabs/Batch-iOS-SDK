@@ -54,4 +54,10 @@ typedef NS_ENUM(NSUInteger, BAWSResponseAttrCheckAction) {
  */
 @property (readonly) NSNumber *time;
 
+/*!
+ @property projectKey
+ @abstract ProjectKey attached the application
+ */
+@property (readonly) NSString *projectKey;
+
 @end

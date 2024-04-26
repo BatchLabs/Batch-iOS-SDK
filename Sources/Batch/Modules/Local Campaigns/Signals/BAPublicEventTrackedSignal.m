@@ -10,12 +10,14 @@
 
 @implementation BAPublicEventTrackedSignal
 
-- (instancetype)initWithName:(NSString *)name label:(nullable NSString *)label data:(nullable BatchEventData *)data {
+- (instancetype)initWithName:(NSString *)name
+                       label:(nullable NSString *)label
+                  attributes:(nullable BatchEventAttributes *)attributes {
     self = [super init];
     if (self) {
         self.name = name;
         self.label = label;
-        self.data = data;
+        self.attributes = attributes;
     }
 
     return self;

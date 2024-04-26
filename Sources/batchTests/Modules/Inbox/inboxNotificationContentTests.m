@@ -42,16 +42,13 @@
                                                  failOnSilentNotification:true];
 
     XCTAssertEqual(@"test-id", [content identifier]);
-    XCTAssertEqual(@"Je suis un title", [content title]);
-    XCTAssertEqual(@"Je suis un body", [content body]);
     XCTAssertEqual(@"Je suis un title", [[content message] title]);
     XCTAssertEqual(@"Je suis un body", [[content message] body]);
     XCTAssertNil([[content message] subtitle]);
     XCTAssertTrue([content isUnread]);
-    XCTAssertFalse([content isDeleted]);
     XCTAssertFalse([content isSilent]);
     XCTAssertEqual(BatchNotificationSourceTransactional, [content source]);
-    XCTAssertEqual(@"https://batch.com", [[content attachmentURL] absoluteString]);
+    XCTAssertEqualObjects(@"https://batch.com", [[content attachmentURL] absoluteString]);
 
     [content _markAsRead];
     XCTAssertFalse([content isUnread]);
@@ -64,8 +61,6 @@
                                                                        isUnread:TRUE
                                                                            date:now
                                                        failOnSilentNotification:true];
-    XCTAssertEqual(@"Je suis un title", [content title]);
-    XCTAssertEqual(@"Je suis un body", [content body]);
     XCTAssertEqual(@"Je suis un title", [[content message] title]);
     XCTAssertEqual(@"Je suis un body", [[content message] body]);
     XCTAssertEqual(@"Je suis un subtitle", [[content message] subtitle]);
@@ -79,13 +74,10 @@
                                                                            date:now
                                                        failOnSilentNotification:true];
     XCTAssertEqual(@"test-id", [content identifier]);
-    XCTAssertNil([content title]);
     XCTAssertNil([[content message] title]);
     XCTAssertNil([[content message] subtitle]);
-    XCTAssertEqual(@"Je suis une alerte", [content body]);
     XCTAssertEqual(@"Je suis une alerte", [[content message] body]);
     XCTAssertTrue([content isUnread]);
-    XCTAssertFalse([content isDeleted]);
     XCTAssertFalse([content isSilent]);
     XCTAssertEqual(BatchNotificationSourceTransactional, [content source]);
 }
@@ -173,10 +165,8 @@
                                                                  isUnread:TRUE
                                                                      date:now
                                                  failOnSilentNotification:false];
-    XCTAssertNil(content.title);
     XCTAssertNil(content.message);
-    XCTAssertEqual(@"", content.body); // Test compatibility behaviour
-    XCTAssertEqual(silentNotificationPayload, content.payload);
+    XCTAssertEqualObjects(silentNotificationPayload, content.payload);
     XCTAssertTrue(content.isSilent);
 }
 

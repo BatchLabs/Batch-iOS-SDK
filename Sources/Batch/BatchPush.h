@@ -34,10 +34,6 @@ FOUNDATION_EXPORT NSString *_Nonnull const BatchPushOpenedNotification;
 /// The value is a NSDictionary.
 FOUNDATION_EXPORT NSString *_Nonnull const BatchPushOpenedNotificationPayloadKey;
 
-/// Key that Batch will read the placeholder from when converting a `UIUserNotificationAction` into a
-/// `UNNotificationAction`
-FOUNDATION_EXPORT NSString *_Nonnull const BatchUserActionInputTextFieldPlaceholderKey;
-
 /// Notification sent by Batch Push when the alert view requesting users to allow push notifications was dismissed.
 ///
 /// Notification's userInfo will contain a ``BatchPushUserDidAcceptKey`` regarding the choice made by the user, whose
@@ -80,15 +76,6 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 /// Do not call this method, as BatchPush only consists of static methods.
 - (nonnull instancetype)init NS_UNAVAILABLE;
 
-/// Setup Batch Push system. (Deprecated)
-///
-/// You can call this method from any thread.
-/// - Warning: __Deprecated:__ This method is deprectaed. You don't need to do anything else besides removing this call,
-/// Batch Push will still work as expected.
-+ (void)setupPush
-    __attribute__((deprecated("setupPush is deprecated. You don't need to do anything else besides removing this call, "
-                              "Batch Push will still work as expected.")));
-
 /// Change the used remote notification types when registering.
 ///
 /// This does __NOT__ change the user preferences once already registered: to do so, you should point them to the native
@@ -105,7 +92,51 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 /// You should call this at a strategic moment, like at the end of your welcome.
 ///
 /// Batch will automatically ask for a push token when the user replies.
+///
+/// ```swift
+/// func askPermission() {
+///     BatchPush.requestNotificationAuthorization()
+/// }
+///
+/// func askPermissionAsync() async {
+///     // Async methods always have to use the completionHandler variant
+///     let _ = try? await BatchPush.requestNotificationAuthorization()
+/// }
+/// ```
+///
 + (void)requestNotificationAuthorization;
+
+/// Method to trigger the iOS popup that asks the user if they wants to allow notifications to be displayed, then
+/// get a Push token.
+///
+/// The default registration is made with Badge, Sound and Alert.
+/// If you want another configuration: call ``BatchPush/setRemoteNotificationTypes:``.
+/// You should call this at a strategic moment, like at the end of your welcome.
+///
+/// Batch will automatically ask for a push token when the user replies and call your completion handler.
+///
+/// ```swift
+/// func askPermission() {
+///     BatchPush.requestNotificationAuthorization { success, error in
+///         // Do something
+///     }
+/// }
+///
+/// func askPermissionAsync() async {
+///     let _ = try? await BatchPush.requestNotificationAuthorization()
+/// }
+/// ```
+///
+/// - Parameters:
+///     - completionHandler: The block to execute asynchronously with the results. This block may execute on a
+///     background thread. The block has no return value and has the following parameters:
+///     - completionHandler(granted): A Boolean value indicating whether the person grants authorization. The value of
+///     this parameter is YES when the person grants authorization for one or more options. The value is NO when the
+///     person denies authorization or authorization is undetermined. Use
+///     `UNUserNotificationCenter.current().getNotificationSettings()` to check the authorization status.
+///     - completionHandler(error): An object containing error information or nil if no error occurs.
++ (void)requestNotificationAuthorizationWithCompletionHandler:
+    (void (^_Nullable)(BOOL granted, NSError *__nullable error))completionHandler;
 
 /// Method to ask iOS for a provisional notification authorization.
 ///
@@ -115,8 +146,53 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 /// They will directly be sent to the notification center, accessible when the user swipes up on the lockscreen, or down
 /// from the statusbar when unlocked.
 ///
-/// This method does nothing on iOS 11 or lower.
+/// ```swift
+/// func askPermission() {
+///     BatchPush.requestProvisionalNotificationAuthorization()
+/// }
+///
+/// func askPermissionAsync() async {
+///     // Async methods always have to use the completionHandler variant
+///     let _ = try? await BatchPush.requestProvisionalNotificationAuthorization()
+/// }
+/// ```
+///
 + (void)requestProvisionalNotificationAuthorization;
+
+/// Method to ask iOS for a provisional notification authorization.
+///
+/// Batch will then automatically ask for a push token.
+/// Provisional authorization will __NOT__ show a popup asking for user authorization,
+/// but notifications will __NOT__ be displayed on the lock screen, or as a banner when the phone is unlocked.
+/// They will directly be sent to the notification center, accessible when the user swipes up on the lockscreen, or down
+/// from the statusbar when unlocked.
+///
+/// Batch will automatically ask for a push token and call your completion handler.
+///
+/// If a user has already refused to show notifications, this method will still call the completion handler with errors.
+///
+/// ```swift
+/// func askPermission() {
+///     BatchPush.requestProvisionalNotificationAuthorization { success, error in
+///         // Do something
+///     }
+/// }
+///
+/// func askPermissionAsync() async {
+///     let _ = try? await BatchPush.requestProvisionalNotificationAuthorization()
+/// }
+/// ```
+///
+/// - Parameters:
+///     - completionHandler: The block to execute asynchronously with the results. This block may execute on a
+///     background thread. The block has no return value and has the following parameters:
+///     - completionHandler(granted): A Boolean value indicating whether the person grants authorization. The value of
+///     this parameter is YES when the person grants authorization for one or more options. The value is NO when the
+///     person denies authorization or authorization is undetermined. Use
+///     `UNUserNotificationCenter.current().getNotificationSettings()` to check the authorization status.
+///     - completionHandler(error): An object containing error information or nil if no error occurs.
++ (void)requestProvisionalNotificationAuthorizationWithCompletionHandler:
+    (void (^_Nullable)(BOOL granted, NSError *__nullable error))completionHandler;
 
 /// Ask iOS to refresh the push token. If the app didn't prompt the user for consent yet, this will not be done.
 ///
@@ -126,77 +202,30 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 /// Open the system settings on your applications' notification settings.
 + (void)openSystemNotificationSettings;
 
-/// Method to trigger the iOS popup that asks the user if they wants to allow Push Notifications, then get a Push token.
-/// (Deprecated)
-///
-/// The default registration is made with Badge, Sound and Alert.
-/// If you want another configuration: call`setRemoteNotificationTypes:`.
-/// You should call this at a strategic moment, like at the end of your welcome.
-/// Equivalent to calling ``BatchPush/requestNotificationAuthorization``
-/// - Warning: __Deprecated:__ This method is deprectaed. Use ``BatchPush/requestNotificationAuthorization`` and
-/// ``BatchPush/refreshToken`` separately. More info in our documentation.
-+ (void)registerForRemoteNotifications __attribute__((
-    deprecated("Use requestNotificationAuthorization and refreshToken separately. More info in our documentation.")));
-
-/// Method to trigger the iOS popup that asks the user if they want to allow Push Notifications and register to APNS.
-/// (Deprecated)
-///
-/// Default registration is made with Badge, Sound and Alert.
-/// If you want another configuration: call ``BatchPush/setRemoteNotificationTypes:``.
-/// You should call this at a strategic moment, like at the end of your welcome.
-///
-/// - Parameter categories: A set of `UIUserNotificationCategory` or `UNNotificationCategory` instances that define the
-/// groups of actions a notification may include. If you try to register `UIUserNotificationCategory` instances on iOS
-/// 10, Batch will automatically do a best effort conversion to `UNNotificationCategory`. If you don't want this
-/// behaviour, please use the standard `UIApplication` methods.
-/// - Warning: __Deprecated:__ Use ``BatchPush/setNotificationsCategories:`` and
-/// ``BatchPush/registerForRemoteNotifications`` separately.
-+ (void)registerForRemoteNotificationsWithCategories:(nullable NSSet *)categories
-
-    __attribute__((deprecated("Use setNotificationCategories and registerForRemoteNotifications separately.")));
-
-/// Set the notification action categories to iOS.
-///
-/// You should call this every time your app starts.
-/// - Important: On versions prior to iOS 10, this call __MUST__ be followed by
-/// ``BatchPush/registerForRemoteNotifications``, or else the categories will __NOT__ be updated.
-/// - Parameter categories:  set of `UIUserNotificationCategory` or `UNNotificationCategory` instances that define the
-/// groups of actions a notification may include. If you try to register `UIUserNotificationCategory` instances on iOS
-/// 10, Batch will automatically do a best effort conversion to `UNNotificationCategory`. If you don't want this
-/// behaviour, please use the standard `UIApplication` methods.
-+ (void)setNotificationsCategories:(nullable NSSet *)categories;
-
 /// Clear the application's badge on the homescreen.
-///
-/// You do not need to call this if you already called ``BatchPush/dismissNotifications``.
 + (void)clearBadge;
 
-/// Clear the app's notifications in the notification center. Also clears your badge.
-///
-/// Call this when you want to remove the notifications. Your badge is removed afterwards, so if you want one, you need
-/// to set it up again.
-/// - Important: Be careful, this method also clears your badge.
+/// Clear the app's notifications in the notification center
 + (void)dismissNotifications;
 
 /// Set whether Batch Push should automatically try to handle deeplinks.
 ///
-/// By default, this is set to __YES__. You need to call everytime your app is restarted, this option is not persisted.
+/// By default, this is set to __true__. You need to call everytime your app is restarted, this option is not persisted.
 ///
-/// If your goal is to implement a custom deeplink format, you should see ``Batch/Batch/deeplinkDelegate`` which allows
-/// you to manually handle the deeplink string, but doesn't put the burden of parsing the notification payload on you.
+/// If your goal is to implement a custom deeplink format, you should see ``Batch/BatchSDK/deeplinkDelegate`` which
+/// allows you to manually handle the deeplink string, but doesn't put the burden of parsing the notification payload on
+/// you. If deeplink handling is disabled, the deeplink delegate will not be called.
 ///
 /// - Note: Setting this to false will __DISABLE__ the deeplink delegate, leaving the handling of the link  entirely up
 /// to you.
-/// - Important: If Batch is set to handle your deeplinks, it will *automatically* call the fetch completion handler (if
-/// applicable) with `UIBackgroundFetchResultNewData.
 /// - Parameter handleDeeplinks: Whether Batch should handle deeplinks automatically.
-+ (void)enableAutomaticDeeplinkHandling:(BOOL)handleDeeplinks;
+@property (class) BOOL enableAutomaticDeeplinkHandling;
 
 /// Get Batch Push's deeplink from a notification's userInfo.
 ///
 /// - Parameter userData The notification's payload.
 /// - Returns: Batch's Deeplink, or nil if not found.
-+ (nullable NSString *)deeplinkFromUserInfo:(nonnull NSDictionary *)userData;
++ (nullable NSString *)deeplinkFromUserInfo:(nonnull NSDictionary *)userData NS_SWIFT_NAME(deeplink(from:));
 
 /// Get the last known push token.
 ///
@@ -204,13 +233,12 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 /// - Important: The returned token might be outdated and invalid if this method is called too early in your application
 /// lifecycle.
 /// - Returns: A push token, nil if unavailable.
-+ (nullable NSString *)lastKnownPushToken;
+@property (class, nullable, readonly) NSString *lastKnownPushToken;
 
 /// Disable the push's automatic integration.
 ///
-/// If you call this, you are responsible of forwarding your application's delegate and
-/// `UNUserNotificationCenterDelegate` calls to Batch. If you don't, some parts of the SDK and Dashboard will break.
-/// Calling this method automatically calls `disableAutomaticNotificationCenterIntegration`.
+/// If you call this, you are responsible of forwarding your application's delegate methods to Batch.If you don't, some
+/// parts of the SDK and Dashboard will break.
 /// - Important: This must be called before you start Batch, or it will have no effect.
 + (void)disableAutomaticIntegration;
 
@@ -230,48 +258,6 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 /// method.
 /// - Returns: Wheter it is a Batch'sPush. If it returns true, you should not handle the push.
 + (BOOL)isBatchPush:(nonnull NSDictionary *)userInfo;
-
-/// Make Batch process a notification. (Deprecated)
-///
-/// You should call this method in `application:didReceiveRemoteNotification:` or
-/// `application:didReceiveRemoteNotification:fetchCompletionHandler:`.
-/// - Important: If you didn't call ``BatchPush/disableAutomaticIntegration``, this method will have no effect.
-/// If you called it but don't implement this method, Batch's push features will __NOT__ work.
-/// - Parameter userInfo: The untouched `userInfo` NSDictionary argument given to you in the application delegate
-/// method.
-/// - Warning: __Deprecated:__ Implement `UNUserNotificationCenterDelegate` using
-/// ``BatchUNUserNotificationCenterDelegate`` or your own implementation.
-+ (void)handleNotification:(nonnull NSDictionary *)userInfo
-    __attribute__((deprecated("Implement UNUserNotificationCenterDelegate using BatchUNUserNotificationCenterDelegate "
-                              "or your own implementation")));
-
-/// Make Batch process a notification action.
-///
-/// You should call this method in `application:handleActionWithIdentifier:forRemoteNotification:completionHandler:`
-/// or `application:handleActionWithIdentifier:forRemoteNotification:withResponseInfo:completionHandler:`
-/// - Important: If you didn't call "disableAutomaticIntegration", this method will have no effect. If you called it but
-/// don't implement this method, Batch's push features will NOT work.
-/// - Parameters:
-///   - userInfo: The untouched `userInfo` NSDictionary argument given to you in the application delegate method.
-///   - identifier: The action's identifier. Used for tracking purposes: it can match your raw action name, or be a more
-///   user-friendly string.
-+ (void)handleNotification:(nonnull NSDictionary *)userInfo actionIdentifier:(nullable NSString *)identifier;
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-
-/// Make Batch process the user notification settings change. (Deprecated)
-///
-/// You should call this method in `application:didRegisterUserNotificationSettings:`.
-/// - Important: If you didn't call ``BatchPush/disableAutomaticIntegration``, this method will have no effect. If you
-/// called it but don't implement this method, Batch's push features will __NOT__ work.
-/// - Parameter notificationSettings: The untouched `notificationSettings UIUserNotificationSettings*` argument given to
-/// you in the application delegate method.
-/// - Warning: __Deprecated:__ Use ``BatchPush/requestNotificationAuthorization``.
-+ (void)handleRegisterUserNotificationSettings:(nonnull UIUserNotificationSettings *)notificationSettings
-    __attribute__((deprecated("Use BatchPush.requestNotificationAuthorization()")));
-
-#pragma clang diagnostic pop
 
 #pragma mark UserNotifications methods
 
@@ -301,6 +287,19 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
       didReceiveNotificationResponse:(nonnull UNNotificationResponse *)response
     NS_SWIFT_NAME(handle(userNotificationCenter:didReceive:));
 
+/// Check a notification comes from Batch
+///
+/// - Parameter  notification: The UNNotification got from the operating system
+/// method.
+/// - Returns: Wheter it is a notification coming from Batch
++ (BOOL)isBatchNotification:(nonnull UNNotification *)notification;
+
+/// Get the Batch deeplink from a notification
+///
+/// - Parameter notification The notification
+/// - Returns: deeplink string, or nil if not found. Warning: the deeplink might not be a valid URL.
++ (nullable NSString *)deeplinkFromNotification:(nonnull UNNotification *)userData;
+
 @end
 
 /// Implementation of `UNUserNotificationCenterDelegate` that
@@ -325,7 +324,7 @@ __attribute__((objc_subclassing_restricted))
 + (void)registerAsDelegate;
 
 /// Should iOS display notifications even if the app is in foreground?
-/// Default: false
+/// Default: true
 @property (assign) BOOL showForegroundNotifications;
 
 @end

@@ -9,7 +9,7 @@
 
 @implementation BAWindowHelper
 
-+ (nullable UIWindowScene *)activeScene NS_AVAILABLE_IOS(13.0) {
++ (nullable UIWindowScene *)activeScene {
     NSSet<UIScene *> *connectedScenes = UIApplication.sharedApplication.connectedScenes;
     for (UIScene *scene in connectedScenes) {
         if (scene.activationState == UISceneActivationStateForegroundActive) {
@@ -19,7 +19,7 @@
     return nil;
 }
 
-+ (nullable UIWindowScene *)activeWindowScene NS_AVAILABLE_IOS(13.0) {
++ (nullable UIWindowScene *)activeWindowScene {
     NSSet<UIScene *> *connectedScenes = UIApplication.sharedApplication.connectedScenes;
     for (UIScene *scene in connectedScenes) {
         if (scene.activationState == UISceneActivationStateForegroundActive &&
@@ -31,15 +31,23 @@
 }
 
 + (UIWindow *)keyWindow {
-    if (@available(iOS 13.0, *)) {
-        UIWindow *window = [self keyWindowFromSceneAPI];
-        return window != nil ? window : UIApplication.sharedApplication.keyWindow;
-    } else {
-        return UIApplication.sharedApplication.keyWindow;
-    }
+    UIWindow *window = [self keyWindowFromSceneAPI];
+
+#if TARGET_OS_VISION
+
+    return window;
+
+#else
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    return window != nil ? window : UIApplication.sharedApplication.keyWindow;
+#pragma clang diagnostic pop
+
+#endif
 }
 
-+ (nullable UIWindow *)keyWindowFromSceneAPI NS_AVAILABLE_IOS(13.0) {
++ (nullable UIWindow *)keyWindowFromSceneAPI {
     // Don't use activeWindowScene as we want to loop on all scenes until we get what we want
     NSSet<UIScene *> *connectedScenes = UIApplication.sharedApplication.connectedScenes;
     for (UIScene *scene in connectedScenes) {

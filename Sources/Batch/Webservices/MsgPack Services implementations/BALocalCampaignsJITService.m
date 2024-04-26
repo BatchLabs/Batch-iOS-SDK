@@ -87,11 +87,6 @@
     body[@"campaigns"] = campaignIds;
     body[@"views"] = views;
 
-    // Add system ids
-    NSNumber *trackerState = [NSNumber numberWithInteger:[BATrackerCenter currentMode]];
-    identifiers[@"m_e"] = trackerState;
-    NSNumber *pushState = [[BAPushCenter instance] swizzled] ? @1 : @0;
-    identifiers[@"m_p"] = pushState;
     [identifiers addEntriesFromDictionary:[[BAStandardQueryWebserviceIdentifiersProvider sharedInstance] identifiers]];
 
     // Add campaign ids to check and views count

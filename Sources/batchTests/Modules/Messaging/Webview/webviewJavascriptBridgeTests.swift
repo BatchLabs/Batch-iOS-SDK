@@ -48,10 +48,6 @@ class webviewJavascriptBridgeTests: XCTestCase {
         XCTAssertResolves(nil, executeDataMethod("getCustomRegion"))
         XCTAssertResolves(nil, executeDataMethod("getCustomUserID"))
 
-        XCTAssertResolves(BridgeExpectations.attributionID as NSString, executeDataMethod("getAttributionID"))
-        bridge.shouldReturnAttributionID = false
-        XCTAssertRejects(executeDataMethod("getAttributionID"))
-
         XCTAssertNoPendingPromise(promises)
     }
 
@@ -354,8 +350,7 @@ fileprivate enum BridgeExpectations {
 }
 
 fileprivate class MockBridgeDelegate: Mock, BATWebviewJavascriptBridgeDelegate {
-    func bridge(_ bridge: BATWebviewJavascriptBridge, shouldDismissMessageWithAnalyticsID analyticsIdentifier: String?)
-    {
+    func bridge(_ bridge: BATWebviewJavascriptBridge, shouldDismissMessageWithAnalyticsID analyticsIdentifier: String?) {
         super.call(bridge, analyticsIdentifier)
     }
 
@@ -376,7 +371,6 @@ fileprivate class MockBridgeDelegate: Mock, BATWebviewJavascriptBridgeDelegate {
 
 fileprivate class MockBridge: BATWebviewJavascriptBridge {
     var shouldReturnCustomDatas = true
-    var shouldReturnAttributionID = true
 
     init(trackingID: String? = nil, delegate: BATWebviewJavascriptBridgeDelegate? = nil) {
         let message = BAMSGMessageWebView()
@@ -386,13 +380,6 @@ fileprivate class MockBridge: BATWebviewJavascriptBridge {
 
     override func installationID() -> BAPromise<NSString> {
         return BAPromise.resolved(BridgeExpectations.installationID)
-    }
-
-    override func readAttributionIDFromSDK() -> String? {
-        if shouldReturnAttributionID {
-            return BridgeExpectations.attributionID
-        }
-        return nil
     }
 
     override func customRegion() -> BAPromise<NSString> {

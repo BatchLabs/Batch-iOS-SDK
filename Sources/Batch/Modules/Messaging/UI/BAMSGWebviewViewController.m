@@ -139,8 +139,8 @@ NSString *const BAMSGWebviewDevMenuReload = @"Reload";
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.closeButton
                                                           attribute:NSLayoutAttributeTop
                                                           relatedBy:NSLayoutRelationEqual
-                                                             toItem:self.topLayoutGuide
-                                                          attribute:NSLayoutAttributeBottom
+                                                             toItem:self.view.safeAreaLayoutGuide
+                                                          attribute:NSLayoutAttributeTop
                                                          multiplier:1
                                                            constant:10]];
 
@@ -171,15 +171,8 @@ NSString *const BAMSGWebviewDevMenuReload = @"Reload";
 
     // On dev mode we want to add actions on long pressing close
     if (_message.developmentMode) {
-        if (@available(iOS 13.0, *)) {
-            // Attach the context menu on the close button
-            [self.closeButton addInteraction:[[UIContextMenuInteraction alloc] initWithDelegate:self]];
-        } else {
-            // On iOS 12 and lower, use a gesture recognizer to manually show a dialog with the development options
-            UILongPressGestureRecognizer *longPressRecognizer =
-                [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongPressCloseButton:)];
-            [self.closeButton addGestureRecognizer:longPressRecognizer];
-        }
+        // Attach the context menu on the close button
+        [self.closeButton addInteraction:[[UIContextMenuInteraction alloc] initWithDelegate:self]];
     }
 }
 
@@ -224,7 +217,7 @@ NSString *const BAMSGWebviewDevMenuReload = @"Reload";
 
 #pragma mark - Development
 
-- (UIMenu *)developmentContextMenu NS_AVAILABLE_IOS(13_0) {
+- (UIMenu *)developmentContextMenu {
     __weak BAMSGWebviewViewController *weakSelf = self;
     NSArray<UIAction *> *items = @[ [UIAction actionWithTitle:BAMSGWebviewDevMenuReload
                                                         image:[UIImage systemImageNamed:@"arrow.clockwise"]

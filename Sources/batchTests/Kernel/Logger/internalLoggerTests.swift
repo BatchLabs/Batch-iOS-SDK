@@ -17,13 +17,13 @@ class internalLoggerTests: XCTestCase {
 
     override func setUp() {
         loggerDelegate.reset()
-        Batch.setLoggerDelegate(loggerDelegate)
+        BatchSDK.loggerDelegate = loggerDelegate
     }
 
     override class func tearDown() {
         // Leave the internal logs true for other tests
         BALogger.internalLogsEnabled = true
-        Batch.setLoggerDelegate(nil)
+        BatchSDK.loggerDelegate = nil
     }
 
     func testEnableInternalLogsWithAPI() {

@@ -145,7 +145,6 @@
         _payload = [rawPayload copy];
         _date = date;
         _isUnread = isUnread;
-        _isDeleted = false;
         _failOnSilentNotification = failOnSilentNotification;
 
         if ([BANullHelper isStringEmpty:_identifier]) {
@@ -190,12 +189,6 @@
                                  @"is enabled: skipping."];
         return false;
     }
-
-    _title = [_message title];
-
-    // "body" can't be nil as we would break the API. For compatibility, a nil body is represented as the empty string.
-    NSString *messageBody = [_message body];
-    _body = messageBody != nil ? messageBody : @"";
 
     return true;
 }
@@ -303,10 +296,6 @@
 
 - (void)_markAsRead {
     _isUnread = false;
-}
-
-- (void)_markAsDeleted {
-    _isDeleted = true;
 }
 
 - (BOOL)hasLandingMessage {

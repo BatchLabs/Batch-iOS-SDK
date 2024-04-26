@@ -21,6 +21,7 @@
 #import <Batch/BALocalCampaignsJITService.h>
 #import <Batch/BAStandardQueryWebserviceIdentifiersProvider.h>
 #import <Batch/BAWebserviceClientExecutor.h>
+#import <Batch/Versions.h>
 
 #define LOG_DOMAIN @"LocalCampaignsManager"
 

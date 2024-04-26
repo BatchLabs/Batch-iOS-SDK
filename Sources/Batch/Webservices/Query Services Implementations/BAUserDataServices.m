@@ -9,6 +9,8 @@
 #import <Batch/BAUserDataServices.h>
 
 #import <Batch/BACoreCenter.h>
+#import <Batch/BAInjection.h>
+#import <Batch/BAParameter.h>
 #import <Batch/BARandom.h>
 #import <Batch/BAUserDataManager.h>
 #import <Batch/BAWSQueryAttributes.h>
@@ -16,6 +18,7 @@
 #import <Batch/BAWSResponseAttributes.h>
 #import <Batch/BAWSResponseAttributesCheck.h>
 #import <Batch/BAWebserviceURLBuilder.h>
+#import <Batch/Batch-Swift.h>
 
 #define DEFAULT_RECHECK_WAIT_TIME @(15000)
 
@@ -81,6 +84,16 @@
         if ([response isKindOfClass:[BAWSResponseAttributes class]]) {
             BAWSResponseAttributes *castedResponse = (BAWSResponseAttributes *)response;
             [BAUserDataManager storeTransactionID:castedResponse.transactionID forVersion:castedResponse.version];
+            if (castedResponse.projectKey != nil) {
+                NSString *oldProjectKey = [BAParameter objectForKey:kParametersProjectKey fallback:nil];
+                if (![castedResponse.projectKey isEqualToString:oldProjectKey]) {
+                    // If we are here this mean we are running on a fresh V2 install and user has
+                    // just wrote some profile data.
+                    // So we save the project key to not trigger the profile data migration from the
+                    // next ATC response otherwise we would erase the data we just sent.
+                    [BAParameter setValue:castedResponse.projectKey forKey:kParametersProjectKey saved:true];
+                }
+            }
         }
     }
 }
@@ -194,6 +207,17 @@
                     // Not so elegant.
                     foundValidCheckAnswer = NO;
                     break;
+            }
+
+            // Checking whether project has changed
+            if (castedResponse.projectKey != nil) {
+                NSString *oldProjectKey = [BAParameter objectForKey:kParametersProjectKey fallback:nil];
+                if (![castedResponse.projectKey isEqualToString:oldProjectKey]) {
+                    [BAParameter setValue:castedResponse.projectKey forKey:kParametersProjectKey saved:true];
+                    [[BAInjection injectProtocol:@protocol(BAProfileCenterProtocol)]
+                        onProjectChanged:oldProjectKey
+                              withNewKey:castedResponse.projectKey];
+                }
             }
         }
     }

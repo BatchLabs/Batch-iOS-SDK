@@ -61,14 +61,17 @@
     action = [action lowercaseString];
 
     if ([@"add" isEqualToString:action]) {
-        [BALogger debugForDomain:LOCAL_LOG_DOMAIN message:@"Adding tag '%@' to collection '%@'", tag, collection];
-        BatchUserDataEditor *editor = [BatchUser editor];
-        [editor addTag:tag inCollection:collection];
+        [BALogger debugForDomain:LOCAL_LOG_DOMAIN
+                         message:@"Adding string item '%@' to array attribute '%@'", tag, collection];
+
+        BatchProfileEditor *editor = [BatchProfile editor];
+        [editor addItemToStringArrayAttribute:tag forKey:collection error:nil];
         [editor save];
     } else if ([@"remove" isEqualToString:action]) {
-        [BALogger debugForDomain:LOCAL_LOG_DOMAIN message:@"Removing tag '%@' from collection '%@'", tag, collection];
-        BatchUserDataEditor *editor = [BatchUser editor];
-        [editor removeTag:tag fromCollection:collection];
+        [BALogger debugForDomain:LOCAL_LOG_DOMAIN
+                         message:@"Removing string item '%@' from array attribute '%@'", tag, collection];
+        BatchProfileEditor *editor = [BatchProfile editor];
+        [editor removeItemFromStringArrayAttribute:tag forKey:collection error:nil];
         [editor save];
     } else {
         [BALogger debugForDomain:LOCAL_LOG_DOMAIN

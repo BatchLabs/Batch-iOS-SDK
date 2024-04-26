@@ -29,34 +29,6 @@
  */
 + (void)batchDidStart;
 
-/*!
- @method handleURL:
- @abstract Give the URL to Batch systems.
- @discussion Call this method in application:openURL:sourceApplication:annotation: of your UIApplicationDelegate
- @discussion You can call this method from any thread.
- @param url         :   The input URL.
- @return YES if Batch take care of this URL, No otherwise.
- @warning The delegate methods is always called in the main thread!
- */
-+ (BOOL)handleURL:(NSURL *)url __attribute__((warn_unused_result));
-
-/*!
- @method setCustomUserIdentifier:
- @abstract Set the custom user identifier to Batch, you should use this method if you have your own login system.
- @discussion You can call this method from any thread.
- @param identifier  :   The unique user identifier.
- @warning  Be carefull: Do not use it if you don't know what you are doing, giving a bad custom user ID can result in
- failure into offer delivery and restore.
- */
-+ (void)setCustomUserIdentifier:(NSString *)identifier;
-
-/*!
- @method setUseAdvancedDeviceInformation:
- @abstract Set if Batch can try to use advanced device information (default = YES)
- @warning You should only use it if you know what you are doing.
- */
-+ (void)setUseAdvancedDeviceInformation:(BOOL)use;
-
 @end
 
 /*!

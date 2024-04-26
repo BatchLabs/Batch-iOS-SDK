@@ -55,10 +55,7 @@
     NSArray *events = [_datasource eventsToSend:100];
     XCTAssertTrue([events count] == 3, @"Event table shound contain 3 events");
 
-    events = [_datasource eventsToSend:2];
-    XCTAssertTrue([events count] == 2, @"Event table shound contain 2 events when limited to 2");
-
-    BAEvent *event = [events objectAtIndex:0];
+    BAEvent *event = [events lastObject];
     XCTAssertTrue([eventName2 isEqualToString:event.name], @"Event name badly persisted");
     XCTAssertTrue(event.state == BAEventStateNew, @"Bad event state");
     NSDictionary *parameters = [BAJson deserializeAsDictionary:event.parameters error:nil];
@@ -66,8 +63,12 @@
     XCTAssertTrue([eventValue isEqualToString:[parameters objectForKey:eventKey]],
                   @"Event parameters wrongly deserialized");
 
-    event = [events objectAtIndex:1];
+    event = [events firstObject];
     XCTAssertTrue([eventName isEqualToString:event.name], @"Event name badly persisted");
+
+    // Test limiting
+    events = [_datasource eventsToSend:2];
+    XCTAssertTrue([events count] == 2, @"Event table shound contain 2 events when limited to 2");
 }
 
 - (void)testCollapsableInsert {
@@ -89,11 +90,11 @@
     NSArray *events = [_datasource eventsToSend:100];
     XCTAssertTrue([events count] == 2, @"Event table shound contain 2 collapsed events");
 
-    BAEvent *event = [events objectAtIndex:0];
+    BAEvent *event = [events lastObject];
     XCTAssertTrue([eventName2 isEqualToString:event.name], @"Event name badly persisted");
     XCTAssertTrue(event.state == BAEventStateNew, @"Bad event state");
 
-    event = [events objectAtIndex:1];
+    event = [events firstObject];
     XCTAssertTrue([eventName isEqualToString:event.name], @"Event name badly persisted");
 }
 
@@ -129,6 +130,21 @@
     // If event is nil, all is good
     if (event) {
         XCTAssertFalse([eventName isEqualToString:event.name], @"Event deletion failed");
+    }
+}
+
+/// Events should be returned in the same order as they're inserted
+- (void)testOrder {
+    NSArray<NSString *> *eventNames = @[ @"_FIRST", @"E.SECOND", @"THIRD", @"_FOURTH" ];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wall"
+    for (NSString *name in eventNames) {
+        [_datasource addEvent:[BAEvent eventWithName:name]];
+    }
+#pragma clang diagnostic pop
+    NSArray<BAEvent *> *eventsToSend = [_datasource eventsToSend:4];
+    for (int i = 0; i < eventsToSend.count; i++) {
+        XCTAssertEqualObjects(eventsToSend[i].name, eventNames[i]);
     }
 }
 

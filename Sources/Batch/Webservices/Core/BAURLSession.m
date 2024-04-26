@@ -19,11 +19,7 @@
     dispatch_once(&onceToken, ^{
       NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration ephemeralSessionConfiguration];
       // Enforce TLS 1.2
-      if (@available(iOS 13, tvOS 13, watchOS 6, macOS 10.15, *)) {
-          sessionConfig.TLSMinimumSupportedProtocolVersion = tls_protocol_version_TLSv12;
-      } else {
-          sessionConfig.TLSMinimumSupportedProtocol = kTLSProtocol12;
-      }
+      sessionConfig.TLSMinimumSupportedProtocolVersion = tls_protocol_version_TLSv12;
 
       session = [NSURLSession sessionWithConfiguration:sessionConfig delegate:nil delegateQueue:nil];
     });

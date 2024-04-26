@@ -2,6 +2,7 @@
 #import <Batch/BALogger.h>
 #import <Batch/BATJsonDictionary.h>
 #import <Batch/BAUserEventBuiltinActions.h>
+#import <Batch/BatchProfile.h>
 #import <Batch/BatchUser.h>
 
 #define LOCAL_LOG_DOMAIN @"BatchActions"
@@ -36,19 +37,27 @@
         return;
     }
 
-    BatchEventData *data = [BatchEventData new];
+    BatchEventAttributes *attributes = [BatchEventAttributes new];
     NSString *label = [json objectForKey:@"l" kindOfClass:[NSString class] allowNil:YES error:&err];
+    if ([label stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]].length > 0) {
+        [attributes putString:label forKey:@"$label"];
+    }
 
     NSArray *tags = [json objectForKey:@"t" kindOfClass:[NSArray class] allowNil:YES error:&err];
     if ([tags count] > 0) {
+        NSMutableArray *safeTags = [NSMutableArray arrayWithCapacity:tags.count];
         for (NSObject *tagValue in tags) {
-            if ([tagValue isKindOfClass:[NSString class]]) {
-                [data addTag:(NSString *)tagValue];
+            if ([tagValue isKindOfClass:[NSString class]] && ((NSString *)tagValue).length > 0) {
+                [safeTags addObject:tagValue];
             } else {
                 [BALogger debugForDomain:LOCAL_LOG_DOMAIN
                                  message:@"Could not add tag in track event action: invalid class '%@'",
                                          NSStringFromClass([tagValue class])];
             }
+        }
+
+        if (safeTags.count > 0) {
+            [attributes putStringArray:safeTags forKey:@"$tags"];
         }
     }
 
@@ -61,9 +70,9 @@
             if ([argValue isKindOfClass:[NSString class]]) {
                 NSDate *dateValue = [self parseISO8601:(NSString *)argValue];
                 if (dateValue != nil) {
-                    [data putDate:dateValue forKey:key];
+                    [attributes putDate:dateValue forKey:key];
                 } else {
-                    [data putString:(NSString *)argValue forKey:key];
+                    [attributes putString:(NSString *)argValue forKey:key];
                 }
             } else if ([argValue isKindOfClass:[NSNumber class]]) {
                 NSNumber *numberAttr = (NSNumber *)argValue;
@@ -77,23 +86,23 @@
                                  message:@"Args data for key '%@' is a NSNumber: %s", key, ctype];
                 if (numberAttr == (void *)kCFBooleanFalse || (NSNumber *)numberAttr == (void *)kCFBooleanTrue) {
                     // Boolean value
-                    [data putBool:[numberAttr boolValue] forKey:key];
+                    [attributes putBool:[numberAttr boolValue] forKey:key];
                 } else if (strcmp(ctype, @encode(char)) == 0 || strcmp(ctype, @encode(short)) == 0 ||
                            strcmp(ctype, @encode(int)) == 0 || strcmp(ctype, @encode(long)) == 0 ||
                            strcmp(ctype, @encode(long long)) == 0) {
                     // Long long might be truncated on 32 bit platforms
-                    [data putInteger:[numberAttr integerValue] forKey:key];
+                    [attributes putInteger:[numberAttr integerValue] forKey:key];
                 } else if (strcmp(ctype, @encode(float)) == 0 || strcmp(ctype, @encode(double)) == 0) {
                     // Decimal values
-                    [data putDouble:[numberAttr doubleValue] forKey:key];
+                    [attributes putDouble:[numberAttr doubleValue] forKey:key];
                 } else if (strcmp(ctype, @encode(BOOL)) == 0) {
                     // According to the documentation that's not supported, but give it a shot
-                    [data putBool:[numberAttr boolValue] forKey:key];
+                    [attributes putBool:[numberAttr boolValue] forKey:key];
                 } else {
                     // Try to make it work in a NSInteger
                     NSInteger val = [numberAttr integerValue];
                     if ([numberAttr isEqualToNumber:[NSNumber numberWithInteger:val]]) {
-                        [data putInteger:[numberAttr integerValue] forKey:key];
+                        [attributes putInteger:[numberAttr integerValue] forKey:key];
                     }
                 }
             } else {
@@ -104,7 +113,7 @@
         }
     }
 
-    [BatchUser trackEvent:event withLabel:label associatedData:data];
+    [BatchProfile trackEventWithName:event attributes:attributes];
 }
 
 + (NSDate *)parseISO8601:(NSString *)dateString {

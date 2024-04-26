@@ -74,6 +74,7 @@
                               didReceiveNotificationResponse:notificationResponseMock]);
 
     BatchUNUserNotificationCenterDelegate *delegate = [BatchUNUserNotificationCenterDelegate new];
+    delegate.showForegroundNotifications = false;
 
     __block BOOL completionHandlerCalled = false;
 
@@ -106,23 +107,15 @@
     // Test that the foreground option works in both modes
     OCMExpect([baPushCenterMock handleUserNotificationCenter:[OCMArg any]
                                      willPresentNotification:[OCMArg any]
-                               willShowSystemForegroundAlert:false]);
+                               willShowSystemForegroundAlert:true]);
     OCMExpect([baPushCenterMock handleUserNotificationCenter:[OCMArg any]
                                      willPresentNotification:[OCMArg any]
-                               willShowSystemForegroundAlert:true]);
+                               willShowSystemForegroundAlert:false]);
 
     BatchUNUserNotificationCenterDelegate *delegate = [BatchUNUserNotificationCenterDelegate new];
     // Test default value
-    XCTAssertFalse(delegate.showForegroundNotifications);
+    XCTAssertTrue(delegate.showForegroundNotifications);
 
-    // Test that the delegate doesn't show foreground notifications
-    [delegate userNotificationCenter:unNotificationCenterMock
-             willPresentNotification:notificationMock
-               withCompletionHandler:^(UNNotificationPresentationOptions options) {
-                 XCTAssertEqual(0, options);
-               }];
-
-    delegate.showForegroundNotifications = true;
     // Test that the delegate can show foreground notifications
     [delegate userNotificationCenter:unNotificationCenterMock
              willPresentNotification:notificationMock
@@ -135,6 +128,14 @@
                      expectedOptions |= UNNotificationPresentationOptionAlert;
                  }
                  XCTAssertEqual(expectedOptions, options);
+               }];
+
+    // Test that the delegate doesn't show foreground notifications
+    delegate.showForegroundNotifications = false;
+    [delegate userNotificationCenter:unNotificationCenterMock
+             willPresentNotification:notificationMock
+               withCompletionHandler:^(UNNotificationPresentationOptions options) {
+                 XCTAssertEqual(0, options);
                }];
 
     OCMVerifyAll(baPushCenterMock);

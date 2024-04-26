@@ -8,6 +8,7 @@
 #import <XCTest/XCTest.h>
 #import "BACoreCenter.h"
 #import "BatchCore.h"
+#import "BatchTests-Swift.h"
 #import "DeeplinkDelegateStub.h"
 
 #import "OCMock.h"
@@ -23,7 +24,7 @@
 }
 
 - (void)tearDown {
-    [Batch setDeeplinkDelegate:nil];
+    [BatchSDK setDeeplinkDelegate:nil];
 }
 
 - (void)testNoDelegate {
@@ -31,6 +32,7 @@
     OCMStub([uiApplicationMock sharedApplication]).andReturn(uiApplicationMock);
 
     [[BACoreCenter instance] openDeeplink:@"https://apple.fr" inApp:NO];
+    [self waitForMainThreadLoop];
 
     [self verifyOpenURL:uiApplicationMock];
 }
@@ -39,14 +41,14 @@
     id uiApplicationMock = OCMClassMock([UIApplication class]);
     OCMStub([uiApplicationMock sharedApplication]).andReturn(uiApplicationMock);
 
-    [[BACoreCenter instance] openDeeplink:@"poula%" inApp:NO];
+    [[BACoreCenter instance] openDeeplink:@" https://poula" inApp:NO];
 
     [self rejectOpenURL:uiApplicationMock];
 
     DeeplinkDelegateStub *delegate = [DeeplinkDelegateStub new];
-    Batch.deeplinkDelegate = delegate;
+    BatchSDK.deeplinkDelegate = delegate;
 
-    [[BACoreCenter instance] openDeeplink:@"poula%" inApp:NO];
+    [[BACoreCenter instance] openDeeplink:@" https://poula" inApp:NO];
     [self waitForMainThreadLoop];
 
     XCTAssertTrue(delegate.hasOpenBeenCalled);
@@ -54,7 +56,7 @@
 
 - (void)testDelegateRemoval {
     DeeplinkDelegateStub *delegate = [DeeplinkDelegateStub new];
-    Batch.deeplinkDelegate = delegate;
+    BatchSDK.deeplinkDelegate = delegate;
     id uiApplicationMock = OCMClassMock([UIApplication class]);
     OCMStub([uiApplicationMock sharedApplication]).andReturn(uiApplicationMock);
 
@@ -62,7 +64,7 @@
     [self waitForMainThreadLoop];
     XCTAssertTrue(delegate.hasOpenBeenCalled);
 
-    Batch.deeplinkDelegate = nil;
+    BatchSDK.deeplinkDelegate = nil;
     [[BACoreCenter instance] openDeeplink:@"https://apple.fr" inApp:NO];
     [self waitForMainThreadLoop];
     [self verifyOpenURL:uiApplicationMock];
@@ -70,7 +72,7 @@
 
 - (void)testDelegate {
     DeeplinkDelegateStub *delegate = [DeeplinkDelegateStub new];
-    Batch.deeplinkDelegate = delegate;
+    BatchSDK.deeplinkDelegate = delegate;
     id uiApplicationMock = OCMClassMock([UIApplication class]);
     OCMStub([uiApplicationMock sharedApplication]).andReturn(uiApplicationMock);
 
@@ -86,11 +88,11 @@
     // Otherwise, we can't test this accurately
     @autoreleasepool {
         DeeplinkDelegateStub *delegate = [DeeplinkDelegateStub new];
-        [Batch setDeeplinkDelegate:delegate];
-        XCTAssertEqual(Batch.deeplinkDelegate, delegate);
+        [BatchSDK setDeeplinkDelegate:delegate];
+        XCTAssertEqual(BatchSDK.deeplinkDelegate, delegate);
         delegate = nil;
     }
-    XCTAssertNil(Batch.deeplinkDelegate);
+    XCTAssertNil(BatchSDK.deeplinkDelegate);
 }
 
 - (void)verifyOpenURL:(id)mock {
@@ -99,19 +101,6 @@
 
 - (void)rejectOpenURL:(id)mock {
     OCMReject([mock openURL:[OCMArg any] options:[OCMArg any] completionHandler:[OCMArg any]]);
-}
-
-- (void)waitForMainThreadLoop {
-    // Since openDeeplink schedules async work on the main thread, we have
-    // to perform a little dance to correctly test the behaviour
-    // To work around this, we schedule something to run on the main thread
-    // AFTER other work has been submitted, and wait for our dummy
-    // task to finish
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for a main thread loop run"];
-    dispatch_async(dispatch_get_main_queue(), ^{
-      [expectation fulfill];
-    });
-    [self waitForExpectations:@[ expectation ] timeout:3.0];
 }
 
 @end

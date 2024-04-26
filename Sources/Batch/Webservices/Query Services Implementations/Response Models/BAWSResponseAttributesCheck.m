@@ -21,6 +21,7 @@
     _actionString = [response objectForKey:@"action"];
     _version = [response objectForKey:@"ver"];
     _time = [response objectForKey:@"t"];
+    _projectKey = [response objectForKey:@"project_key"];
 
     // Sanity checks yay
     if (![_actionString isKindOfClass:[NSString class]]) {
@@ -35,6 +36,9 @@
         _time = nil;
     }
 
+    if ([BANullHelper isStringEmpty:_projectKey]) {
+        _projectKey = nil;
+    }
     return self;
 }
 

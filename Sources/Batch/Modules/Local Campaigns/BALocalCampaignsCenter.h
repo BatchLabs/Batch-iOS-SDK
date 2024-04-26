@@ -13,7 +13,7 @@
 #import <Batch/BALocalCampaignsManager.h>
 #import <Batch/BALocalCampaignsTracker.h>
 
-@class BatchEventData;
+@class BatchEventAttributes;
 
 /*
  Batch's In-App Messaging Module.
@@ -55,7 +55,7 @@
  */
 - (void)processTrackerPublicEventNamed:(nonnull NSString *)name
                                  label:(nullable NSString *)label
-                                  data:(nullable BatchEventData *)data;
+                            attributes:(nullable BatchEventAttributes *)attributes;
 
 /**
  Notify this module of the display of an In-App Campaign.

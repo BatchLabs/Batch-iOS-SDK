@@ -101,26 +101,14 @@
 
 + (UIActivityIndicatorViewStyle)styleForPreferredSize:(BAMSGActivityIndicatorViewSize)preferredSize {
     UIActivityIndicatorViewStyle style;
-    if (@available(iOS 13.0, *)) {
-        switch (preferredSize) {
-            case BAMSGActivityIndicatorViewSizeLarge:
-                style = UIActivityIndicatorViewStyleLarge;
-                break;
-            case BAMSGActivityIndicatorViewSizeMedium:
-            default:
-                style = UIActivityIndicatorViewStyleMedium;
-                break;
-        }
-    } else {
-        switch (preferredSize) {
-            case BAMSGActivityIndicatorViewSizeLarge:
-                style = UIActivityIndicatorViewStyleWhiteLarge;
-                break;
-            case BAMSGActivityIndicatorViewSizeMedium:
-            default:
-                style = UIActivityIndicatorViewStyleWhite;
-                break;
-        }
+    switch (preferredSize) {
+        case BAMSGActivityIndicatorViewSizeLarge:
+            style = UIActivityIndicatorViewStyleLarge;
+            break;
+        case BAMSGActivityIndicatorViewSizeMedium:
+        default:
+            style = UIActivityIndicatorViewStyleMedium;
+            break;
     }
     return style;
 }

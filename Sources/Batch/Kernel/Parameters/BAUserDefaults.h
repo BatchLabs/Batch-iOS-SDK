@@ -58,22 +58,6 @@
  */
 - (void)removeObjectForKey:(NSString *_Nonnull)key;
 
-/*!
- @method saveCustomObject:key:
- @abstract Save a custom object implementing NSCoding.
- @param object  :   An object implementing NSCoding
- @param key     :   Unique key to same this object on.
- */
-- (void)saveCustomObject:(id _Nonnull)object key:(NSString *_Nonnull)key;
-
-/*!
- @method loadCustomObjectWithKey:
- @abstract Load a custom object implementing NSCoding.
- @param key     :   Stored key.
- @return The found object or NULL.
- */
-- (id _Nullable)loadCustomObjectWithKey:(NSString *_Nonnull)key;
-
 /**
  Remove all k/v
  */

@@ -109,14 +109,8 @@ NSString *const kBATPushOpenedNotificationOriginatesFromAppDelegate = @"is_from_
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
 }
 
-// Clear the app's notifications in the notification center. Also clears your badge.
 + (void)dismissNotifications {
-    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:1];
-    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
-}
-
-+ (void)enableAutomaticDeeplinkHandling:(BOOL)handleDeeplinks {
-    [[BAPushCenter instance] setHandleDeeplinks:handleDeeplinks];
+    [[UNUserNotificationCenter currentNotificationCenter] removeAllDeliveredNotifications];
 }
 
 + (NSString *)deeplinkFromUserInfo:(NSDictionary *)userInfo {
@@ -142,21 +136,6 @@ NSString *const kBATPushOpenedNotificationOriginatesFromAppDelegate = @"is_from_
     return [[BAPushCenter instance] isBatchPush:userInfo];
 }
 
-+ (void)handleNotification:(NSDictionary *)userInfo {
-    [[BAPushCenter instance] handleNotification:userInfo];
-}
-
-+ (void)handleNotification:(NSDictionary *)userInfo actionIdentifier:(NSString *)identifier {
-    [[BAPushCenter instance] handleNotification:userInfo actionIdentifier:identifier];
-}
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-+ (void)handleRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
-    [[BAPushCenter instance] handleRegisterUserNotificationSettings:notificationSettings];
-}
-#pragma clang diagnostic pop
-
 #pragma mark -
 #pragma mark Private methods
 
@@ -175,13 +154,10 @@ NSString *const kBATPushOpenedNotificationOriginatesFromAppDelegate = @"is_from_
                                       @"'application:didFinishLaunchingWithOptions:'. This can cause erratic behaviour "
                                       @"with opens, mobile landings and other features. Please use "
                                       @"BatchUNUserNotificationCenterDelegate or implement your own."];
-            if (@available(iOS 13.0, *)) {
-                if ([BAApplicationLifecycle applicationUsesUIScene]) {
-                    [BALogger
-                        publicForDomain:@"Push"
-                                message:@"⚠️ App is using UIScene without a UNUserNotificationCenterDelegate: "
-                                        @"Direct Opens, Mobile Landings, Deeplinks will not work."];
-                }
+            if ([BAApplicationLifecycle applicationUsesUIScene]) {
+                [BALogger publicForDomain:@"Push"
+                                  message:@"⚠️ App is using UIScene without a UNUserNotificationCenterDelegate: "
+                                          @"Direct Opens, Mobile Landings, Deeplinks will not work."];
             }
         }
     }
@@ -282,20 +258,25 @@ NSString *const kBATPushOpenedNotificationOriginatesFromAppDelegate = @"is_from_
     [self setNotificationType:type];
 }
 
-- (void)requestNotificationAuthorization {
+- (void)requestNotificationAuthorizationWithCompletionHandler:(void (^)(BOOL granted,
+                                                                        NSError *error))completionHandler {
+    [self setShouldAutomaticallyRetreivePushToken:YES];
+
     id<BAPushSystemHelperProtocol> pushSystemHelper =
         [BAInjection injectProtocol:@protocol(BAPushSystemHelperProtocol)];
-    [pushSystemHelper registerForRemoteNotificationsTypes:[self notificationType]
-                             providesNotificationSettings:self.supportsAppNotificationSettings];
 
-    [self setShouldAutomaticallyRetreivePushToken:YES];
+    [pushSystemHelper registerForRemoteNotificationsTypes:[self notificationType]
+                             providesNotificationSettings:self.supportsAppNotificationSettings
+                                        completionHandler:completionHandler];
 }
 
-- (void)requestProvisionalNotificationAuthorization {
+- (void)requestProvisionalNotificationAuthorizationWithCompletionHandler:(void (^)(BOOL granted,
+                                                                                   NSError *error))completionHandler {
     id<BAPushSystemHelperProtocol> pushSystemHelper =
         [BAInjection injectProtocol:@protocol(BAPushSystemHelperProtocol)];
     [pushSystemHelper registerForProvisionalNotifications:[self notificationType]
-                             providesNotificationSettings:self.supportsAppNotificationSettings];
+                             providesNotificationSettings:self.supportsAppNotificationSettings
+                                        completionHandler:completionHandler];
 }
 
 - (void)openSystemNotificationSettings {
@@ -307,12 +288,6 @@ NSString *const kBATPushOpenedNotificationOriginatesFromAppDelegate = @"is_from_
 
 - (void)refreshToken {
     [[UIApplication sharedApplication] registerForRemoteNotifications];
-}
-
-+ (void)setNotificationsCategories:(NSSet *)categories {
-    id<BAPushSystemHelperProtocol> pushSystemHelper =
-        [BAInjection injectProtocol:@protocol(BAPushSystemHelperProtocol)];
-    [pushSystemHelper registerCategories:categories];
 }
 
 - (void)registerToken:(NSData *)token {
@@ -477,25 +452,6 @@ NSString *const kBATPushOpenedNotificationOriginatesFromAppDelegate = @"is_from_
     [BATrackerCenter trackPrivateEvent:@"_PUSH_ACTION" parameters:eventParameters];
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-- (void)internalHandleRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
-    BANotificationAuthorization *notifAuth = [BACoreCenter instance].status.notificationAuthorization;
-    BOOL alertEnabled = (notificationSettings.types | UIUserNotificationTypeAlert) > 0;
-    if (alertEnabled &&
-        [BANotificationAuthorization applicationSettings] == BatchPushNotificationSettingStatusUndefined) {
-        [notifAuth setApplicationSettings:BatchPushNotificationSettingStatusEnabled skipServerEvent:true];
-    }
-    [notifAuth settingsMayHaveChanged];
-
-    if (![[BAPushCenter instance] shouldAutomaticallyRetreivePushToken]) {
-        return;
-    }
-
-    [[UIApplication sharedApplication] registerForRemoteNotifications];
-}
-#pragma clang diagnostic pop
-
 #pragma mark -
 #pragma mark Manual integration methods
 
@@ -554,43 +510,6 @@ NSString *const kBATPushOpenedNotificationOriginatesFromAppDelegate = @"is_from_
     }
     return TRUE;
 }
-
-- (void)handleNotification:(NSDictionary *)userInfo {
-    if ([self passesManualIntegrationPreflightChecks]) {
-        if (![userInfo isKindOfClass:[NSDictionary class]] || [userInfo count] == 0) {
-            [BALogger publicForDomain:@"Push" message:@"Cannot process a push payload that's null or empty. Ignoring."];
-            return;
-        }
-
-        [self parseNotification:userInfo fetchCompletionHandler:nil originatesFromUNDelegateResponse:NO];
-    }
-}
-
-- (void)handleNotification:(NSDictionary *)userInfo actionIdentifier:(NSString *)identifier {
-    if ([self passesManualIntegrationPreflightChecks]) {
-        if (![userInfo isKindOfClass:[NSDictionary class]] || [userInfo count] == 0) {
-            [BALogger publicForDomain:@"Push" message:@"Cannot process a push payload that's null or empty. Ignoring."];
-            return;
-        }
-
-        if (![identifier isKindOfClass:[NSString class]] || [identifier length] == 0) {
-            [BALogger publicForDomain:@"Push"
-                              message:@"Cannot process a push action identifier that's null or empty. Ignoring."];
-            return;
-        }
-
-        [self internalHandleNotification:userInfo actionIdentifier:identifier];
-    }
-}
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-- (void)handleRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
-    if ([self passesManualIntegrationPreflightChecks]) {
-        [self internalHandleRegisterUserNotificationSettings:notificationSettings];
-    }
-}
-#pragma clang diagnostic pop
 
 #pragma mark -
 #pragma mark UNUserNotificationCenterDelegate
@@ -654,54 +573,6 @@ NSString *const kBATPushOpenedNotificationOriginatesFromAppDelegate = @"is_from_
                       message:@"Fail to register push token (%@): %@.",
                               [[BACoreCenter instance].status isLikeProduction] ? @"Production" : @"Development",
                               error != nil ? error.localizedDescription : @"Unknown error"];
-}
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-implementations"
-- (void)application:(UIApplication *)application
-    didReceiveRemoteNotification:(NSDictionary *)userInfo
-#pragma clang diagnostic pop
-{
-    [self parseNotification:userInfo fetchCompletionHandler:nil originatesFromUNDelegateResponse:NO];
-}
-
-- (void)application:(UIApplication *)application
-    didReceiveRemoteNotification:(NSDictionary *)userInfo
-          fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler {
-    [self parseNotification:userInfo fetchCompletionHandler:completionHandler originatesFromUNDelegateResponse:NO];
-}
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-implementations"
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-- (void)application:(UIApplication *)application
-    didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
-#pragma clang diagnostic pop
-{
-    [self internalHandleRegisterUserNotificationSettings:notificationSettings];
-}
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-implementations"
-- (void)application:(UIApplication *)application
-    handleActionWithIdentifier:(NSString *)identifier
-         forRemoteNotification:(NSDictionary *)userInfo
-             completionHandler:(void (^)(void))completionHandler
-#pragma clang diagnostic pop
-{
-    [self internalHandleNotification:userInfo actionIdentifier:identifier];
-}
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-implementations"
-- (void)application:(UIApplication *)application
-    handleActionWithIdentifier:(NSString *)identifier
-         forRemoteNotification:(NSDictionary *)userInfo
-              withResponseInfo:(NSDictionary *)responseInfo
-             completionHandler:(void (^)(void))completionHandler
-#pragma clang diagnostic pop
-{
-    [self internalHandleNotification:userInfo actionIdentifier:identifier];
 }
 
 #pragma clang diagnostic pop

@@ -95,24 +95,21 @@
 
 /// Sets Batch's messaging delegate. The delegate is used for optionaly informing your code about analytics event, or
 /// handling In-App messages manually.
-///
-/// - Parameter delegate: Your messaging delegate, weakly retained. Set it to nil to remove it.
-+ (void)setDelegate:(id<BatchMessagingDelegate> _Nullable)delegate;
+@property (class, nullable) id<BatchMessagingDelegate> delegate;
 
 /// Toggles whether Batch should change the shared `AVAudioSession` configuration by itelf.
 ///
 /// It is used to avoid stopping the user's music when displaying a video inapp,
 /// but this may have undesirable effects on your app.
-/// - Parameter canReconfigureAVAudioSession: Whether or not Batch can change the `AVAudioSession`.
-+ (void)setCanReconfigureAVAudioSession:(BOOL)canReconfigureAVAudioSession;
+@property (class) BOOL canReconfigureAVAudioSession;
 
 /// Toggles whether Batch should display the messaging views automatically when coming from a notification.
+/// Default: true
 ///
 /// In-App messaging is not affected by this. If you want to manually display the In-App message, call
 /// ``BatchMessaging/setDelegate:`` with a delegate that implement ``BatchMessagingDelegate/batchInAppMessageReady:``.
 /// - Note: If automatic mode is enabled, manual integration methods will not work.
-/// - Parameter isAutomaticModeOn: Whether to enable automatic mode or not.
-+ (void)setAutomaticMode:(BOOL)isAutomaticModeOn NS_SWIFT_NAME(setAutomaticMode(on:));
+@property (class) BOOL automaticMode;
 
 /// Toogles whether BatchMessaging should enter its "do not disturb" (DnD) mode or exit it.
 ///
@@ -220,7 +217,7 @@
 @end
 
 /// BatchMessaging error code constants.
-enum {
+typedef NS_ENUM(NSInteger, BatchMessagingError) {
 
     /// The current iOS version is too old
     BatchMessagingErrorIncompatibleIOSVersion = -1001,
@@ -243,6 +240,3 @@ enum {
     /// Batch is opted-out from
     BatchMessagingErrorOptedOut = -1007
 };
-
-/// @typedef BatchMessagingError
-typedef NSInteger BatchMessagingError;

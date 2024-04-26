@@ -73,10 +73,8 @@ static NSString *kBAMSGInterstitialViewControllerHeroConstraint = @"BAMainHeroCo
         self.flipHeroHorizontal = NO;
 
         // Set that delegate to make iOS 13's swipe to dismiss listenable
-        if (@available(iOS 13.0, *)) {
-            self.presentationController.delegate = self;
-            [self readModalPresentationStyleFromStyle:style];
-        }
+        self.presentationController.delegate = self;
+        [self readModalPresentationStyleFromStyle:style];
 
         displayHeroContent = hasHeroContent;
         shouldWaitForImage = waitForImage;
@@ -834,7 +832,8 @@ static NSString *kBAMSGInterstitialViewControllerHeroConstraint = @"BAMainHeroCo
                                                      views:NSDictionaryOfVariableBindings(heroLoadingPlaceholder)]];
 
         heroActivityIndicator =
-            [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+            [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleMedium];
+        heroActivityIndicator.color = [UIColor whiteColor];
         heroActivityIndicator.translatesAutoresizingMaskIntoConstraints = NO;
         heroActivityIndicator.hidesWhenStopped = YES;
         [heroActivityIndicator startAnimating];
@@ -866,9 +865,9 @@ static NSString *kBAMSGInterstitialViewControllerHeroConstraint = @"BAMainHeroCo
 
             if ([@"loader" isEqualToString:rule]) {
                 if ([@"light" isEqualToString:value]) {
-                    [heroActivityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhite];
+                    heroActivityIndicator.color = [UIColor whiteColor];
                 } else if ([@"dark" isEqualToString:value]) {
-                    [heroActivityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
+                    heroActivityIndicator.color = [UIColor grayColor];
                 }
             }
         }

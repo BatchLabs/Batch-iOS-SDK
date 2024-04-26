@@ -9,7 +9,7 @@
 
 #import <Batch/BALocalCampaignSignalProtocol.h>
 
-@class BatchEventData;
+@class BatchEventAttributes;
 
 @interface BAPublicEventTrackedSignal : NSObject <BALocalCampaignSignalProtocol>
 
@@ -17,10 +17,10 @@
 
 @property (nullable, copy) NSString *label;
 
-@property (nullable, assign) BatchEventData *data;
+@property (nullable, assign) BatchEventAttributes *attributes;
 
 - (nonnull instancetype)initWithName:(nonnull NSString *)name
                                label:(nullable NSString *)label
-                                data:(nullable BatchEventData *)data;
+                          attributes:(nullable BatchEventAttributes *)attributes;
 
 @end

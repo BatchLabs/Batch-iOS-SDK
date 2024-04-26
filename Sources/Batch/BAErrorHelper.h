@@ -34,7 +34,6 @@ typedef NS_ENUM(NSInteger, BAInternalFailReason) {
      */
     BAInternalFailReasonOptedOut = -60
 };
-typedef NSInteger BatchFailReason;
 
 /*!
  @class BAErrorHelper

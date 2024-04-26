@@ -39,38 +39,29 @@
     id unNotificationMock = OCMClassMock([UNUserNotificationCenter class]);
     OCMExpect([unNotificationMock currentNotificationCenter]).andReturn(nil);
 
-    BOOL dev;
     /*** Start ***/
-
-    // Check development mode.
-    dev = [Batch isRunningInDevelopmentMode];
-    XCTAssertFalse(dev, @"Dev mode should be false.");
 
     // Start Batch and stop it with different keys.
     // We can't test the feedback on key error, but we can test that it does not crash.
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wall"
-    [Batch startWithAPIKey:nil];
+    [BatchSDK startWithAPIKey:nil];
 #pragma clang diagnostic pop
 
     [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:5]];
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillTerminateNotification object:nil];
 
-    [Batch startWithAPIKey:@""];
+    [BatchSDK startWithAPIKey:@""];
 
     [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:5]];
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillTerminateNotification object:nil];
 
-    [Batch startWithAPIKey:@"MYDEVKEY"];
+    [BatchSDK startWithAPIKey:@"MYDEVKEY"];
 
     [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:5]];
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillTerminateNotification object:nil];
 
     [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:5]];
-
-    // Check development mode.
-    dev = [Batch isRunningInDevelopmentMode];
-    XCTAssertFalse(dev, @"Dev mode should be false.");
 }
 
 - (void)testLoggerDelegate {
@@ -78,13 +69,13 @@
 
     XCTAssertNil(delegate.message);
 
-    [Batch setLoggerDelegate:delegate];
+    [BatchSDK setLoggerDelegate:delegate];
 
     // Force logging
     ((void (*)(id, SEL))objc_msgSend)(NSClassFromString(@"BALogger"), NSSelectorFromString(@"enableInternalLogs"));
 
     // Trigger a message
-    [Batch optIn];
+    [BatchSDK optIn];
 
     XCTAssertNotNil(delegate.message);
 
@@ -94,7 +85,7 @@
     ((void (*)(id, SEL))objc_msgSend)(NSClassFromString(@"BALogger"), NSSelectorFromString(@"disableInternalLogs"));
 
     // Trigger a message
-    [Batch optIn];
+    [BatchSDK optIn];
 
     XCTAssertNil(delegate.message);
 }

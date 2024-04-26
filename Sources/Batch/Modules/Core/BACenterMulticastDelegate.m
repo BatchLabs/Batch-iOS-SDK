@@ -18,6 +18,7 @@
 #import <Batch/BAPushCenter.h>
 #import <Batch/BATrackerCenter.h>
 #import <Batch/BAUserCenter.h>
+#import <Batch/Batch-Swift.h>
 
 @implementation BACenterMulticastDelegate
 
@@ -30,7 +31,8 @@ static NSArray *kPluginsList = nil;
     kPluginsList = @[
         [BACoreCenter class], [BAPushCenter class], [BATrackerCenter class], [BAUserCenter class],
         [BAMessagingCenter class], [BAActionsCenter class], [BALocalCampaignsCenter class],
-        [BAEventDispatcherCenter class], [BADisplayReceiptCenter class]
+        [BAEventDispatcherCenter class], [BADisplayReceiptCenter class], [BAProfileCenter class],
+        [BATDataCollectionCenter class]
     ];
 }
 
@@ -67,39 +69,4 @@ static NSArray *kPluginsList = nil;
         }
     }
 }
-
-// Give the URL to Batch systems.
-+ (BOOL)handleURL:(NSURL *)url {
-    if (!url) {
-        return NO;
-    }
-
-    BOOL hasHandled = NO;
-
-    for (id<BACenterProtocol> plugin in kPluginsList) {
-        if ([plugin respondsToSelector:@selector(handleURL:)]) {
-            hasHandled |= [plugin handleURL:url];
-        }
-    }
-
-    return hasHandled;
-}
-
-// Set the custom user identifier to Batch, you should use this method if you have your own login system.
-+ (void)setCustomUserIdentifier:(NSString *)identifier {
-    for (id<BACenterProtocol> plugin in kPluginsList) {
-        if ([plugin respondsToSelector:@selector(setCustomUserIdentifier:)]) {
-            [plugin setCustomUserIdentifier:identifier];
-        }
-    }
-}
-
-+ (void)setUseAdvancedDeviceInformation:(BOOL)use {
-    for (id<BACenterProtocol> plugin in kPluginsList) {
-        if ([plugin respondsToSelector:@selector(setUseAdvancedDeviceInformation:)]) {
-            [plugin setUseAdvancedDeviceInformation:use];
-        }
-    }
-}
-
 @end

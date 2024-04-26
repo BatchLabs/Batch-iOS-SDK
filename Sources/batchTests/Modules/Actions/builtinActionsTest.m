@@ -1,6 +1,7 @@
 #import <Batch/Batch.h>
 #import <XCTest/XCTest.h>
 #import "BAActionsCenter.h"
+#import "BatchTests-Swift.h"
 #import "DeeplinkDelegateStub.h"
 #import "OCMock.h"
 
@@ -10,23 +11,28 @@
 @implementation builtinActionsTest
 
 - (void)tearDown {
-    [Batch setDeeplinkDelegate:nil];
+    [BatchSDK setDeeplinkDelegate:nil];
 }
 
 - (void)testTagEditAction {
-    id batchUserMock = OCMClassMock([BatchUser class]);
-    id batchUserDataEditorMock = OCMClassMock([BatchUserDataEditor class]);
-    [batchUserDataEditorMock setExpectationOrderMatters:YES];
+    id batchProfileMock = OCMClassMock([BatchProfile class]);
+    id batchProfileDataEditorMock = OCMClassMock([BatchProfileEditor class]);
+    [batchProfileDataEditorMock setExpectationOrderMatters:YES];
 
-    OCMExpect([batchUserMock editor]).andReturn(batchUserDataEditorMock);
-    OCMExpect([batchUserDataEditorMock addTag:@"foo" inCollection:@"bar"]);
-    OCMExpect([batchUserDataEditorMock save]);
+    OCMExpect([batchProfileMock editor]).andReturn(batchProfileDataEditorMock);
+    OCMExpect([batchProfileDataEditorMock addItemToStringArrayAttribute:@"foo"
+                                                                 forKey:@"bar"
+                                                                  error:[OCMArg anyObjectRef]]);
+    OCMExpect([batchProfileDataEditorMock save]);
 
-    OCMExpect([batchUserMock editor]).andReturn(batchUserDataEditorMock);
-    OCMExpect([(BatchUserDataEditor *)batchUserDataEditorMock removeTag:@"foo" fromCollection:@"bar"]);
-    OCMExpect([batchUserDataEditorMock save]);
+    OCMExpect([batchProfileMock editor]).andReturn(batchProfileDataEditorMock);
+    OCMExpect([(BatchProfileEditor *)batchProfileDataEditorMock
+        removeItemFromStringArrayAttribute:@"foo"
+                                    forKey:@"bar"
+                                     error:[OCMArg anyObjectRef]]);
+    OCMExpect([batchProfileDataEditorMock save]);
 
-    OCMReject([batchUserMock editor]);
+    OCMReject([batchProfileMock editor]);
 
     [[BAActionsCenter instance] performAction:@"batch.user.tag"
                                      withArgs:@{@"c" : @"bar", @"t" : @"foo", @"a" : @"add"}
@@ -67,13 +73,13 @@
                                     andSource:nil];
     [[BAActionsCenter instance] performAction:@"batch.user.tag" withArgs:@{@"t" : @"foo", @"a" : @"add"} andSource:nil];
 
-    OCMVerifyAll(batchUserMock);
-    OCMVerifyAll(batchUserDataEditorMock);
+    OCMVerifyAll(batchProfileMock);
+    OCMVerifyAll(batchProfileDataEditorMock);
 }
 
 - (void)testDeeplinkFromActions {
     DeeplinkDelegateStub *delegate = [DeeplinkDelegateStub new];
-    Batch.deeplinkDelegate = delegate;
+    BatchSDK.deeplinkDelegate = delegate;
     id uiApplicationMock = OCMClassMock([UIApplication class]);
     OCMStub([uiApplicationMock sharedApplication]).andReturn(uiApplicationMock);
 
@@ -97,83 +103,52 @@
 }
 
 - (void)testTrackEventAction {
-    id batchUserMock = OCMClassMock([BatchUser class]);
-    [batchUserMock setExpectationOrderMatters:YES];
+    self.continueAfterFailure = false;
 
-    OCMExpect([batchUserMock trackEvent:@"test_event"
-                              withLabel:@"test_label"
-                         associatedData:[OCMArg checkWithBlock:^BOOL(id parameter) {
-                           if (![parameter isKindOfClass:[BatchEventData class]]) {
-                               return NO;
-                           }
+    MockEventTracker *eventTracker = [MockEventTracker new];
+    [BAInjection overlayProtocol:@protocol(BATEventTrackerProtocol)
+                        callback:^id _Nullable(id _Nullable originalInstance) {
+                          return eventTracker;
+                        }];
+    // Register a temporary ProfileCenter so that the event tracker is not cached
+    [BAInjection overlayProtocol:@protocol(BAProfileCenterProtocol)
+                        callback:^id _Nullable(id _Nullable originalInstance) {
+                          return [[BAProfileCenter alloc] init];
+                        }];
 
-                           BatchEventData *data = parameter;
-                           return [data->_attributes count] == 0 && [data->_tags count] == 0;
-                         }]]);
+    /*OCMExpect([batchUserMock trackEvent:@"test_event"
+     withLabel:@"test_label"
+     associatedData:[OCMArg checkWithBlock:^BOOL(id parameter) {
+     if (![parameter isKindOfClass:[BatchEventData class]]) {
+     return NO;
+     }
+
+     BatchEventData *data = parameter;
+     return [data->_attributes count] == 0 && [data->_tags count] == 0;
+     }]]);*/
     [[BAActionsCenter instance] performAction:@"batch.user.event"
                                      withArgs:@{@"e" : @"test_event", @"l" : @"test_label"}
                                     andSource:nil];
 
-    OCMExpect([batchUserMock trackEvent:@"test_event_2"
-                              withLabel:@"test_label_2"
-                         associatedData:[OCMArg checkWithBlock:^BOOL(id parameter) {
-                           if (![parameter isKindOfClass:[BatchEventData class]]) {
-                               return NO;
-                           }
+    BAEvent *event = [eventTracker findEventWithName:@"E.TEST_EVENT" parameters:nil];
+    XCTAssertNotNil(event);
+    XCTAssertEqualObjects(event.parametersDictionary[@"label"], @"test_label");
 
-                           BatchEventData *data = parameter;
-                           if ([data->_attributes count] != 0) {
-                               return NO;
-                           }
-
-                           return [data->_tags count] == 3 && [data->_tags containsObject:@"tag1"] &&
-                                  [data->_tags containsObject:@"tag2"] && [data->_tags containsObject:@"tag3"];
-                         }]]);
+    [eventTracker reset];
     [[BAActionsCenter instance]
         performAction:@"batch.user.event"
              withArgs:@{@"e" : @"test_event_2", @"l" : @"test_label_2", @"t" : @[ @"tag1", @"tag2", @"tag3" ]}
             andSource:nil];
 
-    OCMExpect([batchUserMock trackEvent:@"test_event_3"
-                              withLabel:@"test_label_3"
-                         associatedData:[OCMArg checkWithBlock:^BOOL(id parameter) {
-                           if (![parameter isKindOfClass:[BatchEventData class]]) {
-                               return NO;
-                           }
+    event = [eventTracker findEventWithName:@"E.TEST_EVENT_2" parameters:nil];
+    XCTAssertNotNil(event);
+    XCTAssertEqualObjects(event.parametersDictionary[@"label"], @"test_label_2");
+    NSArray *expectedTags = @[ @"tag1", @"tag2", @"tag3" ];
+    XCTAssertEqualObjects((NSArray *)[event.parametersDictionary[@"tags"]
+                              sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)],
+                          expectedTags);
 
-                           BatchEventData *data = parameter;
-                           if ([data->_attributes count] != 5) {
-                               return NO;
-                           }
-
-                           BATTypedEventAttribute *boolAttr = [data->_attributes objectForKey:@"bool"];
-                           if (boolAttr.type != BAEventAttributeTypeBool || ![boolAttr.value isEqual:@YES]) {
-                               return NO;
-                           }
-
-                           BATTypedEventAttribute *intAttr = [data->_attributes objectForKey:@"int"];
-                           if (intAttr.type != BAEventAttributeTypeInteger || ![intAttr.value isEqual:@64]) {
-                               return NO;
-                           }
-
-                           BATTypedEventAttribute *doubleAttr = [data->_attributes objectForKey:@"double"];
-                           if (doubleAttr.type != BAEventAttributeTypeDouble || ![doubleAttr.value isEqual:@654.21]) {
-                               return NO;
-                           }
-
-                           BATTypedEventAttribute *stringAttr = [data->_attributes objectForKey:@"string"];
-                           if (stringAttr.type != BAEventAttributeTypeString || ![stringAttr.value isEqual:@"toto"]) {
-                               return NO;
-                           }
-
-                           BATTypedEventAttribute *dateAttr = [data->_attributes objectForKey:@"date"];
-                           if (dateAttr.type != BAEventAttributeTypeDate) {
-                               return NO;
-                           }
-
-                           NSNumber *timestampValue = (NSNumber *)dateAttr.value;
-                           return [timestampValue isEqual:@1596975143943];
-                         }]]);
+    [eventTracker reset];
     [[BAActionsCenter instance] performAction:@"batch.user.event"
                                      withArgs:@{
                                          @"e" : @"test_event_3",
@@ -188,7 +163,18 @@
                                      }
                                     andSource:nil];
 
-    OCMVerifyAll(batchUserMock);
+    event = [eventTracker findEventWithName:@"E.TEST_EVENT_3" parameters:nil];
+    XCTAssertNotNil(event);
+    XCTAssertEqualObjects(event.parametersDictionary[@"label"], @"test_label_3");
+
+    NSDictionary *expectedAttibutes = @{
+        @"bool.b" : @(true),
+        @"date.t" : @(1596975143943),
+        @"double.f" : @(654.21),
+        @"int.i" : @(64),
+        @"string.s" : @"toto",
+    };
+    XCTAssertEqualObjects(event.parametersDictionary[@"attributes"], expectedAttibutes);
 }
 
 - (void)waitForMainThreadLoop {

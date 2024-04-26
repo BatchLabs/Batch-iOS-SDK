@@ -1,5 +1,5 @@
 //
-//  batchEventDataTests.swift
+//  inboxFetcherTests.swift
 //  Batch
 //
 //  Copyright © Batch.com. All rights reserved.

@@ -9,6 +9,7 @@
 #import <XCTest/XCTest.h>
 
 #import "BACoreCenter.h"
+#import "BatchTests-Swift.h"
 #import "OCMock.h"
 
 @interface BatchCoreCenterTests : XCTestCase
@@ -47,11 +48,15 @@
 
     [[BACoreCenter instance] openDeeplink:@"https://apple.fr/test?id=3" inApp:YES];
     [[BACoreCenter instance] openDeeplink:@"https://apple.fr/test?id=3" inApp:NO];
+
+    [self waitForMainThreadLoop];
+
     OCMVerify(times(2), [uiApplicationDelegateMock application:[OCMArg any]
                                           continueUserActivity:[OCMArg any]
                                             restorationHandler:[OCMArg any]]);
 
     [[BACoreCenter instance] openDeeplink:@"https://www.apple.fr/test?id=3" inApp:YES];
+    [self waitForMainThreadLoop];
     OCMReject([uiApplicationDelegateMock application:[OCMArg any]
                                 continueUserActivity:[OCMArg any]
                                   restorationHandler:[OCMArg any]]);

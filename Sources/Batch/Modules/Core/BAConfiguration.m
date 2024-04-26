@@ -22,14 +22,14 @@ NSString *const kBATConfigurationChangedNotification = @"ConfigurationChangedNot
     // Application developper key.
     NSString *_developperKey;
 
-    // Use advanced device information.
-    BOOL _advancedDeviceInformation;
-
     // Logger delegate.
     __weak id<BatchLoggerDelegate> _loggerDelegate;
 
     // Universal links associated domains
     NSMutableArray<NSString *> *_associatedDomains;
+
+    // Migrations related configuration
+    BatchMigration _disabledMigrations;
 }
 
 @end
@@ -41,24 +41,11 @@ NSString *const kBATConfigurationChangedNotification = @"ConfigurationChangedNot
     if ([BANullHelper isNull:self] == YES) {
         return nil;
     }
-
-    // We allow advanced device information (aka advenced identifiers) by default
-    _advancedDeviceInformation = YES;
-
     return self;
 }
 
 #pragma mark -
 #pragma mark Public methods
-
-- (void)setUseAdvancedDeviceInformation:(BOOL)use {
-    _advancedDeviceInformation = use;
-    [[BANotificationCenter defaultCenter] postNotificationName:kBATConfigurationChangedNotification object:nil];
-}
-
-- (BOOL)useAdvancedDeviceInformation {
-    return _advancedDeviceInformation;
-}
 
 // Keep and check the developper key value.
 - (NSError *)setDevelopperKey:(NSString *)key {
@@ -88,11 +75,6 @@ NSString *const kBATConfigurationChangedNotification = @"ConfigurationChangedNot
     return [NSString stringWithString:_developperKey];
 }
 
-// Get the development mode.
-- (BOOL)developmentMode {
-    return [self guessDevmodeFromAPIKey];
-}
-
 - (void)setLoggerDelegate:(id<BatchLoggerDelegate>)loggerDelegate {
     _loggerDelegate = loggerDelegate;
 
@@ -118,12 +100,12 @@ NSString *const kBATConfigurationChangedNotification = @"ConfigurationChangedNot
     return _associatedDomains;
 }
 
-#pragma mark -
-#pragma mark Private methods
+- (void)setDisabledMigrations:(BatchMigration)migrations {
+    _disabledMigrations = migrations;
+}
 
-// Try to guess the development mode from the key.
-- (BOOL)guessDevmodeFromAPIKey {
-    return [_developperKey hasPrefix:@"DEV"];
+- (Boolean)isMigrationDisabledFor:(BatchMigration)migration {
+    return _disabledMigrations & migration;
 }
 
 @end

@@ -88,12 +88,13 @@ extern NSString *const kBATPushOpenedNotificationOriginatesFromAppDelegate;
 /**
  Ask for the permission to display notifications
  */
-- (void)requestNotificationAuthorization;
+- (void)requestNotificationAuthorizationWithCompletionHandler:(void (^)(BOOL granted, NSError *error))completionHandler;
 
 /**
  Ask for the permission to display provisional notifications
  */
-- (void)requestProvisionalNotificationAuthorization;
+- (void)requestProvisionalNotificationAuthorizationWithCompletionHandler:(void (^)(BOOL granted,
+                                                                                   NSError *error))completionHandler;
 
 /**
  Equivalent to [UIApplication.sharedApplication registerForRemoteNotifications]
@@ -104,17 +105,6 @@ extern NSString *const kBATPushOpenedNotificationOriginatesFromAppDelegate;
  Open iOS' settings on the app's notification page
  */
 - (void)openSystemNotificationSettings;
-
-/*!
- @method setNotificationsCategories:
- @abstract Set the notification action categories to iOS.
- @discussion You should call this every time your app starts
- @param categories  : A set of UIUserNotificationCategory or UNNotificationCategory instances that define the groups of
- actions a notification may include. If you try to register UIUserNotificationCategory instances on iOS 10, Batch will
- automatically do a best effort conversion to UNNotificationCategory. If you don't want this behaviour, please use the
- standard UIApplication methods.
- */
-+ (void)setNotificationsCategories:(NSSet *)categories;
 
 /*!
  @method clearBadge
@@ -130,14 +120,6 @@ extern NSString *const kBATPushOpenedNotificationOriginatesFromAppDelegate;
  you need to set it up again.
  */
 + (void)dismissNotifications;
-
-/*!
- @method enableAutomaticDeeplinkHandling:
- @abstract Set whether Batch Push should automatically try to handle deeplinks
- @discussion By default, this is set to YES. You need to call everytime your app is restarted, this option is not
- persisted.
- */
-+ (void)enableAutomaticDeeplinkHandling:(BOOL)handleDeeplinks;
 
 /*!
  @method deeplinkFromUserInfo:
@@ -172,43 +154,6 @@ extern NSString *const kBATPushOpenedNotificationOriginatesFromAppDelegate;
  @return If it returns true, you should not handle the push.
  */
 + (BOOL)isBatchPush:(NSDictionary *)userInfo;
-
-/*!
- @method handleNotification
- @abstract Make Batch process a notification. You should call this method in "application:didReceiveRemoteNotification:"
- or "application:didReceiveRemoteNotification:fetchCompletionHandler:".
- @warning If you didn't call "disableAutomaticIntegration", this method will have no effect. If you called it but don't
- implement this method, Batch's push features will NOT work.
- @param userInfo : The untouched "userInfo" NSDictionary argument given to you in the application delegate method.
- */
-+ (void)handleNotification:(NSDictionary *)userInfo;
-
-/*!
- @method handleNotification
- @abstract Make Batch process a notification action. You should call this method in
- "application:handleActionWithIdentifier:forRemoteNotification:completionHandler:" or
- "application:handleActionWithIdentifier:forRemoteNotification:withResponseInfo:completionHandler:".
- @warning If you didn't call "disableAutomaticIntegration", this method will have no effect. If you called it but don't
- implement this method, Batch's push features will NOT work.
- @param userInfo : The untouched "userInfo" NSDictionary argument given to you in the application delegate method.
- @param identifier : The action's identifier. Used for tracking purposes: it can match your raw action name, or be a
- more user-friendly string;
- */
-+ (void)handleNotification:(NSDictionary *)userInfo actionIdentifier:(NSString *)identifier;
-
-/*!
- @method handleNotification
- @abstract Make Batch process the user notification settings change. You should call this method in
- "application:didRegisterUserNotificationSettings:".
- @warning If you didn't call "disableAutomaticIntegration", this method will have no effect. If you called it but don't
- implement this method, Batch's push features will NOT work.
- @param notificationSettings : The untouched "notificationSettings" UIUserNotificationSettings* argument given to you in
- the application delegate method.
- */
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-+ (void)handleRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings;
-#pragma clang diagnostic pop
 
 /**
  Make Batch process a foreground notification. You should call this method if you set your own

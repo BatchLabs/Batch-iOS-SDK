@@ -149,7 +149,7 @@ NSString *rawHelloWorld = @"Hello Batch";
 // Tweaked to have 1 as a timestamp rather than 0 to match libz
 NSString *base64HelloWorld = @"H4sIAAAAAAAAE/NIzcnJV3BKLEnOAADB8muICwAAAA==";
 
-static NSData *createRandomNSData() {
+static NSData *createRandomNSData(void) {
     NSUInteger size = 10 * 1024 * 1024; // 10mb
     NSMutableData *data = [NSMutableData dataWithLength:size];
     u_int32_t *bytes = (u_int32_t *)data.mutableBytes;

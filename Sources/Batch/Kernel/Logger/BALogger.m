@@ -97,7 +97,7 @@ __weak static id<BALoggerDelegateSource> BALoggerDelegateSource;
 }
 
 + (void)__SWIFT_debugForDomain:(nullable NSString *)domain message:(NSString *)message {
-    [self warningForDomain:domain message:@"%@", message];
+    [self debugForDomain:domain message:@"%@", message];
 }
 
 #pragma mark - Internal log control

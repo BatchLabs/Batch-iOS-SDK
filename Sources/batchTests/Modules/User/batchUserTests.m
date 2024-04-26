@@ -7,8 +7,8 @@
 
 #import <XCTest/XCTest.h>
 #import "BAInjection.h"
+#import "BAInstallDataEditor.h"
 #import "BAParameter.h"
-#import "BAUserDataEditor.h"
 #import "BAUserDatasourceProtocol.h"
 #import "BAUserSQLiteDatasource.h"
 #import "Batch.h"
@@ -17,7 +17,7 @@
 
 @interface batchUserTests : XCTestCase
 
-@property (nonatomic) BAUserDataEditor *editor;
+@property (nonatomic) BAInstallDataEditor *editor;
 @property BAOverlayedInjectable *datasourceOverlay;
 
 @end
@@ -46,10 +46,10 @@
                                                    return dataSourceToUse;
                                                  }];
 
-    _editor = [BAUserDataEditor new];
+    _editor = [BAInstallDataEditor new];
 
     // Mock editor to allow saving
-    BAUserDataEditor *partialMock = OCMPartialMock(_editor);
+    BAInstallDataEditor *partialMock = OCMPartialMock(_editor);
     OCMStub([partialMock canSave])._andReturn([NSNumber numberWithBool:YES]);
 
     // Clear all saved parameters before each test
@@ -64,9 +64,9 @@
 
 - (void)testAttributesRead {
     // Set attributes
-    [_editor setAttribute:[NSDate new] forKey:@"today"];
-    [_editor setAttribute:@3.2 forKey:@"float_value"];
-    [_editor setAttribute:@5 forKey:@"int_value"];
+    [_editor setDateAttribute:[NSDate new] forKey:@"today" error:nil];
+    [_editor setDoubleAttribute:3.2 forKey:@"float_value" error:nil];
+    [_editor setIntegerAttribute:5 forKey:@"int_value" error:nil];
 
     XCTestExpectation *exp = [self expectationWithDescription:@"testing attributes read"];
     [_editor save:^{
@@ -258,49 +258,6 @@
     XCTAssertNil([BatchUser region]);
     XCTAssertNil([BatchUser language]);
     XCTAssertNil([BatchUser identifier]);
-}
-
-- (void)testAttributionIDChangedEvent {
-    // Ensure event is not sent when attribution id is not a valid UUID
-    XCTestExpectation *exp1 = [self expectationWithDescription:@"Wait for editor stacking operations"];
-    [_editor setAttributionIdentifier:@"WRONG-UUID"];
-    OCMReject([trackerCenterMock trackPrivateEvent:@"_ATTRIBUTION_ID_CHANGED"
-                                        parameters:@{@"attribution_id" : @"WRONG-UUID"}]);
-    [_editor save:^{
-      [exp1 fulfill];
-    }];
-    [self waitForExpectations:@[ exp1 ] timeout:3.0];
-
-    // Ensure event is sent when attribution id is a valid UUID
-    XCTestExpectation *exp2 = [self expectationWithDescription:@"Wait for editor stacking operations"];
-    [_editor setAttributionIdentifier:@"EA7583CD-A667-48BC-B806-42ECB2B48606"];
-    OCMExpect([trackerCenterMock trackPrivateEvent:@"_ATTRIBUTION_ID_CHANGED"
-                                        parameters:@{@"attribution_id" : @"EA7583CD-A667-48BC-B806-42ECB2B48606"}]);
-    [_editor save:^{
-      [exp2 fulfill];
-    }];
-    [self waitForExpectations:@[ exp2 ] timeout:3.0];
-
-    // Ensure event is not sent when attribution id did not changed
-    [_editor setAttributionIdentifier:@"EA7583CD-A667-48BC-B806-42ECB2B48606"];
-    OCMReject([trackerCenterMock trackPrivateEvent:@"_ATTRIBUTION_ID_CHANGED"
-                                        parameters:@{@"attribution_id" : @"EA7583CD-A667-48BC-B806-42ECB2B48606"}]);
-    XCTestExpectation *exp3 = [self expectationWithDescription:@"Wait for editor stacking operations"];
-    [_editor save:^{
-      [exp3 fulfill];
-    }];
-    [self waitForExpectations:@[ exp3 ] timeout:3.0];
-
-    // Ensure event is sent when attribution id is nil (reset)
-    XCTestExpectation *exp4 = [self expectationWithDescription:@"Wait for editor stacking operations"];
-    [_editor setAttributionIdentifier:nil];
-    OCMExpect([trackerCenterMock trackPrivateEvent:@"_ATTRIBUTION_ID_CHANGED"
-                                        parameters:@{@"attribution_id" : [NSNull null]}]);
-    [_editor save:^{
-      [exp4 fulfill];
-    }];
-    [self waitForExpectations:@[ exp4 ] timeout:3.0];
-    OCMVerifyAll(trackerCenterMock);
 }
 
 @end

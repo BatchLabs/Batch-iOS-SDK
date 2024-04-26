@@ -27,6 +27,10 @@
         _version = nil;
     }
 
+    _projectKey = [response objectForKey:@"project_key"];
+    if ([BANullHelper isStringEmpty:_projectKey]) {
+        _projectKey = nil;
+    }
     return self;
 }
 

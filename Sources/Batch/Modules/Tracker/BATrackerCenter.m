@@ -19,7 +19,8 @@
 #import <Batch/BARandom.h>
 #import <Batch/BATrackerCenter.h>
 #import <Batch/BATrackerSignpostHelper.h>
-#import <Batch/BatchEventDataPrivate.h>
+#import <Batch/Batch-Swift.h>
+#import <Batch/BatchEventAttributesPrivate.h>
 
 #import <os/log.h>
 
@@ -42,6 +43,112 @@
 
 @property (atomic) NSString *flushHash;
 
+- (BOOL)internalTrackEvent:(NSString *)name withParameters:(NSDictionary *)parameters collapsable:(BOOL)collapsable;
+
+- (BOOL)internalTrackEvent:(BAEvent *)event;
+
+@end
+
+#pragma mark -
+#pragma mark BATEventTrackerProtocol conformance
+@interface BATrackerCenter (BATEventTrackerProtocolConformance) <BATEventTrackerProtocol>
+@end
+
+@implementation BATrackerCenter (BATEventTrackerProtocolConformance)
+
+- (void)trackPublicEvent:(nonnull NSString *)name attributes:(nullable BatchEventAttributes *)attributes {
+    name = [@"E." stringByAppendingString:name.uppercaseString];
+
+    NSDictionary *parameters;
+    if (attributes) {
+        NSError *error = nil;
+        parameters = [BATEventAttributesSerializer serializeWithEventAttributes:attributes error:&error];
+        if (parameters == nil) {
+            [BALogger publicForDomain:@"Profile"
+                              message:@"Failed to track event: internal error when serializing data"];
+            [BALogger errorForDomain:DEBUG_DOMAIN message:@"Failed to track event: %@", error.debugDescription];
+            return;
+        }
+    } else {
+        parameters = [NSDictionary dictionary];
+    }
+
+    if ([self internalTrackEvent:name withParameters:parameters collapsable:false]) {
+        [[BALocalCampaignsCenter instance] processTrackerPublicEventNamed:name
+                                                                    label:attributes._label
+                                                               attributes:attributes];
+    }
+}
+
+- (void)trackLocation:(nonnull CLLocation *)location {
+    if (location == nil) {
+        return;
+    }
+
+    NSDate *currentDate = [NSDate date];
+
+    // See if a location update should be sent.
+    BOOL shouldTrackLocation = NO;
+
+    if (_lastTrackedLocationTimestamp == nil) {
+        [BALogger debugForDomain:DEBUG_DOMAIN
+                         message:@"Tracking location because no previous location has been tracked"];
+        shouldTrackLocation = YES;
+    } else if ([currentDate timeIntervalSinceDate:_lastTrackedLocationTimestamp] * 1000 >=
+               LOCATION_UPDATE_MINIMUM_TIME_MS) {
+        [BALogger
+            debugForDomain:DEBUG_DOMAIN
+                   message:
+                       @"Tracking location because the minimum time interval since the last sent update has passed"];
+        shouldTrackLocation = YES;
+    }
+
+    // Yes this could have been a big "if", but it would have been less readable
+    if (!shouldTrackLocation) {
+        [BALogger debugForDomain:DEBUG_DOMAIN message:@"Ignoring location track"];
+        return;
+    }
+
+    // According to the doc, if horizontalAccuracy is negative, it's an invalid location
+    // Don't bother sending it
+    if (location.horizontalAccuracy < 0) {
+        return;
+    }
+
+    NSDate *systemTs = location.timestamp;
+    id timestamp;
+    if (systemTs == nil) {
+        timestamp = [NSNull null];
+    } else {
+        timestamp = [NSNumber numberWithDouble:floor([systemTs timeIntervalSince1970] * 1000)];
+    }
+
+    NSDictionary *params = @{
+        @"lat" : [NSNumber numberWithDouble:location.coordinate.latitude],
+        @"lng" : [NSNumber numberWithDouble:location.coordinate.longitude],
+        @"acc" : [NSNumber numberWithDouble:location.horizontalAccuracy],
+        @"date" : timestamp
+    };
+
+    [self trackPrivateEvent:@"_LOCATION_CHANGED" parameters:params collapsable:YES];
+
+    _lastTrackedLocationTimestamp = currentDate;
+}
+
+- (void)trackPrivateEvent:(nonnull NSString *)name
+               parameters:(nullable NSDictionary *)parameters
+              collapsable:(BOOL)collapsable {
+    if ([self internalTrackEvent:name withParameters:parameters collapsable:collapsable]) {
+        [[BALocalCampaignsCenter instance] processTrackerPrivateEventNamed:name];
+    }
+}
+
+- (void)trackManualPrivateEvent:(nonnull BAEvent *)event {
+    if ([self internalTrackEvent:event]) {
+        [[BALocalCampaignsCenter instance] processTrackerPrivateEventNamed:event.name];
+    }
+}
+
 @end
 
 @implementation BATrackerCenter
@@ -50,21 +157,11 @@
 #pragma mark Public methods
 
 + (void)batchWillStart {
-    if ([BATrackerCenter currentMode] == BATrackerModeOFF) {
-        return;
-    }
-
     // This prevent the tracker to be subscribe many times to the events in case the developper call `startWithAPIKey:`
     // many times.
     if (![[BACoreCenter instance].status isRunning]) {
         [[BATrackerCenter instance] start];
     }
-}
-
-+ (void)trackPublicEvent:(nonnull NSString *)name
-                   label:(nullable NSString *)label
-                    data:(nullable BatchEventData *)data {
-    [[BATrackerCenter instance] trackPublicEvent:name label:label data:data];
 }
 
 + (void)trackPrivateEvent:(nonnull NSString *)name parameters:(nullable NSDictionary *)parameters {
@@ -79,10 +176,6 @@
 
 + (void)trackManualPrivateEvent:(nonnull BAEvent *)event {
     [[BATrackerCenter instance] trackManualPrivateEvent:event];
-}
-
-+ (void)trackLocation:(nonnull CLLocation *)location {
-    [[BATrackerCenter instance] trackLocation:location];
 }
 
 + (id<BAEventDatasourceProtocol>)datasource {
@@ -101,18 +194,6 @@
     });
 
     return sharedInstance;
-}
-
-+ (BATrackerMode)currentMode {
-    NSNumber *mode = [BAParameter objectForKey:kParametersTrackerStateKey fallback:kParametersTrackerStateValue];
-
-    if ([mode isEqualToNumber:@0]) {
-        return BATrackerModeOFF;
-    } else if ([mode isEqualToNumber:@1]) {
-        return BATrackerModeDB_ONLY;
-    } else {
-        return BATrackerModeON;
-    }
 }
 
 #pragma mark -
@@ -189,98 +270,6 @@
     return _scheduler;
 }
 
-- (void)trackPublicEvent:(nonnull NSString *)name
-                   label:(nullable NSString *)label
-                    data:(nullable BatchEventData *)data {
-    name = [@"E." stringByAppendingString:name];
-
-    NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithCapacity:4];
-    if ([label isKindOfClass:[NSString class]]) {
-        if (label.length > 200) {
-            [BALogger debugForDomain:DEBUG_DOMAIN message:@"Event label is too long, removing it."];
-        } else {
-            parameters[BA_PUBLIC_EVENT_KEY_LABEL] = label;
-        }
-    }
-
-    if ([data isKindOfClass:[BatchEventData class]]) {
-        [parameters addEntriesFromDictionary:[data _internalDictionaryRepresentation]];
-    }
-
-    if ([self internalTrackEvent:name withParameters:parameters collapsable:false]) {
-        [[BALocalCampaignsCenter instance] processTrackerPublicEventNamed:name label:label data:data];
-    }
-}
-
-- (void)trackPrivateEvent:(nonnull NSString *)name
-               parameters:(nullable NSDictionary *)parameters
-              collapsable:(BOOL)collapsable {
-    if ([self internalTrackEvent:name withParameters:parameters collapsable:collapsable]) {
-        [[BALocalCampaignsCenter instance] processTrackerPrivateEventNamed:name];
-    }
-}
-
-- (void)trackManualPrivateEvent:(nonnull BAEvent *)event {
-    if ([self internalTrackEvent:event]) {
-        [[BALocalCampaignsCenter instance] processTrackerPrivateEventNamed:event.name];
-    }
-}
-
-- (void)trackLocation:(nonnull CLLocation *)location {
-    if (location == nil) {
-        return;
-    }
-
-    NSDate *currentDate = [NSDate date];
-
-    // See if a location update should be sent.
-    BOOL shouldTrackLocation = NO;
-
-    if (_lastTrackedLocationTimestamp == nil) {
-        [BALogger debugForDomain:DEBUG_DOMAIN
-                         message:@"Tracking location because no previous location has been tracked"];
-        shouldTrackLocation = YES;
-    } else if ([currentDate timeIntervalSinceDate:_lastTrackedLocationTimestamp] * 1000 >=
-               LOCATION_UPDATE_MINIMUM_TIME_MS) {
-        [BALogger
-            debugForDomain:DEBUG_DOMAIN
-                   message:
-                       @"Tracking location because the minimum time interval since the last sent update has passed"];
-        shouldTrackLocation = YES;
-    }
-
-    // Yes this could have been a big "if", but it would have been less readable
-    if (!shouldTrackLocation) {
-        [BALogger debugForDomain:DEBUG_DOMAIN message:@"Ignoring location track"];
-        return;
-    }
-
-    // According to the doc, if horizontalAccuracy is negative, it's an invalid location
-    // Don't bother sending it
-    if (location.horizontalAccuracy < 0) {
-        return;
-    }
-
-    NSDate *systemTs = location.timestamp;
-    id timestamp;
-    if (systemTs == nil) {
-        timestamp = [NSNull null];
-    } else {
-        timestamp = [NSNumber numberWithDouble:floor([systemTs timeIntervalSince1970] * 1000)];
-    }
-
-    NSDictionary *params = @{
-        @"lat" : [NSNumber numberWithDouble:location.coordinate.latitude],
-        @"lng" : [NSNumber numberWithDouble:location.coordinate.longitude],
-        @"acc" : [NSNumber numberWithDouble:location.horizontalAccuracy],
-        @"date" : timestamp
-    };
-
-    [self trackPrivateEvent:@"_LOCATION_CHANGED" parameters:params collapsable:YES];
-
-    _lastTrackedLocationTimestamp = currentDate;
-}
-
 /**
  Underlying method that should never be called directly
 
@@ -308,10 +297,6 @@
     NSDictionary *parameters = event.parametersDictionary;
 
     [_signpostHelper trackEvent:name withParameters:parameters collapsable:collapsable];
-
-    if ([BATrackerCenter currentMode] == BATrackerModeOFF) {
-        return false;
-    }
 
     if ([_optOutModule isOptedOut]) {
         [BALogger errorForDomain:@"Batch.User" message:@"Batch is opted out from: refusing to track event"];

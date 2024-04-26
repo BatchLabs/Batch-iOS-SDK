@@ -53,8 +53,8 @@
 
 // Injection methods
 
-+ (nullable id)injectClass:(Class _Nonnull)classToInject;
++ (nullable id)injectClass:(Class _Nonnull)classToInject NS_REFINED_FOR_SWIFT;
 
-+ (nullable id)injectProtocol:(nonnull Protocol *)protocolToInject;
++ (nullable id)injectProtocol:(nonnull Protocol *)protocolToInject NS_REFINED_FOR_SWIFT;
 
 @end

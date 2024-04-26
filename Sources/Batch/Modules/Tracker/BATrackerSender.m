@@ -36,11 +36,6 @@
 }
 
 - (BOOL)send {
-    if ([BATrackerCenter currentMode] != BATrackerModeON) {
-        // Nothing to do, not send.
-        return NO;
-    }
-
     if (_isSending) {
         return YES;
     }

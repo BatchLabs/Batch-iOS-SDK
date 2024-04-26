@@ -1,4 +1,5 @@
 #import <Batch/BAMSGPannableAnchoredContainerView.h>
+#import <Batch/BAWindowHelper.h>
 
 #define DISMISS_THRESHOLD_TRANSLATE_HEIGHT_RATIO 0.5
 #define DISMISS_THRESHOLD_MINIMUM_VELOCITY 100
@@ -67,9 +68,15 @@
                           heightToHide = viewFrame.origin.y + viewFrame.size.height;
                           NSLog(@"origin y %f, height %f", viewFrame.origin.y, viewFrame.size.height);
                       } else {
-                          // Here we'll have to take the distance between the screen's height and the view's Y position
-                          // No need to add the view height, as this calculation already takes it into account
+                        // Here we'll have to take the distance between the screen's height and the view's Y position
+                        // No need to add the view height, as this calculation already takes it into account
+#if TARGET_OS_VISION
+                          // visionOS has no mainScreen, but I don't feel like risking this for legacy code
+                          heightToHide =
+                              [BAWindowHelper keyWindow].coordinateSpace.bounds.size.height - viewFrame.origin.y;
+#else
                           heightToHide = [[UIScreen mainScreen] bounds].size.height - viewFrame.origin.y;
+#endif
                       }
 
                       // Shadows are outside of the layout computation

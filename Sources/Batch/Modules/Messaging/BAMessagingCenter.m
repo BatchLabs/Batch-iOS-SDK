@@ -156,6 +156,10 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
     _wrappedDelegate = [[BABatchMessagingDelegateWrapper alloc] initWithDelgate:delegate];
 }
 
+- (id<BatchMessagingDelegate> _Nullable)delegate {
+    return _wrappedDelegate.delegate;
+}
+
 - (void)setImageDownloadTimeout:(NSTimeInterval)timeout {
     _imageDownloadTimeout = timeout;
 }
@@ -258,6 +262,11 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
 }
 
 - (BOOL)presentMessagingViewController:(nonnull UIViewController *)vc error:(NSError **)error {
+#if TARGET_OS_VISION
+    [BALogger publicForDomain:@"Messaging"
+                      message:@"Refusing to presentMessagingViewController: unsupported on visionOS"];
+    return false;
+#else
     if (![NSThread currentThread].isMainThread) {
         [BALogger publicForDomain:@"Messaging"
                           message:@"[BatchMessaging presentMessagingViewController:] was called outside of the main "
@@ -325,10 +334,16 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
             return false;
         }
     }
+#endif
 }
 
 - (UIViewController *_Nullable)internalLoadViewControllerForMessage:(BatchMessage *_Nonnull)message
                                                               error:(NSError *_Nullable *_Nullable)error {
+#if TARGET_OS_VISION
+    [BALogger publicForDomain:@"Messaging"
+                      message:@"Refusing to load messaging view controller: unsupported on visionOS"];
+    return nil;
+#else
     if (error) {
         *error = nil;
     }
@@ -460,6 +475,7 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
 
         return nil;
     }
+#endif
 }
 
 - (BOOL)performAction:(nonnull BAMSGAction *)action source:(nullable id<BatchUserActionSource>)source {
@@ -744,6 +760,10 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
 - (BOOL)displayMessage:(BatchMessage *_Nonnull)message
              bypassDnD:(BOOL)bypassDnD
                  error:(NSError *_Nullable *_Nullable)outErr {
+#if TARGET_OS_VISION
+    [BALogger publicForDomain:LOGGER_DOMAIN message:@"Batch Messaging is unsupported on visionOS."];
+    return false;
+#else
     if (self.doNotDisturb && !bypassDnD) {
         [BALogger
             publicForDomain:LOGGER_DOMAIN
@@ -776,6 +796,7 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
         }
         return false;
     }
+#endif
 }
 
 - (BAMSGMessage *)messageForObject:(id)object {
@@ -998,15 +1019,20 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
     }
 
     BAMSGOverlayWindow *window;
-    if (@available(iOS 13.0, *)) {
-        UIWindowScene *scene = [BAWindowHelper keyWindow].windowScene;
-        if (scene != nil) {
-            window = [[BAMSGOverlayWindow alloc] initWithWindowScene:scene];
-        }
+    UIWindowScene *scene = [BAWindowHelper keyWindow].windowScene;
+    if (scene != nil) {
+        window = [[BAMSGOverlayWindow alloc] initWithWindowScene:scene];
     }
 
     if (window == nil) {
+#if TARGET_OS_VISION
+        // Vision pro has no way to get the screen size as it does not _really_ have
+        // a screen size in VR space. We have to use a default one
+        // FIXME: Fix this to reenable In-Apps
+        window = [[BAMSGOverlayWindow alloc] initWithFrame:CGRectMake(0, 0, 1280, 720)];
+#else
         window = [[BAMSGOverlayWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+#endif
     }
     if ([vc conformsToProtocol:@protocol(BAMSGWindowHolder)]) {
         // This NEEDS to be before rootViewController is set on the window, as this will trigger viewDidLoad
@@ -1053,38 +1079,5 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
       [self displayMessage:message bypassDnD:bypassDnD error:nil];
     }];
 }
-
-#pragma mark UIAlertView delegate methods
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#pragma clang diagnostic ignored "-Wdeprecated-implementations"
-- (void)didPresentAlertView:(UIAlertView *)alertView {
-    [self messageShown:[self messageForObject:alertView]];
-}
-
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    BAMSGMessageAlert *message = (BAMSGMessageAlert *)[self messageForObject:alertView];
-
-    if (![message isKindOfClass:[BAMSGMessageAlert class]]) {
-        message = nil;
-    }
-
-    [self messageDismissed:message];
-
-    // We can do this since our alert views only have one other CTA
-    if (buttonIndex != [alertView cancelButtonIndex]) {
-        // We don't need to handle BAMSGCTAActionKindClose since the UIAlertView always dismisses itself
-        [self messageButtonClicked:message ctaIndex:0 action:message.acceptCTA];
-        [self performAction:message.acceptCTA
-                       source:message.sourceMessage
-                  actionIndex:0
-            messageIdentifier:message.sourceMessage.devTrackingIdentifier];
-    } else {
-        [self messageClosed:message];
-    }
-}
-
-#pragma clang diagnostic pop
 
 @end

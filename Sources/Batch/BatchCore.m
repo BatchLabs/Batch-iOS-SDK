@@ -7,7 +7,6 @@
 //
 
 #import <Batch/BatchCore.h>
-#import <Batch/BatchUserProfile.h>
 
 #import <Batch/BACenterMulticastDelegate.h>
 #import <Batch/BACoreCenter.h>
@@ -15,32 +14,13 @@
 #import <Batch/BADBGModule.h>
 #import <Batch/BAOptOut.h>
 #import <Batch/BATrackerCenter.h>
+#import <Batch/Batch-Swift.h>
 
-@implementation Batch
+@implementation BatchSDK
 
 // Activate the whole Batch system.
 + (void)startWithAPIKey:(NSString *)key {
     [BACenterMulticastDelegate startWithAPIKey:key];
-}
-
-// Give the URL to Batch systems.
-+ (BOOL)handleURL:(NSURL *)url {
-    return [BACenterMulticastDelegate handleURL:url];
-}
-
-// Test if Batch is running in development mode.
-+ (BOOL)isRunningInDevelopmentMode {
-    return [BACoreCenter isRunningInDevelopmentMode];
-}
-
-+ (BatchUserProfile *)defaultUserProfile {
-    static BatchUserProfile *sharedInstance = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-      sharedInstance = [[BatchUserProfile alloc] init];
-    });
-
-    return sharedInstance;
 }
 
 // Set if Batch can try to use IDFA. Deprecated.
@@ -52,11 +32,11 @@
     [[[BACoreCenter instance] configuration] setLoggerDelegate:loggerDelegate];
 }
 
-+ (void)setUseAdvancedDeviceInformation:(BOOL)use {
-    [BACenterMulticastDelegate setUseAdvancedDeviceInformation:use];
++ (id<BatchLoggerDelegate>)loggerDelegate {
+    return [[[BACoreCenter instance] configuration] loggerDelegate];
 }
 
-+ (UIViewController *)debugViewController {
++ (UIViewController *)makeDebugViewController {
     return [BADBGModule debugViewController];
 }
 
@@ -100,6 +80,10 @@
     return [[BAOptOut instance] isOptedOut];
 }
 
++ (NSArray<NSString *> *_Nonnull)associatedDomains {
+    return [[[[BACoreCenter instance] configuration] associatedDomains] copy];
+}
+
 + (void)setAssociatedDomains:(NSArray<NSString *> *_Nonnull)domains {
     [[[BACoreCenter instance] configuration] setAssociatedDomains:domains];
 }
@@ -118,6 +102,14 @@
 
 + (void)setEnablesFindMyInstallation:(BOOL)enablesFindMyInstallation {
     [BADBGFindMyInstallationHelper setEnablesFindMyInstallation:enablesFindMyInstallation];
+}
+
++ (void)updateAutomaticDataCollection:(_Nonnull BatchDataCollectionConfigEditor)editor {
+    [[BATDataCollectionCenter sharedInstance] updateDataCollectionConfigWithEditor:editor];
+}
+
++ (void)setDisabledMigrations:(BatchMigration)migrations {
+    [[[BACoreCenter instance] configuration] setDisabledMigrations:migrations];
 }
 
 @end

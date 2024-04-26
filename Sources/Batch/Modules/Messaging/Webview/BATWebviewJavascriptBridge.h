@@ -66,9 +66,6 @@ typedef NS_ENUM(NSUInteger, BATWebviewJavascriptBridgeErrorCode) {
 
 - (BAPromise<NSString *> *)installationID;
 
-// Method that facilitates testing the attribution ID handling
-- (nullable NSString *)readAttributionIDFromSDK;
-
 - (BAPromise<NSString *> *)customRegion;
 
 - (BAPromise<NSString *> *)customLanguage;

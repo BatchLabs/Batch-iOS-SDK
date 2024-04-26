@@ -5,23 +5,33 @@
 //
 
 #import "BAInjectionRegistrar.h"
+#import <Batch/Batch-Swift.h>
 #import "BADisplayReceiptCenter.h"
 #import "BAEventDispatcherCenter.h"
 #import "BAInboxSQLiteDatasource.h"
 #import "BAInboxSQLiteHelper.h"
 #import "BAInjection.h"
+#import "BAInstallDataEditor.h"
 #import "BALocalCampaignsFilePersistence.h"
 #import "BAMessagingAnalyticsDeduplicatingDelegate.h"
 #import "BAMessagingCenter.h"
 #import "BAMetricManager.h"
 #import "BAMetricRegistry.h"
 #import "BAPushSystemHelper.h"
-#import "BAUserDataEditor.h"
+#import "BATrackerCenter.h"
 #import "BAUserSQLiteDatasource.h"
 
 @implementation BAInjectionRegistrar
 
 + (void)registerInjectables {
+    // Register BAProfileCenter
+    [BAInjection registerInjectable:[BAInjectable injectableWithInstance:[BAProfileCenter sharedInstance]]
+                        forProtocol:@protocol(BAProfileCenterProtocol)];
+
+    // Register BATEventTrackerProtocol
+    [BAInjection registerInjectable:[BAInjectable injectableWithInstance:[BATrackerCenter instance]]
+                        forProtocol:@protocol(BATEventTrackerProtocol)];
+
     // Register BADisplayReceiptCenter
     [BAInjection registerInjectable:[BAInjectable injectableWithInstance:[BADisplayReceiptCenter new]]
                            forClass:BADisplayReceiptCenter.class];
@@ -66,9 +76,15 @@
 
     // Register BAUserDataEditor
     [BAInjection registerInjectable:[BAInjectable injectableWithInitializer:^id() {
-                   return [BAUserDataEditor new];
+                   return [BAInstallDataEditor new];
                  }]
-                           forClass:BAUserDataEditor.class];
+                           forClass:BAInstallDataEditor.class];
+
+    // Register BAProfileEditor
+    [BAInjection registerInjectable:[BAInjectable injectableWithInitializer:^id() {
+                   return [BATProfileEditor new];
+                 }]
+                           forClass:BATProfileEditor.class];
 
     // Register BAInboxSQLiteDatasource
     [BAInjection registerInjectable:[BAInjectable injectableWithInitializer:^id() {

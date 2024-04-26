@@ -29,6 +29,4 @@
 
 - (void)_markAsRead;
 
-- (void)_markAsDeleted;
-
 @end

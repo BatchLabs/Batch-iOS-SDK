@@ -9,6 +9,7 @@
 
 #import <Batch/BAHTTPHeaders.h>
 #import <Batch/BAWebserviceMsgPackClient.h>
+#import <Batch/Versions.h>
 
 #define BA_METRIC_HEADER_SDK_VERSION @"x-batch-sdk-version"
 #define BA_METRIC_HEADER_SCHEMA_VERSION @"x-batch-protocol-version"

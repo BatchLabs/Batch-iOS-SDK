@@ -1,7 +1,5 @@
 #import <Foundation/Foundation.h>
 
-#import <Batch/BatchPushPrivate.h>
-
 typedef NS_OPTIONS(NSUInteger, BANotificationAuthorizationTypes) {
     BANotificationAuthorizationTypesNone = 0,
     BANotificationAuthorizationTypesBadge = 1 << 0,
@@ -60,8 +58,6 @@ typedef NS_ENUM(NSUInteger, BANotificationAuthorizationStatus) {
 
 @property BANotificationAuthorizationTypes types;
 
-@property BatchPushNotificationSettingStatus applicationSetting;
-
 - (nullable NSDictionary *)optionalDictionaryRepresentation;
 
 - (nonnull NSDictionary *)dictionaryRepresentation;
@@ -71,10 +67,6 @@ typedef NS_ENUM(NSUInteger, BANotificationAuthorizationStatus) {
 @interface BANotificationAuthorization : NSObject
 
 @property (nonnull) BANotificationAuthorizationSettings *currentSettings;
-
-+ (BatchPushNotificationSettingStatus)applicationSettings;
-
-- (void)setApplicationSettings:(BatchPushNotificationSettingStatus)appSettings skipServerEvent:(BOOL)skipServerEvent;
 
 - (BOOL)shouldFetchSettings;
 

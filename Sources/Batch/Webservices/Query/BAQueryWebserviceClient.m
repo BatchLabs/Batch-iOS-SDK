@@ -9,7 +9,6 @@
 #import <Batch/BAQueryWebserviceClient.h>
 
 #import <Batch/BACoreCenter.h>
-#import <Batch/BAWebserviceMetrics.h>
 
 #import <Batch/BAJson.h>
 #import <Batch/BAParameter.h>
@@ -153,10 +152,6 @@
     return responses;
 }
 
-- (void)updateMetricWithSuccess:(BOOL)success {
-    [[BAWebserviceMetrics sharedInstance] webserviceFinished:self.shortIdentifier success:success];
-}
-
 #pragma mark -
 #pragma mark BAWebserviceClient overrides
 
@@ -180,12 +175,6 @@
     NSMutableDictionary *identifiers = [NSMutableDictionary new];
     postParameters[@"ids"] = identifiers;
 
-    // Modules
-    NSNumber *trackerState = [NSNumber numberWithInteger:[BATrackerCenter currentMode]];
-    identifiers[@"m_e"] = trackerState;
-    NSNumber *pushState = [[BAPushCenter instance] swizzled] ? @1 : @0;
-    identifiers[@"m_p"] = pushState;
-
     // Add common identifiers
     [identifiers addEntriesFromDictionary:[_identifiersProvider identifiers]];
 
@@ -197,20 +186,6 @@
         currentSettings] optionalDictionaryRepresentation];
     if (notificationAuthorization) {
         postParameters[@"nath"] = notificationAuthorization;
-    }
-
-    // NSLog(@"DebugOptin: ts: %@ dty: %@ nath: %@", [NSDate new], [BAPropertiesCenter valueForShortName:@"nty"],
-    // [[notificationAuthorization description] stringByReplacingOccurrencesOfString:@"\n" withString:@""]);
-
-    @try {
-        // Add the webservice metrics
-        NSArray *metrics = [[BAWebserviceMetrics sharedInstance] popMetricsAsDictionaries];
-        if ([metrics count] > 0) {
-            postParameters[@"metrics"] = metrics;
-        }
-    } @catch (NSException *metricException) {
-        [BALogger errorForDomain:@"BatchWebserviceMetrics"
-                         message:@"Error while adding metrics to webservice: %@", [metricException description]];
     }
 
     return postParameters;
@@ -230,12 +205,10 @@
     if ([self.delegate respondsToSelector:@selector(webserviceClientWillStart:)]) {
         [self.delegate webserviceClientWillStart:self];
     }
-    [[BAWebserviceMetrics sharedInstance] webserviceStarted:self.shortIdentifier];
 }
 
 - (void)connectionFailedWithError:(NSError *)error {
     [super connectionFailedWithError:error];
-    [self updateMetricWithSuccess:false];
 
     [BALogger
         errorForDomain:LOCAL_ERROR_DOMAIN
@@ -259,7 +232,6 @@
     [super connectionDidFinishLoadingWithData:data];
     // Check data.
     if ([BANullHelper isNull:data]) {
-        [self updateMetricWithSuccess:false];
         [BALogger errorForDomain:LOCAL_ERROR_DOMAIN
                          message:@"%@ webservice return a NULL or empty data.", self.datasource.requestIdentifier];
         [self.delegate webserviceClient:self didFailWithError:[BAErrorHelper webserviceError]];
@@ -271,7 +243,6 @@
         NSDictionary *startDict = [BAJson deserializeDataAsDictionary:data error:nil];
 
         if (![BANullHelper isNull:startDict]) {
-            [self updateMetricWithSuccess:true];
             [self handleResponse:startDict];
         } else {
             [[NSException exceptionWithName:@"Invalid content."
@@ -280,7 +251,6 @@
                                    userInfo:nil] raise];
         }
     } @catch (NSException *exception) {
-        [self updateMetricWithSuccess:false];
         [BALogger
             errorForDomain:LOCAL_ERROR_DOMAIN
                    message:@"Error %@ webservice: %@", self.datasource.requestIdentifier, [exception description]];

@@ -33,4 +33,10 @@
  */
 @property (readonly) NSNumber *version;
 
+/*!
+ @property projectKey
+ @abstract ProjectKey attached the application
+ */
+@property (readonly) NSString *projectKey;
+
 @end

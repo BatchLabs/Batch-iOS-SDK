@@ -21,31 +21,6 @@
 @class BatchEventData;
 
 /*!
- @enum BATrackerMode
- @abstract Possible causes of webservice failure.
- */
-enum {
-    /*!
-     Value to completly switch off the event tracker.
-     */
-    BATrackerModeOFF = 0,
-
-    /*!
-     Value to stop sending the event (event will continue to be registred in DB).
-     */
-    BATrackerModeDB_ONLY = 1,
-
-    /*!
-     Value to completely activate the event tracker (default value).
-     */
-    BATrackerModeON = 2
-};
-/*!
- @typedef BATrackerMode
- */
-typedef NSInteger BATrackerMode;
-
-/*!
  @class BATrackerCenter
  @abstract Central control point of Batch event tracking services.
  @discussion Used for managing all tracking features.
@@ -60,25 +35,11 @@ typedef NSInteger BATrackerMode;
 + (BATrackerCenter *_Nonnull)instance __attribute__((warn_unused_result));
 
 /*!
- @method currentMode
- @abstract Helper to retieve the sending mode.
- @return The current BATrackerMode stored or default.
- */
-+ (BATrackerMode)currentMode __attribute__((warn_unused_result));
-
-/*!
  @method batchWillStart
  @abstract Called before Batch runtime begins its process.
  @discussion Implements anything that deserve it before all the process starts, like subscribing to events or watever.
  */
 + (void)batchWillStart;
-
-/*!
- Track an uncollapsable publicevent with label and data
-
- Do not prepend "E." to the event name: this method will do it
- */
-+ (void)trackPublicEvent:(nonnull NSString *)name label:(nullable NSString *)label data:(nullable BatchEventData *)data;
 
 /*!
  Track an uncollapsable private event with parameters
@@ -97,12 +58,6 @@ typedef NSInteger BATrackerMode;
  Track an already existing private event. Use case: BAEvent is created from an old BAEventLight instance.
  */
 + (void)trackManualPrivateEvent:(nonnull BAEvent *)event;
-
-/*!
- @method trackLocation:
- @abstract Track an location event
- */
-+ (void)trackLocation:(nonnull CLLocation *)location;
 
 /*!
  @method datasource

@@ -66,23 +66,23 @@
     id optOutMock = OCMClassMock([BAOptOut class]);
     OCMStub([optOutMock instance]).andReturn(optOutMock);
 
-    [Batch optOut];
+    [BatchSDK optOut];
     OCMVerify([optOutMock setOptedOut:true wipeData:false completionHandler:[OCMArg isNotNil]]);
 
-    [Batch optIn];
+    [BatchSDK optIn];
     OCMVerify([optOutMock setOptedOut:false wipeData:false completionHandler:[OCMArg isNotNil]]);
 
-    [Batch optOutAndWipeData];
+    [BatchSDK optOutAndWipeData];
     OCMVerify([optOutMock setOptedOut:true wipeData:true completionHandler:[OCMArg isNotNil]]);
 
     id userCompletionHandler = ^BatchOptOutNetworkErrorPolicy(BOOL success) {
       return BatchOptOutNetworkErrorPolicyCancel;
     };
 
-    [Batch optOutWithCompletionHandler:userCompletionHandler];
+    [BatchSDK optOutWithCompletionHandler:userCompletionHandler];
     OCMVerify([optOutMock setOptedOut:true wipeData:false completionHandler:userCompletionHandler]);
 
-    [Batch optOutAndWipeDataWithCompletionHandler:userCompletionHandler];
+    [BatchSDK optOutAndWipeDataWithCompletionHandler:userCompletionHandler];
     OCMVerify([optOutMock setOptedOut:true wipeData:true completionHandler:userCompletionHandler]);
 }
 
@@ -147,9 +147,11 @@
     NSString *filePath = ((BALocalCampaignsFilePersistence *)[campaignsCenter campaignPersister]).filePath.path;
     XCTAssertTrue([[NSFileManager defaultManager] fileExistsAtPath:filePath]);
 
-    // Add view event
-    NSTimeInterval timestamp = [[NSDate date] timeIntervalSince1970];
-    [[campaignsCenter viewTracker] trackEventForCampaignID:@"campaign_id" kind:BALocalCampaignTrackerEventKindView];
+    // Add view event. Remove 2 seconds from current time to reduce test flakiness
+    NSTimeInterval timestamp = [[[NSDate date] dateByAddingTimeInterval:-2] timeIntervalSince1970];
+    BALocalCampaignCountedEvent *viewEvent =
+        [[campaignsCenter viewTracker] trackEventForCampaignID:@"campaign_id" kind:BALocalCampaignTrackerEventKindView];
+    XCTAssertNotNil(viewEvent, @"Failed to track view event");
     XCTAssertEqual([[campaignsCenter viewTracker] numberOfViewEventsSince:timestamp].intValue, 1);
 
     [[BAOptOut instance] setOptedOut:true

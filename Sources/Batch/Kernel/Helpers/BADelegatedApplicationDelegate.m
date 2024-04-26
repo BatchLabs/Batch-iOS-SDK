@@ -125,11 +125,6 @@
     // If you swizzle more methods, make sure that you add tests
     [self swizzle_didRegisterForRemoteNotificationsWithDeviceToken:class];
     [self swizzle_didFailToRegisterForRemoteNotificationsWithError:class];
-    [self swizzle_didReceiveRemoteNotification:class];
-    [self swizzle_didReceiveRemoteNotification_fetchCompletionHandler:class];
-    [self swizzle_didRegisterUserNotificationSettings:class];
-    [self swizzle_handleActionWithIdentifier_forRemoteNotification_completionHandler:class];
-    [self swizzle_handleActionWithIdentifier_forRemoteNotification_withResponseInfo_completionHandler:class];
 }
 
 #pragma mark Swizzled method implementations
@@ -168,114 +163,6 @@
     };
     self.original_didFailToRegisterForRemoteNotificationsWithError =
         [self swizzleMethod:selector withBlock:block onClass:class skipIfTargetDoesntImplement:false];
-}
-
-- (void)swizzle_didReceiveRemoteNotification:(Class)class {
-    BADelegatedApplicationDelegate *delegatedAppDelegate = self;
-    SEL selector = @selector(application:didReceiveRemoteNotification:);
-    id block = ^(id _self, UIApplication *application, NSDictionary *userInfo) {
-      [delegatedAppDelegate.batchDelegate application:application didReceiveRemoteNotification:userInfo];
-
-      IMP originalIMP = delegatedAppDelegate.original_didReceiveRemoteNotification;
-      if (originalIMP == NULL) {
-          return;
-      }
-      ((void (*)(id, SEL, UIApplication *, NSDictionary *))originalIMP)(_self, selector, application, userInfo);
-    };
-    self.original_didReceiveRemoteNotification =
-        [self swizzleMethod:selector withBlock:block onClass:class skipIfTargetDoesntImplement:false];
-}
-
-- (void)swizzle_didReceiveRemoteNotification_fetchCompletionHandler:(Class)class {
-    BADelegatedApplicationDelegate *delegatedAppDelegate = self;
-    SEL selector = @selector(application:didReceiveRemoteNotification:fetchCompletionHandler:);
-    id block = ^(id _self, UIApplication *application, NSDictionary *userInfo,
-                 void (^completionHandler)(UIBackgroundFetchResult result)) {
-      [delegatedAppDelegate.batchDelegate application:application
-                         didReceiveRemoteNotification:userInfo
-                               fetchCompletionHandler:completionHandler];
-
-      IMP originalIMP = delegatedAppDelegate.original_didReceiveRemoteNotification_fetchCompletionHandler;
-      if (originalIMP == NULL) {
-          return;
-      }
-      ((void (*)(id, SEL, UIApplication *, NSDictionary *, void (^)(UIBackgroundFetchResult result)))originalIMP)(
-          _self, selector, application, userInfo, completionHandler);
-    };
-    self.original_didReceiveRemoteNotification_fetchCompletionHandler =
-        [self swizzleMethod:selector withBlock:block onClass:class skipIfTargetDoesntImplement:true];
-}
-
-- (void)swizzle_didRegisterUserNotificationSettings:(Class)class {
-    BADelegatedApplicationDelegate *delegatedAppDelegate = self;
-    SEL selector = @selector(application:didRegisterUserNotificationSettings:);
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-
-    id block = ^(id _self, UIApplication *application, UIUserNotificationSettings *notificationSettings) {
-      [delegatedAppDelegate.batchDelegate application:application
-                  didRegisterUserNotificationSettings:notificationSettings];
-
-      IMP originalIMP = delegatedAppDelegate.original_didRegisterUserNotificationSettings;
-      if (originalIMP == NULL) {
-          return;
-      }
-      ((void (*)(id, SEL, UIApplication *, UIUserNotificationSettings *))originalIMP)(_self, selector, application,
-                                                                                      notificationSettings);
-    };
-
-#pragma clang diagnostic pop
-
-    self.original_didRegisterUserNotificationSettings =
-        [self swizzleMethod:selector withBlock:block onClass:class skipIfTargetDoesntImplement:false];
-}
-
-- (void)swizzle_handleActionWithIdentifier_forRemoteNotification_completionHandler:(Class)class {
-    BADelegatedApplicationDelegate *delegatedAppDelegate = self;
-    SEL selector = @selector(application:handleActionWithIdentifier:forRemoteNotification:completionHandler:);
-    id block = ^(id _self, UIApplication *application, NSString *identifier, NSDictionary *userInfo,
-                 void (^completionHandler)(void)) {
-      [delegatedAppDelegate.batchDelegate application:application
-                           handleActionWithIdentifier:identifier
-                                forRemoteNotification:userInfo
-                                    completionHandler:completionHandler];
-
-      IMP originalIMP =
-          delegatedAppDelegate.original_handleActionWithIdentifier_forRemoteNotification_completionHandler;
-      if (originalIMP == NULL) {
-          return;
-      }
-      ((void (*)(id, SEL, UIApplication *, NSString *, NSDictionary *, void (^)(void)))originalIMP)(
-          _self, selector, application, identifier, userInfo, completionHandler);
-    };
-    self.original_handleActionWithIdentifier_forRemoteNotification_completionHandler =
-        [self swizzleMethod:selector withBlock:block onClass:class skipIfTargetDoesntImplement:true];
-}
-
-- (void)swizzle_handleActionWithIdentifier_forRemoteNotification_withResponseInfo_completionHandler:(Class)class {
-    BADelegatedApplicationDelegate *delegatedAppDelegate = self;
-    SEL selector = @selector(application:
-              handleActionWithIdentifier:forRemoteNotification:withResponseInfo:completionHandler:);
-    id block = ^(id _self, UIApplication *application, NSString *identifier, NSDictionary *userInfo,
-                 NSDictionary *responseInfo, void (^completionHandler)(void)) {
-      [delegatedAppDelegate.batchDelegate application:application
-                           handleActionWithIdentifier:identifier
-                                forRemoteNotification:userInfo
-                                     withResponseInfo:responseInfo
-                                    completionHandler:completionHandler];
-
-      IMP originalIMP =
-          delegatedAppDelegate
-              .original_handleActionWithIdentifier_forRemoteNotification_withResponseInfo_completionHandler;
-      if (originalIMP == NULL) {
-          return;
-      }
-      ((void (*)(id, SEL, UIApplication *, NSString *, NSDictionary *, NSDictionary *, void (^)(void)))originalIMP)(
-          _self, selector, application, identifier, userInfo, responseInfo, completionHandler);
-    };
-    self.original_handleActionWithIdentifier_forRemoteNotification_withResponseInfo_completionHandler =
-        [self swizzleMethod:selector withBlock:block onClass:class skipIfTargetDoesntImplement:true];
 }
 
 @end

@@ -69,7 +69,9 @@ NSString *const kBAActionGroupName = @"batch.group";
 }
 
 - (void)registerInternalAction:(nonnull BatchUserAction *)action {
-    [registeredActions setObject:action forKey:action.identifier];
+    if (action != nil) {
+        [registeredActions setObject:action forKey:action.identifier];
+    }
 }
 
 - (NSError *)registerAction:(nonnull BatchUserAction *)action {
@@ -284,6 +286,10 @@ NSString *const kBAActionGroupName = @"batch.group";
  * Action that triggers the rating prompt
  */
 - (BatchUserAction *)ratingAction {
+#if TARGET_OS_VISION
+    // There is no way (yet) to request a rating on visionOS
+    return nil;
+#else
     return
         [BatchUserAction userActionWithIdentifier:[kBAActionsReservedIdentifierPrefix stringByAppendingString:@"rating"]
                                       actionBlock:^(NSString *_Nonnull identifier,
@@ -298,6 +304,7 @@ NSString *const kBAActionGroupName = @"batch.group";
                                         }
                                         [SKStoreReviewController requestReview];
                                       }];
+#endif
 }
 
 - (void)performGroupAction:(nonnull NSDictionary<NSString *, NSObject *> *)rawArguments

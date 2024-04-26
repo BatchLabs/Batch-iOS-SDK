@@ -53,7 +53,6 @@ static const int currentVersion = 1;
     NSMutableDictionary *keyValues = [[NSMutableDictionary alloc] init];
     [keyValues setValue:[self language] forKey:@"ula"];
     [keyValues setValue:[self region] forKey:@"ure"];
-    [keyValues setValue:[self version] forKey:@"upv"];
 
     return [NSDictionary dictionaryWithDictionary:keyValues];
 }
@@ -72,37 +71,8 @@ static const int currentVersion = 1;
     return error;
 }
 
-- (void)incrementVersion {
-    @synchronized(_lock) {
-        NSNumber *version = [self version];
-        // Sanity
-        if (![version isKindOfClass:[NSNumber class]]) {
-            [BAParameter setValue:@(1) forKey:kParametersAppProfileVersionKey saved:YES];
-        } else {
-            [BAParameter setValue:@([version longLongValue] + 1) forKey:kParametersAppProfileVersionKey saved:YES];
-        }
-
-        NSMutableDictionary *eventParameters = [[self dictionaryRepresentation] mutableCopy];
-        [eventParameters setValue:[self customIdentifier] forKey:@"cus"];
-
-        [BATrackerCenter trackPrivateEvent:@"_PROFILE_CHANGED" parameters:eventParameters];
-    }
-}
-
-- (void)sendAttributionIDChangedEvent {
-    NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    params[@"attribution_id"] = self.attributionID != nil ? self.attributionID : [NSNull null];
-    [BATrackerCenter trackPrivateEvent:@"_ATTRIBUTION_ID_CHANGED" parameters:params];
-}
-
 #pragma mark -
 #pragma mark Properties override methods
-
-- (NSNumber *)version {
-    @synchronized(_lock) {
-        return [BAParameter objectForKey:kParametersAppProfileVersionKey fallback:@(1)];
-    }
-}
 
 /*** Custom Identifier ***/
 
@@ -145,21 +115,6 @@ static const int currentVersion = 1;
 
     if (error != nil) {
         [BALogger errorForDomain:@"UserProfile" message:@"Error changing the region: %@", [error localizedDescription]];
-    }
-}
-
-/*** Attribution Identifier ***/
-
-- (NSString *)attributionID {
-    return [BAParameter objectForKey:kParametersAttributionIDKey fallback:nil];
-}
-
-- (void)setAttributionID:(NSString *)attributionID {
-    NSError *error = [self updateValue:attributionID forKey:kParametersAttributionIDKey];
-
-    if (error != nil) {
-        [BALogger errorForDomain:@"UserProfile"
-                         message:@"Error changing the attribution identifier: %@", [error localizedDescription]];
     }
 }
 
