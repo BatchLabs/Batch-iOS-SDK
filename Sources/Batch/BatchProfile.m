@@ -26,10 +26,11 @@ NSErrorDomain const BatchProfileErrorDomain = @"com.batch.ios.profile";
 }
 
 + (void)trackEventWithName:(nonnull NSString *)name attributes:(nullable BatchEventAttributes *)attributes {
-    if (![attributes isKindOfClass:[BatchEventAttributes class]]) {
+    if (attributes && ![attributes isKindOfClass:[BatchEventAttributes class]]) {
+        [BALogger warningForDomain:@"Profile"
+                           message:@"Event attributes must be an instance of BatchEventAttributes. Aborting."];
         return;
     }
-
     NSError *error = nil;
     [[BAInjection injectProtocol:@protocol(BAProfileCenterProtocol)] trackPublicEventWithName:name
                                                                                    attributes:attributes
