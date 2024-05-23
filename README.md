@@ -7,7 +7,7 @@ The Batch iOS SDK allows you to build meaningful communication experience in you
 Our [📕 setup documentation](https://doc.batch.com/ios/prerequisites) details the steps to take for an easy and successful integration.
 
 # Prerequisites
-The Batch iOS SDK requires Xcode 12 and iOS 10.0 or higher.
+The Batch iOS SDK requires Xcode 15.3 and iOS 13.0 or higher.
 
 # Documentation
 - [Setup guide](https://doc.batch.com/ios/prerequisites): start your implementation here!
