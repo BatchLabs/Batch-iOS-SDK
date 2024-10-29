@@ -28,6 +28,21 @@ class BATProfileOperationsSerializer: NSObject {
             jsonParameters["email_marketing"] = serializedValue
         }
 
+        if let phoneNumber = profileEditor.phoneNumber {
+            jsonParameters["phone_number"] = phoneNumber.value
+        }
+
+        if let smsMarketingSubscription = profileEditor.smsMarketingSubscription {
+            let serializedValue: String
+            switch smsMarketingSubscription {
+                case .subscribed:
+                    serializedValue = "subscribed"
+                case .unsubscribed:
+                    serializedValue = "unsubscribed"
+            }
+            jsonParameters["sms_marketing"] = serializedValue
+        }
+
         if let language = profileEditor.language {
             jsonParameters["language"] = language.value
         }

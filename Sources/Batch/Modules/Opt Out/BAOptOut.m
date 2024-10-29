@@ -149,9 +149,7 @@ NSString *const kBATOptOutWipeDataKey = @"wipe_data";
 
 - (NSMutableDictionary *)makeBaseEventData {
     NSMutableDictionary *data = [NSMutableDictionary new];
-
     data[@"di"] = [[BAPropertiesCenter valueForShortName:@"di"] uppercaseString];
-    data[@"idfa"] = [BAPropertiesCenter valueForShortName:@"idfa"];
     data[@"cus"] = [BAPropertiesCenter valueForShortName:@"cus"];
     data[@"tok"] = [BAPropertiesCenter valueForShortName:@"tok"];
     return data;

@@ -10,9 +10,9 @@ import Foundation
 
 /// A test BATProfileEditor that has a controllable canSetEmail
 class TestProfileEditor: BATProfileEditor {
-    public var test_canSetEmail = true
+    public var test_isProfileIdentified = true
 
-    override func canSetEmail() -> Bool {
-        return test_canSetEmail
+    override func isProfileIdentified() -> Bool {
+        return test_isProfileIdentified
     }
 }

@@ -38,12 +38,14 @@ public class BATEventAttributesSerializer: NSObject {
             switch attributeValue.type {
                 case .date, .string, .double, .integer, .bool:
                     jsonAttributes[jsonKey] = attributeValue.value
+
                 case .URL:
                     if let urlValue = attributeValue.value as? URL {
                         jsonAttributes[jsonKey] = urlValue.absoluteString
                     } else {
                         throw BATSDKError.sdkInternal(subcode: 1, reason: "attribute isn't an URL")
                     }
+
                 case .stringArray:
                     if let arrayValue = attributeValue.value as? [String] {
                         jsonAttributes[jsonKey] = arrayValue

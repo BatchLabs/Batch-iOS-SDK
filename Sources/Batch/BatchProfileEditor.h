@@ -14,6 +14,12 @@ typedef NS_ENUM(NSUInteger, BatchEmailSubscriptionState) {
     BatchEmailSubscriptionStateUnsubscribed = 1,
 };
 
+/// Enum defining the state of an SMS subscription
+typedef NS_ENUM(NSUInteger, BatchSMSSubscriptionState) {
+    BatchSMSSubscriptionStateSubscribed = 0,
+    BatchSMSSubscriptionStateUnsubscribed = 1,
+};
+
 /// Provides profile attribute edition methods.
 ///
 /// Once save() has been called once (or implicitly when using the editor block), you will
@@ -89,7 +95,7 @@ typedef NS_ENUM(NSUInteger, BatchEmailSubscriptionState) {
 /// Set the user email.
 ///
 /// - Important: This method requires to already have a registered identifier for the user
-/// or to call ``BatchProfile.identify()`` method before this one.
+/// or to call ``BatchProfile/identify`` method before this one.
 /// - Parameters:
 ///    - email: User email.
 ///    - error Pointer to an error describing. Note that the error is only about validation  and doesn't
@@ -99,9 +105,41 @@ typedef NS_ENUM(NSUInteger, BatchEmailSubscriptionState) {
 
 /// Set the user email subscription state.
 ///
+/// Note that profile's subscription status is automatically set to unsubscribed when a user click an unsubscribe link.
 /// - Parameters:
 ///    - state: Subscription state
 - (void)setEmailMarketingSubscriptionState:(BatchEmailSubscriptionState)state;
+
+/// Set the profile phone number.
+///
+/// - Important: This method requires to already have a registered identifier for the user
+/// or to call ``BatchProfile/identify:`` method before this one.
+/// - Parameters:
+///    - phoneNumber: A valid [E.164](https://en.wikipedia.org/wiki/E.164) formatted string.   Must start with a "+" and
+///    not be longer than 15 digits without special characters (eg: "+33123456789"). nil to reset.
+///    - error Pointer to an error describing. Note that the error is only about validation  and doesn't mean the value
+///    has been sent to the server yet.
+/// - Returns:  A boolean indicating whether the attribute passed validation or not.
+///
+/// ## Examples:
+/// ```swift
+///     BatchProfile.identify("my_custom_user_id")
+///     let editor = BatchProfile.editor()
+///     try? editor.setPhoneNumber("+33123456789").save()
+/// ```
+/// ```objc
+///     [BatchProfile identify: @"my_custom_user_id"];
+///     BatchProfileEditor *editor = [BatchProfile editor];
+///     [editor setPhoneNumber:@"+33123456789" error:nil];
+/// ```
+- (BOOL)setPhoneNumber:(nullable NSString *)phoneNumber error:(NSError *_Nullable *_Nullable)error;
+
+/// Set the profile SMS marketing subscription state.
+///
+/// Note that profile's subscription status is automatically set to unsubscribed when a user send a STOP message.
+/// - Parameters:
+///    - state: State of the subscription
+- (void)setSMSMarketingSubscriptionState:(BatchSMSSubscriptionState)state;
 
 /// Set a boolean profile attribute for a key.
 ///

@@ -28,6 +28,19 @@ final class profileEditorValidationTests: XCTestCase {
         XCTAssertFalse(BATProfileDataValidators.isValidEmail("inval\rid@invalid.gmail.com\n"))
     }
 
+    func testPhoneNumberPatterns() {
+        XCTAssertTrue(BATProfileDataValidators.isValidPhoneNumber("+2901234"))
+        XCTAssertTrue(BATProfileDataValidators.isValidPhoneNumber("+33612345678"))
+        XCTAssertTrue(BATProfileDataValidators.isValidPhoneNumber("+123456789123145"))
+
+        XCTAssertFalse(BATProfileDataValidators.isValidEmail("+"))
+        XCTAssertFalse(BATProfileDataValidators.isValidEmail("+1234567891231456"))
+        XCTAssertFalse(BATProfileDataValidators.isValidEmail("33612345678"))
+        XCTAssertFalse(BATProfileDataValidators.isValidEmail("+33-6-12-34-56-78"))
+        XCTAssertFalse(BATProfileDataValidators.isValidEmail("+33 6 12 34 56 78"))
+        XCTAssertFalse(BATProfileDataValidators.isValidEmail(""))
+    }
+
     func testEmailIsTooLong() {
         XCTAssertTrue(BATProfileDataValidators.isEmailTooLong("testastringtestastringtoolongtobeanemailtestastringtoolongtestastringtoolongtobeanemailtestastringtoolongtestastringtoolongtobeanemailtestastringtoolongtestastringtoolongtobeanemailtestastringtoolongtestastringtoolongtobeanemailtestastringtoolongtoolongtobeanemailtestastringtoolongtobeanemailtestastringtoolongtobeanemailtestastringtoolongtobeanemailtestastringtoo@batch.com"))
         XCTAssertFalse(BATProfileDataValidators.isEmailTooLong("bar@foo.batch.com"))
@@ -35,7 +48,7 @@ final class profileEditorValidationTests: XCTestCase {
 
     func testEditorEmailErrors() {
         let editor = TestProfileEditor()
-        editor.test_canSetEmail = true
+        editor.test_isProfileIdentified = true
         XCTAssertNoThrow(try editor.setEmail("test@batch.com"))
         XCTAssertThrowsError(try editor.setEmail("invalid@inva lid.gmail.com"))
         let longEmailPart = String(repeating: "test_too_long", count: 100)
@@ -45,5 +58,18 @@ final class profileEditorValidationTests: XCTestCase {
     func testCustomUserIDValidity() {
         XCTAssertFalse(BATProfileDataValidators.isCustomIDTooLong("customId"))
         XCTAssertTrue(BATProfileDataValidators.isCustomIDTooLong("my_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_id_1111"))
+    }
+
+    func testIsCustomIDBlocklisted() {
+        XCTAssertTrue(BATProfileDataValidators.isCustomIDBlocklisted("null"))
+        XCTAssertTrue(BATProfileDataValidators.isCustomIDBlocklisted("(null)"))
+        XCTAssertTrue(BATProfileDataValidators.isCustomIDBlocklisted("nil"))
+        XCTAssertTrue(BATProfileDataValidators.isCustomIDBlocklisted("[object Object]"))
+        XCTAssertTrue(BATProfileDataValidators.isCustomIDBlocklisted("undefined"))
+        XCTAssertTrue(BATProfileDataValidators.isCustomIDBlocklisted("Infinity"))
+        XCTAssertTrue(BATProfileDataValidators.isCustomIDBlocklisted("-Infinity"))
+        XCTAssertTrue(BATProfileDataValidators.isCustomIDBlocklisted("NaN"))
+        XCTAssertTrue(BATProfileDataValidators.isCustomIDBlocklisted("true"))
+        XCTAssertTrue(BATProfileDataValidators.isCustomIDBlocklisted("false"))
     }
 }

@@ -63,6 +63,11 @@ public class BAProfileCenter: NSObject, BAProfileCenterProtocol {
                 BALogger.public(domain: loggerDomain, message: "Cannot identify, Custom ID is invalid: it cannot be only made of whitespace or contain a newline.")
                 return
             }
+
+            guard BATProfileDataValidators.isCustomIDBlocklisted(customID) == false else {
+                BALogger.public(domain: loggerDomain, message: "Cannot identify, Custom ID is blocklisted: `\(customID)`. Please ensure you have correctly implemented the API.")
+                return
+            }
         }
 
         // Compatibility
@@ -200,7 +205,7 @@ public class BAProfileCenter: NSObject, BAProfileCenterProtocol {
     }
 
     func sendIdentifyEvent(customID: String?) {
-        guard let installID = BatchUser.installationID else {
+        guard let installID = BatchUser.installationID, !installID.isEmpty else {
             BALogger.error(domain: loggerDomain, message: "Could not track identify event: nil Installation ID")
             return
         }

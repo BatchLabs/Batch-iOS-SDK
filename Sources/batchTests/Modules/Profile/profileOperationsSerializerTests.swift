@@ -19,6 +19,8 @@ final class profileOperationsSerializerTests: XCTestCase {
         let serialized = try serializeEditor { editor in
             try editor.setEmail("test@batch.com")
             editor.setEmailMarketingSubscriptionState(.subscribed)
+            try editor.setPhoneNumber("+33123456789")
+            editor.setSMSMarketingSubscriptionState(.subscribed)
             try editor.setLanguage("fr_ch")
             try editor.setRegion("FR")
             try editor.setCustom(stringAttribute: "hello", forKey: "string_att")
@@ -57,6 +59,8 @@ final class profileOperationsSerializerTests: XCTestCase {
 
         XCTAssertEqual(serialized["email"] as? String, "test@batch.com")
         XCTAssertEqual(serialized["email_marketing"] as? String, "subscribed")
+        XCTAssertEqual(serialized["phone_number"] as? String, "+33123456789")
+        XCTAssertEqual(serialized["sms_marketing"] as? String, "subscribed")
         XCTAssertEqual(serialized["language"] as? String, "fr_ch")
         XCTAssertEqual(serialized["region"] as? String, "FR")
 
@@ -119,7 +123,7 @@ final class profileOperationsSerializerTests: XCTestCase {
     /// Test that an email cannot be set and is not serialized if not allowed
     func testCantSetEmail() throws {
         let editor = TestProfileEditor()
-        editor.test_canSetEmail = false
+        editor.test_isProfileIdentified = false
 
         XCTAssertThrowsError(try editor.setEmail("test@batch.com"))
 
@@ -127,9 +131,20 @@ final class profileOperationsSerializerTests: XCTestCase {
         XCTAssertNil(serialized["email"])
     }
 
+    /// Test that a phone number cannot be set and is not serialized if not allowed
+    func testCantSetPhoneNumber() throws {
+        let editor = TestProfileEditor()
+        editor.test_isProfileIdentified = false
+
+        XCTAssertThrowsError(try editor.setPhoneNumber("+33123456789"))
+
+        let serialized = BATProfileOperationsSerializer.serialize(profileEditor: editor)
+        XCTAssertNil(serialized["phone_number"])
+    }
+
     func serializeEditor(_ editClosure: (BATProfileEditor) throws -> Void) rethrows -> [AnyHashable: Any] {
         let editor = TestProfileEditor()
-        editor.test_canSetEmail = true
+        editor.test_isProfileIdentified = true
         try editClosure(editor)
         return BATProfileOperationsSerializer.serialize(profileEditor: editor)
     }

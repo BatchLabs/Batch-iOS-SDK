@@ -23,11 +23,6 @@
     [BACenterMulticastDelegate startWithAPIKey:key];
 }
 
-// Set if Batch can try to use IDFA. Deprecated.
-+ (void)setUseIDFA:(BOOL)use {
-    [BALogger publicForDomain:nil message:@"Ignoring 'setUseIDFA' API call: Batch has removed support for IDFA."];
-}
-
 + (void)setLoggerDelegate:(id<BatchLoggerDelegate>)loggerDelegate {
     [[[BACoreCenter instance] configuration] setLoggerDelegate:loggerDelegate];
 }

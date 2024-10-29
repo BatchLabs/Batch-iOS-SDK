@@ -194,7 +194,13 @@ fileprivate class MockWKWebView: WKWebView, MockDelegate {
         return mock
     }
 
-    override func evaluateJavaScript(_ javaScriptString: String, completionHandler: ((Any?, Error?) -> Void)? = nil) {
-        mock.call(javaScriptString, completionHandler)
-    }
+    #if compiler(>=6.0)
+        override func evaluateJavaScript(_ javaScriptString: String, completionHandler: (@MainActor @Sendable (Any?, (any Error)?) -> Void)? = nil) {
+            mock.call(javaScriptString, completionHandler)
+        }
+    #else
+        override func evaluateJavaScript(_ javaScriptString: String, completionHandler: ((Any?, Error?) -> Void)? = nil) {
+            mock.call(javaScriptString, completionHandler)
+        }
+    #endif
 }

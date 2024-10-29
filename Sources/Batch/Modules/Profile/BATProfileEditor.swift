@@ -9,13 +9,11 @@ import Foundation
 fileprivate enum Maximums {
     static let stringArrayItems = 25
     static let stringLength = 64
-    static let emailLength = 256
     static let urlLength = 2048
 }
 
 fileprivate enum Consts {
     static let attributeNamePattern = "^[a-zA-Z0-9_]{1,30}$"
-    static let emailAddressPattern = "^[^@\\s]+@[A-z0-9\\-\\.]+\\.[A-z0-9]+$"
 }
 
 /// Protocol that exposes BATProfileEditor's state, so that it can be serialized
@@ -23,6 +21,10 @@ protocol BATSerializableProfileEditorProtocol {
     var email: (any BATProfileAttributeOperation)? { get }
 
     var emailMarketingSubscription: BATProfileEditorEmailSubscriptionState? { get }
+
+    var phoneNumber: (any BATProfileAttributeOperation)? { get }
+
+    var smsMarketingSubscription: BATProfileEditorSMSSubscriptionState? { get }
 
     var language: (any BATProfileAttributeOperation)? { get }
 
@@ -79,11 +81,14 @@ public protocol BATInstallDataEditorCompatibilityProtocol {
 @objc
 public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, NSCopying {
     private let attributeNameRegexp: BATRegularExpression = .init(pattern: Consts.attributeNamePattern)
-    private let emailAddressRegexp: BATRegularExpression = .init(pattern: Consts.emailAddressPattern)
 
     private(set) var email: (any BATProfileAttributeOperation)?
 
     private(set) var emailMarketingSubscription: BATProfileEditorEmailSubscriptionState?
+
+    private(set) var phoneNumber: (any BATProfileAttributeOperation)?
+
+    private(set) var smsMarketingSubscription: BATProfileEditorSMSSubscriptionState?
 
     private(set) var language: (any BATProfileAttributeOperation)?
 
@@ -114,18 +119,18 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
     public func setEmail(_ value: String?) throws {
         try checkIfConsumed()
 
+        if !isProfileIdentified() {
+            throw BatchProfileError(code: .editorInvalidValue, reason: "Emails cannot be set on a profile if it has not been identified first. Please call 'BatchProfile.idenfity()' with a non nil value beforehand.")
+        }
+
         if let value {
             let baseError = "Cannot set email address:"
 
-            if !canSetEmail() {
-                throw BatchProfileError(code: .editorInvalidValue, reason: "Emails cannot be set on a profile if it has not been identified first. Please call 'BatchProfile.idenfity()' with a non nil value beforehand.")
+            if BATProfileDataValidators.isEmailTooLong(value) {
+                throw BatchProfileError(code: .editorInvalidValue, reason: "\(baseError) address cannot be longer than \(BATProfileDataValidators.emailMaxLength) characters")
             }
 
-            if value.count > Maximums.emailLength {
-                throw BatchProfileError(code: .editorInvalidValue, reason: "\(baseError) address cannot be longer than \(Maximums.emailLength) characters")
-            }
-
-            if !emailAddressRegexp.matches(value) {
+            if !BATProfileDataValidators.isValidEmail(value) {
                 throw BatchProfileError(code: .editorInvalidValue, reason: "\(baseError) invalid address")
             }
 
@@ -140,6 +145,34 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
         do {
             try checkIfConsumed()
             emailMarketingSubscription = value
+        } catch {
+            // Do nothing
+        }
+    }
+
+    @objc
+    public func setPhoneNumber(_ value: String?) throws {
+        try checkIfConsumed()
+
+        if !isProfileIdentified() {
+            throw BatchProfileError(code: .editorInvalidValue, reason: "Phone number cannot be set on a profile if it has not been identified first. Please call 'BatchProfile.idenfity()' with a non nil value beforehand.")
+        }
+
+        if let value {
+            if !BATProfileDataValidators.isValidPhoneNumber(value) {
+                throw BatchProfileError(code: .editorInvalidValue, reason: "Invalid phone number. Please make sure that the string starts with a `+` and is no longer than 15 digits.")
+            }
+            phoneNumber = BATProfileAttributeSetOperation(type: .string, value: value)
+        } else {
+            phoneNumber = BATProfileAttributeDeleteOperation()
+        }
+    }
+
+    @objc
+    public func setSMSMarketingSubscriptionState(_ value: BATProfileEditorSMSSubscriptionState) {
+        do {
+            try checkIfConsumed()
+            smsMarketingSubscription = value
         } catch {
             // Do nothing
         }
@@ -393,14 +426,16 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
         let copy = BATProfileEditor()
         copy.email = self.email
         copy.emailMarketingSubscription = self.emailMarketingSubscription
+        copy.phoneNumber = self.phoneNumber
+        copy.smsMarketingSubscription = self.smsMarketingSubscription
         copy.language = self.language
         copy.region = self.region
         copy.customAttributes = self.customAttributes
         return copy
     }
 
-    func canSetEmail() -> Bool {
-        // We can only set an email if the user is logged in
+    func isProfileIdentified() -> Bool {
+        // We can only set an email or a phone number if the user is logged in
         // This method is exposed for testing purposes
         return BAUserProfile.default().customIdentifier != nil
     }
@@ -475,6 +510,14 @@ public struct BATProfileAttributePartialArrayUpdateOperation: BATProfileAttribut
 /// an @objc method with a parameter from a public header, as this creates an import loop.
 @objc
 public enum BATProfileEditorEmailSubscriptionState: UInt {
+    case subscribed = 0
+    case unsubscribed = 1
+}
+
+/// SMS subscription state. This is already defined in BatchProfile.h, but we cannot reexpose
+/// an @objc method with a parameter from a public header, as this creates an import loop.
+@objc
+public enum BATProfileEditorSMSSubscriptionState: UInt {
     case subscribed = 0
     case unsubscribed = 1
 }

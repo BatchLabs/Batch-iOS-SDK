@@ -93,6 +93,24 @@
     [_backingImpl setEmailMarketingSubscriptionState:swiftState];
 }
 
+- (BOOL)setPhoneNumber:(nullable NSString *)phoneNumber error:(NSError **)error {
+    INIT_AND_BLANK_ERROR_IF_NEEDED(error)
+    ENSURE_ATTRIBUTE_VALUE_CLASS_NILABLE(phoneNumber, NSString.class)
+    return [_backingImpl setPhoneNumber:phoneNumber error:error];
+}
+
+- (void)setSMSMarketingSubscriptionState:(BatchSMSSubscriptionState)state {
+    BATProfileEditorSMSSubscriptionState swiftState;
+    switch (state) {
+        case BatchSMSSubscriptionStateSubscribed:
+            swiftState = BATProfileEditorSMSSubscriptionStateSubscribed;
+            break;
+        case BatchSMSSubscriptionStateUnsubscribed:
+            swiftState = BATProfileEditorSMSSubscriptionStateUnsubscribed;
+    }
+    [_backingImpl setSMSMarketingSubscriptionState:swiftState];
+}
+
 - (BOOL)addItemToStringArrayAttribute:(NSString *)element forKey:(NSString *)key error:(NSError **)error {
     INIT_AND_BLANK_ERROR_IF_NEEDED(error)
     ENSURE_KEY_STRING(key)
