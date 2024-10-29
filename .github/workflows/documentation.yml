@@ -29,10 +29,10 @@ jobs:
       - name: Build DocC
         run: |
             # Build DocArchive
-            cd Sources && xcodebuild docbuild CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED="NO"
+            cd Sources && xcodebuild docbuild -scheme Batch -derivedDataPath ./BatchBuild
             
             # Transform for static hosting
-            `xcrun -find docc` process-archive transform-for-static-hosting  build/Release-iphoneos/Batch.doccarchive --hosting-base-path Batch-iOS-SDK --output-path ../docs
+            `xcrun -find docc` process-archive transform-for-static-hosting  ./BatchBuild/Build/Products/Debug-maccatalyst/Batch.doccarchive --hosting-base-path Batch-iOS-SDK --output-path ../docs
      
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
