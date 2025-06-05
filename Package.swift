@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "Batch",
     platforms: [
-        .iOS(.v10)
+        .iOS(.v15)
     ],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
@@ -18,8 +18,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "Batch",
-            url: "https://download.batch.com/sdk/ios/spm/BatchSDK-ios_spm-xcframework-3.0.0.zip",
-            checksum: "6a85b851bc483fdccbf4d5b9ee916637ad20bae3ad2cb47f437f56cf2af20d7f"
+            url: "https://download.batch.com/sdk/ios/spm/BatchSDK-ios_spm-xcframework-3.0.1.zip",
+            checksum: "944de4c24f776923c69b848a67452fb81000ddd53415330cf94a708a6e1ebd3e"
         )
     ]
 )
