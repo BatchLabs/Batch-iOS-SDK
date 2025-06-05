@@ -10,7 +10,6 @@
 
 #import <Batch/BAActionsCenter.h>
 #import <Batch/BACoreCenter.h>
-#import <Batch/BADisplayReceiptCenter.h>
 #import <Batch/BAEventDispatcherCenter.h>
 #import <Batch/BALocalCampaignsCenter.h>
 #import <Batch/BAMessagingCenter.h>
@@ -31,8 +30,7 @@ static NSArray *kPluginsList = nil;
     kPluginsList = @[
         [BACoreCenter class], [BAPushCenter class], [BATrackerCenter class], [BAUserCenter class],
         [BAMessagingCenter class], [BAActionsCenter class], [BALocalCampaignsCenter class],
-        [BAEventDispatcherCenter class], [BADisplayReceiptCenter class], [BAProfileCenter class],
-        [BATDataCollectionCenter class]
+        [BAEventDispatcherCenter class], [BAProfileCenter class], [BATDataCollectionCenter class]
     ];
 }
 

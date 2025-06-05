@@ -18,6 +18,7 @@
 #import <Batch/BAWSResponseLocalCampaigns.h>
 
 #import <Batch/BALocalCampaignCountedEvent.h>
+#import <Batch/Batch-Swift.h>
 
 @interface BALocalCampaignsServiceDatasource () {
     NSDictionary<NSString *, BALocalCampaignCountedEvent *> *_viewEvents;
@@ -36,7 +37,9 @@
 }
 
 - (NSURL *)requestURL {
-    return [BAWebserviceURLBuilder webserviceURLForShortname:self.requestShortIdentifier];
+    NSString *host = [[BAInjection injectProtocol:@protocol(BADomainManagerProtocol)] urlFor:BADomainServiceWeb
+                                                                        overrideWithOriginal:FALSE];
+    return [BAWebserviceURLBuilder webserviceURLForHost:host shortname:self.requestShortIdentifier];
 }
 
 - (NSString *)requestIdentifier {
@@ -44,7 +47,7 @@
 }
 
 - (NSString *)requestShortIdentifier {
-    return @"local";
+    return kParametersLocalCampaignsWebserviceShortname;
 }
 
 - (NSArray<id<BAWSQuery>> *)queriesToSend {

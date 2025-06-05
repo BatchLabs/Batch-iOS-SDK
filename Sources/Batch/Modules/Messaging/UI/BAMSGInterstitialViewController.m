@@ -1326,7 +1326,7 @@ static NSString *kBAMSGInterstitialViewControllerHeroConstraint = @"BAMainHeroCo
 
 #pragma mark - Parent
 
-- (BAMSGMessage *)message {
+- (BAMSGMEPMessage *)message {
     return self.messageDescription;
 }
 

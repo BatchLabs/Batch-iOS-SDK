@@ -20,6 +20,7 @@
 #import <Batch/BAMSGWebviewViewController.h>
 #import <Batch/BAOptOut.h>
 #import <Batch/BAPushCenter.h>
+#import <Batch/Batch-Swift.h>
 #import <Batch/BatchPush.h>
 
 #import <Batch/BAMSGImageDownloader.h>
@@ -59,6 +60,8 @@
 
 #define BAMESSAGING_EVENT_TYPE_GLOBAL_TAP @"global_tap_action"
 
+#define BAMESSAGING_EVENT_TYPE_LOADING_IMAGE_ERROR @"loading_image_error"
+
 #define BAMESSAGING_EVENT_TYPE_CTA @"cta_action"
 
 #define BAMESSAGING_EVENT_TYPE_WEBVIEW_CLICK @"webview_click"
@@ -73,6 +76,7 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
 
 @interface BAMessagingCenter () {
     BABatchMessagingDelegateWrapper *_wrappedDelegate;
+    BABatchInAppDelegateWrapper *_wrappedInAppDelegate;
     BatchMessage *_pendingMessage;
 }
 @end
@@ -102,6 +106,7 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
     self = [super init];
     if (self) {
         _wrappedDelegate = [[BABatchMessagingDelegateWrapper alloc] initWithDelgate:nil];
+        _wrappedInAppDelegate = [[BABatchInAppDelegateWrapper alloc] initWithDelgate:nil];
         _canReconfigureAVAudioSession = YES;
         _automaticMode = YES;
         _imageDownloadTimeout = BAMESSAGING_DEFAULT_TIMEOUT;
@@ -156,8 +161,16 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
     _wrappedDelegate = [[BABatchMessagingDelegateWrapper alloc] initWithDelgate:delegate];
 }
 
+- (void)setInAppDelegate:(id<BatchInAppDelegate> _Nullable)inAppDelegate {
+    _wrappedInAppDelegate = [[BABatchInAppDelegateWrapper alloc] initWithDelgate:inAppDelegate];
+}
+
 - (id<BatchMessagingDelegate> _Nullable)delegate {
     return _wrappedDelegate.delegate;
+}
+
+- (id<BatchInAppDelegate> _Nullable)inAppDelegate {
+    return _wrappedInAppDelegate.delegate;
 }
 
 - (void)setImageDownloadTimeout:(NSTimeInterval)timeout {
@@ -202,9 +215,11 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
     if (font == nil) {
         [BAMSGLabel setFontOverride:nil boldFont:nil italicFont:nil boldItalicFont:nil];
         [BAMSGButton setFontOverride:nil boldFont:nil italicFont:nil boldItalicFont:nil];
+        [InAppFont reset];
     } else {
         [BAMSGLabel setFontOverride:font boldFont:boldFont italicFont:italicFont boldItalicFont:boldItalicFont];
         [BAMSGButton setFontOverride:font boldFont:boldFont italicFont:italicFont boldItalicFont:boldItalicFont];
+        [InAppFont setFontOverride:font boldFont:boldFont italicFont:italicFont boldItalicFont:boldItalicFont];
     }
 }
 
@@ -221,7 +236,7 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
 
 - (void)handleInAppMessage:(nonnull BatchInAppMessage *)message {
     [BAThreading performBlockOnMainThreadAsync:^{
-      if ([self->_wrappedDelegate batchInAppMessageReady:message]) {
+      if ([self->_wrappedInAppDelegate batchInAppMessageReady:message]) {
           [BALogger debugForDomain:LOGGER_DOMAIN
                            message:@"Called developer's delegate with the In-App message %@", message];
       } else {
@@ -306,6 +321,20 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
             while (presentedVC.presentedViewController) {
                 presentedVC = presentedVC.presentedViewController;
             }
+            if ([presentedVC isKindOfClass:[UIAlertController class]]) {
+                [BALogger publicForDomain:LOGGER_DOMAIN
+                                  message:@"A Batch message was about to be displayed on Alert Controller"];
+                if (error) {
+                    *error =
+                        [NSError errorWithDomain:MESSAGING_ERROR_DOMAIN
+                                            code:BatchMessagingErrorNoSuitableVCForDisplay
+                                        userInfo:@{
+                                            NSLocalizedDescriptionKey :
+                                                @"Could not find a suitable view controller to display the message on."
+                                        }];
+                }
+                return false;
+            }
             void (^presentationBlock)(void) = ^{
               [targetVC presentViewController:vc animated:YES completion:nil];
             };
@@ -375,9 +404,16 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
         return nil;
     }
 
-    BAMSGMessage *msg = [BAMSGPayloadParser messageForRawMessage:message bailIfNotAlert:NO];
+    BAMSGMessage *msg;
+    if ([message isCEPMessage]) {
+        msg = [BAMSGPayloadParser messageForCEPRawMessage:message bailIfNotAlert:NO];
+    } else {
+        msg = [BAMSGPayloadParser messageForMEPRawMessage:message bailIfNotAlert:NO];
+    }
 
-    if ([msg isKindOfClass:[BAMSGMessageAlert class]]) {
+    if ([msg isKindOfClass:[BAMSGCEPMessage class]]) {
+        return [InAppViewControllerProvider viewControllerWithMessage:(BAMSGCEPMessage *)msg error:error];
+    } else if ([msg isKindOfClass:[BAMSGMessageAlert class]]) {
         return [BADelegatedUIAlertController alertControllerWithMessage:(BAMSGMessageAlert *)msg];
     } else if ([msg isKindOfClass:[BAMSGMessageInterstitial class]]) {
         BAMSGMessageInterstitial *universalMessage = (BAMSGMessageInterstitial *)msg;
@@ -507,7 +543,7 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
 
 - (void)performAction:(nonnull BAMSGAction *)action
                source:(nullable id<BatchUserActionSource>)source
-          actionIndex:(NSInteger)index
+        ctaIdentifier:(NSString *_Nonnull)ctaIdentifier
     messageIdentifier:(nullable NSString *)identifier {
     if (![self performAction:action source:source]) {
         return;
@@ -521,28 +557,9 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
         publicAction = [[BatchMessageAction alloc] _initWithInternalAction:action];
     }
 
-    [_wrappedDelegate batchMessageDidTriggerAction:publicAction messageIdentifier:identifier actionIndex:index];
-}
-
-- (void)performAction:(nonnull BAMSGAction *)action
-                source:(nullable id<BatchUserActionSource>)source
-    webViewAnalyticsID:(nullable NSString *)analyticsID
-     messageIdentifier:(nullable NSString *)messageIdentifier {
-    if (![self performAction:action source:source]) {
-        return;
-    }
-
-    BatchMessageAction *publicAction = nil;
-
-    if ([action isKindOfClass:[BAMSGCTA class]]) {
-        publicAction = [[BatchMessageCTA alloc] _initWithInternalAction:(BAMSGCTA *)action];
-    } else if (action != nil) {
-        publicAction = [[BatchMessageAction alloc] _initWithInternalAction:action];
-    }
-
-    [_wrappedDelegate batchWebViewMessageDidTriggerAction:publicAction
-                                        messageIdentifier:messageIdentifier
-                                      analyticsIdentifier:analyticsID];
+    [_wrappedDelegate batchMessageDidTriggerAction:publicAction
+                                 messageIdentifier:identifier
+                                     ctaIdentifier:ctaIdentifier];
 }
 
 #pragma mark Event tracking
@@ -565,7 +582,10 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
     [parameters setObject:messageSource forKey:@"s"];
 
     if (message.sourceMessage != nil) {
-        [parameters setObject:message.sourceMessage.messageIdentifier forKey:@"id"];
+        // Ensure messageIdentifier is not null since CEP message does't have global identifier.
+        if (![BANullHelper isNull:message.sourceMessage.messageIdentifier]) {
+            [parameters setObject:message.sourceMessage.messageIdentifier forKey:@"id"];
+        }
         if (message.sourceMessage.eventData != nil) {
             [parameters setObject:message.sourceMessage.eventData forKey:@"ed"];
         }
@@ -581,10 +601,23 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
                             parameters:[self baseEventParametersForMessage:message type:type]];
 }
 
-- (void)trackCTAClickEvent:(BAMSGMessage *_Nonnull)message ctaIndex:(NSInteger)ctaIndex action:(NSString *)action {
+- (void)trackCTAClickEvent:(BAMSGMessage *_Nonnull)message
+             ctaIdentifier:(NSString *_Nonnull)ctaIdentifier
+                    action:(NSString *)action {
     NSMutableDictionary *parameters = [self baseEventParametersForMessage:message type:BAMESSAGING_EVENT_TYPE_CTA];
-    [parameters setObject:@(ctaIndex) forKey:@"ctaIndex"];
+    [parameters setObject:ctaIdentifier forKey:@"ctaId"];
     [parameters setObject:(action != nil ? action : [NSNull null]) forKey:@"action"];
+    [BATrackerCenter trackPrivateEvent:BAMESSAGING_EVENT_NAME parameters:parameters];
+}
+
+- (void)trackCTAClickEvent:(BAMSGMessage *_Nonnull)message
+             ctaIdentifier:(NSString *)ctaIdentifier
+                   ctaType:(NSString *)ctaType
+                    action:(NSString *)action {
+    NSMutableDictionary *parameters = [self baseEventParametersForMessage:message type:BAMESSAGING_EVENT_TYPE_CTA];
+    [parameters setObject:(action != nil ? action : [NSNull null]) forKey:@"action"];
+    [parameters setObject:ctaIdentifier forKey:@"ctaId"];
+    [parameters setObject:ctaType forKey:@"ctaType"];
     [BATrackerCenter trackPrivateEvent:BAMESSAGING_EVENT_NAME parameters:parameters];
 }
 
@@ -645,7 +678,8 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
         }
     }
 
-    [_wrappedDelegate batchMessageWasCancelledByAutoclose:message.sourceMessage.devTrackingIdentifier];
+    [_wrappedDelegate batchMessageDidDisappear:message.sourceMessage.devTrackingIdentifier
+                                        reason:BatchMessagingCloseReasonAuto];
 }
 
 - (void)messageClosed:(BAMSGMessage *_Nonnull)message {
@@ -659,7 +693,8 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
         }
     }
 
-    [_wrappedDelegate batchMessageWasCancelledByUserAction:message.sourceMessage.devTrackingIdentifier];
+    [_wrappedDelegate batchMessageDidDisappear:message.sourceMessage.devTrackingIdentifier
+                                        reason:BatchMessagingCloseReasonUser];
 }
 
 - (void)message:(BAMSGMessage *_Nonnull)message closedByError:(BATMessagingCloseErrorCause)errorCause {
@@ -673,7 +708,8 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
         }
     }
 
-    [_wrappedDelegate batchMessageWasCancelledByError:message.sourceMessage.devTrackingIdentifier];
+    [_wrappedDelegate batchMessageDidDisappear:message.sourceMessage.devTrackingIdentifier
+                                        reason:BatchMessagingCloseReasonError];
 }
 
 - (void)messageDismissed:(BAMSGMessage *_Nonnull)message {
@@ -682,7 +718,8 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
 
         [self trackGenericEvent:message type:BAMESSAGING_EVENT_TYPE_DISMISS];
     }
-    [_wrappedDelegate batchMessageDidDisappear:message.sourceMessage.devTrackingIdentifier];
+    [_wrappedDelegate batchMessageDidDisappear:message.sourceMessage.devTrackingIdentifier
+                                        reason:BatchMessagingCloseReasonAction];
 }
 
 - (void)messageGlobalTapActionTriggered:(BAMSGMessage *_Nonnull)message action:(BAMSGAction *)action {
@@ -705,9 +742,30 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
     }
 }
 
-- (void)messageButtonClicked:(BAMSGMessage *_Nonnull)message ctaIndex:(NSInteger)ctaIndex action:(BAMSGCTA *)action {
+- (void)messageButtonClicked:(BAMSGMessage *_Nonnull)message
+               ctaIdentifier:(NSString *_Nonnull)ctaIdentifier
+                      action:(BAMSGCTA *)action {
     if (message != nil) {
-        [self trackCTAClickEvent:message ctaIndex:ctaIndex action:action.actionIdentifier];
+        [self trackCTAClickEvent:message ctaIdentifier:ctaIdentifier action:action.actionIdentifier];
+
+        id<BatchEventDispatcherPayload> payload =
+            [BAEventDispatcherCenter messageEventPayloadFromMessage:message.sourceMessage action:action];
+        if (payload != nil) {
+            if ([action isDismissAction]) {
+                [self.eventDispatcher dispatchEventWithType:BatchEventDispatcherTypeMessagingClose payload:payload];
+            } else {
+                [self.eventDispatcher dispatchEventWithType:BatchEventDispatcherTypeMessagingClick payload:payload];
+            }
+        }
+    }
+}
+
+- (void)messageButtonClicked:(BAMSGMessage *_Nonnull)message
+               ctaIdentifier:(NSString *)ctaIdentifier
+                     ctaType:(NSString *)ctaType
+                      action:(BAMSGAction *)action {
+    if (message != nil) {
+        [self trackCTAClickEvent:message ctaIdentifier:ctaIdentifier ctaType:ctaType action:action.actionIdentifier];
 
         id<BatchEventDispatcherPayload> payload =
             [BAEventDispatcherCenter messageEventPayloadFromMessage:message.sourceMessage action:action];

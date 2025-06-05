@@ -5,11 +5,12 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
+#import <Batch/BAInjection.h>
 #import <Batch/BAPushTokenService.h>
-
 #import <Batch/BAWSQueryPushToken.h>
 #import <Batch/BAWSResponsePushToken.h>
 #import <Batch/BAWebserviceURLBuilder.h>
+#import <Batch/Batch-Swift.h>
 
 @interface BAPushTokenServiceDatasource () {
     NSString *_token;
@@ -30,7 +31,9 @@
 }
 
 - (NSURL *)requestURL {
-    return [BAWebserviceURLBuilder webserviceURLForShortname:self.requestShortIdentifier];
+    NSString *host = [[BAInjection injectProtocol:@protocol(BADomainManagerProtocol)] urlFor:BADomainServiceWeb
+                                                                        overrideWithOriginal:FALSE];
+    return [BAWebserviceURLBuilder webserviceURLForHost:host shortname:self.requestShortIdentifier];
 }
 
 - (NSString *)requestIdentifier {
@@ -38,7 +41,7 @@
 }
 
 - (NSString *)requestShortIdentifier {
-    return @"t";
+    return kParametersPushWebserviceShortname;
 }
 
 - (NSArray<id<BAWSQuery>> *)queriesToSend {

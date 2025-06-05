@@ -18,7 +18,7 @@
     self = [super init];
     if (self) {
         // Note: we call an in-app the combination of a landing and a local campaign
-        _message = [BatchInAppMessage messageForPayload:payload];
+        _message = [BatchInAppMessage messageForPayload:payload isCEPMessage:FALSE];
 
         if (!_message) {
             if (error) {

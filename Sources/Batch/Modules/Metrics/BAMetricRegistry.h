@@ -23,6 +23,15 @@ NS_ASSUME_NONNULL_BEGIN
 /// Observe local campaigns sync response time
 - (BAObservation *)localCampaignsSyncResponseTime;
 
+/// Count dns errors
+- (BACounter *)dnsErrorCount;
+
+/// Count loading image error
+- (BACounter *)downloadingImageErrorCount;
+
+/// New observation for download image time
+- (BAObservation *)registerNewDownloadImageDurationMetric;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -41,8 +41,10 @@
 - (void)setUp {
     [super setUp];
 
+    NSString *host = [[BAInjection injectProtocol:@protocol(BADomainManagerProtocol)] urlFor:BADomainServiceWeb
+                                                                        overrideWithOriginal:FALSE];
     _helperMock = OCMClassMock([BAWebserviceURLBuilder class]);
-    OCMStub([_helperMock webserviceURLForShortname:[OCMArg any]])
+    OCMStub([_helperMock webserviceURLForHost:host shortname:[OCMArg any]])
         .andReturn([NSURL URLWithString:@"https://batch.com/"]);
 
     // Put setup code here. This method is called before the invocation of each test method in the class.

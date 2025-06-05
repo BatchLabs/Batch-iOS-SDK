@@ -384,7 +384,7 @@
                                                                     action:self.message.globalTapAction];
           [BAMessagingCenter.instance performAction:self.message.globalTapAction
                                              source:self.message.sourceMessage
-                                        actionIndex:BatchMessageGlobalActionIndex
+                                      ctaIdentifier:BatchMessageGlobalActionIndex
                                   messageIdentifier:self.message.sourceMessage.devTrackingIdentifier];
         }];
     }

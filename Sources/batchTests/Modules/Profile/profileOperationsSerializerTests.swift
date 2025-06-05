@@ -13,6 +13,24 @@ final class profileOperationsSerializerTests: XCTestCase {
         XCTAssertTrue(serializeEditor { _ in }.isEmpty)
     }
 
+    func testLocaleSubscriptionStateSeriailization() throws {
+        let serialized = serializeEditor { editor in
+            editor.setEmailMarketingSubscriptionState(.subscribed)
+            editor.setSMSMarketingSubscriptionState(.subscribed)
+        }
+
+        XCTAssertEqual(serialized["email_marketing"] as? String, "subscribed")
+        XCTAssertEqual(serialized["sms_marketing"] as? String, "subscribed")
+
+        let unsubscribedSerialized = serializeEditor { editor in
+            editor.setEmailMarketingSubscriptionState(.unsubscribed)
+            editor.setSMSMarketingSubscriptionState(.unsubscribed)
+        }
+
+        XCTAssertEqual(unsubscribedSerialized["email_marketing"] as? String, "unsubscribed")
+        XCTAssertEqual(unsubscribedSerialized["sms_marketing"] as? String, "unsubscribed")
+    }
+
     func testComplexSerialization() throws {
         let dateTimestamp = 1_596_975_143
 

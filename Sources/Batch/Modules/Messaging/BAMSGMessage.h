@@ -25,12 +25,22 @@
 @interface BAMSGMessage : NSObject
 
 @property (nonnull) BatchMessage *sourceMessage;
+
+@end
+
+// Minimal MEP message representation
+@interface BAMSGMEPMessage : BAMSGMessage
+
 @property (nullable) NSString *bodyText;
 @property (nullable) BAMSGHTMLText *bodyHtml;
 
 @end
 
-@interface BAMSGMessageAlert : BAMSGMessage
+// Minimal CEP message representation
+@interface BAMSGCEPMessage : BAMSGMessage
+@end
+
+@interface BAMSGMessageAlert : BAMSGMEPMessage
 
 @property (nullable) NSString *titleText;
 @property (nonnull) NSString *cancelButtonText;
@@ -38,7 +48,7 @@
 
 @end
 
-@interface BAMSGMessageInterstitial : BAMSGMessage
+@interface BAMSGMessageInterstitial : BAMSGMEPMessage
 
 @property (nonnull) NSString *css;
 @property (nullable) NSString *headingText;
@@ -65,7 +75,7 @@ typedef NS_ENUM(NSUInteger, BAMSGBannerCTADirection) {
     BAMSGBannerCTADirectionVertical,
 };
 
-@interface BAMSGMessageBaseBanner : BAMSGMessage
+@interface BAMSGMessageBaseBanner : BAMSGMEPMessage
 
 @property (nonnull) NSString *css;
 @property (nullable) NSString *titleText;
@@ -87,7 +97,7 @@ typedef NS_ENUM(NSUInteger, BAMSGBannerCTADirection) {
 @interface BAMSGMessageModal : BAMSGMessageBaseBanner
 @end
 
-@interface BAMSGMessageImage : BAMSGMessage
+@interface BAMSGMessageImage : BAMSGMEPMessage
 @property CGSize imageSize;
 @property (nullable) NSString *imageURL;
 @property NSTimeInterval globalTapDelay;
@@ -112,7 +122,7 @@ typedef NS_ENUM(NSUInteger, BAMSGWebViewLayoutWorkaround) {
     BAMSGWebViewLayoutWorkaroundApplyInsetsNatively = 2,
 };
 
-@interface BAMSGMessageWebView : BAMSGMessage
+@interface BAMSGMessageWebView : BAMSGMEPMessage
 
 @property (nonnull) NSString *css;
 @property (nonnull) NSURL *url;

@@ -58,7 +58,7 @@
         ]
     };
 
-    BatchInAppMessage *message = [BatchInAppMessage messageForPayload:dictionary];
+    BatchInAppMessage *message = [BatchInAppMessage messageForPayload:dictionary isCEPMessage:FALSE];
     XCTAssertNotNil(message);
 
     BAMessageEventPayload *payload1 = [[BAMessageEventPayload alloc] initWithMessage:message action:nil];

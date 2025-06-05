@@ -11,11 +11,19 @@
 
 @end
 
+@implementation BAMSGMEPMessage
+
+@end
+
 @implementation BAMSGMessage
 
 @end
 
 @implementation BAMSGMessageAlert
+
+@end
+
+@implementation BAMSGCEPMessage
 
 @end
 

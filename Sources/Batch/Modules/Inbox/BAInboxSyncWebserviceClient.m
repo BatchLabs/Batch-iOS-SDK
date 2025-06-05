@@ -16,6 +16,7 @@
 #import <Batch/BAPushPayload.h>
 #import <Batch/BATJsonDictionary.h>
 #import <Batch/BAWebserviceURLBuilder.h>
+#import <Batch/Batch-Swift.h>
 
 #define DEBUG_DOMAIN @"InboxSyncWebserviceClient"
 
@@ -83,7 +84,10 @@ static const NSString *kBatchWebserviceIdentifierInboxSync = @"inbox_sync";
 }
 
 - (nullable NSURL *)generateURLWithIdentifier:(nonnull NSString *)identifier type:(BAInboxWebserviceClientType)type {
-    NSURL *url = [BAWebserviceURLBuilder webserviceURLForShortname:@"inbox"];
+    NSString *host = [[BAInjection injectProtocol:@protocol(BADomainManagerProtocol)] urlFor:BADomainServiceWeb
+                                                                        overrideWithOriginal:FALSE];
+    NSURL *url = [BAWebserviceURLBuilder webserviceURLForHost:host shortname:kParametersInboxWebserviceShortname];
+    ;
 
     url = [url URLByAppendingPathComponent:@"sync"];
     url = [url URLByAppendingPathComponent:type == BAInboxWebserviceClientTypeUserIdentifier ? @"custom" : @"install"];

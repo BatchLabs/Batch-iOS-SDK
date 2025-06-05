@@ -45,7 +45,9 @@
 }
 
 - (NSURL *)requestURL {
-    return [BAWebserviceURLBuilder webserviceURLForShortname:self.requestShortIdentifier];
+    NSString *host = [[BAInjection injectProtocol:@protocol(BADomainManagerProtocol)] urlFor:BADomainServiceWeb
+                                                                        overrideWithOriginal:FALSE];
+    return [BAWebserviceURLBuilder webserviceURLForHost:host shortname:self.requestShortIdentifier];
 }
 
 - (NSString *)requestIdentifier {
@@ -53,7 +55,7 @@
 }
 
 - (NSString *)requestShortIdentifier {
-    return @"ats";
+    return kParametersAttributesSendWebserviceShortname;
 }
 
 - (NSArray<id<BAWSQuery>> *)queriesToSend {
@@ -119,7 +121,10 @@
 }
 
 - (NSURL *)requestURL {
-    return [BAWebserviceURLBuilder webserviceURLForShortname:self.requestShortIdentifier];
+    NSString *host = [[BAInjection injectProtocol:@protocol(BADomainManagerProtocol)] urlFor:BADomainServiceWeb
+                                                                        overrideWithOriginal:FALSE];
+
+    return [BAWebserviceURLBuilder webserviceURLForHost:host shortname:self.requestShortIdentifier];
 }
 
 - (NSString *)requestIdentifier {
@@ -127,7 +132,7 @@
 }
 
 - (NSString *)requestShortIdentifier {
-    return @"atc";
+    return kParametersAttributesCheckWebserviceShortname;
 }
 
 - (NSArray<id<BAWSQuery>> *)queriesToSend {

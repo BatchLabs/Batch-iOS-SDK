@@ -125,7 +125,6 @@
 
     id parameterMock = OCMClassMock([BAParameter class]);
     id installIDMock = OCMClassMock([BAInstallationID class]);
-    id displayReceiptCacheMock = OCMClassMock([BADisplayReceiptCache class]);
 
     dummyOptOutEventTracker *tracker = [dummyOptOutEventTracker new];
     tracker.automaticallyResolvePromises = true;
@@ -133,7 +132,6 @@
     [optOut setEventTracker:tracker];
 
     OCMExpect(ClassMethod([parameterMock removeAllObjects])).andForwardToRealObject();
-    OCMExpect(ClassMethod([displayReceiptCacheMock removeAll])).andForwardToRealObject();
     OCMExpect(ClassMethod([installIDMock delete])).andForwardToRealObject();
 
     BALocalCampaignsCenter *campaignsCenter = [BALocalCampaignsCenter instance];
@@ -162,11 +160,9 @@
 
     OCMVerifyAll(parameterMock);
     OCMVerifyAll(installIDMock);
-    OCMVerifyAll(displayReceiptCacheMock);
     XCTAssertTrue([[BAOptOut new] isOptedOut]);
 
     [installIDMock stopMocking];
-    [displayReceiptCacheMock stopMocking];
 
     XCTAssertNil([BAInstallationID installationID]);
 

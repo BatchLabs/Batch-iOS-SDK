@@ -47,14 +47,14 @@ class eventTrackerServiceTests: XCTestCase {
     }
 
     func testShortIdentifier() {
-        XCTAssertEqual(makeService().requestShortIdentifier, "tr")
+        XCTAssertEqual(makeService().requestShortIdentifier, kParametersTrackingWebserviceShortname)
     }
 
     func testURL() {
         let _ = BACoreCenter.instance().configuration.setDevelopperKey("ABCDEF")
         let url = makeService().requestURL
         XCTAssertNotNil(url)
-        XCTAssertTrue(url!.absoluteString.contains("tr"))
+        XCTAssertTrue(url!.absoluteString.contains(kParametersTrackingWebserviceShortname))
         // TODO: better tests with ocmock or DI
     }
 

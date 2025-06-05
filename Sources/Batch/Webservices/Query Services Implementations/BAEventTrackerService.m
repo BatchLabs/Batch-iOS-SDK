@@ -11,8 +11,10 @@
 #import <Batch/BAWSResponseTracking.h>
 #import <Batch/BAWebserviceURLBuilder.h>
 
+#import <Batch/BAInjection.h>
 #import <Batch/BAPromise.h>
 #import <Batch/BATrackerCenter.h>
+#import <Batch/Batch-Swift.h>
 
 @interface BAEventTrackerService () {
     NSArray *_events;
@@ -40,7 +42,10 @@
 }
 
 - (NSURL *)requestURL {
-    return [BAWebserviceURLBuilder webserviceURLForShortname:self.requestShortIdentifier];
+    BADomainManager *manager = [BAInjection injectProtocol:@protocol(BADomainManagerProtocol)];
+    NSString *host = [manager urlFor:BADomainServiceWeb
+                overrideWithOriginal:[manager canCheckOriginalDomainAvalaibility]];
+    return [BAWebserviceURLBuilder webserviceURLForHost:host shortname:self.requestShortIdentifier];
 }
 
 - (NSString *)requestIdentifier {
@@ -48,7 +53,7 @@
 }
 
 - (NSString *)requestShortIdentifier {
-    return @"tr";
+    return kParametersTrackingWebserviceShortname;
 }
 
 - (NSArray<id<BAWSQuery>> *)queriesToSend {
@@ -64,6 +69,12 @@
 }
 
 - (void)webserviceClient:(nonnull BAQueryWebserviceClient *)client didFailWithError:(nonnull NSError *)error {
+    // Ensure to correctly delay if the orignal domain isn't available at the moment
+    BADomainManager *manager = [BAInjection injectProtocol:@protocol(BADomainManagerProtocol)];
+    if ([manager canCheckOriginalDomainAvalaibility]) {
+        [manager updateLastCheckDomainDate];
+    }
+
     // Promises will notify the caller directly, no need to inform the global tracker.
     // This is especially useful for the opted-out event tracker
     // One day, this will evolve to only work with promises
@@ -78,6 +89,12 @@
 
 - (void)webserviceClient:(nonnull BAQueryWebserviceClient *)client
     didSucceedWithResponses:(nonnull NSArray<id<BAWSResponse>> *)responses {
+    // Update the domain if the original one is now available
+    BADomainManager *manager = [BAInjection injectProtocol:@protocol(BADomainManagerProtocol)];
+    if ([manager canCheckOriginalDomainAvalaibility]) {
+        [manager resetDomainToOriginal];
+    }
+
     if (_promises) {
         for (BAPromise *promise in _promises) {
             [promise resolve:nil];

@@ -10,6 +10,8 @@
 
 @interface BAMSGPayloadParser : NSObject
 
-+ (BAMSGMessage *_Nullable)messageForRawMessage:(BatchMessage *_Nonnull)rawMessage bailIfNotAlert:(BOOL)bailNotAlert;
-
++ (BAMSGMEPMessage *_Nullable)messageForMEPRawMessage:(BatchMessage *_Nonnull)rawMessage
+                                       bailIfNotAlert:(BOOL)bailNotAlert;
++ (BAMSGCEPMessage *_Nullable)messageForCEPRawMessage:(BatchMessage *_Nonnull)rawMessage
+                                       bailIfNotAlert:(BOOL)bailNotAlert;
 @end

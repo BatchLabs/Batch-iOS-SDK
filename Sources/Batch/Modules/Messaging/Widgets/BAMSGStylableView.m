@@ -164,10 +164,10 @@
 
         if ([value length] == 9) {
             // Color is ARGB
-            return [UIColor colorWithRed:((hexVal & 0xFF0000) >> 16) / 255.0
-                                   green:((hexVal & 0xFF00) >> 8) / 255.0
-                                    blue:(hexVal & 0xFF) / 255.0
-                                   alpha:((hexVal & 0xFF000000) >> 24) / 255.0];
+            return [UIColor colorWithRed:((hexVal & 0xFF000000) >> 24) / 255.0
+                                   green:((hexVal & 0x00FF0000) >> 16) / 255.0
+                                    blue:((hexVal & 0x0000FF00) >> 8) / 255.0
+                                   alpha:(hexVal & 0x000000FF) / 255.0];
         } else {
             return [UIColor colorWithRed:((hexVal & 0xFF0000) >> 16) / 255.0
                                    green:((hexVal & 0xFF00) >> 8) / 255.0
@@ -186,6 +186,29 @@
             UIColor *color;
             [invocation getReturnValue:&color];
             return color;
+        }
+    }
+
+    return nil;
+}
+
++ (nullable UIColor *)colorFromRGBAValue:(nonnull NSString *)rgbaValue {
+    if ([rgbaValue hasPrefix:@"#"]) {
+        unsigned hexVal = 0;
+        NSScanner *scanner = [NSScanner scannerWithString:[rgbaValue substringFromIndex:1]];
+        [scanner scanHexInt:&hexVal];
+
+        if ([rgbaValue length] == 9) {
+            // Color is RGBA
+            return [UIColor colorWithRed:((hexVal & 0xFF000000) >> 24) / 255.0
+                                   green:((hexVal & 0x00FF0000) >> 16) / 255.0
+                                    blue:((hexVal & 0x0000FF00) >> 8) / 255.0
+                                   alpha:(hexVal & 0x000000FF) / 255.0];
+        } else {
+            return [UIColor colorWithRed:((hexVal & 0xFF0000) >> 16) / 255.0
+                                   green:((hexVal & 0xFF00) >> 8) / 255.0
+                                    blue:(hexVal & 0xFF) / 255.0
+                                   alpha:1.0];
         }
     }
 

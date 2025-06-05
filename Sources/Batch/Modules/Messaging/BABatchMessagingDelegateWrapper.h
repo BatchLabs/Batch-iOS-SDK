@@ -36,24 +36,11 @@
 
 - (BOOL)batchMessageDidAppear:(nullable NSString *)messageIdentifier;
 
-- (BOOL)batchMessageWasCancelledByUserAction:(nullable NSString *)messageIdentifier;
-
-- (BOOL)batchMessageWasCancelledByAutoclose:(nullable NSString *)messageIdentifier;
-
 - (BOOL)batchMessageDidTriggerAction:(nonnull BatchMessageAction *)action
                    messageIdentifier:(nullable NSString *)identifier
-                         actionIndex:(NSInteger)index;
+                       ctaIdentifier:(NSString *_Nonnull)ctaIdentifier;
 
-- (BOOL)batchMessageDidDisappear:(nullable NSString *)messageIdentifier;
-
-- (BOOL)batchInAppMessageReady:(nonnull BatchInAppMessage *)message;
-
-- (BOOL)batchMessageWasCancelledByError:(NSString *_Nullable)messageIdentifier
-    NS_SWIFT_NAME(batchMessageWasCancelledByError(_:));
-
-- (BOOL)batchWebViewMessageDidTriggerAction:(BatchMessageAction *_Nullable)action
-                          messageIdentifier:(NSString *_Nullable)messageIdentifier
-                        analyticsIdentifier:(NSString *_Nullable)analyticsIdentifier;
+- (BOOL)batchMessageDidDisappear:(nullable NSString *)messageIdentifier reason:(BatchMessagingCloseReason)reason;
 
 - (nullable UIViewController *)presentingViewControllerForBatchUI;
 

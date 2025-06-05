@@ -10,7 +10,7 @@
 #import <Batch/BAPromise.h>
 #import <Foundation/Foundation.h>
 
-@class BACSSDocument, BACSSDOMNode, BAMSGMessage, BAMSGCTA;
+@class BACSSDocument, BACSSDOMNode, BAMSGMEPMessage, BAMSGCTA;
 
 @interface BAMSGViewController : UIViewController
 
@@ -22,7 +22,7 @@
 - (nonnull instancetype)initWithStyleRules:(nonnull BACSSDocument *)style NS_DESIGNATED_INITIALIZER;
 
 #pragma mark - Parent
-- (BAMSGMessage *_Nonnull)message;
+- (BAMSGMEPMessage *_Nonnull)message;
 
 #pragma mark - Styling
 - (BACSSRules *_Nullable)rulesForNode:(BACSSDOMNode *_Nullable)node;

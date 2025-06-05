@@ -58,12 +58,6 @@
 #define kParametersPushTokenKey @"push.token"
 #define kParametersPushTokenIsProductionKey @"push.token.isproduction"
 
-// Display receipt keys (sharing with extensions)
-#define kParametersDisplayReceiptLastApiKey @"batch_shared_apikey"
-#define kParametersDisplayReceiptInstallIdKey @"batch_shared_installid"
-#define kParametersDisplayReceiptCustomIdKey @"batch_shared_customid"
-#define kParametersDisplayReceiptOptOutKey @"batch_shared_optout"
-
 // Latest notification authorization status sent to the server
 #define kParametersNotificationAuthSentStatusKey @"notification.auth.sentstatus"
 
@@ -140,25 +134,27 @@
 #define kWebserviceKeyPushExperiment @"ex"
 #define kWebserviceKeyPushVariant @"va"
 
-#define kParametersWebserviceBase @"https://ws.batch.com"
-#define kParametersDisplayReceiptWebserviceBase @"https://drws.batch.com"
-#define kParametersMetricWebserviceBase @"https://wsmetrics.batch.com/api-sdk"
-
-#define kParametersWebserviceDomain kParametersWebserviceHost @"/i/"
-
 // URL shortnames
 #define kParametersStartWebserviceShortname @"st"
 #define kParametersPushWebserviceShortname @"t"
 #define kParametersTrackingWebserviceShortname @"tr"
 #define kParametersAttributesSendWebserviceShortname @"ats"
 #define kParametersAttributesCheckWebserviceShortname @"atc"
-#define kParametersInboxFetchWebserviceShortname @"inbox"
+#define kParametersInboxWebserviceShortname @"inbox"
 #define kParametersLocalCampaignsWebserviceShortname @"local"
 #define kParametersLocalCampaignsJITWebserviceShortname @"lc_jit"
 
-// start
-#define kParametersStartWebserviceURL kParametersWebserviceDomain BAVersion @"/" kParametersStartWebserviceShortname
+// DNS Fallback
+#define kParametersDomainKey @"batch.domain.current"
+#define kParametersDomainErrorCountKey @"batch.domain.current.error.count"
+#define kParametersDomainErrorUpdateDate @"batch.domain.current.error.last_update.date"
+#define kParametersDomainErrorLimitCount 3
+#define kParametersDomainErrorMinDelaySecond 5
+#define kParametersDomainOriginal @"batch.com"
+#define kParametersDomainLastUpdateDate @"batch.domain.current.last_update.date"
+#define kParametersDomainLastCheckMinDelaySecond 172800
+#define kParametersDomainLastCheckDate @"batch.domain.original.last_check.date"
+#define kParametersDNSFallbackFeatureFlag 0
 
-// local campaigns
-#define kParametersLocalCampaignsWebserviceURL \
-    kParametersWebserviceDomain BAVersion @"/" kParametersLocalCampaignsWebserviceShortname
+// Mobile landing & In-app MEP & CEP
+#define BATCH_MESSAGE_MEP_CTA_INDEX_KEY @"mepCtaIndex:"

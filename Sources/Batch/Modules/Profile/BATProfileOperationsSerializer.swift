@@ -18,14 +18,7 @@ class BATProfileOperationsSerializer: NSObject {
         }
 
         if let emailMarketingSubscription = profileEditor.emailMarketingSubscription {
-            let serializedValue: String
-            switch emailMarketingSubscription {
-                case .subscribed:
-                    serializedValue = "subscribed"
-                case .unsubscribed:
-                    serializedValue = "unsubscribed"
-            }
-            jsonParameters["email_marketing"] = serializedValue
+            jsonParameters["email_marketing"] = serialize(state: emailMarketingSubscription)
         }
 
         if let phoneNumber = profileEditor.phoneNumber {
@@ -33,14 +26,7 @@ class BATProfileOperationsSerializer: NSObject {
         }
 
         if let smsMarketingSubscription = profileEditor.smsMarketingSubscription {
-            let serializedValue: String
-            switch smsMarketingSubscription {
-                case .subscribed:
-                    serializedValue = "subscribed"
-                case .unsubscribed:
-                    serializedValue = "unsubscribed"
-            }
-            jsonParameters["sms_marketing"] = serializedValue
+            jsonParameters["sms_marketing"] = serialize(state: smsMarketingSubscription)
         }
 
         if let language = profileEditor.language {
@@ -95,5 +81,19 @@ class BATProfileOperationsSerializer: NSObject {
         }
 
         return json
+    }
+
+    private static func serialize(state: BATProfileEditorSMSSubscriptionState) -> String {
+        return switch state {
+            case .subscribed: "subscribed"
+            case .unsubscribed: "unsubscribed"
+        }
+    }
+
+    private static func serialize(state: BATProfileEditorEmailSubscriptionState) -> String {
+        return switch state {
+            case .subscribed: "subscribed"
+            case .unsubscribed: "unsubscribed"
+        }
     }
 }

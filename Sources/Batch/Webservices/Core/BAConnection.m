@@ -8,12 +8,14 @@
 
 #import <Batch/BAConnection.h>
 
+#import <Batch/BAInjection.h>
 #import <Batch/BALogger.h>
 #import <Batch/BAOptOut.h>
 #import <Batch/BAParameter.h>
 #import <Batch/BARandom.h>
 #import <Batch/BAThreading.h>
 #import <Batch/BAWebserviceCryptor.h>
+#import <Batch/Batch-Swift.h>
 
 #define DEFAULT_RETRY_AFTER @60 // seconds
 
@@ -53,17 +55,17 @@
             case -1205: // kCFURLErrorClientCertificateRejected
             case -1206: // kCFURLErrorClientCertificateRequired
                 return BAConnectionErrorCauseSSLHandshakeFailure;
-                break;
             case -1001: // kCFURLErrorTimedOut
-            case -1003: // kCFURLErrorCannotFindHost
             case -1004: // kCFURLErrorCannotConnectToHost
             case -1005: // kCFURLErrorNetworkConnectionLost
             case -1009: // kCFURLErrorNotConnectedToInternet
                 return BAConnectionErrorCauseNetworkTimeout;
-                break;
+            case -1000: // KCFErrorDomainCFNetwork
+            case -1003: // kCFURLErrorCannotFindHost
+                [[BAInjection injectProtocol:@protocol(BADomainManagerProtocol)] updateDomainIfNeeded];
+                return BAConnectionErrorCauseNetworkTimeout;
             default:
                 return BAConnectionErrorCauseOther;
-                break;
         }
     }
     return BAConnectionErrorCauseOther;
@@ -327,6 +329,7 @@ bail_on_err:
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
       if (error == nil) {
+          [[BAInjection injectProtocol:@protocol(BADomainManagerProtocol)] resetErrorCountIfNeeded];
           [strongDelegate connectionDidFinishLoadingWithData:data];
       } else {
           [strongDelegate connectionFailedWithError:error];

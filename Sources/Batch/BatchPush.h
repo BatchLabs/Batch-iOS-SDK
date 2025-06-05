@@ -273,7 +273,7 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 ///   returning .alert (or more) to iOS' completion handler.
 + (void)handleUserNotificationCenter:(nonnull UNUserNotificationCenter *)center
              willPresentNotification:(nonnull UNNotification *)notification
-       willShowSystemForegroundAlert:(BOOL)willShowSystemForegroundAlert
+       willShowSystemForegroundAlert:(BOOL)willShowSystemForegroundAlert NS_SWIFT_UI_ACTOR
     NS_SWIFT_NAME(handle(userNotificationCenter:willPresent:willShowSystemForegroundAlert:));
 
 /// Make Batch process a background notification open/action.
@@ -284,7 +284,7 @@ typedef NS_ENUM(NSUInteger, BatchNotificationSource) {
 ///   - center: Original center argument.
 ///   - response: Original response argument.
 + (void)handleUserNotificationCenter:(nonnull UNUserNotificationCenter *)center
-      didReceiveNotificationResponse:(nonnull UNNotificationResponse *)response
+      didReceiveNotificationResponse:(nonnull UNNotificationResponse *)response NS_SWIFT_UI_ACTOR
     NS_SWIFT_NAME(handle(userNotificationCenter:didReceive:));
 
 /// Check a notification comes from Batch

@@ -34,6 +34,9 @@
 /// Period during cached local campaign requiring a JIT sync is considered as up-to-date  (in seconds).
 #define JIT_CAMPAIGN_CACHE_PERIOD 30
 
+/// Default retry after in fail case (in seconds)
+#define DEFAULT_RETRY_AFTER @60
+
 @interface BALocalCampaignsManager () {
     /// Date provider
     id<BADateProviderProtocol> _dateProvider;
@@ -198,8 +201,7 @@
         [[BALocalCampaignsJITService alloc] initWithLocalCampaigns:eligibleCampaignsSynced
             viewTracker:_viewTracker
             success:^(NSArray *eligibleCampaignIds) {
-              self->_nextAvailableJITTimestamp =
-                  [[self->_dateProvider currentDate] timeIntervalSince1970] + MIN_DELAY_BETWEEN_JIT_SYNC;
+              [self setNextAvailableJITTimestampWithDefaultDelay];
 
               if ([eligibleCampaignIds count] > 0) {
                   for (BALocalCampaign *campaign in [NSArray arrayWithArray:eligibleCampaignsSynced]) {
@@ -223,8 +225,7 @@
               }
             }
             error:^(NSError *error, NSNumber *retryAfter) {
-              self->_nextAvailableJITTimestamp =
-                  [[self->_dateProvider currentDate] timeIntervalSince1970] + retryAfter.doubleValue;
+              [self setNextAvailableJITTimestampWithCustomDelay:retryAfter];
               completionHandler(nil);
             }];
     [BAWebserviceClientExecutor.sharedInstance addClient:wsClient];
@@ -441,6 +442,15 @@
     @synchronized(_watchedEventsLock) {
         _watchedEventNames = updatedEventNames;
     }
+}
+
+- (void)setNextAvailableJITTimestampWithDefaultDelay {
+    [self setNextAvailableJITTimestampWithCustomDelay:@MIN_DELAY_BETWEEN_JIT_SYNC];
+}
+
+- (void)setNextAvailableJITTimestampWithCustomDelay:(nullable NSNumber *)delay {
+    NSNumber *retryAfter = ((delay == nil ? 0 : delay) <= 0 ? DEFAULT_RETRY_AFTER : delay);
+    _nextAvailableJITTimestamp = [[self->_dateProvider currentDate] timeIntervalSince1970] + retryAfter.doubleValue;
 }
 
 @end

@@ -42,10 +42,10 @@
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
 {
-    struct { BOOL isRequired; BOOL isInstance; } opts[4] = { {YES, YES}, {NO, YES}, {YES, NO}, {NO, NO} };
+    struct { BOOL isMandatory; BOOL isInstance; } opts[4] = { {YES, YES}, {NO, YES}, {YES, NO}, {NO, NO} };
     for(int i = 0; i < 4; i++)
     {
-        struct objc_method_description methodDescription = protocol_getMethodDescription(mockedProtocol, aSelector, opts[i].isRequired, opts[i].isInstance);
+        struct objc_method_description methodDescription = protocol_getMethodDescription(mockedProtocol, aSelector, opts[i].isMandatory, opts[i].isInstance);
         if(methodDescription.name != NULL)
             return [NSMethodSignature signatureWithObjCTypes:methodDescription.types];
     }

@@ -111,6 +111,11 @@ public class BAProfileCenter: NSObject, BAProfileCenterProtocol {
     public func applyEditor(_ profileEditor: BATProfileEditor) {
         let serializedEditOperations = BATProfileOperationsSerializer.serialize(profileEditor: profileEditor)
 
+        guard !serializedEditOperations.isEmpty else {
+            BALogger.debug(domain: loggerDomain, message: "Trying to send an empty profile data changed event, aborting.")
+            return
+        }
+
         BAInjection.inject(BATEventTracker.self)?.trackPrivateEvent(event: .profileDataChanged, parameters: serializedEditOperations, collapsable: false)
     }
 

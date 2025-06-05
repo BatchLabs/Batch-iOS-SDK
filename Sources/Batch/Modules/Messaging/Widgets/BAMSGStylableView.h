@@ -21,6 +21,8 @@
 
 + (nullable UIColor *)colorFromValue:(nonnull NSString *)value;
 
++ (nullable UIColor *)colorFromRGBAValue:(nonnull NSString *)rgbaValue;
+
 + (nullable UIFont *)fontFromRules:(nonnull BACSSRules *)rules
                           baseFont:(nullable UIFont *)baseFont
                       baseBoldFont:(nullable UIFont *)baseBoldFont;

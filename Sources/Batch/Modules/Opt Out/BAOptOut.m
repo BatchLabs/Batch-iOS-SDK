@@ -1,7 +1,6 @@
 #import <Batch/BAOptOut.h>
 
 #import <Batch/BACoreCenter.h>
-#import <Batch/BADisplayReceiptCache.h>
 #import <Batch/BAInboxDatasourceProtocol.h>
 #import <Batch/BAInjection.h>
 #import <Batch/BAInstallationID.h>
@@ -140,8 +139,6 @@ NSString *const kBATOptOutWipeDataKey = @"wipe_data";
     NSUserDefaults *defaults = [self userDefaults];
     [defaults setObject:@(shouldOptOut) forKey:OptOutDefaultKey];
 
-    [BADisplayReceiptCache saveIsOptOut:shouldOptOut];
-
     if (!shouldOptOut) {
         [defaults setObject:@(true) forKey:ShouldFireOptinEventDefaultKey];
     }
@@ -196,7 +193,6 @@ NSString *const kBATOptOutWipeDataKey = @"wipe_data";
     [BAParameter removeAllObjects];
     [BAInstallationID delete];
     [BALocalCampaignsCenter.instance userDidOptOut];
-    [BADisplayReceiptCache removeAll];
     [[BAInjection injectProtocol:@protocol(BAInboxDatasourceProtocol)] clear];
 }
 

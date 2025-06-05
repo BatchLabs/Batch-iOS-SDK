@@ -8,16 +8,24 @@
 #import <Batch/BALogger.h>
 #import <Batch/BAMSGPayloadParser.h>
 #import <Batch/BATJsonDictionary.h>
+#import <Batch/Batch-Swift.h>
 #import <Batch/BatchMessagingPrivate.h>
 #import <Batch/Versions.h>
 
 #define LOGGER_DOMAIN @"BAMSGPayloadParser"
 
 @implementation BAMSGPayloadParser
++ (BAMSGCEPMessage *)messageForCEPRawMessage:(BatchMessage *)rawMessage bailIfNotAlert:(BOOL)bailNotAlert {
+    BAMSGCEPMessage *message = [BAMSGPayloadParser parseBaseCEPMessage:rawMessage.messagePayload];
+    message.sourceMessage = rawMessage;
 
-+ (BAMSGMessage *_Nullable)messageForRawMessage:(BatchMessage *_Nonnull)rawMessage bailIfNotAlert:(BOOL)bailNotAlert {
+    return message;
+}
+
++ (BAMSGMEPMessage *_Nullable)messageForMEPRawMessage:(BatchMessage *_Nonnull)rawMessage
+                                       bailIfNotAlert:(BOOL)bailNotAlert {
     // Basic parsing
-    BAMSGMessage *message = [BAMSGPayloadParser parseBaseMessage:rawMessage.messagePayload];
+    BAMSGMEPMessage *message = [BAMSGPayloadParser parseBaseMEPMessage:rawMessage.messagePayload];
 
     if ([message isKindOfClass:[BAMSGMessageAlert class]]) {
         message = [BAMSGPayloadParser parseAlertMessage:rawMessage.messagePayload
@@ -62,14 +70,14 @@
     return message;
 }
 
-+ (BAMSGMessage *_Nullable)parseBaseMessage:(NSDictionary *_Nonnull)userData {
++ (BAMSGMEPMessage *_Nullable)parseBaseMEPMessage:(NSDictionary *_Nonnull)userData {
     NSString *kind = userData[@"kind"];
     if (![kind isKindOfClass:[NSString class]]) {
         [BAMSGPayloadParser printGenericDebugLog:@"'kind' is not a NSString"];
         return nil;
     }
 
-    BAMSGMessage *baseMessage = nil;
+    BAMSGMEPMessage *baseMessage = nil;
 
     if ([kind isEqualToString:@"alert"]) {
         baseMessage = [[BAMSGMessageAlert alloc] init];
@@ -88,26 +96,7 @@
         return nil;
     }
 
-    NSNumber *minimumMessagingAPIVersion = userData[@"minapi"];
-    if ((id)minimumMessagingAPIVersion == [NSNull null]) {
-        minimumMessagingAPIVersion = nil;
-    }
-
-    if (minimumMessagingAPIVersion != nil && ![minimumMessagingAPIVersion isKindOfClass:[NSNumber class]]) {
-        [BAMSGPayloadParser printGenericDebugLog:@"'minimumMessagingAPIVersion' is not nil but not a NSNumber."];
-        return nil;
-    }
-
-    // Validate the api version before going any further
-    NSInteger minimumMessagingAPIVersionInteger = [minimumMessagingAPIVersion integerValue];
-    if (minimumMessagingAPIVersionInteger > 0 && minimumMessagingAPIVersionInteger > BAMessagingAPILevel) {
-        [BAMSGPayloadParser
-            printGenericDebugLog:
-                [NSString
-                    stringWithFormat:@"minapi too high for this SDK. Got %ld, current SDK messaging API level: %u",
-                                     (long)minimumMessagingAPIVersionInteger, BAMessagingAPILevel]];
-        [BALogger publicForDomain:@"Messaging"
-                          message:@"This SDK is too old to display this message. Please update it."];
+    if (![BAMSGPayloadParser isMinAPICompliant:userData]) {
         return nil;
     }
 
@@ -154,6 +143,47 @@
     }
 
     return baseMessage;
+}
+
++ (BAMSGCEPMessage *_Nullable)parseBaseCEPMessage:(NSDictionary *_Nonnull)userData {
+    if (![BAMSGPayloadParser isMinAPICompliant:userData key:@"minMLvl"]) {
+        return nil;
+    }
+
+    BAMSGCEPMessage *baseMessage = [[BAMSGCEPMessage alloc] init];
+
+    return baseMessage;
+}
+
++ (BOOL)isMinAPICompliant:(NSDictionary *_Nonnull)userData {
+    return [BAMSGPayloadParser isMinAPICompliant:userData key:@"minapi"];
+}
+
++ (BOOL)isMinAPICompliant:(NSDictionary *_Nonnull)userData key:(NSString *)key {
+    NSNumber *minimumMessagingAPIVersion = userData[key];
+    if ((id)minimumMessagingAPIVersion == [NSNull null]) {
+        minimumMessagingAPIVersion = nil;
+    }
+
+    if (minimumMessagingAPIVersion != nil && ![minimumMessagingAPIVersion isKindOfClass:[NSNumber class]]) {
+        [BAMSGPayloadParser printGenericDebugLog:@"'minimumMessagingAPIVersion' is not nil but not a NSNumber."];
+        return FALSE;
+    }
+
+    // Validate the api version before going any further
+    NSInteger minimumMessagingAPIVersionInteger = [minimumMessagingAPIVersion integerValue];
+    if (minimumMessagingAPIVersionInteger > 0 && minimumMessagingAPIVersionInteger > BAMessagingAPILevel) {
+        [BAMSGPayloadParser
+            printGenericDebugLog:
+                [NSString
+                    stringWithFormat:@"minapi too high for this SDK. Got %ld, current SDK messaging API level: %u",
+                                     (long)minimumMessagingAPIVersionInteger, BAMessagingAPILevel]];
+        [BALogger publicForDomain:@"Messaging"
+                          message:@"This SDK is too old to display this message. Please update it."];
+        return FALSE;
+    }
+
+    return TRUE;
 }
 
 + (BAMSGMessageAlert *_Nullable)parseAlertMessage:(NSDictionary *_Nonnull)userData

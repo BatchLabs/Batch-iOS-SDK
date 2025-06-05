@@ -49,7 +49,8 @@
 - (void)testHasChanged {
     BACounter *counter = [[BACounter alloc] initWithName:@"counter_test_metric" andLabelNames:@"label", nil];
     XCTAssertFalse([counter hasChildren]);
-    [[counter labels:@"label", nil] increment];
+    NSArray<NSString *> *labels = [[NSArray alloc] initWithObjects:@"label", nil];
+    [[counter labels:labels] increment];
     XCTAssertTrue([counter hasChildren]);
 }
 

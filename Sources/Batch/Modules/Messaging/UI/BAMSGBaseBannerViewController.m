@@ -1261,7 +1261,7 @@ static NSString *kBAMSGInterstitialViewControllerHeroConstraint = @"BAMainHeroCo
 
             [BAMessagingCenter.instance performAction:self.globalTapAction
                                                source:self.messageDescription.sourceMessage
-                                          actionIndex:BatchMessageGlobalActionIndex
+                                        ctaIdentifier:BatchMessageGlobalActionIndex
                                     messageIdentifier:self.messageDescription.sourceMessage.devTrackingIdentifier];
         } else {
             [BALogger
@@ -1291,7 +1291,7 @@ static NSString *kBAMSGInterstitialViewControllerHeroConstraint = @"BAMainHeroCo
 
 #pragma mark - Parent
 
-- (BAMSGMessage *_Nonnull)message {
+- (BAMSGMEPMessage *_Nonnull)message {
     return self.messageDescription;
 }
 

@@ -6,16 +6,19 @@
 //  Copyright (c) 2016 Batch SDK. All rights reserved.
 //
 
+#import <Batch/BAJson.h>
 #import <Batch/BALogger.h>
 #import <Batch/BAMSGPayloadParser.h>
 #import <Batch/BAMessagingCenter.h>
 #import <Batch/BANullHelper.h>
+#import <Batch/BATGZIP.h>
 #import <Batch/BAThreading.h>
+#import <Batch/Batch-Swift.h>
 #import <Batch/BatchMessaging.h>
 #import <Batch/BatchMessagingPrivate.h>
 
 NSString *const kBatchMessagingCloseButtonTrackingIdentifier = @"close";
-NSInteger const BatchMessageGlobalActionIndex = -1;
+NSString *const BatchMessageGlobalActionIndex = BATCH_MESSAGE_MEP_CTA_INDEX_KEY @"-1";
 
 @implementation BatchAlertMessageCTA
 
@@ -256,11 +259,13 @@ NSInteger const BatchMessageGlobalActionIndex = -1;
 
 @implementation BatchMessage : NSObject
 
-+ (nullable instancetype)messageForPayload:(nonnull NSDictionary<NSString *, NSObject *> *)payload {
-    return [[BatchMessage alloc] initWithPayload:payload];
++ (nullable instancetype)messageForPayload:(nonnull NSDictionary<NSString *, NSObject *> *)payload
+                              isCEPMessage:(BOOL)isCEPMessage {
+    return [[BatchMessage alloc] initWithPayload:payload isCEPMessage:isCEPMessage];
 }
 
-- (nullable instancetype)initWithPayload:(nonnull NSDictionary<NSString *, NSObject *> *)payload {
+- (nullable instancetype)initWithPayload:(nonnull NSDictionary<NSString *, NSObject *> *)payload
+                            isCEPMessage:(BOOL)isCEPMessage {
     if (![payload isKindOfClass:[NSDictionary class]]) {
         [BALogger errorForDomain:@"BatchMessage" message:@"payload isn't a NSDictionary"];
         return nil;
@@ -269,8 +274,57 @@ NSInteger const BatchMessageGlobalActionIndex = -1;
     self = [super init];
     if (self) {
         _messagePayload = payload;
+        _isCEPMessage = isCEPMessage;
+
+        // Read the extra non-ui related keys in the landing payload for compatibility
+        NSObject *identifier;
+        NSString *devIdentifierKey;
+        NSString *eventDataKey;
+        // Determine keys according message type
+        if (!isCEPMessage) {
+            identifier = payload[@"id"];
+            if (![identifier isKindOfClass:[NSString class]]) {
+                [self printGenericDebugLog:@"'id' is not a NSString but is mandatory"];
+                return nil;
+            }
+
+            devIdentifierKey = @"did";
+            eventDataKey = @"ed";
+        } else {
+            devIdentifierKey = @"trackingId";
+            eventDataKey = @"eventData";
+        }
+
+        self.messageIdentifier = (NSString *)identifier;
+
+        // DevTrackingIdentifier
+        NSObject *devIdentifier = payload[devIdentifierKey];
+        if ((id)devIdentifier == [NSNull null]) {
+            devIdentifier = nil;
+        }
+        if (devIdentifier != nil && ![devIdentifier isKindOfClass:[NSString class]]) {
+            NSString *msg = [@"" stringByAppendingFormat:@"'%@' is not nil but is not a NSString", devIdentifierKey];
+            [self printGenericDebugLog:msg];
+            return nil;
+        }
+        self.devTrackingIdentifier = (NSString *)devIdentifier;
+
+        // EventData
+        NSObject *eventData = payload[eventDataKey];
+        if (eventData != nil && ![eventData isKindOfClass:[NSDictionary class]]) {
+            NSString *msg =
+                [@"" stringByAppendingFormat:@"'%@' is not nil but isn't a NSDictionary. Ignoring.", eventDataKey];
+            [self printGenericDebugLog:msg];
+            // Don't return!
+        } else {
+            self.eventData = (NSDictionary *)eventData;
+        }
     }
     return self;
+}
+
+- (void)printGenericDebugLog:(NSString *)msg {
+    [BALogger debugForDomain:@"BatchMessage" message:@"Error while decoding payload: %@", msg];
 }
 
 - (id)copyWithZone:(nullable NSZone *)zone {
@@ -291,31 +345,16 @@ NSInteger const BatchMessageGlobalActionIndex = -1;
     id<BatchInAppMessageContent> _content;
 }
 
-+ (nullable instancetype)messageForPayload:(nonnull NSDictionary<NSString *, NSObject *> *)payload {
-    return [[BatchInAppMessage alloc] initForPayload:payload];
++ (nullable instancetype)messageForPayload:(nonnull NSDictionary<NSString *, NSObject *> *)payload
+                              isCEPMessage:(BOOL)isCEPMessage {
+    return [[BatchInAppMessage alloc] initForPayload:payload isCEPMessage:isCEPMessage];
 }
 
-- (nullable instancetype)initForPayload:(nonnull NSDictionary<NSString *, NSObject *> *)payload {
-    self = [super initWithPayload:payload];
+- (nullable instancetype)initForPayload:(nonnull NSDictionary<NSString *, NSObject *> *)payload
+                           isCEPMessage:(BOOL)isCEPMessage {
+    self = [super initWithPayload:payload isCEPMessage:isCEPMessage];
     if (self) {
         _lock = [NSObject new];
-        NSObject *identifier = payload[@"id"];
-        if (![identifier isKindOfClass:[NSString class]]) {
-            [BALogger errorForDomain:@"BatchInAppMessage" message:@"'id' is not a NSString but is mandatory"];
-            return nil;
-        }
-
-        NSObject *devIdentifier = payload[@"did"];
-        if ((id)devIdentifier == [NSNull null]) {
-            devIdentifier = nil;
-        }
-        if (devIdentifier != nil && ![devIdentifier isKindOfClass:[NSString class]]) {
-            [BALogger errorForDomain:@"BatchInAppMessage" message:@"'did' is not nil but is not a NSString"];
-            return nil;
-        }
-
-        self.messageIdentifier = (NSString *)identifier;
-        self.devTrackingIdentifier = (NSString *)devIdentifier;
         _content = nil;
     }
     return self;
@@ -352,10 +391,10 @@ NSInteger const BatchMessageGlobalActionIndex = -1;
     return copy;
 }
 
-- (id<BatchInAppMessageContent>)content {
+- (id<BatchInAppMessageContent>)mepContent {
     @synchronized(_lock) {
         if (_content == nil) {
-            BAMSGMessage *msg = [BAMSGPayloadParser messageForRawMessage:self bailIfNotAlert:false];
+            BAMSGMEPMessage *msg = [BAMSGPayloadParser messageForMEPRawMessage:self bailIfNotAlert:false];
             if ([msg isKindOfClass:[BAMSGMessageAlert class]]) {
                 _content = [[BatchAlertMessageContent alloc] _initWithInternalMessage:(BAMSGMessageAlert *)msg];
                 ((BatchAlertMessageContent *)_content).trackingIdentifier = self.devTrackingIdentifier;
@@ -384,7 +423,7 @@ NSInteger const BatchMessageGlobalActionIndex = -1;
 }
 
 - (BatchMessagingContentType)contentType {
-    id content = self.content;
+    id content = self.mepContent;
 
     if ([content isKindOfClass:BatchAlertMessageContent.class]) {
         return BatchMessagingContentTypeAlert;
@@ -413,54 +452,54 @@ NSInteger const BatchMessageGlobalActionIndex = -1;
 
 - (nullable instancetype)initWithPayload:(nonnull NSDictionary<NSString *, NSObject *> *)payload {
     if (![payload isKindOfClass:[NSDictionary class]]) {
-        [BALogger errorForDomain:@"BatchMessage" message:@"payload isn't a NSDictionary"];
+        [self printGenericDebugLog:@"payload isn't a NSDictionary"];
         return nil;
     }
 
     NSObject *batchPayload = [payload objectForKey:@"com.batch"];
     if (![batchPayload isKindOfClass:[NSDictionary class]]) {
-        [BALogger errorForDomain:@"BatchMessage" message:@"batch internal payload not found or isn't a NSDictionary"];
+        [self printGenericDebugLog:@"batch internal payload not found or isn't a NSDictionary"];
         return nil;
     }
 
-    NSObject *message = [(NSDictionary *)batchPayload objectForKey:@"ld"];
-    if (![message isKindOfClass:[NSDictionary class]]) {
-        [BALogger errorForDomain:@"BatchMessage" message:@"message not found or isn't a NSDictionary"];
+    NSObject *mepMessage = [(NSDictionary *)batchPayload objectForKey:@"ld"];
+    NSObject *cepMessage = [(NSDictionary *)batchPayload objectForKey:@"ld2"];
+
+    BOOL isCEPMessage = FALSE;
+    NSDictionary *castedMessage;
+    if ([cepMessage isKindOfClass:[NSString class]]) {
+        NSData *data = [(NSString *)cepMessage dataUsingEncoding:NSUTF8StringEncoding];
+        NSError *error = nil;
+        NSData *decodedMessage = [[[BATBase91J alloc] init] decode:data error:&error];
+
+        if (error) {
+            [self printGenericDebugLog:[error localizedFailureReason]];
+            return nil;
+        }
+
+        NSData *unzipedMessage = [BATGZIP dataByGunzipping:decodedMessage];
+        NSDictionary *dictionaryMessage = [BAJson deserializeDataAsDictionary:unzipedMessage error:&error];
+
+        if (error) {
+            [self printGenericDebugLog:[error localizedFailureReason]];
+            return nil;
+        }
+
+        if ([dictionaryMessage isKindOfClass:[NSDictionary class]]) {
+            castedMessage = (NSDictionary *)dictionaryMessage;
+            isCEPMessage = TRUE;
+        }
+    } else if ([mepMessage isKindOfClass:[NSDictionary class]]) {
+        castedMessage = (NSDictionary *)mepMessage;
+    } else {
+        [self printGenericDebugLog:@"message not found or isn't a NSDictionary"];
         return nil;
     }
 
-    NSDictionary *castedMessage = (NSDictionary *)message;
-
-    self = [super initWithPayload:castedMessage];
+    self = [super initWithPayload:castedMessage isCEPMessage:isCEPMessage];
     if (self) {
         _pushPayload = payload;
         _isDisplayedFromInbox = false;
-
-        // Read the extra non-ui related keys in the landing payload for compatibility
-        NSString *identifier = castedMessage[@"id"];
-        if (![identifier isKindOfClass:[NSString class]]) {
-            [self printGenericDebugLog:@"'id' is not a NSString but is mandatory"];
-            return nil;
-        }
-
-        NSString *devIdentifier = castedMessage[@"did"];
-        if ((id)devIdentifier == [NSNull null]) {
-            devIdentifier = nil;
-        }
-        if (devIdentifier != nil && ![devIdentifier isKindOfClass:[NSString class]]) {
-            [self printGenericDebugLog:@"'did' is not nil but is not a NSString"];
-            return nil;
-        }
-
-        NSDictionary *eventData = castedMessage[@"ed"];
-        if (eventData != nil && ![eventData isKindOfClass:[NSDictionary class]]) {
-            [self printGenericDebugLog:@"'ed' is not nil but isn't a NSDictionary. Ignoring."];
-            // Don't return!
-        }
-
-        self.messageIdentifier = identifier;
-        self.devTrackingIdentifier = devIdentifier;
-        self.eventData = eventData;
     }
     return self;
 }
@@ -483,6 +522,14 @@ NSInteger const BatchMessageGlobalActionIndex = -1;
 
 + (id<BatchMessagingDelegate> _Nullable)delegate {
     return [[BAMessagingCenter instance] delegate];
+}
+
++ (void)setInAppDelegate:(id<BatchInAppDelegate> _Nullable)inAppDelegate {
+    [[BAMessagingCenter instance] setInAppDelegate:inAppDelegate];
+}
+
++ (id<BatchInAppDelegate> _Nullable)inAppDelegate {
+    return [[BAMessagingCenter instance] inAppDelegate];
 }
 
 + (void)setCanReconfigureAVAudioSession:(BOOL)canReconfigureAVAudioSession {

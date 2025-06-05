@@ -67,17 +67,16 @@
     return self;
 }
 
-- (id)labels:(nonnull NSString *)firstLabel, ... {
+- (id)labels:(nonnull NSArray<NSString *> *)args {
     NSMutableArray *labels = [NSMutableArray array];
-    NSString *label;
-    va_list argumentList;
+    NSString *firstLabel = args.firstObject;
+
     if (firstLabel) {
         [labels addObject:firstLabel];
-        va_start(argumentList, firstLabel);
-        while ((label = va_arg(argumentList, id)) != nil) {
+        for (NSUInteger i = 1; i < args.count; i++) {
+            NSString *label = args[i];
             [labels addObject:label];
         }
-        va_end(argumentList);
     }
     id child = [_children objectForKey:labels];
     if (child == nil) {

@@ -5,10 +5,12 @@
 //
 
 #import <Batch/BAErrorHelper.h>
+#import <Batch/BAInjection.h>
 #import <Batch/BAMetric.h>
 #import <Batch/BAMetricWebserviceClient.h>
 #import <Batch/BATMessagePackWriter.h>
 #import <Batch/BAWebserviceURLBuilder.h>
+#import <Batch/Batch-Swift.h>
 
 #define LOGGER_DOMAIN @"BAMetricsWebserviceClient"
 
@@ -22,7 +24,9 @@
                                  success:(void (^)(void))successHandler
                                    error:(void (^)(NSError *error))errorHandler;
 {
-    NSURL *url = [NSURL URLWithString:kParametersMetricWebserviceBase relativeToURL:nil];
+    NSString *host = [[BAInjection injectProtocol:@protocol(BADomainManagerProtocol)] urlFor:BADomainServiceMetric
+                                                                        overrideWithOriginal:FALSE];
+    NSURL *url = [NSURL URLWithString:host relativeToURL:nil];
     self = [super initWithMethod:BAWebserviceClientRequestMethodPost URL:url delegate:nil];
     if (self) {
         _metrics = metrics;

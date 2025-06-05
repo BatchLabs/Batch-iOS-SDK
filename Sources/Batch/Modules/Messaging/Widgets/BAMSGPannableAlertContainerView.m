@@ -39,7 +39,7 @@
         _panGesture.delaysTouchesEnded = false;
         [self addGestureRecognizer:_panGesture];
         _lockVertically = true;
-        _resetPositionOnDismiss = true;
+        _resetPositionOnDismiss = false;
     }
     return self;
 }

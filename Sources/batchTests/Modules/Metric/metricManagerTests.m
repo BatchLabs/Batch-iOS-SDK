@@ -46,12 +46,21 @@
 
     BAObservation *observation = [[[BAObservation alloc] initWithName:@"observation_test_metric"
                                                         andLabelNames:@"label1", @"label2", nil] registerMetric];
-    [[observation labels:@"value1", @"value2", nil] startTimer];
-    [[observation labels:@"value1", @"value2", nil] observeDuration];
-    [[observation labels:@"value2", @"value3", nil] startTimer];
+    NSArray<NSString *> *labels1 = [[NSArray alloc] initWithObjects:@"value1", @"value2", nil];
+    [[observation labels:labels1] startTimer];
+
+    NSArray<NSString *> *labels2 = [[NSArray alloc] initWithObjects:@"value1", @"value2", nil];
+    [[observation labels:labels2] observeDuration];
+
+    NSArray<NSString *> *labels3 = [[NSArray alloc] initWithObjects:@"value2"
+                                                                    @"value3",
+                                                                    nil];
+    [[observation labels:labels3] startTimer];
 
     // Making copy of metrics because the reset method will be called when getMetricsToSend is done
-    NSArray *expected = @[ [counter copy], [[observation labels:@"value1", @"value2", nil] copy] ];
+    NSArray<NSString *> *labels1copy = [[NSArray alloc] initWithObjects:@"value1", @"value2", nil];
+
+    NSArray *expected = @[ [counter copy], [[observation labels:labels1copy] copy] ];
 
     NSArray *actual = [_manager getMetricsToSend];
     XCTAssertEqual([expected count], [actual count]);

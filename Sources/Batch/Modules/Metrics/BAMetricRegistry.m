@@ -12,6 +12,10 @@
     BACounter *_localCampaignsJITCount;
 
     BAObservation *_localCampaignsSyncResponseTime;
+
+    BACounter *_dnsErrorCount;
+
+    BACounter *_downloadingImageErrorCount;
 }
 
 - (instancetype)init {
@@ -41,6 +45,12 @@
 
     _localCampaignsSyncResponseTime =
         [[[BAObservation alloc] initWithName:@"sdk_local_campaigns_sync_ws_duration"] registerMetric];
+
+    _dnsErrorCount = [[[BACounter alloc] initWithName:@"sdk_dns_error_count"
+                                        andLabelNames:@"status", nil] registerMetric];
+
+    _downloadingImageErrorCount = [[[BACounter alloc] initWithName:@"sdk_download_image_error_count"
+                                                     andLabelNames:@"status", nil] registerMetric];
 }
 
 - (BAObservation *)localCampaignsJITResponseTime {
@@ -53,6 +63,20 @@
 
 - (BAObservation *)localCampaignsSyncResponseTime {
     return _localCampaignsSyncResponseTime;
+}
+
+- (BACounter *)dnsErrorCount {
+    return _dnsErrorCount;
+}
+
+- (BACounter *)downloadingImageErrorCount {
+    return _downloadingImageErrorCount;
+}
+
+// Can't use usual mechanism because several image could load simultaneously, but we kept keys centralized
+- (BAObservation *)registerNewDownloadImageDurationMetric {
+    return [[[BAObservation alloc] initWithName:@"sdk_download_image_duration"
+                                  andLabelNames:@"type", nil] registerMetric];
 }
 
 @end

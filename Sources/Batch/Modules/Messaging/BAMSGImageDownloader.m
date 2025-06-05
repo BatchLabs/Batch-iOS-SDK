@@ -5,8 +5,11 @@
 //  Copyright © 2016 Batch. All rights reserved.
 //
 
+#import <Batch/BAInjection.h>
 #import <Batch/BAMSGImageDownloader.h>
+#import <Batch/BAMetricRegistry.h>
 #import <Batch/BATGIFFile.h>
+#import "BAObservation.h"
 #import "BATMessagingCloseErrorCause.h"
 
 @implementation BAMSGImageDownloader
@@ -63,6 +66,8 @@
         }
     }
 
+    BAObservation *downloadTime =
+        [[BAInjection injectClass:BAMetricRegistry.class] registerNewDownloadImageDurationMetric];
     NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
     config.timeoutIntervalForResource = timeout;
     // Enforce TLS 1.2
@@ -76,6 +81,8 @@
           if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
               NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
               if (httpResponse.statusCode < 200 || httpResponse.statusCode >= 300) {
+                  [downloadTime observeDuration];
+                  [[[BAInjection injectClass:BAMetricRegistry.class] downloadingImageErrorCount] increment];
                   completionHandler(
                       nil, false, nil,
                       error
@@ -93,6 +100,8 @@
               }
 
               if (!data) {
+                  [downloadTime observeDuration];
+                  [[[BAInjection injectClass:BAMetricRegistry.class] downloadingImageErrorCount] increment];
                   completionHandler(nil, false, nil,
                                     error ? error
                                           : [NSError errorWithDomain:@"com.batch.ios.BAMSGImageDownloaderError"
@@ -106,6 +115,8 @@
               }
 
               if ([BATGIFFile isPotentiallyAGif:data]) {
+                  NSArray<NSString *> *labels = [[NSArray alloc] initWithObjects:@"gif", nil];
+                  [[downloadTime labels:labels] observeDuration];
                   completionHandler(data, true, nil, nil);
                   return;
               }
@@ -113,6 +124,8 @@
               UIImage *image = [UIImage imageWithData:data];
 
               if (!image) {
+                  [downloadTime observeDuration];
+                  [[[BAInjection injectClass:BAMetricRegistry.class] downloadingImageErrorCount] increment];
                   completionHandler(
                       nil, false, nil,
                       error ? error
@@ -126,8 +139,12 @@
                   return;
               }
 
+              NSArray<NSString *> *labels = [[NSArray alloc] initWithObjects:@"image", nil];
+              [[downloadTime labels:labels] observeDuration];
               completionHandler(data, false, image, nil);
           } else {
+              [downloadTime observeDuration];
+              [[[BAInjection injectClass:BAMetricRegistry.class] downloadingImageErrorCount] increment];
               completionHandler(
                   nil, false, nil,
                   error ? error
@@ -141,7 +158,7 @@
               return;
           }
         }];
-
+    [downloadTime startTimer];
     [task resume];
 }
 

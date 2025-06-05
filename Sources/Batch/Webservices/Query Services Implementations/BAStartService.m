@@ -6,6 +6,7 @@
 //
 
 #import <Batch/BAStartService.h>
+#import <Batch/Batch-Swift.h>
 
 #import <Batch/BAWebserviceURLBuilder.h>
 
@@ -15,6 +16,7 @@
 #import <Batch/BAWSResponseStart.h>
 
 #import <Batch/BACoreCenter.h>
+#import <Batch/BAInjection.h>
 #import <Batch/BANullHelper.h>
 #import <Batch/BAParameter.h>
 
@@ -29,7 +31,9 @@
 }
 
 - (NSURL *)requestURL {
-    return [BAWebserviceURLBuilder webserviceURLForShortname:self.requestShortIdentifier];
+    NSString *host = [[BAInjection injectProtocol:@protocol(BADomainManagerProtocol)] urlFor:BADomainServiceWeb
+                                                                        overrideWithOriginal:FALSE];
+    return [BAWebserviceURLBuilder webserviceURLForHost:host shortname:self.requestShortIdentifier];
 }
 
 - (NSString *)requestIdentifier {
@@ -37,7 +41,7 @@
 }
 
 - (NSString *)requestShortIdentifier {
-    return @"st";
+    return kParametersStartWebserviceShortname;
 }
 
 - (NSArray<id<BAWSQuery>> *)queriesToSend {

@@ -9,8 +9,20 @@
 #import <Foundation/Foundation.h>
 
 #import <Batch/BatchActions.h>
+#import <Batch/BatchMessagingCloseReason.h>
 
 @class BatchInAppMessage, BatchMessage, BatchPushMessage, BatchMessageAction;
+
+@protocol BatchInAppDelegate <NSObject>
+
+@optional
+
+/// Called when an In-App message should be presented to the user.
+///
+/// - Parameter message: In-App message to show.
+- (void)batchInAppMessageReady:(BatchInAppMessage *_Nonnull)message NS_SWIFT_NAME(batchInAppMessageReady(message:));
+
+@end
 
 /// Implement this protocol if you want to be notified of what happens to the messaging view (for example, perform some
 /// analytics on show/hide).
@@ -22,18 +34,6 @@
 ///
 /// - Parameter messageIdentifier: Analytics message identifier string. Can be nil.
 - (void)batchMessageDidAppear:(NSString *_Nullable)messageIdentifier;
-
-/// Called when the message view was dismissed by a user interaction (close button tap, swipe gesture...)
-///
-/// - Parameter messageIdentifier: Analytics message identifier string. Can be nil.
-- (void)batchMessageWasCancelledByUserAction:(NSString *_Nullable)messageIdentifier
-    NS_SWIFT_NAME(batchMessageWasCancelledByUserAction(_:));
-
-/// Called when the message view was dismissed automatically after the auto closing countdown.
-///
-/// - Parameter messageIdentifier: Analytics message identifier string. Can be nil.
-- (void)batchMessageWasCancelledByAutoclose:(NSString *_Nullable)messageIdentifier
-    NS_SWIFT_NAME(batchMessageWasCancelledByAutoclose(_:));
 
 /// Called when Batch needs to present a message in automatic mode.
 ///
@@ -52,41 +52,19 @@
 ///   - action: Action that will be performed. Fields can be nil if the action was only to dismiss the message on tap.
 ///     __DO NOT__ run the action yourself: the SDK will automatically do it.
 ///   - identifier: Analytics message identifier string. Can be nil.
-///   - index: Index of the action/CTA. If the action comes from the "global tap action", the index
-///     will be ``BatchMessageGlobalActionIndex`` If the index is greater than or equal to zero,
+///   - ctaIdentifier: Identifier of the action/CTA. If the action comes from the "global tap action", the identifier
+///     will be ``BatchMessageGlobalActionIndex``,
 ///     you can cast the action to ``BatchMessageCTA``
 - (void)batchMessageDidTriggerAction:(BatchMessageAction *_Nonnull)action
                    messageIdentifier:(NSString *_Nullable)identifier
-                         actionIndex:(NSInteger)index;
+                       ctaIdentifier:(NSString *_Nonnull)ctaIdentifier;
 
 /// Called when the message view disappeared from the screen.
 ///
-/// - Parameter messageIdentifier: Analytics message identifier string. Can be nil.
-- (void)batchMessageDidDisappear:(NSString *_Nullable)messageIdentifier;
-
-/// Called when an In-App message should be presented to the user.
-///
-/// - Parameter message: In-App message to show.
-- (void)batchInAppMessageReady:(nonnull BatchInAppMessage *)message NS_SWIFT_NAME(batchInAppMessageReady(message:));
-
-/// Called when the message view was closed because of an error.
-///
-/// - Parameter messageIdentifier: Analytics message identifier string. Can be nil.
-- (void)batchMessageWasCancelledByError:(NSString *_Nullable)messageIdentifier
-    NS_SWIFT_NAME(batchMessageWasCancelledByError(_:));
-
-/// Called when the WebView message view will be dismissed due to the user navigating away or triggering an action
-/// (using the Javascript SDK).
-///
 /// - Parameters:
-///   - action: Action that will be performed. Fields can be nil if the action was only to dismiss the message on
-///     tap. __DO NOT__ run the action yourself: the SDK will automatically do it. Can be nil.
-///   - messageIdentifier: Analytics message identifier string. Can be nil.
-///   - analyticsIdentifier: Click analytic identifier. Matches the `analyticsID` parameter of the Javascript call,
-///     or the `batchAnalyticsID` query parameter of a link.
-- (void)batchWebViewMessageDidTriggerAction:(BatchMessageAction *_Nullable)action
-                          messageIdentifier:(NSString *_Nullable)messageIdentifier
-                        analyticsIdentifier:(NSString *_Nullable)analyticsIdentifier;
+///  - messageIdentifier: Analytics message identifier string. Can be nil.
+///  - reason: Enum for the different reasons why an In-App message can be closed
+- (void)batchMessageDidDisappear:(NSString *_Nullable)messageIdentifier reason:(BatchMessagingCloseReason)reason;
 
 @end
 
@@ -96,6 +74,9 @@
 /// Sets Batch's messaging delegate. The delegate is used for optionaly informing your code about analytics event, or
 /// handling In-App messages manually.
 @property (class, nullable) id<BatchMessagingDelegate> delegate;
+
+/// Sets Batch's In-App delegate. The delegate is used for handling In-App messages manually
+@property (class, nullable) id<BatchInAppDelegate> inAppDelegate;
 
 /// Toggles whether Batch should change the shared `AVAudioSession` configuration by itelf.
 ///
@@ -107,7 +88,8 @@
 /// Default: true
 ///
 /// In-App messaging is not affected by this. If you want to manually display the In-App message, call
-/// ``BatchMessaging/setDelegate:`` with a delegate that implement ``BatchMessagingDelegate/batchInAppMessageReady:``.
+/// ``BatchMessaging/setDelegate:`` with a delegate that implement
+/// ``BatchInAppDelegate/batchInAppMessageReady:``.
 /// - Note: If automatic mode is enabled, manual integration methods will not work.
 @property (class) BOOL automaticMode;
 

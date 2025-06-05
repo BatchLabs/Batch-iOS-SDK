@@ -58,9 +58,19 @@
     [_wrappedDelegate messageDismissed:message];
 }
 
-- (void)messageButtonClicked:(BAMSGMessage *_Nonnull)message ctaIndex:(NSInteger)ctaIndex action:(BAMSGCTA *)action {
+- (void)messageButtonClicked:(BAMSGMessage *_Nonnull)message
+               ctaIdentifier:(NSString *_Nonnull)ctaIdentifier
+                      action:(BAMSGCTA *)action {
     ENSURE_ONCE
-    [_wrappedDelegate messageButtonClicked:message ctaIndex:ctaIndex action:action];
+    [_wrappedDelegate messageButtonClicked:message ctaIdentifier:ctaIdentifier action:action];
+}
+
+- (void)messageButtonClicked:(BAMSGMessage *_Nonnull)message
+               ctaIdentifier:(NSString *)ctaIdentifier
+                     ctaType:(NSString *)ctaType
+                      action:(BAMSGAction *)action {
+    ENSURE_ONCE
+    [_wrappedDelegate messageButtonClicked:message ctaIdentifier:ctaIdentifier ctaType:ctaType action:action];
 }
 
 - (void)messageAutomaticallyClosed:(BAMSGMessage *_Nonnull)message {

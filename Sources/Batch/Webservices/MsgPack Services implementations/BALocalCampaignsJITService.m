@@ -21,6 +21,7 @@
 #import <Batch/BAMetricRegistry.h>
 #import <Batch/BAStandardQueryWebserviceIdentifiersProvider.h>
 #import <Batch/BAUserDatasourceProtocol.h>
+#import <Batch/Batch-Swift.h>
 
 #define LOGGER_DOMAIN @"BALocalCampaignsJITService"
 
@@ -55,7 +56,11 @@
                                         success:(void (^)(NSArray *eligibleCampaignIds))successHandler
                                           error:(void (^)(NSError *error, NSNumber *retryAfter))errorHandler;
 {
-    NSURL *url = [BAWebserviceURLBuilder webserviceURLForShortname:kParametersLocalCampaignsJITWebserviceShortname];
+    NSString *host = [[BAInjection injectProtocol:@protocol(BADomainManagerProtocol)] urlFor:BADomainServiceWeb
+                                                                        overrideWithOriginal:FALSE];
+    NSURL *url = [BAWebserviceURLBuilder webserviceURLForHost:host
+                                                    shortname:kParametersLocalCampaignsJITWebserviceShortname];
+    ;
     self = [super initWithMethod:BAWebserviceClientRequestMethodPost URL:url delegate:nil];
     if (self) {
         _campaigns = campaigns;
@@ -126,7 +131,8 @@
 
     // Metrics
     [[_metricRegistry localCampaignsJITResponseTime] observeDuration];
-    [[[_metricRegistry localCampaignsJITCount] labels:@"OK", nil] increment];
+    NSArray<NSString *> *labels = [[NSArray alloc] initWithObjects:@"OK", nil];
+    [[[_metricRegistry localCampaignsJITCount] labels:labels] increment];
 
     if (_successHandler == nil) {
         return;
@@ -177,7 +183,9 @@
 
     // Metrics
     [[_metricRegistry localCampaignsJITResponseTime] observeDuration];
-    [[[_metricRegistry localCampaignsJITCount] labels:@"KO", nil] increment];
+
+    NSArray<NSString *> *labels = [[NSArray alloc] initWithObjects:@"KO", nil];
+    [[[_metricRegistry localCampaignsJITCount] labels:labels] increment];
 
     if (error == nil || _errorHandler == nil) {
         return;

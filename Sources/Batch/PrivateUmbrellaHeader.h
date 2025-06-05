@@ -134,10 +134,6 @@
 #import <Batch/BAUserDataBuiltinActions.h>
 #import <Batch/BAUserEventBuiltinActions.h>
 #import <Batch/BAActionsCenter.h>
-#import <Batch/BADisplayReceiptCenter.h>
-#import <Batch/BADisplayReceipt.h>
-#import <Batch/BADisplayReceiptWebserviceClient.h>
-#import <Batch/BADisplayReceiptCache.h>
 #import <Batch/BADelegatedUIAlertController.h>
 #import <Batch/BAMSGStackViewHorizontalItem.h>
 #import <Batch/BAMSGViewController.h>
@@ -186,6 +182,7 @@
 #import <Batch/BAMSGStylableView.h>
 #import <Batch/BAMSGImageView.h>
 #import <Batch/BAMSGRemoteImageView.h>
+#import <Batch/BABatchInAppDelegateWrapper.h>
 #import <Batch/BATMessagingCloseErrorCause.h>
 #import <Batch/BATGIFFile.h>
 #import <Batch/BATGIFAnimator.h>

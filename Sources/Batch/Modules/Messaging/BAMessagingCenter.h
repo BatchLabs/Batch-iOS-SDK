@@ -8,6 +8,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+#import <Batch/BABatchInAppDelegateWrapper.h>
 #import <Batch/BABatchMessagingDelegateWrapper.h>
 #import <Batch/BACenterMulticastDelegate.h>
 #import <Batch/BAMSGBannerViewController.h>
@@ -43,6 +44,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setDelegate:(id<BatchMessagingDelegate> _Nullable)delegate;
 
 - (id<BatchMessagingDelegate> _Nullable)delegate;
+
+- (void)setInAppDelegate:(id<BatchInAppDelegate> _Nullable)delegate;
+
+- (id<BatchInAppDelegate> _Nullable)inAppDelegate;
 
 - (void)setImageDownloadTimeout:(NSTimeInterval)timeout;
 
@@ -87,13 +92,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)performAction:(nonnull BAMSGAction *)action
                source:(nullable id<BatchUserActionSource>)source
-          actionIndex:(NSInteger)index
+        ctaIdentifier:(NSString *_Nonnull)ctaIdentifier
     messageIdentifier:(nullable NSString *)identifier;
-
-- (void)performAction:(nonnull BAMSGAction *)action
-                source:(nullable id<BatchUserActionSource>)source
-    webViewAnalyticsID:(nullable NSString *)analyticsID
-     messageIdentifier:(nullable NSString *)identifier;
 
 - (BAPromise *)dismissWindow:(nullable BAMSGOverlayWindow *)window;
 

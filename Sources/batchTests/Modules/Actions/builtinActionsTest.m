@@ -77,6 +77,11 @@
     OCMVerifyAll(batchProfileDataEditorMock);
 }
 
+- (void)testDismissAction {
+    BOOL isRegister = [[BAActionsCenter instance] performAction:@"batch.dismiss" withArgs:@{} andSource:nil];
+    XCTAssertTrue(isRegister);
+}
+
 - (void)testDeeplinkFromActions {
     DeeplinkDelegateStub *delegate = [DeeplinkDelegateStub new];
     BatchSDK.deeplinkDelegate = delegate;

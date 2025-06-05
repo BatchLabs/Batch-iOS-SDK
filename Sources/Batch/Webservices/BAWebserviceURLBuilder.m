@@ -11,18 +11,6 @@
 
 @implementation BAWebserviceURLBuilder
 
-+ (nullable NSURL *)webserviceURLForShortname:(nonnull NSString *)shortname {
-    return [BAWebserviceURLBuilder webserviceURLForHost:[BAWebserviceURLBuilder host]
-                                              shortname:shortname
-                                                 apiKey:BACoreCenter.instance.configuration.developperKey];
-}
-
-+ (nullable NSURL *)webserviceURLForShortname:(nonnull NSString *)shortname apiKey:(nonnull NSString *)apiKey {
-    return [BAWebserviceURLBuilder webserviceURLForHost:[BAWebserviceURLBuilder host]
-                                              shortname:shortname
-                                                 apiKey:apiKey];
-}
-
 + (nullable NSURL *)webserviceURLForHost:(nonnull NSString *)host shortname:(nonnull NSString *)shortname {
     return [BAWebserviceURLBuilder webserviceURLForHost:host
                                               shortname:shortname
@@ -63,10 +51,6 @@
     [urlString appendString:escapedAPIKey];
 
     return [NSURL URLWithString:urlString relativeToURL:nil];
-}
-
-+ (NSString *)host {
-    return kParametersWebserviceBase;
 }
 
 @end

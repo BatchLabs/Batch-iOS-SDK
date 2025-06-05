@@ -48,77 +48,24 @@
     return false;
 }
 
-- (BOOL)batchMessageWasCancelledByUserAction:(NSString *)identifier {
-    if ([_delegate respondsToSelector:@selector(batchMessageWasCancelledByUserAction:)]) {
-        [BAThreading performBlockOnMainThreadAsync:^{
-          [self->_delegate batchMessageWasCancelledByUserAction:identifier];
-        }];
-        return true;
-    }
-    return false;
-}
-
-- (BOOL)batchMessageWasCancelledByAutoclose:(NSString *)identifier {
-    if ([_delegate respondsToSelector:@selector(batchMessageWasCancelledByAutoclose:)]) {
-        [BAThreading performBlockOnMainThreadAsync:^{
-          [self->_delegate batchMessageWasCancelledByAutoclose:identifier];
-        }];
-        return true;
-    }
-    return false;
-}
-
 - (BOOL)batchMessageDidTriggerAction:(BatchMessageAction *_Nonnull)action
                    messageIdentifier:(NSString *)identifier
-                         actionIndex:(NSInteger)index {
-    if ([_delegate respondsToSelector:@selector(batchMessageDidTriggerAction:messageIdentifier:actionIndex:)]) {
+                       ctaIdentifier:(NSString *_Nonnull)ctaIdentifier {
+    if ([_delegate respondsToSelector:@selector(batchMessageDidTriggerAction:messageIdentifier:ctaIdentifier:)]) {
         [BAThreading performBlockOnMainThreadAsync:^{
-          [self->_delegate batchMessageDidTriggerAction:action messageIdentifier:identifier actionIndex:index];
+          [self->_delegate batchMessageDidTriggerAction:action
+                                      messageIdentifier:identifier
+                                          ctaIdentifier:ctaIdentifier];
         }];
         return true;
     }
     return false;
 }
 
-- (BOOL)batchMessageDidDisappear:(NSString *)identifier {
-    if ([_delegate respondsToSelector:@selector(batchMessageDidDisappear:)]) {
+- (BOOL)batchMessageDidDisappear:(NSString *)identifier reason:(BatchMessagingCloseReason)reason {
+    if ([_delegate respondsToSelector:@selector(batchMessageDidDisappear:reason:)]) {
         [BAThreading performBlockOnMainThreadAsync:^{
-          [self->_delegate batchMessageDidDisappear:identifier];
-        }];
-        return true;
-    }
-    return false;
-}
-
-- (BOOL)batchInAppMessageReady:(BatchInAppMessage *)message {
-    if ([_delegate respondsToSelector:@selector(batchInAppMessageReady:)]) {
-        [BAThreading performBlockOnMainThreadAsync:^{
-          [self->_delegate batchInAppMessageReady:message];
-        }];
-        return true;
-    }
-    return false;
-}
-
-- (BOOL)batchMessageWasCancelledByError:(NSString *_Nullable)messageIdentifier {
-    if ([_delegate respondsToSelector:@selector(batchMessageWasCancelledByError:)]) {
-        [BAThreading performBlockOnMainThreadAsync:^{
-          [self->_delegate batchMessageWasCancelledByError:messageIdentifier];
-        }];
-        return true;
-    }
-    return false;
-}
-
-- (BOOL)batchWebViewMessageDidTriggerAction:(BatchMessageAction *_Nullable)action
-                          messageIdentifier:(NSString *_Nullable)messageIdentifier
-                        analyticsIdentifier:(NSString *_Nullable)analyticsIdentifier {
-    if ([_delegate respondsToSelector:@selector(batchWebViewMessageDidTriggerAction:
-                                                                  messageIdentifier:analyticsIdentifier:)]) {
-        [BAThreading performBlockOnMainThreadAsync:^{
-          [self->_delegate batchWebViewMessageDidTriggerAction:action
-                                             messageIdentifier:messageIdentifier
-                                           analyticsIdentifier:analyticsIdentifier];
+          [self->_delegate batchMessageDidDisappear:identifier reason:reason];
         }];
         return true;
     }

@@ -448,7 +448,7 @@ NSString *const BAMSGWebviewDevMenuReload = @"Reload";
       BAMessagingCenter *messagingCenter = [BAInjection injectClass:BAMessagingCenter.class];
       [messagingCenter performAction:action
                               source:self.message.sourceMessage
-                  webViewAnalyticsID:analyticsIdentifier
+                       ctaIdentifier:analyticsIdentifier
                    messageIdentifier:self.message.sourceMessage.devTrackingIdentifier];
     }];
 }

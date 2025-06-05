@@ -207,7 +207,7 @@
     if ([eligibleCampaigns count] > 0) {
         // Get the first elected campaign
         BALocalCampaign *firstElectedCampaign = eligibleCampaigns[0];
-        if (firstElectedCampaign.requiresJustInTimeSync && ![signal isKindOfClass:BANewSessionSignal.class]) {
+        if (firstElectedCampaign.requiresJustInTimeSync) {
             BATSyncedJITCampaignState syncedCampaignState =
                 [self->_campaignManager syncedJITCampaignState:firstElectedCampaign];
             if (syncedCampaignState == BATSyncedJITCampaignStateEligible) {
@@ -490,6 +490,10 @@
           [self->_campaignPersister deleteCampaigns];
       }
     });
+
+    if (err == NULL) {
+        [_campaignManager setNextAvailableJITTimestampWithDefaultDelay];
+    }
 
     [_campaignManager loadCampaigns:campaigns];
     [_campaignManager setCappings:cappings];

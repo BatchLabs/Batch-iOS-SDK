@@ -75,19 +75,23 @@
 
 @interface BatchMessage ()
 
-+ (nullable instancetype)messageForPayload:(nonnull NSDictionary<NSString *, NSObject *> *)payload;
++ (nullable instancetype)messageForPayload:(nonnull NSDictionary<NSString *, NSObject *> *)payload
+                              isCEPMessage:(BOOL)isCEPMessage;
 
 @property (nonnull, readonly) NSDictionary<NSString *, NSObject *> *messagePayload;
 
 @property (nonnull) NSString *messageIdentifier;
 @property (nullable) NSString *devTrackingIdentifier;
 @property (nullable) NSObject *eventData;
+/// Determine if the message is a MEP or a CEP one
+@property BOOL isCEPMessage;
 
 @end
 
 @interface BatchInAppMessage () <NSCopying>
 
-+ (nullable instancetype)messageForPayload:(nonnull NSDictionary<NSString *, NSObject *> *)payload;
++ (nullable instancetype)messageForPayload:(nonnull NSDictionary<NSString *, NSObject *> *)payload
+                              isCEPMessage:(BOOL)isCEPMessage;
 
 - (void)setCampaign:(nonnull BALocalCampaign *)campaign;
 

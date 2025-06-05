@@ -89,6 +89,21 @@
     }
 }
 
+- (void)testHandleWebserviceResponsePayload {
+    BAMutableDateProvider *dateProvider =
+        [[BAMutableDateProvider alloc] initWithTimestamp:[[NSDate date] timeIntervalSince1970]];
+    BALocalCampaignsFilePersistence *campaignPersister = [BALocalCampaignsFilePersistence new];
+
+    [BAInjection overlayProtocol:@protocol(BALocalCampaignsPersisting) returnedInstance:campaignPersister];
+    BALocalCampaignsCenter *lcCenter = [BALocalCampaignsCenter new];
+    [lcCenter setValue:dateProvider forKey:@"dateProvider"];
+
+    NSMutableDictionary *payload = [[self singleCampaignPayload] mutableCopy];
+    [lcCenter handleWebserviceResponsePayload:payload];
+
+    XCTAssertFalse([[lcCenter campaignManager] isJITServiceAvailable]);
+}
+
 - (NSDictionary *)invalidCampaignsTypePayload {
     return @{@"campaigns" : @{}};
 }

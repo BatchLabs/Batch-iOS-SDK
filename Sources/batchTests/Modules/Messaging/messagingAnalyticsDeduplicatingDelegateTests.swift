@@ -7,14 +7,14 @@ class messagingAnalyticsDeduplicatingDelegateTests: XCTestCase {
         let wrappedDelegate = TestMessagingAnalyticsDelegate()
         let deduplicateDelegate = BAMessagingAnalyticsDeduplicatingDelegate(wrappedDelegate: wrappedDelegate)
 
-        let message = BAMSGMessage()
+        let message = BAMSGMEPMessage()
 
         let trackMethods: () -> Void = {
             deduplicateDelegate.messageShown(message)
             deduplicateDelegate.messageClosed(message)
             deduplicateDelegate.messageClosed(message, byError: .serverFailure)
             deduplicateDelegate.messageDismissed(message)
-            deduplicateDelegate.messageButtonClicked(message, ctaIndex: 0, action: BAMSGCTA())
+            deduplicateDelegate.messageButtonClicked(message, ctaIdentifier: "0", action: BAMSGCTA())
             deduplicateDelegate.messageAutomaticallyClosed(message)
             deduplicateDelegate.messageGlobalTapActionTriggered(message, action: BAMSGAction())
             deduplicateDelegate.messageWebViewClickTracked(
@@ -36,6 +36,7 @@ class TestMessagingAnalyticsDelegate: BAMessagingAnalyticsDelegate {
     var shownCalled = false
     var closedCalled = false
     var closedByErrorCalled = false
+    var withLoadingImageErrorCalled = false
     var dismissedCalled = false
     var buttonClickedCalled = false
     var autoCloseCalled = false
@@ -72,7 +73,14 @@ class TestMessagingAnalyticsDelegate: BAMessagingAnalyticsDelegate {
         dismissedCalled = true
     }
 
-    func messageButtonClicked(_: BAMSGMessage, ctaIndex _: Int, action _: BAMSGCTA) {
+    func messageButtonClicked(_: BAMSGMessage, ctaIdentifier _: String, action _: BAMSGCTA) {
+        if buttonClickedCalled {
+            fail()
+        }
+        buttonClickedCalled = true
+    }
+
+    func messageButtonClicked(_: BAMSGMessage, ctaIdentifier _: String, ctaType _: String, action _: BAMSGAction) {
         if buttonClickedCalled {
             fail()
         }

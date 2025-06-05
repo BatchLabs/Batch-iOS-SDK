@@ -53,12 +53,17 @@ NSString *const kBAActionGroupName = @"batch.group";
         _pasteboard = [UIPasteboard generalPasteboard];
         registeredActions = [NSMutableDictionary new];
 
+        [self registerInternalAction:[self dismissAction]];
         [self registerInternalAction:[self deeplinkAction]];
         [self registerInternalAction:[self refreshLocalCampaignsAction]];
         [self registerInternalAction:[self requestNotificationsAction]];
         [self registerInternalAction:[self redirectSettingsAction]];
         [self registerInternalAction:[self smartReoptinAction]];
         [self registerInternalAction:[self trackingConsentAction]];
+        [self registerInternalAction:[self requestNotificationsActionCEP]];
+        [self registerInternalAction:[self redirectSettingsActionCEP]];
+        [self registerInternalAction:[self smartReoptinActionCEP]];
+        [self registerInternalAction:[self trackingConsentActionCEP]];
         [self registerInternalAction:[self groupAction]];
         [self registerInternalAction:[self clipboardAction]];
         [self registerInternalAction:[self ratingAction]];
@@ -203,6 +208,16 @@ NSString *const kBAActionGroupName = @"batch.group";
                      }];
 }
 
+- (BatchUserAction *)dismissAction {
+    return [BatchUserAction
+        userActionWithIdentifier:[kBAActionsReservedIdentifierPrefix stringByAppendingString:@"dismiss"]
+                     actionBlock:^(NSString *_Nonnull identifier,
+                                   NSDictionary<NSString *, NSObject *> *_Nonnull arguments,
+                                   id<BatchUserActionSource> _Nullable source){
+                         // Noting to do
+                     }];
+}
+
 - (BatchUserAction *)requestNotificationsAction {
     return [BatchUserAction userActionWithIdentifier:[kBAActionsReservedIdentifierPrefix
                                                          stringByAppendingString:@"ios_request_notifications"]
@@ -213,9 +228,29 @@ NSString *const kBAActionGroupName = @"batch.group";
                                          }];
 }
 
+- (BatchUserAction *)requestNotificationsActionCEP {
+    return [BatchUserAction
+        userActionWithIdentifier:[kBAActionsReservedIdentifierPrefix stringByAppendingString:@"request_notifications"]
+                     actionBlock:^(NSString *_Nonnull identifier,
+                                   NSDictionary<NSString *, NSObject *> *_Nonnull arguments,
+                                   id<BatchUserActionSource> _Nullable source) {
+                       [BatchPush requestNotificationAuthorization];
+                     }];
+}
+
 - (BatchUserAction *)redirectSettingsAction {
     return [BatchUserAction
         userActionWithIdentifier:[kBAActionsReservedIdentifierPrefix stringByAppendingString:@"ios_redirect_settings"]
+                     actionBlock:^(NSString *_Nonnull identifier,
+                                   NSDictionary<NSString *, NSObject *> *_Nonnull arguments,
+                                   id<BatchUserActionSource> _Nullable source) {
+                       [[BAPushCenter instance] openSystemNotificationSettings];
+                     }];
+}
+
+- (BatchUserAction *)redirectSettingsActionCEP {
+    return [BatchUserAction
+        userActionWithIdentifier:[kBAActionsReservedIdentifierPrefix stringByAppendingString:@"redirect_settings"]
                      actionBlock:^(NSString *_Nonnull identifier,
                                    NSDictionary<NSString *, NSObject *> *_Nonnull arguments,
                                    id<BatchUserActionSource> _Nullable source) {
@@ -237,6 +272,16 @@ NSString *const kBAActionGroupName = @"batch.group";
                      }];
 }
 
+- (BatchUserAction *)smartReoptinActionCEP {
+    return [BatchUserAction
+        userActionWithIdentifier:[kBAActionsReservedIdentifierPrefix stringByAppendingString:@"smart_reoptin"]
+                     actionBlock:^(NSString *_Nonnull identifier,
+                                   NSDictionary<NSString *, NSObject *> *_Nonnull arguments,
+                                   id<BatchUserActionSource> _Nullable source) {
+                       [self doSmartReoptin];
+                     }];
+}
+
 // Action that asks user for tracking consent
 // If the consent has already been asked for, open the App's consent settings
 // If the user can't do anything about it, this does nothing
@@ -244,6 +289,15 @@ NSString *const kBAActionGroupName = @"batch.group";
 - (BatchUserAction *)trackingConsentAction {
     return [BatchUserAction
         userActionWithIdentifier:[kBAActionsReservedIdentifierPrefix stringByAppendingString:@"ios_tracking_consent"]
+                     actionBlock:^(NSString *_Nonnull identifier, NSDictionary<NSString *, id> *_Nonnull arguments,
+                                   id<BatchUserActionSource> _Nullable source) {
+                       [self askForTrackingConsent];
+                     }];
+}
+
+- (BatchUserAction *)trackingConsentActionCEP {
+    return [BatchUserAction
+        userActionWithIdentifier:[kBAActionsReservedIdentifierPrefix stringByAppendingString:@"tracking_consent"]
                      actionBlock:^(NSString *_Nonnull identifier, NSDictionary<NSString *, id> *_Nonnull arguments,
                                    id<BatchUserActionSource> _Nullable source) {
                        [self askForTrackingConsent];

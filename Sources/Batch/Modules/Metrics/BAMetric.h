@@ -36,7 +36,7 @@
                    andLabelNamesList:(nonnull NSArray<NSString *> *)labelNames;
 
 /// Get or create a child from labels values
-- (nonnull id)labels:(nonnull NSString *)firstLabel, ... NS_REQUIRES_NIL_TERMINATION;
+- (nonnull id)labels:(nonnull NSArray<NSString *> *)args;
 
 /// Register this metric to the BAMetricManager instance
 - (nonnull id)registerMetric;

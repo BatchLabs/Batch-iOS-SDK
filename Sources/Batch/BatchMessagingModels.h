@@ -6,7 +6,7 @@
 //  Copyright (c) 2019 Batch SDK. All rights reserved.
 //
 
-FOUNDATION_EXPORT NSInteger const BatchMessageGlobalActionIndex;
+FOUNDATION_EXPORT NSString *_Nonnull const BatchMessageGlobalActionIndex;
 
 typedef NS_ENUM(NSUInteger, BatchMessagingContentType) {
 
@@ -208,7 +208,9 @@ typedef NS_ENUM(NSUInteger, BatchMessagingContentType) {
 /// property.
 ///
 /// Can be nil if an error occurred or if not applicable
-@property (nullable, readonly) id<BatchInAppMessageContent> content;
+/// This method will return null and `contentType` property will return `BatchMessagingContentTypeUnknown` for messages
+/// coming from the CEP (Customer Engagement Platform).
+@property (nullable, readonly) id<BatchInAppMessageContent> mepContent;
 
 /// Get the campaign token. This is the same token as you see when opening the In-App Campaign in your browser, when on
 /// the dashboard. Can be nil.

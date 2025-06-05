@@ -98,6 +98,22 @@ typedef NS_ENUM(NSInteger, BATSyncedJITCampaignState) {
  */
 - (BOOL)isOverGlobalCappings;
 
+/**
+ Sets the next available timestamp for Just-In-Time (JIT) synchronization
+ using the default minimum delay.
+ The default minimum delay is defined by the constant
+ #MIN_DELAY_BETWEEN_JIT_SYNC
+ */
+- (void)setNextAvailableJITTimestampWithDefaultDelay;
+
+/**
+ Sets the next available timestamp for Just-In-Time (JIT) synchronization
+ using a custom delay.
+ The default minimum delay is defined by the constant
+ #DEFAULT_RETRY_AFTER
+ */
+- (void)setNextAvailableJITTimestampWithCustomDelay:(nullable NSNumber *)delay;
+
 @end
 
 NS_ASSUME_NONNULL_END

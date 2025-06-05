@@ -6,7 +6,6 @@
 
 #import "BAInjectionRegistrar.h"
 #import <Batch/Batch-Swift.h>
-#import "BADisplayReceiptCenter.h"
 #import "BAEventDispatcherCenter.h"
 #import "BAInboxSQLiteDatasource.h"
 #import "BAInboxSQLiteHelper.h"
@@ -24,6 +23,10 @@
 @implementation BAInjectionRegistrar
 
 + (void)registerInjectables {
+    // Register BADomainManager
+    [BAInjection registerInjectable:[BAInjectable injectableWithInstance:[BADomainManager sharedInstance]]
+                        forProtocol:@protocol(BADomainManagerProtocol)];
+
     // Register BAProfileCenter
     [BAInjection registerInjectable:[BAInjectable injectableWithInstance:[BAProfileCenter sharedInstance]]
                         forProtocol:@protocol(BAProfileCenterProtocol)];
@@ -31,10 +34,6 @@
     // Register BATEventTrackerProtocol
     [BAInjection registerInjectable:[BAInjectable injectableWithInstance:[BATrackerCenter instance]]
                         forProtocol:@protocol(BATEventTrackerProtocol)];
-
-    // Register BADisplayReceiptCenter
-    [BAInjection registerInjectable:[BAInjectable injectableWithInstance:[BADisplayReceiptCenter new]]
-                           forClass:BADisplayReceiptCenter.class];
 
     // Register BAEventDispatcherCenter
     [BAInjection registerInjectable:[BAInjectable injectableWithInitializer:^id() {

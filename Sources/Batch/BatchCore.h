@@ -62,14 +62,15 @@ typedef NS_OPTIONS(NSUInteger, BatchMigration) {
 
 /// Start Batch.
 ///
-/// You should call this method in `application:didFinishLaunchingWithOptions:` of your `UIApplicationDelegate`
+/// You should synchronously call this method in `application:didFinishLaunchingWithOptions:` of your
+/// `UIApplicationDelegate`
 ///
 /// - Note: This is the method that triggers the hooking or your Application to automatically handle some lifecycle
 /// events. If you run into issues, you can try moving this method before other SDK initializations, or call
 /// ``Batch/BatchPush/disableAutomaticIntegration`` before this method, and follow the "Manual Integration" advanced.
 /// - Parameters:
 ///    - key: Your APP's API Key, LIVE or DEV. You can find it on your dashboard.
-+ (void)startWithAPIKey:(NSString *_Nonnull)key;
++ (void)startWithAPIKey:(NSString *_Nonnull)key NS_SWIFT_UI_ACTOR;
 
 /// Set if Batch should send its logs to a custom object of yours.
 ///
@@ -84,7 +85,7 @@ typedef NS_OPTIONS(NSUInteger, BatchMigration) {
 /// implementation more easily. If you want to make it accessible in production, you should hide it in a hard to
 /// reproduce sequence.
 /// - Note: Should be presented modally.
-+ (UIViewController *_Nullable)makeDebugViewController;
++ (UIViewController *_Nullable)makeDebugViewController NS_SWIFT_UI_ACTOR;
 
 /// Toogle whether internal logs should be logged or not.
 ///

@@ -79,14 +79,17 @@
 - (void)acceptPressed {
     [self dismissViewControllerAnimated:YES completion:nil];
 
+    NSString *ctaIdentifier =
+        [BATCH_MESSAGE_MEP_CTA_INDEX_KEY stringByAppendingString:[NSString stringWithFormat:@"%i", 0]];
+
     [_messagingAnalyticsDelegate messageButtonClicked:self.messageDescription
-                                             ctaIndex:0
+                                        ctaIdentifier:ctaIdentifier
                                                action:self.messageDescription.acceptCTA];
 
     // We don't need to handle BAMSGCTAActionKindClose since we did that earlier
     [BAMessagingCenter.instance performAction:self.messageDescription.acceptCTA
                                        source:self.messageDescription.sourceMessage
-                                  actionIndex:0
+                                ctaIdentifier:ctaIdentifier
                             messageIdentifier:self.messageDescription.sourceMessage.devTrackingIdentifier];
 }
 
