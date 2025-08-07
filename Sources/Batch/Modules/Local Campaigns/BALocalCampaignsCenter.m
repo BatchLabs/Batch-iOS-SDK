@@ -405,7 +405,7 @@
                                message:@"Loaded %lu campaigns from disk", (unsigned long)campaigns.count];
           }
       }
-      [self->_campaignManager loadCampaigns:campaigns];
+      [self->_campaignManager loadCampaigns:campaigns fromCache:true];
       [self->_campaignManager setCappings:cappings];
       [self campaignCacheReady];
     });
@@ -495,7 +495,7 @@
         [_campaignManager setNextAvailableJITTimestampWithDefaultDelay];
     }
 
-    [_campaignManager loadCampaigns:campaigns];
+    [_campaignManager loadCampaigns:campaigns fromCache:false];
     [_campaignManager setCappings:cappings];
 }
 

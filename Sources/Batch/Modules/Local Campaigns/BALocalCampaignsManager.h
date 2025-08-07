@@ -44,7 +44,7 @@ typedef NS_ENUM(NSInteger, BATSyncedJITCampaignState) {
 
  Also triggers the campaign loaded signal
  */
-- (void)loadCampaigns:(NSArray<BALocalCampaign *> *)updatedCampaignList;
+- (void)loadCampaigns:(NSArray<BALocalCampaign *> *)updatedCampaignList fromCache:(BOOL)fromCache;
 
 /**
  Checks if an event name will trigger at least one campaign, allowing for a fast pre-filter to check if it is worth

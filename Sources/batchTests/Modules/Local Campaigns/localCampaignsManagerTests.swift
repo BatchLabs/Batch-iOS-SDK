@@ -20,7 +20,7 @@ class localCampaignsManagerTests: XCTestCase {
             createFakeCampaignWith(priority: 50, jit: false),
             createFakeCampaignWith(priority: 10, jit: false),
         ]
-        manager.load(campaigns)
+        manager.load(campaigns, fromCache: false)
 
         let sortedCampaigns: [BALocalCampaign] = manager.eligibleCampaignsSorted(byPriority: BANewSessionSignal())
         XCTAssertEqual(sortedCampaigns[0], campaigns[1])

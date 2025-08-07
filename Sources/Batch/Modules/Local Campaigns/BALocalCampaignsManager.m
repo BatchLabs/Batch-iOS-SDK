@@ -103,11 +103,25 @@
     return [NSArray arrayWithArray:_campaignList];
 }
 
-- (void)loadCampaigns:(NSArray<BALocalCampaign *> *)updatedCampaignList {
+/**
+ * Loads campaigns with customer user ID support.
+ * Clears existing campaigns, filters the new list based on user-specific criteria,
+ * and updates the watched event names cache.
+ * @param updatedCampaignList Array of campaigns to load
+ */
+- (void)loadCampaigns:(NSArray<BALocalCampaign *> *)updatedCampaignList fromCache:(BOOL)fromCache {
     @synchronized(_campaignList) {
         [_campaignList removeAllObjects];
         if (updatedCampaignList != nil) {
             [_campaignList addObjectsFromArray:[self cleanCampaignList:updatedCampaignList]];
+
+            if (!fromCache) {
+                NSMutableArray *ids = [NSMutableArray array];
+                for (BALocalCampaign *item in updatedCampaignList) {
+                    [ids addObject:item.campaignID];
+                }
+                [self updateSyncedJITCampaigns:_campaignList eligibleCampaignIds:ids];
+            }
         }
 
         [self updateWatchedEventNames];
@@ -204,17 +218,8 @@
               [self setNextAvailableJITTimestampWithDefaultDelay];
 
               if ([eligibleCampaignIds count] > 0) {
-                  for (BALocalCampaign *campaign in [NSArray arrayWithArray:eligibleCampaignsSynced]) {
-                      BATSyncedJITResult *syncedJITResult = [[BATSyncedJITResult alloc]
-                          initWithTimestamp:[[self->_dateProvider currentDate] timeIntervalSince1970]];
-                      if (![eligibleCampaignIds containsObject:campaign.campaignID]) {
-                          [eligibleCampaignsSynced removeObject:campaign];
-                          syncedJITResult.eligible = false;
-                      } else {
-                          syncedJITResult.eligible = true;
-                      }
-                      self->_syncedJITCampaigns[campaign.campaignID] = syncedJITResult;
-                  }
+                  [self updateSyncedJITCampaigns:eligibleCampaignsSynced eligibleCampaignIds:eligibleCampaignIds];
+
                   if ([eligibleCampaignsSynced count] > 0) {
                       completionHandler(eligibleCampaigns[0]);
                   } else {
@@ -229,6 +234,25 @@
               completionHandler(nil);
             }];
     [BAWebserviceClientExecutor.sharedInstance addClient:wsClient];
+}
+
+- (void)updateSyncedJITCampaigns:(NSMutableArray<BALocalCampaign *> *)eligibleCampaignsSynced
+             eligibleCampaignIds:(NSArray *)eligibleCampaignIds {
+    @synchronized(_syncedJITCampaigns) {
+        for (BALocalCampaign *campaign in [NSArray arrayWithArray:eligibleCampaignsSynced]) {
+            if (campaign.requiresJustInTimeSync) {
+                BATSyncedJITResult *syncedJITResult = [[BATSyncedJITResult alloc]
+                    initWithTimestamp:[[self->_dateProvider currentDate] timeIntervalSince1970]];
+                if (![eligibleCampaignIds containsObject:campaign.campaignID]) {
+                    [eligibleCampaignsSynced removeObject:campaign];
+                    syncedJITResult.eligible = false;
+                } else {
+                    syncedJITResult.eligible = true;
+                }
+                self->_syncedJITCampaigns[campaign.campaignID] = syncedJITResult;
+            }
+        }
+    }
 }
 
 - (BOOL)isJITServiceAvailable {
