@@ -24,7 +24,7 @@ typedef NS_ENUM(NSUInteger, BAMSGActivityIndicatorViewColor) {
 
 - (instancetype)initWithPreferredSize:(BAMSGActivityIndicatorViewSize)size NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithActivityIndicatorStyle:(UIActivityIndicatorViewStyle)style
-    __attribute__((deprecated("Use initWithPreferredSize:"))) NS_DESIGNATED_INITIALIZER;
+    __attribute__((deprecated("Use initWithPreferredSize:")))NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithFrame:(CGRect)frame NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithCoder:(NSCoder *)coder NS_DESIGNATED_INITIALIZER;
 
