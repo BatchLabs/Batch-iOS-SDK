@@ -36,12 +36,12 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)sharedInstance;
 
 /*!
- @method swizzleAppDelegate:
+ @method findAndSwizzleAppDelegate:
  @abstract Swizzle the current [UIApplication sharedApplication].delegate class. Note that calling this method multiple
  times is an error. Make sure to set a `batchDelegate` on this object to be informed of the calls.
  @return Whether the operation succeeded
  */
-- (BOOL)swizzleAppDelegate;
+- (BOOL)findAndSwizzleAppDelegate;
 
 @end
 

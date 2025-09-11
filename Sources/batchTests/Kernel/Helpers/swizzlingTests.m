@@ -64,17 +64,17 @@
 
     BADelegatedApplicationDelegate *delegatedAppDelegate = [BADelegatedApplicationDelegate new];
     // Test that we can't swizzle with no batch delegate
-    XCTAssertFalse([delegatedAppDelegate swizzleAppDelegate]);
+    XCTAssertFalse([delegatedAppDelegate findAndSwizzleAppDelegate]);
     // Test that we can't swizzle if the batch delegate is the same class of the app delegate
     // Which causes an infinite loop
     delegatedAppDelegate.batchDelegate = (id)[StubApplicationDelegate new];
-    XCTAssertFalse([delegatedAppDelegate swizzleAppDelegate]);
+    XCTAssertFalse([delegatedAppDelegate findAndSwizzleAppDelegate]);
 
     BatchApplicationDelegate *batchDelegate = [BatchApplicationDelegate new];
     delegatedAppDelegate.batchDelegate = batchDelegate;
     // Test that we can't swizzle twiice
-    XCTAssertTrue([delegatedAppDelegate swizzleAppDelegate]);
-    XCTAssertFalse([delegatedAppDelegate swizzleAppDelegate]);
+    XCTAssertTrue([delegatedAppDelegate findAndSwizzleAppDelegate]);
+    XCTAssertFalse([delegatedAppDelegate findAndSwizzleAppDelegate]);
 }
 
 - (void)testNoProxy {
@@ -89,7 +89,7 @@
 
     BADelegatedApplicationDelegate *delegatedAppDelegate = [BADelegatedApplicationDelegate new];
     delegatedAppDelegate.batchDelegate = batchDelegate;
-    XCTAssertFalse([delegatedAppDelegate swizzleAppDelegate]);
+    XCTAssertFalse([delegatedAppDelegate findAndSwizzleAppDelegate]);
 }
 
 - (void)testSwizzling {
@@ -107,7 +107,7 @@
 
     BADelegatedApplicationDelegate *delegatedAppDelegate = [BADelegatedApplicationDelegate new];
     delegatedAppDelegate.batchDelegate = batchDelegate;
-    XCTAssertTrue([delegatedAppDelegate swizzleAppDelegate]);
+    XCTAssertTrue([delegatedAppDelegate findAndSwizzleAppDelegate]);
 
     // Test that calling a method calls both the original application delegate, and Batch's implementation
     [UIApplication.sharedApplication.delegate application:uiApplicationMock
@@ -137,7 +137,7 @@
 
     BADelegatedApplicationDelegate *delegatedAppDelegate = [BADelegatedApplicationDelegate new];
     delegatedAppDelegate.batchDelegate = batchDelegate;
-    XCTAssertTrue([delegatedAppDelegate swizzleAppDelegate]);
+    XCTAssertTrue([delegatedAppDelegate findAndSwizzleAppDelegate]);
 
     // Test that calling a method calls both the original application delegate, and Batch's implementation
     [UIApplication.sharedApplication.delegate application:uiApplicationMock
@@ -163,7 +163,7 @@
 
     BADelegatedApplicationDelegate *delegatedAppDelegate = [BADelegatedApplicationDelegate new];
     delegatedAppDelegate.batchDelegate = batchDelegate;
-    XCTAssertTrue([delegatedAppDelegate swizzleAppDelegate]);
+    XCTAssertTrue([delegatedAppDelegate findAndSwizzleAppDelegate]);
 
     XCTAssertFalse([applicationDelegate respondsToSelector:@selector(application:
                                                                didReceiveRemoteNotification:fetchCompletionHandler:)]);
@@ -177,7 +177,7 @@
     OCMStub([uiApplicationMock delegate]).andReturn(completeApplicationDelegate);
     delegatedAppDelegate = [BADelegatedApplicationDelegate new];
     delegatedAppDelegate.batchDelegate = batchDelegate;
-    XCTAssertTrue([delegatedAppDelegate swizzleAppDelegate]);
+    XCTAssertTrue([delegatedAppDelegate findAndSwizzleAppDelegate]);
 
     XCTAssertTrue([completeApplicationDelegate
         respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]);
@@ -208,7 +208,7 @@
 
     BADelegatedApplicationDelegate *delegatedAppDelegate = [BADelegatedApplicationDelegate new];
     delegatedAppDelegate.batchDelegate = (id)batchDelegateProxy;
-    XCTAssertTrue([delegatedAppDelegate swizzleAppDelegate]);
+    XCTAssertTrue([delegatedAppDelegate findAndSwizzleAppDelegate]);
 
     [self callAllDelegateMethodsOn:applicationDelegate applicationMock:uiApplicationMock];
     XCTAssertEqual(1, [applicationDelegate.invokedSelectors count]);
@@ -237,7 +237,7 @@
 
     BADelegatedApplicationDelegate *delegatedAppDelegate = [BADelegatedApplicationDelegate new];
     delegatedAppDelegate.batchDelegate = (id)batchDelegateProxy;
-    XCTAssertTrue([delegatedAppDelegate swizzleAppDelegate]);
+    XCTAssertTrue([delegatedAppDelegate findAndSwizzleAppDelegate]);
 
     [self callAllDelegateMethodsOn:applicationDelegate applicationMock:uiApplicationMock];
     XCTAssertEqual(2, [applicationDelegate.invokedSelectors count]);
