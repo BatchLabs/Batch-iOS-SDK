@@ -19,6 +19,7 @@
 
 #import <Batch/BALocalCampaignsCenter.h>
 #import <Batch/BALocalCampaignsJITService.h>
+#import <Batch/BAParameter.h>
 #import <Batch/BAStandardQueryWebserviceIdentifiersProvider.h>
 #import <Batch/BAWebserviceClientExecutor.h>
 #import <Batch/Versions.h>
@@ -26,7 +27,7 @@
 #define LOG_DOMAIN @"LocalCampaignsManager"
 
 /// Max number of campaigns to send to the server for JIT sync
-#define MAX_CAMPAIGNS_JIT_THRESHOLD 5
+#define MAX_CAMPAIGNS_JIT_THRESHOLD 10
 
 /// Min delay between two JIT sync (in seconds)
 #define MIN_DELAY_BETWEEN_JIT_SYNC 15
@@ -128,9 +129,16 @@
     }
 }
 
+// Clears cached JIT campaigns to ensure they are re-evaluated when user identity changes
+- (void)resetJITCampaignsCaches {
+    @synchronized(_syncedJITCampaigns) {
+        [_syncedJITCampaigns removeAllObjects];
+    }
+}
+
 - (BOOL)isEventWatched:(NSString *)name {
     // Store the set in a strong variable to prevent a race condition where _watchedEventNames would be freed
-    // while we sent a selector to it
+    // while we sent a selector to it 
     NSSet<NSString *> *watchedEvents;
 
     @synchronized(_watchedEventsLock) {
@@ -141,6 +149,12 @@
     return [watchedEvents containsObject:uppercaseName];
 }
 
+/**
+ * Finds eligible campaigns for a signal and sorts them by priority.
+ * Considers trigger satisfaction, displayability, and customer user ID filtering.
+ * @param signal The signal containing trigger information
+ * @return Array of eligible campaigns sorted by priority (highest first)
+ */
 - (nonnull NSArray<BALocalCampaign *> *)eligibleCampaignsSortedByPriority:(id<BALocalCampaignSignalProtocol>)signal {
     @synchronized(_campaignList) {
         NSMutableArray<BALocalCampaign *> *eligibleCampaigns = [NSMutableArray new];
@@ -202,6 +216,7 @@
 }
 
 - (void)verifyCampaignsEligibilityFromServer:(NSArray<BALocalCampaign *> *)eligibleCampaigns
+                                     version:(BALocalCampaignsVersion)version
                               withCompletion:(void (^_Nonnull)(BALocalCampaign *_Nullable))completionHandler {
     if ([eligibleCampaigns count] <= 0) {
         completionHandler(nil);
@@ -214,6 +229,7 @@
     BALocalCampaignsJITService *wsClient =
         [[BALocalCampaignsJITService alloc] initWithLocalCampaigns:eligibleCampaignsSynced
             viewTracker:_viewTracker
+            version:version
             success:^(NSArray *eligibleCampaignIds) {
               [self setNextAvailableJITTimestampWithDefaultDelay];
 
@@ -278,6 +294,11 @@
     return syncedJITResult.eligible ? BATSyncedJITCampaignStateEligible : BATSyncedJITCampaignStateNotEligible;
 }
 
+/**
+ * Gets view counts for loaded campaigns with customer user ID support.
+ * Returns a dictionary mapping campaign IDs to their view count information.
+ * @return Dictionary of campaign IDs to view counts, or nil if no campaigns are loaded
+ */
 - (nullable NSDictionary<NSString *, BALocalCampaignCountedEvent *> *)viewCountsForLoadedCampaigns {
     if ([_campaignList count] == 0) {
         return nil;
@@ -288,10 +309,14 @@
         [campaignIds addObject:lc.campaignID];
     }
 
+    NSString *customUserID = [BAParameter objectForKey:kParametersCustomUserIDKey fallback:nil];
     NSMutableDictionary *views = [NSMutableDictionary new];
     // TODO : optimize this with a SQLite "IN"
     for (NSString *lcId in campaignIds) {
-        views[lcId] = [_viewTracker eventInformationForCampaignID:lcId kind:BALocalCampaignTrackerEventKindView];
+        views[lcId] = [_viewTracker eventInformationForCampaignID:lcId
+                                                             kind:BALocalCampaignTrackerEventKindView
+                                                          version:_version
+                                                     customUserID:customUserID];
     }
 
     return views;
@@ -339,6 +364,13 @@
  - Campaigns that hit their capping
  - Campaigns that have a max api level too low (min api level doesn't not mean that it is busted forever)
  */
+/**
+ * Removes campaigns that will never be eligible, even in the future.
+ * Filters out expired campaigns, campaigns over capping, and campaigns with incompatible API levels.
+ * Uses customer user ID for personalized capping calculations.
+ * @param campaignsToClean Array of campaigns to filter
+ * @return Array of campaigns that could potentially be displayed
+ */
 - (NSArray *)cleanCampaignList:(NSArray *)campaignsToClean {
     BATZAwareDate *currentDate = [BATZAwareDate dateWithDate:[_dateProvider currentDate] relativeToUserTZ:NO];
     NSInteger messagingAPILevel = BAMessagingAPILevel;
@@ -376,9 +408,21 @@
 /**
  Checks if a campaign is over its global capping.
  */
+/**
+ * Checks if a campaign is over its capping with customer user ID support.
+ * Considers both view count capping and minimum display interval.
+ * @param campaign The campaign to check
+ * @param ignoreMinInterval Whether to ignore minimum display interval check
+ * @return YES if campaign is over capping, NO otherwise
+ */
 - (BOOL)isCampaignOverCapping:(BALocalCampaign *)campaign ignoreMinInterval:(BOOL)ignoreMinInterval {
+    NSString *customUserID = [BAParameter objectForKey:kParametersCustomUserIDKey fallback:nil];
+
     BALocalCampaignCountedEvent *eventData =
-        [_viewTracker eventInformationForCampaignID:campaign.campaignID kind:BALocalCampaignTrackerEventKindView];
+        [_viewTracker eventInformationForCampaignID:campaign.campaignID
+                                               kind:BALocalCampaignTrackerEventKindView
+                                            version:_version
+                                       customUserID:customUserID];
     if (eventData == nil) {
         // What should happen if we can't read the views ?
         [BALogger errorForDomain:@"Batch Messaging"
@@ -408,6 +452,13 @@
   - Current date over start date
   - Minimum API level
   - etc...
+ */
+/**
+ * Checks if a campaign is displayable according to all conditions.
+ * Considers capping, API level compatibility, date constraints, and quiet hours.
+ * Uses customer user ID for personalized eligibility checks.
+ * @param campaign The campaign to check
+ * @return YES if campaign is displayable, NO otherwise
  */
 - (BOOL)isCampaignDisplayable:(BALocalCampaign *)campaign {
     if ([self isCampaignOverCapping:campaign ignoreMinInterval:NO]) {
@@ -445,12 +496,82 @@
         return false;
     }
 
+    if ([self isCampaignDateInQuietHours:campaign]) {
+        [BALogger debugForDomain:LOG_DOMAIN
+                         message:@"Ignoring campaign %@ because of quiet days and hours", campaign.campaignID];
+
+        return false;
+    }
+
     return true;
+}
+
+/**
+ Checks if the current user date and time fall within the configured quiet hours.
+ This method handles both same-day and overnight time intervals.
+
+ @return YES if the current time is a quiet time, NO otherwise.
+ */
+- (BOOL)isCampaignDateInQuietHours:(BALocalCampaign *)campaign {
+    if (campaign.quietHours != nil) {
+        NSCalendar *calendar = [NSCalendar currentCalendar];
+        [calendar setFirstWeekday:0];
+        NSDate *now = [_dateProvider currentDate];
+
+        // Get current day of week. NSCalendar uses 1 for Sunday, 2 for Monday, etc.
+        // Our enum uses 0 for Sunday, 1 for Monday, etc. We need to subtract 1 to align them.
+        NSInteger currentWeekday = [calendar component:NSCalendarUnitWeekday fromDate:now] - 1;
+
+        BOOL isTodayAQuietDay =
+            [campaign.quietHours.quietDaysOfWeek containsObject:[NSNumber numberWithInteger:currentWeekday]];
+
+        // If the current day is designated as a quiet day, then the entire day is quiet.
+        if (isTodayAQuietDay) {
+            return true;
+        }
+
+        // --- Check for Time-Based Quiet Hours ---
+        // If we've reached this point, it's not a full quiet day. Now check the specific time range.
+        NSDateComponents *timeComponents = [calendar components:(NSCalendarUnitHour | NSCalendarUnitMinute)
+                                                       fromDate:now];
+        NSInteger currentHour = [timeComponents hour];
+        NSInteger currentMinute = [timeComponents minute];
+
+        // To make comparisons easier, convert all times to total minutes from midnight.
+        NSInteger currentTimeInMinutes = currentHour * 60 + currentMinute;
+        NSInteger startTimeInMinutes = campaign.quietHours.startHour * 60 + campaign.quietHours.startMin;
+        NSInteger endTimeInMinutes = campaign.quietHours.endHour * 60 + campaign.quietHours.endMin;
+
+        // This logic handles two scenarios for the quiet hours interval:
+        // 1. Overnight (e.g., 22:00 to 07:00), where start time is greater than end time.
+        // 2. Same-day (e.g., 09:00 to 17:00), where start time is less than or equal to end time.
+
+        // Determine if the quiet period is overnight
+        BOOL isOvernight = startTimeInMinutes > endTimeInMinutes;
+
+        if (isOvernight) {
+            // For an overnight period, it's a quiet time if the current time is either:
+            // 1. After the start time (e.g., between 22:00 and midnight).
+            // OR
+            // 2. Before the end time (e.g., between midnight and 07:00).
+            return currentTimeInMinutes >= startTimeInMinutes || currentTimeInMinutes < endTimeInMinutes;
+        } else {
+            // For a same-day period, it is quiet time if the current time is within the interval.
+            return currentTimeInMinutes >= startTimeInMinutes && currentTimeInMinutes < endTimeInMinutes;
+        }
+    }
+
+    return false;
 }
 
 /**
  Update the set of watched event names
  This method is not thread safe: do not call it without some kind of lock
+ */
+/**
+ * Updates the set of watched event names from loaded campaigns.
+ * This method is not thread safe for the campaign list access but is synchronized for the watched events update.
+ * Should be called after loading campaigns to optimize event filtering.
  */
 - (void)updateWatchedEventNames {
     NSMutableSet *updatedEventNames = [NSMutableSet new];

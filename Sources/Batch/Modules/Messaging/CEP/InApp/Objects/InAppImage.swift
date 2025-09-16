@@ -5,7 +5,7 @@
 //
 
 /// Represents an in-app image
-public struct InAppImage: Codable, Identifiable, InAppTypedComponent {
+public struct InAppImage: Codable, Identifiable, InAppTypedComponent, InAppExpandableComponent {
     // MARK: -
 
     public let id: String

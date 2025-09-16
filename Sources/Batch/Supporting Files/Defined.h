@@ -141,8 +141,18 @@
 #define kParametersAttributesSendWebserviceShortname @"ats"
 #define kParametersAttributesCheckWebserviceShortname @"atc"
 #define kParametersInboxWebserviceShortname @"inbox"
-#define kParametersLocalCampaignsWebserviceShortname @"local"
-#define kParametersLocalCampaignsJITWebserviceShortname @"lc_jit"
+
+#define kParametersLocalCampaignsWebserviceShortname @"inapp"
+#define kParametersLocalCampaignsJITWebserviceShortname @"jit"
+#define kParametersLocalMEPJITWebserviceShortname @"mep"
+#define kParametersLocalCEPJITWebserviceShortname @"cep"
+
+#define kParametersLocalMEPCampaignsJITWebserviceShortname                                            \
+    kParametersLocalCampaignsWebserviceShortname @"_" kParametersLocalCampaignsJITWebserviceShortname \
+                                                 @"_" kParametersLocalMEPJITWebserviceShortname
+#define kParametersLocalCEPCampaignsJITWebserviceShortname                                            \
+    kParametersLocalCampaignsWebserviceShortname @"_" kParametersLocalCampaignsJITWebserviceShortname \
+                                                 @"_" kParametersLocalCEPJITWebserviceShortname
 
 // DNS Fallback
 #define kParametersDomainKey @"batch.domain.current"

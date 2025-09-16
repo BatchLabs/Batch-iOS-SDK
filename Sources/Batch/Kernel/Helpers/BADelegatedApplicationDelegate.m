@@ -11,7 +11,7 @@
 #import <Batch/BAPushCenter.h>
 #import <objc/runtime.h>
 
-#define DEBUG_SWIZZLE NO
+#define DEBUG_SWIZZLE 0
 
 @implementation BADelegatedApplicationDelegate
 
@@ -34,7 +34,7 @@
     return self;
 }
 
-- (BOOL)swizzleAppDelegate {
+- (BOOL)findAndSwizzleAppDelegate {
     if (!_batchDelegate) {
         return false;
     }
@@ -50,6 +50,43 @@
         return false;
     }
 
+    if ([[NSString stringWithFormat:@"SwiftUI.%@", @"AppDelegate"]
+            isEqualToString:NSStringFromClass(appDelegate.class)]) {
+        [BALogger debugForDomain:nil message:@"SwiftUI AppDelegate detected, adjusting swizzling"];
+        // On a SwiftUI lifecycle app, SwiftUI.AppDelegate is always the application delegate
+        // The SwiftUI class does not respond to the selectors, but implements
+        // "forwardingTargetForSelector"
+        // https://developer.apple.com/documentation/objectivec/nsobject-swift.class/forwardingtarget(for:) and returns
+        // the instance set using @UIApplicationDelegateAdaptor In theory, this is never nil, but you never know how
+        // Batch is implemented. So, the plan is:
+        //   - If it is nil, swizzle SwiftUI.AppDelegate
+        //   - If it is not nil, swizzle the developer's implementation
+        if ([appDelegate respondsToSelector:@selector(forwardingTargetForSelector:)]) {
+            id developerDelegate = [(NSObject *)appDelegate
+                forwardingTargetForSelector:@selector(application:didRegisterForRemoteNotificationsWithDeviceToken:)];
+            if (developerDelegate != nil) {
+                [BALogger
+                    debugForDomain:nil
+                           message:
+                               @"SwiftUI AppDelegate has a UIApplicationDelegateAdaptor, switching swizzling target"];
+                appDelegate = developerDelegate;
+            }
+        } else {
+            [BALogger debugForDomain:nil
+                             message:@"SwiftUI AppDelegate does not respond to forwardingTargetForSelector. Swizzling "
+                                     @"system delegate"];
+        }
+    }
+
+    if ([self swizzleAppDelegate:appDelegate]) {
+        _didSwizzle = true;
+        return true;
+    } else {
+        return false;
+    }
+}
+
+- (BOOL)swizzleAppDelegate:(nonnull id<UIApplicationDelegate>)appDelegate {
     Class appDelegateClass = [appDelegate class];
 
     if (appDelegateClass == [_batchDelegate class]) {
@@ -70,8 +107,6 @@
     }
 
     [self swizzleMethodsOfDelegate:appDelegate];
-
-    _didSwizzle = true;
     return true;
 }
 
@@ -92,6 +127,8 @@
 
 #if DEBUG_SWIZZLE
     NSLog(@"Swizzling %@", selectorString);
+    NSLog(@"Swizzled class responds to selector %@ ? %@", NSStringFromSelector(selector),
+          [targetClass instancesRespondToSelector:selector] ? @"YES" : @"NO");
 #endif
 
     // If the class instance doesn't implement a selector and

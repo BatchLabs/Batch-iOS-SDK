@@ -386,6 +386,7 @@ NSString *const BatchMessageGlobalActionIndex = BATCH_MESSAGE_MEP_CTA_INDEX_KEY 
         copy.eventData = [self.eventData copy];
         copy.campaignIdentifier = self.campaignIdentifier;
         copy.campaignToken = self.campaignToken;
+        copy.isCEPMessage = self.isCEPMessage;
     }
 
     return copy;

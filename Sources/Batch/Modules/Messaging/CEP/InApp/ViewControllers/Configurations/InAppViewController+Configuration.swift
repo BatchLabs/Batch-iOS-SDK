@@ -8,8 +8,10 @@ extension InAppViewController {
     struct Configuration {
         // MARK: -
 
+        let format: InAppFormat
         let style: Style
         let placement: Placement
+        let content: Content
         let builder: Builder
         let closeConfiguration: CloseConfiguration
 
@@ -18,7 +20,7 @@ extension InAppViewController {
                 || shouldOverleapTopSafeArea(size: size)
         }
 
-        private func shouldOverleapSafeArea(margins: UIEdgeInsets, position: InAppVerticalAlignment, size: UIUserInterfaceSizeClass) -> Bool { margins == .zero && placement.position == position && style.isModal && size == .compact }
+        private func shouldOverleapSafeArea(margins: UIEdgeInsets, position: InAppVerticalAlignment, size: UIUserInterfaceSizeClass) -> Bool { margins == .zero && placement.position == position && format == .modal && size == .compact }
 
         func shouldOverleapBottomSafeArea(size: UIUserInterfaceSizeClass) -> Bool { shouldOverleapSafeArea(margins: placement.margins, position: .bottom, size: size) }
         func shouldOverleapTopSafeArea(size: UIUserInterfaceSizeClass) -> Bool { shouldOverleapSafeArea(margins: placement.margins, position: .top, size: size) }
@@ -29,7 +31,6 @@ extension InAppViewController.Configuration {
     struct Style: InAppRoundableCorners, InAppBorderable {
         // MARK: -
 
-        let isModal: Bool
         let backgroundColor: UIColor?
         let radius: [CGFloat]
         let borderWidth: CGFloat?
@@ -37,8 +38,7 @@ extension InAppViewController.Configuration {
 
         // MARK: -
 
-        init(isModal: Bool, backgroundColor: UIColor?, radius: [Int], borderWidth: Int?, borderColor: UIColor?) {
-            self.isModal = isModal
+        init(backgroundColor: UIColor?, radius: [Int], borderWidth: Int?, borderColor: UIColor?) {
             self.backgroundColor = backgroundColor
             self.radius = radius.map(CGFloat.init)
             self.borderWidth = borderWidth.map(CGFloat.init)
@@ -75,5 +75,9 @@ extension InAppViewController.Configuration {
         var isOnlyOneImage: Bool { viewsBuilder.contains(where: { $0.component.type == .image }) && viewsBuilder.count == 1 }
 
         let viewsBuilder: [InAppViewBuilder]
+    }
+
+    struct Content {
+        let message: BAMSGCEPMessage
     }
 }

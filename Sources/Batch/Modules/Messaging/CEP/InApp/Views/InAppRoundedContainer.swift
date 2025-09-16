@@ -11,7 +11,7 @@ class InAppRoundedContainer<T: InAppRoundableCorners & InAppBorderable>: UIView 
 
     let style: T
     private let regularStyle = InAppRoundedContainerIpadStyle(radius: [8, 8, 8, 8])
-    let isModal: Bool
+    let format: InAppFormat
 
     // MARK: -
 
@@ -28,7 +28,7 @@ class InAppRoundedContainer<T: InAppRoundableCorners & InAppBorderable>: UIView 
     }
 
     func layoutStyle() {
-        let styleToUse: any InAppRoundableCorners & InAppBorderable = if traitCollection.horizontalSizeClass != .compact, isModal {
+        let styleToUse: any InAppRoundableCorners & InAppBorderable = if traitCollection.horizontalSizeClass != .compact, format == .modal {
             regularStyle
         } else {
             style
@@ -43,9 +43,9 @@ class InAppRoundedContainer<T: InAppRoundableCorners & InAppBorderable>: UIView 
 
     // MARK: -
 
-    init(style: T, isModal: Bool) {
+    init(style: T, format: InAppFormat) {
         self.style = style
-        self.isModal = isModal
+        self.format = format
 
         super.init(frame: .zero)
 

@@ -261,10 +261,10 @@
               return;
           }
 
+          [BAMessagingCenter.instance messageButtonClicked:self.message ctaIndex:index action:cta];
+
           NSString *ctaIdentifier =
               [BATCH_MESSAGE_MEP_CTA_INDEX_KEY stringByAppendingString:[NSString stringWithFormat:@"%ld", index]];
-
-          [BAMessagingCenter.instance messageButtonClicked:self.message ctaIdentifier:ctaIdentifier action:cta];
 
           // We don't need to handle BAMSGCTAActionKindClose since we did that earlier
           [BAMessagingCenter.instance performAction:cta

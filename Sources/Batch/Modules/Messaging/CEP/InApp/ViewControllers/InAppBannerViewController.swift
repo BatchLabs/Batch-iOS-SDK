@@ -11,8 +11,8 @@ import UIKit
 class InAppBannerViewController: InAppBaseBannerViewController {
     // MARK: -
 
-    override init(configuration: InAppViewController.Configuration, message: BAMSGCEPMessage) {
-        super.init(configuration: configuration, message: message)
+    override init(configuration: InAppViewController.Configuration) {
+        super.init(configuration: configuration)
     }
 
     @available(*, unavailable)

@@ -6,5 +6,5 @@
 
 /// Represents available in-app components
 public enum InAppComponent: String, Codable, CaseIterable {
-    case button, columns, divider, image, text
+    case button, columns, divider, image, text, spacer, webview
 }

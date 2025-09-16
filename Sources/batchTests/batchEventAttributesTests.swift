@@ -7,10 +7,10 @@
 
 import Batch
 import Foundation
-import XCTest
+import Testing
 
-class batchEventAttributesTests: XCTestCase {
-    func testValidData() {
+struct BatchEventAttributesTests {
+    @Test func validData() {
         let attributes = BatchEventAttributes()
 
         let now = Date(timeIntervalSince1970: 1_589_466_748.930)
@@ -29,23 +29,23 @@ class batchEventAttributesTests: XCTestCase {
         let tags = internalRepresentation["tags"] as! [String]
         let jsonAttributes = internalRepresentation["attributes"] as! [String: AnyObject]
 
-        XCTAssertTrue(tags.contains("foo"))
-        XCTAssertTrue(tags.contains("bar"))
-        XCTAssertTrue(tags.contains("baz"))
+        #expect(tags.contains("foo"))
+        #expect(tags.contains("bar"))
+        #expect(tags.contains("baz"))
 
-        XCTAssertEqual(1, jsonAttributes["int.i"] as! Int)
-        XCTAssertEqual(1.0 as Float, jsonAttributes["float.f"] as! Float)
-        XCTAssertEqual(1.0 as Double, jsonAttributes["double.f"] as! Double)
-        XCTAssertEqual(true, jsonAttributes["bool.b"] as! Bool)
-        XCTAssertEqual("foobar", jsonAttributes["string.s"] as! String)
-        XCTAssertEqual(" 456 ", jsonAttributes["123.s"] as! String)
-        XCTAssertEqual(1_589_466_748_930, jsonAttributes["now.t"] as! Int64)
-        XCTAssertEqual("https://batch.com", jsonAttributes["url.u"] as! String)
+        #expect(jsonAttributes["int.i"] as! Int == 1)
+        #expect(1.0 as Float == jsonAttributes["float.f"] as! Float)
+        #expect(1.0 as Double == jsonAttributes["double.f"] as! Double)
+        #expect(jsonAttributes["bool.b"] as! Bool == true)
+        #expect(jsonAttributes["string.s"] as! String == "foobar")
+        #expect(jsonAttributes["123.s"] as! String == " 456 ")
+        #expect(jsonAttributes["now.t"] as! Int64 == 1_589_466_748_930)
+        #expect(jsonAttributes["url.u"] as! String == "https://batch.com")
 
-        XCTAssertNil(internalRepresentation["converted"])
+        #expect(internalRepresentation["converted"] == nil)
     }
 
-    func testInvalidData() {
+    @Test func invalidData() throws {
         let attributes = BatchEventAttributes()
 
         attributes.put(
@@ -55,6 +55,6 @@ class batchEventAttributesTests: XCTestCase {
         attributes.put("foobar", forKey: "invalid_key%%%")
         attributes.put("foobar", forKey: "key_that_is_too_long_really_it_should_be_more_than_thirty_chars")
         attributes.put(URL(string: "batch.com")!, forKey: "url_without_scheme")
-        let _ = try! BATEventAttributesSerializer.serialize(eventAttributes: attributes)
+        _ = try BATEventAttributesSerializer.serialize(eventAttributes: attributes)
     }
 }

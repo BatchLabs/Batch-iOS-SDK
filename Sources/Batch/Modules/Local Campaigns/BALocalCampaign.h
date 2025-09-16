@@ -6,6 +6,7 @@
 //
 
 #import <Batch/BALocalCampaignOutputProtocol.h>
+#import <Batch/BALocalCampaignQuietHours.h>
 #import <Batch/BALocalCampaignTrackerProtocol.h>
 #import <Batch/BALocalCampaignTriggerProtocol.h>
 #import <Batch/BATZAwareDate.h>
@@ -124,6 +125,16 @@
  Whether this campaign should be verified by the server before being displayed.
  */
 @property (assign) BOOL requiresJustInTimeSync;
+
+/**
+ Specific, pre-defined period during the capaign will not be displayed to the user
+ */
+@property (nullable, strong) BALocalCampaignQuietHours *quietHours;
+
+/**
+ Delay between the trigger and the display
+ */
+@property (assign) NSInteger displayDelaySec;
 
 /**
  Generate a new occurrence identifier.

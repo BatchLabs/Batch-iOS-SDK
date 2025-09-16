@@ -72,6 +72,11 @@ public class BAProfileCenter: NSObject, BAProfileCenterProtocol {
 
         // Compatibility
         if let compatEditor = BAInjection.inject(BAInstallDataEditor.self) {
+            // Reset JIT campaign caches when user identity changes to ensure campaigns are re-evaluated for the new user
+            if let manager = BAInjection.inject(BALocalCampaignsManager.self), customID != BatchUser.identifier() {
+                manager.resetJITCampaignsCaches()
+            }
+
             compatEditor.setIdentifier(customID)
             compatEditor.save()
         } else {

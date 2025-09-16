@@ -24,9 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)messageDismissed:(BAMSGMessage *_Nonnull)message;
 
-- (void)messageButtonClicked:(BAMSGMessage *_Nonnull)message
-               ctaIdentifier:(NSString *_Nonnull)ctaIdentifier
-                      action:(BAMSGCTA *)action;
+- (void)messageButtonClicked:(BAMSGMessage *_Nonnull)message ctaIndex:(NSInteger)ctaIndex action:(BAMSGCTA *)action;
 
 - (void)messageButtonClicked:(BAMSGMessage *_Nonnull)message
                ctaIdentifier:(NSString *)ctaIdentifier

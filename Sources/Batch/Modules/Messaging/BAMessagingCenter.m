@@ -601,11 +601,9 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
                             parameters:[self baseEventParametersForMessage:message type:type]];
 }
 
-- (void)trackCTAClickEvent:(BAMSGMessage *_Nonnull)message
-             ctaIdentifier:(NSString *_Nonnull)ctaIdentifier
-                    action:(NSString *)action {
+- (void)trackCTAClickEvent:(BAMSGMessage *_Nonnull)message ctaIndex:(NSInteger)ctaIndex action:(NSString *)action {
     NSMutableDictionary *parameters = [self baseEventParametersForMessage:message type:BAMESSAGING_EVENT_TYPE_CTA];
-    [parameters setObject:ctaIdentifier forKey:@"ctaId"];
+    [parameters setObject:@(ctaIndex) forKey:@"ctaIndex"];
     [parameters setObject:(action != nil ? action : [NSNull null]) forKey:@"action"];
     [BATrackerCenter trackPrivateEvent:BAMESSAGING_EVENT_NAME parameters:parameters];
 }
@@ -637,7 +635,9 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
         [parameters setObject:analyticsID forKey:@"analyticsID"];
     }
     if (action != nil && action.actionIdentifier != nil) {
-        [parameters setObject:action.actionIdentifier forKey:@"actionName"];
+        // Infer the analytics action key from the message type
+        NSString *actionKey = [message isCEPMessage] ? @"action" : @"actionName";
+        [parameters setObject:action.actionIdentifier forKey:actionKey];
     }
     [BATrackerCenter trackPrivateEvent:BAMESSAGING_EVENT_NAME parameters:parameters];
 }
@@ -742,11 +742,10 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
     }
 }
 
-- (void)messageButtonClicked:(BAMSGMessage *_Nonnull)message
-               ctaIdentifier:(NSString *_Nonnull)ctaIdentifier
-                      action:(BAMSGCTA *)action {
+// Used only for MEP messages
+- (void)messageButtonClicked:(BAMSGMessage *_Nonnull)message ctaIndex:(NSInteger)ctaIndex action:(BAMSGCTA *)action {
     if (message != nil) {
-        [self trackCTAClickEvent:message ctaIdentifier:ctaIdentifier action:action.actionIdentifier];
+        [self trackCTAClickEvent:message ctaIndex:ctaIndex action:action.actionIdentifier];
 
         id<BatchEventDispatcherPayload> payload =
             [BAEventDispatcherCenter messageEventPayloadFromMessage:message.sourceMessage action:action];
@@ -760,6 +759,7 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
     }
 }
 
+// Used only for CEP messages
 - (void)messageButtonClicked:(BAMSGMessage *_Nonnull)message
                ctaIdentifier:(NSString *)ctaIdentifier
                      ctaType:(NSString *)ctaType

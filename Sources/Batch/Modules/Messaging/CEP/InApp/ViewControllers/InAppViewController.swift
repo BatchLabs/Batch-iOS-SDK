@@ -6,52 +6,62 @@
 
 import UIKit
 
-/// Main view controller to handle all common interaction and behavior
-/// Inspired by: ``BAMSGViewController``
-class InAppViewController: UIViewController {
-    // MARK: -
+/// Main view controller to handle all common interaction and behavior for in-app messages.
+/// This class serves as the base for all other specific message format view controllers (Modal, Banner, etc.).
+/// It is inspired by the legacy `BAMSGViewController`.
+class InAppViewController: UIViewController, InAppViewCountdownClose, BatchMessagingViewController {
+    // MARK: - Properties
 
+    /// The configuration object containing all the styling and behavioral parameters for the message.
     let configuration: Configuration
 
+    /// A flag to track whether the message has been dismissed, preventing duplicate dismissal calls.
     var isDismissed: Bool = false
 
-    var autoclosingStartTime: TimeInterval
-    var autoclosingDuration: TimeInterval
+    /// The timestamp when the auto-closing countdown started.
+    var autoclosingStartTime: TimeInterval = 0
 
-    var autoclosingRemainingTime: TimeInterval {
-        return autoclosingDuration - (BAUptimeProvider.uptime() - autoclosingStartTime)
-    }
+    /// The total duration of the auto-closing countdown.
+    var autoclosingDuration: TimeInterval = 0
 
+    /// A wrapper for handling analytics tracking for the in-app message.
     let analyticManager: InAppAnalyticWrapper
 
-    // MARK: -
+    /// Indicates whether the message should be displayed in a new, separate window.
+    var shouldDisplayInSeparateWindow: Bool { true }
 
-    init(configuration: Configuration, message: BAMSGCEPMessage) {
-        self.autoclosingStartTime = 0
-        self.autoclosingDuration = 0
+    // MARK: - Initialization
+
+    /// Initializes the view controller with a specific configuration and message data.
+    /// - Parameters:
+    ///   - configuration: The configuration for the message's appearance and behavior.
+    ///   - message: The raw campaign message data used for analytics.
+    init(configuration: Configuration) {
         self.configuration = configuration
-        self.analyticManager = InAppAnalyticWrapper(message: message)
-
-        // Delegate
-
+        self.analyticManager = InAppAnalyticWrapper(message: configuration.content.message)
         super.init(nibName: nil, bundle: nil)
     }
 
+    /// Storyboard/XIB initialization is not supported.
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: -
+    // MARK: - View Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        setupRootStyle()
+        // Ensures the view scales properly with Dynamic Type settings.
+        view.maximumContentSizeCategory = UIContentSizeCategory.extraExtraExtraLarge
 
+        // Attempt to configure and set up the main view contents.
         do {
             try messageContentView.configure()
+            try setupViewContents()
         } catch {
+            // If setup fails, log the error and dismiss the view controller.
             BALogger.error(domain: String(describing: Self.self), message: error.localizedDescription)
             _ = dismiss()
         }
@@ -59,117 +69,79 @@ class InAppViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-        if let delay = configuration.closeConfiguration.delay {
-            startAutoclosingCountdown(delay: delay)
-        }
-
+        // Start the auto-close countdown if configured.
+        startAutoclosingCountdownIfNeeded(configuration: configuration)
+        // Track the "shown" event for analytics.
         analyticManager.track(.shown)
     }
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-
+        // Track the "dismissed" event and update the state.
         analyticManager.track(.dismissed)
-
         isDismissed = true
     }
 
+    /// Responds to device orientation or size changes.
     override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-
+        // Trigger a layout update to adapt to the new size.
         view.layoutSubviews()
     }
 
+    /// Responds to changes in trait collections, like dark mode or size class.
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-
+        // Trigger a constraint update to adapt to new traits.
         view.updateConstraints()
     }
 
-    // MARK: -
+    // MARK: - UI Components (Lazy-loaded)
 
+    /// The countdown view that shows the remaining time before auto-closing.
+    lazy var countdownView: BAMSGCountdownView = {
+        let countdownView = BAMSGCountdownView()
+        countdownView.clipsToBounds = true
+        countdownView.layer.masksToBounds = true
+        countdownView.translatesAutoresizingMaskIntoConstraints = false
+        return countdownView
+    }()
+
+    /// The close button for the message. Returns nil if not configured.
     lazy var closeButton: InAppCloseButton? = {
         guard let cross = configuration.closeConfiguration.cross else { return nil }
-
-        let button = InAppCloseButton(
-            configuration: InAppCloseButton.Configuration(style: InAppCloseButton.Configuration.Style(
-                color: cross.color,
-                backgroundColor: cross.backgroundColor
-            )),
+        return InAppCloseButton(
+            configuration: .init(style: .init(color: cross.color, backgroundColor: cross.backgroundColor)),
             onClosureTap: onClosureTap,
             analyticTrigger: analyticManager.track(_:)
         )
-
-        return button
     }()
 
-    lazy var countdownView: BAMSGCountdownView? = {
-        guard let delay = configuration.closeConfiguration.delay else { return nil }
-
-        let view = BAMSGCountdownView()
-        view.setColor(delay.color ?? .clear)
-        view.clipsToBounds = true
-        view.layer.masksToBounds = true
-        view.translatesAutoresizingMaskIntoConstraints = false
-
-        return view
-    }()
-
-    // MARK: -
-
+    /// The scroll view that contains the message content, allowing for vertical scrolling if needed.
     lazy var scrollableViewContent: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.alwaysBounceVertical = false
-
-        if #available(iOS 17.4, visionOS 1.1, *) {
-            scrollView.bouncesVertically = false
-        }
-
-        scrollView.delaysContentTouches = false
-        scrollView.setContentHuggingPriority(.defaultHigh, for: .vertical)
-
-        scrollView.addSubview(messageContentView)
-
-        let scrollSizeConstraint = NSLayoutConstraint(item: scrollView, attribute: .height, relatedBy: .greaterThanOrEqual, toItem: messageContentView, attribute: .height, multiplier: 1, constant: 0)
-        scrollSizeConstraint.priority = .init(200)
-        scrollView.addConstraint(scrollSizeConstraint)
-        scrollView.addConstraints(
-            [NSLayoutConstraint.Attribute.leading, .trailing, .top, .bottom, .width].map {
-                layoutConstraint(item: messageContentView, attribute: $0, relatedBy: .equal, toItem: scrollView)
-            } + [
-                layoutConstraint(item: messageContentView, attribute: .height, relatedBy: .greaterThanOrEqual, toItem: scrollView),
-            ]
-        )
-
         return scrollView
     }()
 
+    /// The main container view that holds all the message's content (text, images, buttons).
     lazy var messageContentView: InAppRootContainerView = {
         let inAppView = InAppRootContainerView(
-            configuration: InAppRootContainerView.Configuration(
-                builder: InAppRootContainerView.Configuration.Builder(
-                    viewsBuilder: configuration.builder.viewsBuilder
-                ),
-                placement: InAppRootContainerView.Configuration.Placement(
-                    margins: configuration.placement.margins
-                )
+            configuration: .init(
+                builder: .init(viewsBuilder: configuration.builder.viewsBuilder),
+                placement: .init(margins: configuration.placement.margins)
             ),
             onClosureTap: onClosureTap,
             onError: { [weak self] error, component in
                 guard let self else { return }
 
                 BALogger.error(domain: String(describing: component), message: error.localizedDescription)
-
-                switch (component, configuration.builder.isOnlyOneImage) {
-                    case (.image, true):
-                        BAThreading.performBlock(onMainThreadAsync: { [weak self] in
-                            self?.dismiss()
-                        })
-
-                    default:
-                        break
+                // If an image fails to load and it's the only one, dismiss the message.
+                if case .image = component, configuration.builder.isOnlyOneImage {
+                    BAThreading.performBlock(onMainThreadAsync: { [weak self] in
+                        self?.dismiss()
+                    })
                 }
             }
         )
@@ -177,276 +149,88 @@ class InAppViewController: UIViewController {
         return inAppView
     }()
 
+    /// The closure that handles tap events on actions (like buttons or the close icon).
     lazy var onClosureTap: InAppClosureDelegate.Closure = { [weak self] component, _ in
         guard let self else { return }
 
-        analyticManager.track(.closed)
+        if let component {
+            analyticManager.track(.cta(component: component))
+        }
 
-        dismiss().then { [weak self] _ in
+        dismiss().then { [configuration = self.configuration] _ in
             if let component, let action = component.action {
-                self?.analyticManager.track(.cta(action: component))
-            }
-        }
-    }
-
-    func containerizedInnerContent() throws -> InAppContainer {
-        let view = try InAppContainer(configuration: configuration.placement) { [weak self] in
-            guard let self else { return UIView() }
-
-            let shouldOverleapSafeArea = configuration.shouldOverleapSafeArea(size: traitCollection.horizontalSizeClass)
-            let style = if shouldOverleapSafeArea {
-                CustomStyle(
-                    borderWidth: nil,
-                    borderColor: nil,
-                    radius: []
-                )
-            } else {
-                CustomStyle(
-                    borderWidth: configuration.style.borderWidth,
-                    borderColor: configuration.style.borderColor,
-                    radius: configuration.style.radius
+                let sourceMessage = configuration.content.message.sourceMessage
+                BAMessagingCenter.instance().perform(
+                    action,
+                    source: sourceMessage,
+                    ctaIdentifier: component.analyticsIdentifier,
+                    messageIdentifier: sourceMessage.devTrackingIdentifier
                 )
             }
-
-            let container = InAppRoundedContainer(style: style, isModal: configuration.style.isModal)
-            container.backgroundColor = shouldOverleapSafeArea ? nil : configuration.style.backgroundColor
-            container.translatesAutoresizingMaskIntoConstraints = false
-            container.addSubview(scrollableViewContent)
-
-            let constraints = [NSLayoutConstraint.Attribute.leading, .trailing, .top, .bottom, .width].map {
-                self.layoutConstraint(item: container, attribute: $0, relatedBy: .equal, toItem: self.scrollableViewContent)
-            }
-
-            NSLayoutConstraint.activate(constraints)
-
-            return container
         }
-
-        view.translatesAutoresizingMaskIntoConstraints = false
-
-        return view
     }
 
-    // MARK: -
+    // MARK: - Layout and Constraints
 
-    func layoutConstraint(item: UIView, attribute: NSLayoutConstraint.Attribute, relatedBy: NSLayoutConstraint.Relation, toItem: UIView) -> NSLayoutConstraint {
-        NSLayoutConstraint(
-            item: item,
-            attribute: attribute,
-            relatedBy: relatedBy,
-            toItem: toItem,
-            attribute: attribute,
-            multiplier: 1,
-            constant: 0
-        )
+    /// Sets up the scroll view and its content. This method is crucial for enabling scrolling.
+    func setupViewContent(contentView: UIView) {
+        contentView.addSubview(scrollableViewContent)
+        scrollableViewContent.addSubview(messageContentView)
+
+        // Pin the scroll view to its container.
+        NSLayoutConstraint.activate([
+            contentView.leadingAnchor.constraint(equalTo: scrollableViewContent.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollableViewContent.trailingAnchor),
+            contentView.topAnchor.constraint(equalTo: scrollableViewContent.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollableViewContent.bottomAnchor),
+        ])
+
+        // This low-priority constraint helps resolve layout ambiguity, suggesting the scroll view
+        // should be at least as tall as its content.
+        let scrollSizeConstraint = NSLayoutConstraint(item: scrollableViewContent, attribute: .height, relatedBy: .greaterThanOrEqual, toItem: messageContentView, attribute: .height, multiplier: 1, constant: 0)
+        scrollSizeConstraint.priority = .init(200)
+        scrollableViewContent.addConstraint(scrollSizeConstraint)
+
+        // Set up constraints for the message content within the scroll view.
+        // Pinning to the edges and setting the width allows the content's intrinsic height
+        // to define the scrollable area.
+        NSLayoutConstraint.activate([
+            messageContentView.topAnchor.constraint(equalTo: scrollableViewContent.topAnchor),
+            messageContentView.leadingAnchor.constraint(equalTo: scrollableViewContent.leadingAnchor),
+            messageContentView.trailingAnchor.constraint(equalTo: scrollableViewContent.trailingAnchor),
+            messageContentView.bottomAnchor.constraint(greaterThanOrEqualTo: scrollableViewContent.bottomAnchor),
+            messageContentView.widthAnchor.constraint(equalTo: scrollableViewContent.widthAnchor),
+        ])
     }
 
-    func setupVerticalConstraints(for contentView: UIView, viewGuide: UILayoutGuide) -> [NSLayoutConstraint] {
-        let constraints = switch configuration.placement.position {
-            case .top:
-                [
-                    contentView.topAnchor.constraint(equalTo: viewGuide.topAnchor),
-                    viewGuide.bottomAnchor.constraint(greaterThanOrEqualTo: contentView.bottomAnchor),
-                ]
-            case .center:
-                [
-                    contentView.topAnchor.constraint(greaterThanOrEqualTo: viewGuide.topAnchor),
-                    contentView.centerYAnchor.constraint(equalTo: viewGuide.centerYAnchor),
-                    viewGuide.bottomAnchor.constraint(greaterThanOrEqualTo: contentView.bottomAnchor),
-                ]
-            case .bottom:
-                [
-                    contentView.topAnchor.constraint(greaterThanOrEqualTo: viewGuide.topAnchor),
-                    contentView.bottomAnchor.constraint(equalTo: viewGuide.bottomAnchor),
-                ]
-            @unknown default:
-                [
-                    contentView.topAnchor.constraint(equalTo: viewGuide.topAnchor),
-                    contentView.bottomAnchor.constraint(equalTo: viewGuide.bottomAnchor),
-                ]
-        }
-
-        return constraints
-    }
-
+    /// Adds the close button to the view and sets its constraints.
     func setupCloseButton(in view: UIView) {
         guard let closeButton else { return }
-
         closeButton.translatesAutoresizingMaskIntoConstraints = false
-
         view.addSubview(closeButton)
-
-        let constraints = [
+        NSLayoutConstraint.activate([
             closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
             closeButton.widthAnchor.constraint(equalTo: closeButton.heightAnchor),
             closeButton.widthAnchor.constraint(equalToConstant: 24),
             view.safeAreaLayoutGuide.trailingAnchor.constraint(equalTo: closeButton.trailingAnchor, constant: 8),
-        ]
-
-        NSLayoutConstraint.activate(constraints)
+        ])
     }
 
-    func setupCountdownView(in view: UIView, withSafeArea: Bool) {
-        guard let countdownView else { return }
-
-        countdownView.translatesAutoresizingMaskIntoConstraints = false
-        countdownView.layer.masksToBounds = true
-        view.addSubview(countdownView)
-
-        var constraints = [
-            countdownView.heightAnchor.constraint(equalToConstant: 2),
-        ]
-
-        if withSafeArea {
-            constraints += [
-                countdownView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-                view.safeAreaLayoutGuide.trailingAnchor.constraint(equalTo: countdownView.trailingAnchor),
-            ]
-        } else {
-            constraints += [
-                countdownView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                view.trailingAnchor.constraint(equalTo: countdownView.trailingAnchor),
-            ]
-        }
-
-        let additionnalBorderWidth: CGFloat = (configuration.style.borderWidth ?? 0) / 2
-        let anchorConstraint: NSLayoutConstraint = if configuration.style.isModal {
-            switch configuration.placement.position {
-                case .top: countdownView.bottomAnchor.constraint(equalTo: withSafeArea ? view.safeAreaLayoutGuide.bottomAnchor : view.bottomAnchor, constant: -additionnalBorderWidth)
-                case .center, .bottom: countdownView.topAnchor.constraint(equalTo: withSafeArea ? view.safeAreaLayoutGuide.topAnchor : view.topAnchor, constant: additionnalBorderWidth)
-                @unknown default: countdownView.topAnchor.constraint(equalTo: withSafeArea ? view.safeAreaLayoutGuide.topAnchor : view.topAnchor, constant: additionnalBorderWidth)
-            }
-        } else {
-            countdownView.topAnchor.constraint(equalTo: withSafeArea ? view.safeAreaLayoutGuide.topAnchor : view.topAnchor, constant: additionnalBorderWidth)
-        }
-
-        NSLayoutConstraint.activate(constraints + [anchorConstraint])
+    /// Abstract method to be implemented by subclasses to set up their specific view hierarchies.
+    func setupViewContents() throws {
+        fatalError("You must override setupViewContents in a subclass")
     }
 
-    func setupViewContent(contentView: UIView) throws {
-        let containerizedInnerContent = try containerizedInnerContent()
-        contentView.translatesAutoresizingMaskIntoConstraints = false
+    // MARK: - Actions and Dismissal
 
-        if traitCollection.horizontalSizeClass != .compact {
-            contentView.layoutMargins = .zero
-        }
-
-        let size = traitCollection.horizontalSizeClass
-        if configuration.shouldOverleapSafeArea(size: size) {
-            contentView.addSubview(overleapSafeAreaView)
-            overleapSafeAreaView.addSubview(containerizedInnerContent)
-
-            let constraints: [NSLayoutConstraint] = [
-                overleapSafeAreaView.topAnchor.constraint(equalTo: contentView.topAnchor),
-                overleapSafeAreaView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-                overleapSafeAreaView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-                overleapSafeAreaView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            ]
-
-            NSLayoutConstraint.activate(constraints)
-        } else {
-            contentView.addSubview(containerizedInnerContent)
-        }
-
-        view.addSubview(contentView)
-
-        var constraints = [
-            contentView.leadingAnchor.constraint(equalTo: containerizedInnerContent.leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: containerizedInnerContent.trailingAnchor),
-            contentView.topAnchor.constraint(equalTo: containerizedInnerContent.topAnchor),
-            contentView.bottomAnchor.constraint(equalTo: containerizedInnerContent.bottomAnchor),
-        ]
-
-        let viewGuide = traitCollection.horizontalSizeClass == .compact ? view.safeAreaLayoutGuide : view.readableContentGuide
-
-        if configuration.shouldOverleapSafeArea(size: traitCollection.horizontalSizeClass) {
-            constraints += [
-                contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            ]
-        } else {
-            if configuration.style.isModal {
-                constraints += [
-                    viewGuide.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-                    viewGuide.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-                ]
-            } else {
-                constraints += [
-                    contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                    contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                ]
-            }
-        }
-
-        constraints += setupVerticalConstraints(for: contentView, viewGuide: viewGuide)
-
-        NSLayoutConstraint.activate(constraints)
-    }
-
-    lazy var overleapSafeAreaView: UIView = {
-        let style = CustomStyle(
-            borderWidth: configuration.style.borderWidth,
-            borderColor: configuration.style.borderColor,
-            radius: configuration.style.radius
-        )
-
-        let view = InAppRoundedContainer(style: style, isModal: configuration.style.isModal)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = configuration.style.backgroundColor
-        view.clipsToBounds = true
-
-        return view
-    }()
-
-    func setupRootStyle() {
-        view.maximumContentSizeCategory = UIContentSizeCategory.extraExtraExtraLarge
-    }
-
-    // MARK: -
-
-    func startAutoclosingCountdown(delay: Configuration.CloseConfiguration.Delay) {
-        autoclosingDuration = TimeInterval(delay.value)
-        autoclosingStartTime = BAUptimeProvider.uptime()
-        let autoCloseTime = DispatchTime.now().advanced(by: .seconds(delay.value))
-        DispatchQueue.main.asyncAfter(deadline: autoCloseTime) { [weak self] in
-            self?.internalAutoclosingDidFire()
-        }
-
-        doAnimateAutoclosing()
-    }
-
-    func internalAutoclosingDidFire() {
-        guard !isDismissed else { return }
-
-        autoclosingDidFire()
-    }
-
-    func doAnimateAutoclosing() {
-        guard autoclosingDuration > 0, let countdownView else { return }
-
-        let timeLeft = autoclosingRemainingTime
-        countdownView.setPercentage(Float(timeLeft) / Float(autoclosingDuration))
-
-        view.layoutSubviews()
-        countdownView.layoutIfNeeded()
-
-        UIView.animate(withDuration: timeLeft, delay: 0, options: .curveLinear, animations: { [weak countdownView] in
-            countdownView?.setPercentage(0)
-        })
-    }
-
-    func autoclosingDidFire() {
-        analyticManager.track(.automaticallyClosed)
-
-        dismiss()
-    }
-
-    // MARK: -
-
+    /// Action for the close button.
     @objc func closeButtonAction() {
+        analyticManager.track(.closed)
+
         dismiss()
     }
 
+    /// Public method to initiate the dismissal of the view controller.
     @discardableResult
     func dismiss() -> BAPromise<NSObject> {
         guard !isDismissed else {
@@ -458,51 +242,32 @@ class InAppViewController: UIViewController {
         return doDismiss()
     }
 
+    /// Abstract method to be implemented by subclasses to handle their specific dismissal logic.
     func doDismiss() -> BAPromise<NSObject> {
         fatalError("You must override doDismiss in a subclass")
     }
 
+    /// Handles dismissing a modally presented view controller.
     func doDismissSelfModal() -> BAPromise<NSObject> {
         let promise = BAPromise()
-        if self.presentingViewController != nil {
-            if self.presentedViewController == nil {
-                dismiss(animated: true) {
-                    promise.resolve(nil)
-                }
+        if presentingViewController != nil {
+            // Only dismiss if we are not currently presenting another view controller.
+            if presentedViewController == nil {
+                dismiss(animated: true) { promise.resolve(nil) }
             } else {
                 BALogger.debug(domain: String(describing: self), message: "Refusing to dismiss modal: something is covering us.")
                 promise.reject(nil)
             }
         } else {
-            BALogger.debug(domain: String(describing: self), message: "Refusing to dismiss modal: no presenting view controller. We're probably not on screen.")
+            BALogger.debug(domain: String(describing: self), message: "Refusing to dismiss modal: no presenting view controller.")
             promise.reject(nil)
         }
-
         return promise
     }
 
-    func userDidCloseMessage() {
-        if isDismissed {
-            return
-        }
-        isDismissed = true
-
-        analyticManager.track(.closed)
-    }
-}
-
-extension InAppViewController {
-    /// Represents a custom style to handle overleap safe area as MEP
-    /// Should only be used in ``InAppViewController``
-    struct CustomStyle: InAppBorderable & InAppRoundableCorners {
-        let borderWidth: CGFloat?
-        let borderColor: UIColor?
-        let radius: [CGFloat]
-
-        init(borderWidth: CGFloat?, borderColor: UIColor?, radius: [CGFloat]) {
-            self.borderWidth = borderWidth
-            self.borderColor = borderColor
-            self.radius = radius
-        }
+    /// Called when the autoclosing timer fires.
+    func autoclosingDidFire() {
+        analyticManager.track(.automaticallyClosed)
+        dismiss()
     }
 }

@@ -8,17 +8,20 @@
 #import <Batch/BALocalCampaignLandingOutput.h>
 
 #import <Batch/BAMessagingCenter.h>
+#import <Batch/BAThreading.h>
 #import <Batch/BatchMessagingPrivate.h>
 
 @implementation BALocalCampaignLandingOutput {
     BatchInAppMessage *_message;
 }
 
-- (nullable instancetype)initWithPayload:(nonnull NSDictionary *)payload error:(NSError **)error {
+- (nullable instancetype)initWithPayload:(nonnull NSDictionary *)payload
+                            isCEPMessage:(BOOL)isCEPMessage
+                                   error:(NSError **)error {
     self = [super init];
     if (self) {
         // Note: we call an in-app the combination of a landing and a local campaign
-        _message = [BatchInAppMessage messageForPayload:payload isCEPMessage:FALSE];
+        _message = [BatchInAppMessage messageForPayload:payload isCEPMessage:isCEPMessage];
 
         if (!_message) {
             if (error) {
@@ -40,7 +43,11 @@
     BatchInAppMessage *msg = [_message copy];
     [msg setCampaign:campaign];
 
-    [[BAMessagingCenter instance] handleInAppMessage:msg];
+    [BAThreading
+        performBlockOnMainThread:^{
+          [[BAMessagingCenter instance] handleInAppMessage:msg];
+        }
+                     secondDelay:campaign.displayDelaySec];
 }
 
 @end

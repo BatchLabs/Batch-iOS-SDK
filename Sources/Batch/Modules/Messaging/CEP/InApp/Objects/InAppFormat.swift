@@ -6,5 +6,5 @@
 
 /// Represents an in-app format
 public enum InAppFormat: String, Codable {
-    case modal, fullscreen
+    case modal, fullscreen, webview
 }

@@ -13,14 +13,14 @@ struct InAppAnalyticWrapper {
         case shown
         case dismissed
         case closed
-        case cta(action: InAppCTAComponent)
+        case cta(component: InAppCTAComponent)
         case webView(component: InAppCTAComponent)
         case closeError(_ error: BATMessagingCloseErrorCause)
     }
 
     // MARK: -
 
-    let message: BAMSGCEPMessage
+    private let message: BAMSGCEPMessage
     let analyticsDelegate: BAMessagingAnalyticsDelegate?
 
     // MARK: -
@@ -46,13 +46,6 @@ struct InAppAnalyticWrapper {
                 guard let action = component.action else { return }
 
                 analyticsDelegate?.messageButtonClicked(message, ctaIdentifier: component.analyticsIdentifier, ctaType: component.type.rawValue, action: action)
-
-                BAMessagingCenter.instance().perform(
-                    action,
-                    source: message.sourceMessage,
-                    ctaIdentifier: component.analyticsIdentifier,
-                    messageIdentifier: message.sourceMessage.devTrackingIdentifier
-                )
             case let .webView(component):
                 guard let action = component.action else { return }
 

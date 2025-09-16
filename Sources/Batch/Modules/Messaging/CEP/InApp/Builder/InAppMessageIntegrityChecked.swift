@@ -152,6 +152,10 @@ struct InAppMessageChecker {
         try anyType(for: value, mandatory: mandatory, source: source, component: component)
     }
 
+    static func url(for value: URL?, mandatory: Mandatory<URL>, source: AnyKeyPath, component: Component) throws -> URL {
+        try anyType(for: value, mandatory: mandatory, source: source, component: component)
+    }
+
     static func anyType<T>(for value: T?, mandatory: Mandatory<T>, source: AnyKeyPath, component: Component) throws -> T {
         Checker.checkNil(for: value, isMandatory: mandatory.value, source: source, component: component)
 
@@ -441,6 +445,25 @@ extension InAppMessageChecker {
             msgAction.actionIdentifier = action.action
             msgAction.actionArguments = args
             return msgAction
+        }
+
+        /// Sanitizes and provides default close button configuration for webview format
+        /// Ensures webview messages always have a close button with appropriate default styling
+        /// when no explicit close button configuration is provided
+        static func cross(format: InAppFormat, cross: InAppViewController.Configuration.CloseConfiguration.Cross?, source: AnyKeyPath, component: Component) throws -> InAppViewController.Configuration.CloseConfiguration.Cross? {
+            guard let cross else {
+                // For webview format, provide default close button styling if none specified
+                if format == .webview {
+                    return InAppViewController.Configuration.CloseConfiguration.Cross(
+                        color: try colors(for: nil, mandatory: .false((light: "#292945ff", dark: "#7575ffff")), source: source, component: component),
+                        backgroundColor: try colors(for: nil, mandatory: .false((light: "#ebebebff", dark: "#4d4d4dff")), source: source, component: component)
+                    )
+                } else {
+                    return nil
+                }
+            }
+
+            return cross
         }
 
         static func errorWithLogs(_ error: InternalError, component: Component, source: AnyKeyPath) -> InternalError {

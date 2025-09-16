@@ -13,7 +13,7 @@
 #define LOGGER_DOMAIN @"Local Campaigns - File Persistence"
 #define LOCAL_ERROR_DOMAIN @"com.batch.module.localcampaigns.filepersistence"
 
-#define FILE_VERSION 1
+#define FILE_VERSION 2
 
 @implementation BALocalCampaignsFilePersistence
 

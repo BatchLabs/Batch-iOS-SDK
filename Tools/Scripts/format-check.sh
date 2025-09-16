@@ -22,7 +22,7 @@ set -e
 SDK_FOLDER="../../sdk"
 
 # Format Objective-C code
-find "${SDK_FOLDER}/Batch" "${SDK_FOLDER}/batchTests" -type f -name "*.[mh]" -not \( -path "${SDK_FOLDER}/Batch/Versions.h" \) -print0 | xargs -0 ${CLANGFORMAT} --dry-run --Werror -i
+find "${SDK_FOLDER}/Batch" "${SDK_FOLDER}/batchTests" -type f -name "*.[mh]" -not \( -path "${SDK_FOLDER}/Batch/Supporting Files/Versions.h" \) -print0 | xargs -0 ${CLANGFORMAT} --dry-run --Werror -i
 
 # Format Swift code
 if [ "${USE_SYSTEM_SWIFTFORMAT}" == "1" ]; then

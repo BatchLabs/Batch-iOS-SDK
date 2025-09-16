@@ -6,5 +6,5 @@
 
 /// Types of the CTA
 enum InAppCTAType: String {
-    case image, button
+    case image, button, webview
 }

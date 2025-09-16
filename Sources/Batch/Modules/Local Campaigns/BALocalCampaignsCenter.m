@@ -30,6 +30,7 @@
 #import <Batch/BAPublicEventTrackedSignal.h>
 
 #import <Batch/BALocalCampaignsService.h>
+#import <Batch/BALocalCampaignsVersion.h>
 #import <Batch/BAQueryWebserviceClient.h>
 #import <Batch/BAWebserviceClientExecutor.h>
 
@@ -68,6 +69,11 @@
     [BALocalCampaignsCenter instance];
 }
 
+/**
+ * Returns the singleton instance of the local campaigns center.
+ * Thread-safe implementation using dispatch_once.
+ * @return The shared BALocalCampaignsCenter instance
+ */
 + (instancetype)instance {
     static BALocalCampaignsCenter *sharedInstance = nil;
     static dispatch_once_t onceToken;
@@ -86,6 +92,11 @@
     return self;
 }
 
+/**
+ * Initializes the local campaigns center with all necessary components.
+ * Sets up the view tracker, campaign manager, persistence, and dispatch queues.
+ * Also registers for new session notifications if not on visionOS.
+ */
 - (void)setup {
     _viewTracker = [BALocalCampaignsTracker new];
     _dateProvider = [BASecureDateProvider new];
@@ -226,6 +237,7 @@
                 self->_isWaitingJITSync = true;
                 [self->_campaignManager
                     verifyCampaignsEligibilityFromServer:eligibleCampaignsRequiringJIT
+                                                 version:[self->_campaignManager version]
                                           withCompletion:^(BALocalCampaign *_Nullable electedCampaign) {
                                             if (electedCampaign != nil) {
                                                 [BALogger
@@ -241,12 +253,11 @@
                                             } else {
                                                 [BALogger
                                                     debugForDomain:LOGGER_DOMAIN
-                                                           message:@"Ne eligible campaigns found after the JIT sync."];
+                                                           message:@"No eligible campaigns found after the JIT sync."];
                                             }
                                             self->_isWaitingJITSync = false;
                                             [self dequeueSignals];
                                           }];
-
             } else {
                 // JIT not available or campaign is cached and not eligible. Fallback on offline campaign
                 BALocalCampaign *firstEligibleCampaignNotRequiringJITSync =
@@ -284,18 +295,28 @@
 
 - (void)processTrackerPublicEventNamed:(nonnull NSString *)name
                                  label:(nullable NSString *)label
-                            attributes:(nullable BatchEventAttributes *)attributes {
+                            attributes:(nullable NSDictionary *)attributes {
     [self emitSignal:[[BAPublicEventTrackedSignal alloc] initWithName:name label:label attributes:attributes]];
 }
 
+/**
+ * Records a campaign view event and sends tracking data to the server.
+ * This method is called when a campaign is successfully displayed to the user.
+ * It tracks the event with customer user ID support for personalized analytics.
+ * @param identifier The unique identifier of the displayed campaign
+ * @param eventData Optional event data associated with the campaign display
+ */
 - (void)didPerformCampaignOutputWithIdentifier:(nonnull NSString *)identifier eventData:(nullable NSObject *)eventData {
     if (identifier == nil) {
         [BALogger debugForDomain:LOGGER_DOMAIN message:@"Can't track local campaign view for a nil identifier"];
     }
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-      BALocalCampaignCountedEvent *ev =
-          [self->_viewTracker trackEventForCampaignID:identifier kind:BALocalCampaignTrackerEventKindView];
+      NSString *customUserID = [BAParameter objectForKey:kParametersCustomUserIDKey fallback:nil];
+      BALocalCampaignCountedEvent *ev = [self->_viewTracker trackEventForCampaignID:identifier
+                                                                               kind:BALocalCampaignTrackerEventKindView
+                                                                            version:self->_campaignManager.version
+                                                                       customUserID:customUserID];
       if (ev != nil) {
           [BATrackerCenter trackPrivateEvent:@"_LC_VIEW"
                                   parameters:@{
@@ -312,6 +333,12 @@
     });
 }
 
+/**
+ * Enqueues a signal for later processing when the SDK is not ready.
+ * This method is thread-safe and handles the case where the SDK becomes ready
+ * while waiting for the synchronization lock.
+ * @param signal The signal to enqueue for later processing
+ */
 - (void)enqueueSignal:(id<BALocalCampaignSignalProtocol>)signal {
     // This check should be made before calling this method, but we need to ensure it
     // so that we don't end up in an infinite loop
@@ -332,6 +359,11 @@
     }
 }
 
+/**
+ * Dequeues and processes all pending signals.
+ * This method is called when the SDK becomes ready and can process signals.
+ * It's thread-safe and processes signals in the order they were enqueued.
+ */
 - (void)dequeueSignals {
     @synchronized(_signalQueue) {
         NSArray *enqueuedSignals = [_signalQueue copy];
@@ -370,6 +402,12 @@
     }
 }
 
+/**
+ * Loads campaigns from the local disk cache.
+ * This method handles cache expiration, parsing, and loading campaigns into the manager.
+ * It also extracts version information and global cappings from the cached data.
+ * After loading, it triggers a server refresh to get the latest campaigns.
+ */
 - (void)loadCampaignCache {
     // Flag this as loaded before we actually do it so that we do not do it twice
     // Setting as ready comes later
@@ -378,6 +416,7 @@
       NSError *err;
       NSArray<BALocalCampaign *> *campaigns;
       BALocalCampaignsGlobalCappings *cappings;
+      BALocalCampaignsVersion version;
       NSDictionary *rawCampaigns = [self->_campaignPersister loadCampaignsWithError:&err];
       if (rawCampaigns == nil) {
           [BALogger debugForDomain:LOGGER_DOMAIN
@@ -394,7 +433,10 @@
                   return;
               }
           }
-          campaigns = [BALocalCampaignsParser parseCampaigns:rawCampaigns outPersistable:nil error:&err];
+          campaigns = [BALocalCampaignsParser parseCampaigns:rawCampaigns
+                                              outPersistable:nil
+                                                     version:self->_campaignManager.version
+                                                       error:&err];
           cappings = [BALocalCampaignsParser parseCappings:rawCampaigns outPersistable:nil];
           if (campaigns == nil) {
               [BALogger errorForDomain:LOGGER_DOMAIN
@@ -404,9 +446,28 @@
               [BALogger debugForDomain:LOGGER_DOMAIN
                                message:@"Loaded %lu campaigns from disk", (unsigned long)campaigns.count];
           }
+
+          BALocalCampaignsVersion cachedVersion = [BALocalCampaignsParser parseVersion:rawCampaigns
+                                                                        outPersistable:nil
+                                                                                 error:&err];
+          if (cachedVersion == BALocalCampaignsVersionUnknown) {
+              version = BALocalCampaignsVersionMEP;
+          } else {
+              version = cachedVersion;
+          }
+
+          if (err != nil) {
+              [BALogger errorForDomain:LOGGER_DOMAIN
+                               message:@"Could not parse local campaigns loaded from disk: %@",
+                                       err ? err.localizedDescription : @"Unknown error"];
+          } else {
+              [BALogger debugForDomain:LOGGER_DOMAIN message:@"Version %d from disk", version];
+          }
       }
+
       [self->_campaignManager loadCampaigns:campaigns fromCache:true];
       [self->_campaignManager setCappings:cappings];
+      [self->_campaignManager setVersion:version];
       [self campaignCacheReady];
     });
 }
@@ -416,6 +477,12 @@
     [self refreshCampaignsFromServer];
 }
 
+/**
+ * Refreshes campaigns from the server.
+ * This method disables signal processing while synchronizing, collects view counts
+ * for loaded campaigns with customer user ID support, and makes a webservice call
+ * to get the latest campaign data from the server.
+ */
 - (void)refreshCampaignsFromServer {
     // Disable signal queue while we are synchronizing local campaigns
     _isReady = false;
@@ -451,23 +518,46 @@
     [self makeReady];
 }
 
+/**
+ * Handles the webservice response payload containing campaign data.
+ * This method parses campaigns, cappings, and version information from the payload,
+ * persists the data to disk, and loads the campaigns into the manager with customer user ID support.
+ * @param payload The response payload from the campaigns webservice
+ */
 - (void)handleWebserviceResponsePayload:(nonnull NSDictionary *)payload {
     NSError *err = nil;
 
     NSMutableDictionary *persistPayload = [NSMutableDictionary dictionary];
     NSDictionary *campaignsPayload = nil;
     NSDictionary *cappingsPayload = nil;
+    NSDictionary *versionPayload = nil;
+    NSArray<BALocalCampaign *> *campaigns = nil;
 
-    NSArray<BALocalCampaign *> *campaigns = [BALocalCampaignsParser parseCampaigns:payload
-                                                                    outPersistable:&campaignsPayload
-                                                                             error:&err];
-    if (campaigns == nil) {
+    BALocalCampaignsVersion version = [BALocalCampaignsParser parseVersion:payload
+                                                            outPersistable:&versionPayload
+                                                                     error:&err];
+    if (err != nil) {
         [BALogger errorForDomain:LOGGER_DOMAIN
                          message:@"Could not parse local campaigns webservice response payload: %@",
                                  err ? err.localizedDescription : @"Unknown error"];
-        persistPayload = nil;
+        versionPayload = nil;
     } else {
-        [BALogger debugForDomain:LOGGER_DOMAIN message:@"Loaded %ld campaigns from the WS", campaigns.count];
+        [BALogger debugForDomain:LOGGER_DOMAIN message:@"Version %lu from the WS", version];
+    }
+
+    if (version != BALocalCampaignsVersionUnknown) {
+        campaigns = [BALocalCampaignsParser parseCampaigns:payload
+                                            outPersistable:&campaignsPayload
+                                                   version:version
+                                                     error:&err];
+        if (campaigns == nil) {
+            [BALogger errorForDomain:LOGGER_DOMAIN
+                             message:@"Could not parse local campaigns webservice response payload: %@",
+                                     err ? err.localizedDescription : @"Unknown error"];
+            persistPayload = nil;
+        } else {
+            [BALogger debugForDomain:LOGGER_DOMAIN message:@"Loaded %ld campaigns from the WS", campaigns.count];
+        }
     }
 
     BALocalCampaignsGlobalCappings *cappings = [BALocalCampaignsParser parseCappings:payload
@@ -477,11 +567,14 @@
     }
 
     dispatch_async(_persistenceQueue, ^{
-      if (campaignsPayload != nil) {
+      if (campaignsPayload != nil && versionPayload != nil) {
           [persistPayload addEntriesFromDictionary:campaignsPayload];
           if (cappingsPayload != nil) {
               [persistPayload addEntriesFromDictionary:cappingsPayload];
           }
+
+          [persistPayload addEntriesFromDictionary:versionPayload];
+
           [persistPayload
               setObject:[NSNumber numberWithDouble:[[self->_dateProvider currentDate] timeIntervalSince1970]]
                  forKey:@"cache_date"];
@@ -497,6 +590,7 @@
 
     [_campaignManager loadCampaigns:campaigns fromCache:false];
     [_campaignManager setCappings:cappings];
+    [_campaignManager setVersion:version];
 }
 
 - (void)newSessionStartedNotification {

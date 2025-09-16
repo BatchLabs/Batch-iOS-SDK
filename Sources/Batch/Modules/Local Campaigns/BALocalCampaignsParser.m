@@ -13,6 +13,7 @@
 
 #import <Batch/BALocalCampaignLandingOutput.h>
 #import <Batch/BALocalCampaignOutputProtocol.h>
+#import <Batch/BALocalCampaignQuietHours.h>
 
 #import <Batch/BATZAwareDate.h>
 
@@ -20,6 +21,7 @@
 
 + (NSArray<BALocalCampaign *> *)parseCampaigns:(NSDictionary *)rawJson
                                 outPersistable:(NSDictionary **)persist
+                                       version:(BALocalCampaignsVersion)version
                                          error:(NSError **)error {
     NSMutableArray<NSObject *> *persistCampaigns = [NSMutableArray new];
     NSMutableArray<BALocalCampaign *> *parsedCampaigns = [NSMutableArray new];
@@ -63,7 +65,9 @@
             continue;
         }
 
-        BALocalCampaign *parsedCampaign = [self parseCampaign:(NSDictionary *)rawJsonContent error:&outErr];
+        BALocalCampaign *parsedCampaign = [self parseCampaign:(NSDictionary *)rawJsonContent
+                                                      version:version
+                                                        error:&outErr];
         if (parsedCampaign == nil) {
             [BALogger errorForDomain:@"Local Campaigns"
                              message:@"An error occurred while parsing a local campaign: %@. Ignoring.",
@@ -88,7 +92,9 @@
     return parsedCampaigns;
 }
 
-+ (BALocalCampaign *)parseCampaign:(NSDictionary *)rawJson error:(NSError **)error {
++ (BALocalCampaign *)parseCampaign:(NSDictionary *)rawJson
+                           version:(BALocalCampaignsVersion)version
+                             error:(NSError **)error {
     BATJsonDictionary *json =
         [[BATJsonDictionary alloc] initWithDictionary:rawJson
                                           errorDomain:@"com.batch.module.localcampaigns.parser.error.campaign"];
@@ -169,8 +175,13 @@
         return nil;
     }
 
-    campaign.requiresJustInTimeSync = [[json objectForKey:@"requireJIT" kindOfClass:[NSNumber class]
-                                                 fallback:@(NO)] boolValue];
+    BOOL fallback = NO;
+    if (version == BALocalCampaignsVersionCEP) {
+        fallback = YES;
+    }
+    campaign.requiresJustInTimeSync = [[json objectForKey:@"requireJIT"
+                                              kindOfClass:[NSNumber class]
+                                                 fallback:@(fallback)] boolValue];
 
     NSArray *triggersJSON = [json objectForKey:@"triggers" kindOfClass:[NSArray class] allowNil:NO error:&outErr];
     if (triggersJSON == nil) {
@@ -202,6 +213,17 @@
             *error = outErr;
         }
         return nil;
+    }
+
+    campaign.displayDelaySec = [[json objectForKey:@"displayDelaySec" kindOfClass:[NSNumber class]
+                                          fallback:@0] integerValue];
+
+    NSDictionary *quietHoursPayload = [json objectForKey:@"quietHours"
+                                             kindOfClass:[NSDictionary class]
+                                                allowNil:YES
+                                                   error:nil];
+    if (quietHoursPayload != nil && [quietHoursPayload isKindOfClass:[NSDictionary class]]) {
+        campaign.quietHours = [[BALocalCampaignQuietHours alloc] initWithDictionary:quietHoursPayload];
     }
 
     return campaign;
@@ -238,6 +260,34 @@
         *error = nil;
     }
     return triggers;
+}
+
++ (BALocalCampaignsVersion)parseVersion:(NSDictionary *)rawJson
+                         outPersistable:(NSDictionary **)persist
+                                  error:(NSError **)error {
+    NSString *value = [rawJson objectForKey:kParametersLocalCampaignsVersionPayloadKey];
+
+    BALocalCampaignsVersion version = BALocalCampaignsVersionUnknown;
+    if (value != nil && [value isKindOfClass:[NSString class]]) {
+        if ([value isEqual:kParametersLocalCampaignsVersionMEP]) {
+            version = BALocalCampaignsVersionMEP;
+        } else if ([value isEqual:kParametersLocalCampaignsVersionCEP]) {
+            version = BALocalCampaignsVersionCEP;
+        } else {
+            if (error) {
+                *error = [self genericParsingErrorForReason:@"Could not find any understandable campaigns version"];
+            }
+        }
+        if (persist != nil && version != BALocalCampaignsVersionUnknown) {
+            *persist = @{kParametersLocalCampaignsVersionPayloadKey : value};
+        }
+    } else {
+        if (error) {
+            *error = [self genericParsingErrorForReason:@"Could not find any understandable campaigns version"];
+        }
+    }
+
+    return version;
 }
 
 + (BALocalCampaignsGlobalCappings *)parseCappings:(NSDictionary *)rawJson outPersistable:(NSDictionary **)persist {
@@ -332,8 +382,13 @@
             return nil;
         }
 
+        NSDictionary *attributes = [json objectForKey:@"attributes"
+                                          kindOfClass:[NSDictionary class]
+                                             allowNil:YES
+                                                error:&outErr];
+
         NSString *label = [json objectForKey:@"label" kindOfClass:[NSString class] fallback:nil];
-        return [BAEventTrigger triggerWithName:eventName label:label];
+        return [BAEventTrigger triggerWithName:eventName label:label attributes:attributes];
     }
 
     if (error) {
@@ -365,7 +420,8 @@
         return nil;
     }
 
-    if ([@"LANDING" isEqualToString:type]) {
+    BOOL isCEPMessage = [type isEqualToString:@"LANDING_CEP"];
+    if ([@"LANDING" isEqualToString:type] || isCEPMessage) {
         NSDictionary *payload = [json objectForKey:@"payload"
                                        kindOfClass:[NSDictionary class]
                                           allowNil:NO
@@ -378,6 +434,7 @@
         }
 
         BALocalCampaignLandingOutput *output = [[BALocalCampaignLandingOutput alloc] initWithPayload:payload
+                                                                                        isCEPMessage:isCEPMessage
                                                                                                error:&outErr];
         if (output == nil) {
             if (error) {

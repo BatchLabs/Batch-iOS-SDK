@@ -22,7 +22,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @required
 
-- (nullable instancetype)initWithPayload:(nonnull NSDictionary *)payload error:(NSError **)error;
+- (nullable instancetype)initWithPayload:(nonnull NSDictionary *)payload
+                            isCEPMessage:(BOOL)isCEPMessage
+                                   error:(NSError **)error;
 
 - (void)performForCampaign:(nonnull BALocalCampaign *)campaign;
 

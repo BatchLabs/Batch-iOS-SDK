@@ -27,4 +27,10 @@ struct InAppHeightTypeTests {
         let heightType = InAppHeightType(stringValue: stringValue)
         #expect(heightType == nil)
     }
+
+    @Test func testInAppHeightTypeFill() async throws {
+        let stringValue = "fill"
+        let heightType = InAppHeightType(stringValue: stringValue)
+        #expect(heightType == .fill)
+    }
 }

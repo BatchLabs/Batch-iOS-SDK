@@ -9,6 +9,12 @@
     }
   ],
   "defaultOptions" : {
+    "language" : "en",
+    "locationScenario" : {
+      "identifier" : "New York, NY, USA",
+      "referenceType" : "built-in"
+    },
+    "region" : "US",
     "testTimeoutsEnabled" : true,
     "threadSanitizerEnabled" : true,
     "uiTestingScreenshotsLifetime" : "keepAlways",
@@ -16,6 +22,7 @@
   },
   "testTargets" : [
     {
+      "parallelizable" : false,
       "target" : {
         "containerPath" : "container:Batch.xcodeproj",
         "identifier" : "02F7846A19B9EF5A0006FF07",

@@ -1344,7 +1344,7 @@ static NSString *kBAMSGInterstitialViewControllerHeroConstraint = @"BAMainHeroCo
 }
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController {
-    [self userDidCloseMessage];
+    [self.messagingAnalyticsDelegate messageClosed:self.message];
 }
 
 @end

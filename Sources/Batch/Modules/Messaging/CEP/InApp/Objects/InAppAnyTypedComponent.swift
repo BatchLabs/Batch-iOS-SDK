@@ -42,6 +42,10 @@ public struct InAppAnyTypedComponent: Codable {
                 try container.encode(image)
             case let label as InAppLabel:
                 try container.encode(label)
+            case let spacer as InAppSpacer:
+                try container.encode(spacer)
+            case let webview as InAppWebview:
+                try container.encode(webview)
             default:
                 throw CodableError.unknownType
         }
@@ -62,6 +66,10 @@ public struct InAppAnyTypedComponent: Codable {
                 self.init(try container.decode(InAppImage.self))
             case .text:
                 self.init(try container.decode(InAppLabel.self))
+            case .spacer:
+                self.init(try container.decode(InAppSpacer.self))
+            case .webview:
+                self.init(try container.decode(InAppWebview.self))
             case .none:
                 throw CodableError.unknownType
         }

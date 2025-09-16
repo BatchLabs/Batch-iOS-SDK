@@ -33,11 +33,11 @@ typedef NS_ENUM(NSInteger, BATWebviewBridgeInternalErrorCode) {
 handler without having to eval anything
  */
 @implementation BATWebviewJavascriptBridge {
-    BAMSGMessageWebView *_message;
+    BAMSGMessage *_message;
     __weak id<BATWebviewJavascriptBridgeDelegate> _delegate;
 }
 
-- (instancetype)initWithMessage:(nonnull BAMSGMessageWebView *)message
+- (instancetype)initWithMessage:(nonnull BAMSGMessage *)message
                        delegate:(nullable id<BATWebviewJavascriptBridgeDelegate>)delegate {
     self = [super init];
     if (self) {

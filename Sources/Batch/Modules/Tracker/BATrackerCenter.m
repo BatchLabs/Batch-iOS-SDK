@@ -17,6 +17,7 @@
 #import <Batch/BAParameter.h>
 #import <Batch/BAQueryWebserviceClient.h>
 #import <Batch/BARandom.h>
+#import <Batch/BATJsonDictionary.h>
 #import <Batch/BATrackerCenter.h>
 #import <Batch/BATrackerSignpostHelper.h>
 #import <Batch/Batch-Swift.h>
@@ -74,9 +75,22 @@
     }
 
     if ([self internalTrackEvent:name withParameters:parameters collapsable:false]) {
+        BATJsonDictionary *json = [[BATJsonDictionary alloc] initWithDictionary:parameters errorDomain:DEBUG_DOMAIN];
+
+        NSError *err = nil;
+
+        NSDictionary *dictionaryAttributes = [json objectForKey:@"attributes"
+                                                    kindOfClass:[NSDictionary class]
+                                                       allowNil:YES
+                                                          error:&err];
+        if (err) {
+            [BALogger debugForDomain:DEBUG_DOMAIN
+                             message:@"Failed to deserialize attributes: %@", err.debugDescription];
+        }
+
         [[BALocalCampaignsCenter instance] processTrackerPublicEventNamed:name
                                                                     label:attributes._label
-                                                               attributes:attributes];
+                                                               attributes:dictionaryAttributes];
     }
 }
 

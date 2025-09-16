@@ -148,7 +148,10 @@
     // Add view event. Remove 2 seconds from current time to reduce test flakiness
     NSTimeInterval timestamp = [[[NSDate date] dateByAddingTimeInterval:-2] timeIntervalSince1970];
     BALocalCampaignCountedEvent *viewEvent =
-        [[campaignsCenter viewTracker] trackEventForCampaignID:@"campaign_id" kind:BALocalCampaignTrackerEventKindView];
+        [[campaignsCenter viewTracker] trackEventForCampaignID:@"campaign_id"
+                                                          kind:BALocalCampaignTrackerEventKindView
+                                                       version:BALocalCampaignsVersionMEP
+                                                  customUserID:nil];
     XCTAssertNotNil(viewEvent, @"Failed to track view event");
     XCTAssertEqual([[campaignsCenter viewTracker] numberOfViewEventsSince:timestamp].intValue, 1);
 

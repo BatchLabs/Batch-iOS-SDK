@@ -56,7 +56,7 @@ typedef NS_ENUM(NSUInteger, BATWebviewJavascriptBridgeErrorCode) {
 
 @interface BATWebviewJavascriptBridge : NSObject
 
-- (instancetype)initWithMessage:(nonnull BAMSGMessageWebView *)message
+- (instancetype)initWithMessage:(nonnull BAMSGMessage *)message
                        delegate:(nullable id<BATWebviewJavascriptBridgeDelegate>)delegate;
 
 - (nonnull BAPromise<NSString *> *)executeBridgeMethod:(nullable NSString *)method

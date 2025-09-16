@@ -26,6 +26,9 @@
 
 @property (nonnull) BatchMessage *sourceMessage;
 
+/// Convenience helper to check if the message originates from CEP
+- (BOOL)isCEPMessage;
+
 @end
 
 // Minimal MEP message representation

@@ -15,7 +15,6 @@
 #import <Batch/BAWSQueryTracking.h>
 #import <Batch/BAWSResponseAttributesCheck.h>
 #import <Batch/BAWSResponseAttributes.h>
-#import <Batch/BAPushTokenService.h>
 #import <Batch/BAWSResponseStart.h>
 #import <Batch/BAWSResponse.h>
 #import <Batch/BAWSResponseTracking.h>
@@ -72,8 +71,11 @@
 #import <Batch/BALocalCampaignCountedEvent.h>
 #import <Batch/BALocalCampaignsSQLTracker.h>
 #import <Batch/BALocalCampaignsTracker.h>
+#import <Batch/BALocalCampaignsVersion.h>
+#import <Batch/BALocalCampaignDayOfWeek.h>
 #import <Batch/BALocalCampaignsPersisting.h>
 #import <Batch/BALocalCampaignsFilePersistence.h>
+#import <Batch/BALocalCampaignQuietHours.h>
 #import <Batch/BALocalCampaignsCenter.h>
 #import <Batch/BALocalCampaignsParser.h>
 #import <Batch/BALocalCampaignLandingOutput.h>
@@ -108,7 +110,6 @@
 #import <Batch/BAEventDispatcherCenter.h>
 #import <Batch/BAPushEventPayload.h>
 #import <Batch/BAMessageEventPayload.h>
-#import <Batch/BAUserDataEnums.h>
 #import <Batch/BAEvent.h>
 #import <Batch/BAEventSQLiteDatasource.h>
 #import <Batch/BAEventDatasourceProtocol.h>
@@ -231,7 +232,6 @@
 #import <Batch/BATMessagePackWriter.h>
 #import <Batch/msgpack-c.h>
 #import <Batch/BATMessagePackReader.h>
-#import <Batch/BATJsonDictionary.h>
 #import <Batch/BAThreading.h>
 #import <Batch/BANullHelper.h>
 #import <Batch/BARandom.h>
@@ -243,6 +243,7 @@
 #import <Batch/BATJsonDictionary.h>
 #import <Batch/BADelegatedApplicationDelegate.h>
 #import <Batch/BAHTTPHeaders.h>
+#import <Batch/BADictionaryHelper.h>
 #import <Batch/BAStringUtils.h>
 #import <Batch/BAPartialApplicationDelegate.h>
 

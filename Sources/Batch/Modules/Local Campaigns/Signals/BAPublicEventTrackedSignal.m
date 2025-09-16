@@ -12,7 +12,7 @@
 
 - (instancetype)initWithName:(NSString *)name
                        label:(nullable NSString *)label
-                  attributes:(nullable BatchEventAttributes *)attributes {
+                  attributes:(nullable NSDictionary *)attributes {
     self = [super init];
     if (self) {
         self.name = name;
@@ -28,7 +28,8 @@
         return false;
     }
 
-    return [((BAEventTrigger *)trigger) isSatisfiedForName:self.name label:self.label];
+    return [((BAEventTrigger *)trigger) isSatisfiedForName:self.name label:self.label] &&
+           [((BAEventTrigger *)trigger) isSatisfiedForAttributes:self.attributes];
 }
 
 @end

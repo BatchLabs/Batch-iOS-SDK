@@ -10,7 +10,7 @@ public struct InAppMessage: Codable {
 
     public let format: InAppFormat
     let minMLvl: Int
-    let position: InAppVerticalAlignment
+    let position: InAppVerticalAlignment?
     let root: InAppRootContainer
     let closeOptions: InAppCloseOption
     let texts: [String: String]?
@@ -21,7 +21,7 @@ public struct InAppMessage: Codable {
 
     // MARK: -
 
-    public init(format: InAppFormat, position: InAppVerticalAlignment, root: InAppRootContainer, closeOptions: InAppCloseOption, texts: [String: String], urls: [String: String], actions: [String: InAppAction], eventData: [String: String], trackingId: String?) {
+    public init(format: InAppFormat, position: InAppVerticalAlignment?, root: InAppRootContainer, closeOptions: InAppCloseOption, texts: [String: String], urls: [String: String], actions: [String: InAppAction], eventData: [String: String], trackingId: String?) {
         self.format = format
         self.position = position
         self.root = root

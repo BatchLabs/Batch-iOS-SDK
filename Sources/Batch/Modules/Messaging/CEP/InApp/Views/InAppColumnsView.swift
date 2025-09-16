@@ -7,12 +7,16 @@
 import UIKit
 
 /// Represents an in-app columns view
-public class InAppColumnsView: UIStackView, InAppContainerizable, InAppClosureDelegate {
+public class InAppColumnsView: UIStackView, InAppContainerizable, InAppClosureDelegate, InAppExpandableView {
     // MARK: -
 
     let configuration: InAppColumnsView.Configuration
     let onClosureTap: InAppClosureDelegate.Closure
     let onError: InAppErrorDelegate.Closure
+
+    var isExpandable: Bool {
+        configuration.placement.isExpandable
+    }
 
     // MARK: -
 
@@ -59,12 +63,21 @@ public class InAppColumnsView: UIStackView, InAppContainerizable, InAppClosureDe
 
             child.addSubview(subchild)
 
-            let constraints = [
+            var constraints = [
                 subchild.leadingAnchor.constraint(equalTo: child.leadingAnchor),
                 subchild.trailingAnchor.constraint(equalTo: child.trailingAnchor),
-                subchild.heightAnchor.constraint(lessThanOrEqualTo: child.heightAnchor),
             ]
 
+            if builder?.expandable.isExpandable == true {
+                constraints += [
+                    subchild.heightAnchor.constraint(equalTo: child.heightAnchor),
+                    heightAnchor.constraint(equalTo: child.heightAnchor),
+                ]
+            } else {
+                constraints += [
+                    subchild.heightAnchor.constraint(lessThanOrEqualTo: child.heightAnchor),
+                ]
+            }
             addArrangedSubview(child)
 
             NSLayoutConstraint.activate(constraints)
@@ -95,5 +108,6 @@ extension InAppColumnsView.Configuration {
         // MARK: -
 
         let margins: UIEdgeInsets
+        let heightType: InAppHeightType?
     }
 }

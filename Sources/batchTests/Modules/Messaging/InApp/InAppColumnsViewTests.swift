@@ -45,6 +45,7 @@ struct InAppColumnsViewTests {
     static let textAlign: InAppHorizontalAlignment = .left
     static let textColor: UIColor = .blue
     static let fontDecoration: [InAppFontDecoration] = [.bold, .italic]
+    static let format: InAppFormat = .fullscreen
 
     // Buttons
     static let borderWidth: Int = 2
@@ -88,21 +89,22 @@ struct InAppColumnsViewTests {
 
     @MainActor
     @Test func testConfiguration() async throws {
-        await confirmation("Should pass through `onClosureTap`") { @MainActor confirm in
+        try await confirmation("Should pass through `onClosureTap`") { @MainActor confirm in
             let columnsView = InAppColumnsView(
                 configuration: InAppColumnsView.Configuration(
-                    builders: InAppAnyObjectTypeBuilder.build(
+                    builders: try InAppAnyObjectTypeBuilder.build(
                         urls: [Self.imageId: Self.imageURL],
                         texts: [Self.titleId: Self.title, Self.button1Id: Self.button1, Self.button2Id: Self.button2],
                         actions: [Self.imageId: Self.action],
-                        componentTypes: Self.componentsTypes
+                        componentTypes: Self.componentsTypes,
+                        format: Self.format
                     ),
                     ratios: Self.ratios,
                     style: InAppColumnsView.Configuration.Style(
                         spacing: Self.spacing,
                         verticalAlignment: Self.verticalAlignment
                     ),
-                    placement: InAppColumnsView.Configuration.Placement(margins: Self.margins)
+                    placement: InAppColumnsView.Configuration.Placement(margins: Self.margins, heightType: nil)
                 ),
                 onClosureTap: { component, _ in
                     #expect(component?.type == .image)
@@ -137,21 +139,68 @@ struct InAppColumnsViewTests {
     }
 
     @MainActor
-    @Test func testDistribution() async throws {
+    @Test func testFillConfiguration() async throws {
+        var components = Self.componentsTypes
+        components.replaceSubrange(0 ..< 1, with: [.init(InAppSpacer(height: "fill"))])
+
         let columnsView = InAppColumnsView(
             configuration: InAppColumnsView.Configuration(
-                builders: InAppAnyObjectTypeBuilder.build(
+                builders: try InAppAnyObjectTypeBuilder.build(
                     urls: [Self.imageId: Self.imageURL],
                     texts: [Self.titleId: Self.title, Self.button1Id: Self.button1, Self.button2Id: Self.button2],
                     actions: [Self.imageId: Self.action],
-                    componentTypes: Self.componentsTypes
+                    componentTypes: components,
+                    format: Self.format
+                ),
+                ratios: Self.ratios,
+                style: InAppColumnsView.Configuration.Style(
+                    spacing: Self.spacing,
+                    verticalAlignment: Self.verticalAlignment
+                ),
+                placement: InAppColumnsView.Configuration.Placement(margins: Self.margins, heightType: components.contains(where: { $0?.component is InAppExpandableComponent }) ? .fill : nil)
+            ),
+            onClosureTap: { _, _ in },
+            onError: { _, _ in }
+        )
+
+        await InAppWaitingForTests.wait(for: 5)
+
+        #expect(columnsView.arrangedSubviews.count == 4)
+        #expect(columnsView.axis == .horizontal)
+        #expect(columnsView.distribution == .fillEqually)
+        #expect(columnsView.spacing == CGFloat(Self.spacing))
+        #expect(columnsView.alignment == .top)
+
+        #expect((columnsView.arrangedSubviews[0] as? InAppPercentedView)?.percent == CGFloat(Self.ratios[0]))
+        #expect((columnsView.arrangedSubviews[1] as? InAppPercentedView)?.percent == CGFloat(Self.ratios[1]))
+        #expect((columnsView.arrangedSubviews[2] as? InAppPercentedView)?.percent == CGFloat(Self.ratios[2]))
+        #expect((columnsView.arrangedSubviews[3] as? InAppPercentedView)?.percent == CGFloat(Self.ratios[3]))
+
+        #expect(((columnsView.arrangedSubviews[0] as? InAppPercentedView)?.subviews[0] as? InAppContainer)?.subviews[0] is InAppSpacerView)
+        #expect(((columnsView.arrangedSubviews[1] as? InAppPercentedView)?.subviews[0] as? InAppContainer)?.subviews[0] is InAppLabelView)
+        #expect(((columnsView.arrangedSubviews[2] as? InAppPercentedView)?.subviews[0] as? InAppContainer)?.subviews[0] is InAppButtonView)
+        #expect(((columnsView.arrangedSubviews[3] as? InAppPercentedView)?.subviews[0] as? InAppContainer)?.subviews[0] is InAppButtonView)
+
+        #expect(columnsView.isExpandable)
+    }
+
+    @MainActor
+    @Test func testDistribution() async throws {
+        let columnsView = InAppColumnsView(
+            configuration: InAppColumnsView.Configuration(
+                builders: try InAppAnyObjectTypeBuilder.build(
+                    urls: [Self.imageId: Self.imageURL],
+                    texts: [Self.titleId: Self.title, Self.button1Id: Self.button1, Self.button2Id: Self.button2],
+                    actions: [Self.imageId: Self.action],
+                    componentTypes: Self.componentsTypes,
+                    format: Self.format
                 ),
                 ratios: [25, 20, 25, 30],
                 style: InAppColumnsView.Configuration.Style(
                     spacing: Self.spacing,
                     verticalAlignment: Self.verticalAlignment
                 ),
-                placement: InAppColumnsView.Configuration.Placement(margins: Self.margins)
+                placement: InAppColumnsView.Configuration.Placement(margins: Self.margins, heightType: nil)
             ),
             onClosureTap: { _, _ in
                 Issue.record("Should not be called")
@@ -169,21 +218,22 @@ struct InAppColumnsViewTests {
     @MainActor
     @Test func testFailLoading() async throws {
         // Because of retry expectedCount is 2
-        await confirmation("Should pass through `onError`", expectedCount: 2) { @MainActor confirm in
+        try await confirmation("Should pass through `onError`", expectedCount: 2) { @MainActor confirm in
             let columnsView = InAppColumnsView(
                 configuration: InAppColumnsView.Configuration(
-                    builders: InAppAnyObjectTypeBuilder.build(
+                    builders: try InAppAnyObjectTypeBuilder.build(
                         urls: [Self.imageId: "https://static.batch.com/sample/100.jpeg"],
                         texts: [Self.titleId: Self.title, Self.button1Id: Self.button1, Self.button2Id: Self.button2],
                         actions: [Self.imageId: Self.action],
-                        componentTypes: Self.componentsTypes
+                        componentTypes: Self.componentsTypes,
+                        format: Self.format
                     ),
                     ratios: Self.ratios,
                     style: InAppColumnsView.Configuration.Style(
                         spacing: Self.spacing,
                         verticalAlignment: Self.verticalAlignment
                     ),
-                    placement: InAppColumnsView.Configuration.Placement(margins: Self.margins)
+                    placement: InAppColumnsView.Configuration.Placement(margins: Self.margins, heightType: nil)
                 ),
                 onClosureTap: { _, _ in
                     Issue.record("On error only should be called")

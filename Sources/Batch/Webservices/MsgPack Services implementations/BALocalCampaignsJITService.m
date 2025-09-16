@@ -7,8 +7,6 @@
 #import "BALocalCampaignsJITService.h"
 #import <Batch/BAErrorHelper.h>
 #import <Batch/BALocalCampaign.h>
-#import <Batch/BATMessagePackReader.h>
-#import <Batch/BATMessagePackWriter.h>
 #import <Batch/BAWebserviceURLBuilder.h>
 
 #import <Batch/BALocalCampaignCountedEvent.h>
@@ -18,8 +16,13 @@
 #import <Batch/BATrackerCenter.h>
 
 #import <Batch/BAInjection.h>
+#import <Batch/BAJson.h>
+#import <Batch/BALocalCampaignsVersion.h>
 #import <Batch/BAMetricRegistry.h>
+#import <Batch/BANullHelper.h>
+#import <Batch/BAParameter.h>
 #import <Batch/BAStandardQueryWebserviceIdentifiersProvider.h>
+#import <Batch/BATJsonDictionary.h>
 #import <Batch/BAUserDatasourceProtocol.h>
 #import <Batch/Batch-Swift.h>
 
@@ -49,18 +52,38 @@
 
     /// Metric Registry
     BAMetricRegistry *_metricRegistry;
+
+    BALocalCampaignsVersion _version;
 }
 
+/**
+ * Initializes the JIT service with campaigns to verify and handlers for success/error.
+ * Automatically selects the appropriate webservice endpoint based on the campaign version.
+ * @param campaigns Array of campaigns to verify eligibility for
+ * @param viewTracker Tracker for getting campaign view counts
+ * @param version Campaign version (MEP or CEP) determining endpoint and features
+ * @param successHandler Block called with eligible campaign IDs on success
+ * @param errorHandler Block called with error and optional retry delay on failure
+ * @return Initialized service instance or nil if initialization failed
+ */
 - (nullable instancetype)initWithLocalCampaigns:(NSArray *)campaigns
                                     viewTracker:(id<BALocalCampaignTrackerProtocol>)viewTracker
+                                        version:(BALocalCampaignsVersion)version
                                         success:(void (^)(NSArray *eligibleCampaignIds))successHandler
                                           error:(void (^)(NSError *error, NSNumber *retryAfter))errorHandler;
 {
     NSString *host = [[BAInjection injectProtocol:@protocol(BADomainManagerProtocol)] urlFor:BADomainServiceWeb
                                                                         overrideWithOriginal:FALSE];
-    NSURL *url = [BAWebserviceURLBuilder webserviceURLForHost:host
-                                                    shortname:kParametersLocalCampaignsJITWebserviceShortname];
-    ;
+    NSURL *url = nil;
+    if (version == BALocalCampaignsVersionCEP) {
+        url = [BAWebserviceURLBuilder webserviceURLForHost:host
+                                                 shortname:kParametersLocalCEPCampaignsJITWebserviceShortname];
+    } else {
+        url = [BAWebserviceURLBuilder webserviceURLForHost:host
+                                                 shortname:kParametersLocalMEPCampaignsJITWebserviceShortname];
+    }
+
+    // We now call the designated initializer of our superclass, BAWebserviceJsonClient
     self = [super initWithMethod:BAWebserviceClientRequestMethodPost URL:url delegate:nil];
     if (self) {
         _campaigns = campaigns;
@@ -68,6 +91,7 @@
         _successHandler = successHandler;
         _errorHandler = errorHandler;
         _metricRegistry = [BAInjection injectClass:BAMetricRegistry.class];
+        _version = version;
 
         // Overriding default timeout
         [self setTimeout:LOCAL_CAMPAIGNS_JIT_TIMEOUT];
@@ -75,13 +99,16 @@
     return self;
 }
 
-- (nullable NSData *)requestBody:(NSError **)error {
+/**
+ * Builds the request body dictionary for the JIT webservice call.
+ * Includes campaign IDs, view counts, and system identifiers with customer user ID support.
+ * Overrides the superclass method to provide campaign-specific request data.
+ * @return Dictionary containing the request body data
+ */
+- (nonnull NSMutableDictionary *)requestBodyDictionary {
     if ([_campaigns count] <= 0) {
-        return nil;
+        return [NSMutableDictionary new];
     }
-
-    BATMessagePackWriter *writer = [[BATMessagePackWriter alloc] init];
-    NSError *writerError;
 
     NSMutableDictionary *body = [NSMutableDictionary dictionary];
     NSMutableDictionary *identifiers = [NSMutableDictionary new];
@@ -93,30 +120,28 @@
     body[@"views"] = views;
 
     [identifiers addEntriesFromDictionary:[[BAStandardQueryWebserviceIdentifiersProvider sharedInstance] identifiers]];
+    NSString *customUserID = [BAParameter objectForKey:kParametersCustomUserIDKey fallback:nil];
 
     // Add campaign ids to check and views count
     for (BALocalCampaign *campaign in _campaigns) {
         [campaignIds addObject:campaign.campaignID];
         BALocalCampaignCountedEvent *eventData =
-            [_viewTracker eventInformationForCampaignID:campaign.campaignID kind:BALocalCampaignTrackerEventKindView];
+            [_viewTracker eventInformationForCampaignID:campaign.campaignID
+                                                   kind:BALocalCampaignTrackerEventKindView
+                                                version:_version
+                                           customUserID:customUserID];
         [views setObject:@{@"count" : @(eventData.count)} forKey:campaign.campaignID];
     }
 
     // Add user attributes
-    id<BAUserDatasourceProtocol> database = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
-    if (database != nil) {
-        body[@"attributes"] = [BAUserAttribute serverJsonRepresentationForAttributes:[database attributes]];
+    if (_version != BALocalCampaignsVersionCEP) {
+        id<BAUserDatasourceProtocol> database = [BAInjection injectProtocol:@protocol(BAUserDatasourceProtocol)];
+        if (database != nil) {
+            body[@"attributes"] = [BAUserAttribute serverJsonRepresentationForAttributes:[database attributes]];
+        }
     }
 
-    [writer writeDictionary:body error:&writerError];
-    if (writerError != nil) {
-        [BALogger debugForDomain:LOGGER_DOMAIN message:@"Could not pack local campaigns jit body"];
-        if (error != nil) {
-            *error = writerError;
-        }
-        return false;
-    }
-    return writer.data;
+    return body;
 }
 
 - (void)connectionWillStart {
@@ -126,6 +151,7 @@
     [[_metricRegistry localCampaignsJITResponseTime] startTimer];
 }
 
+// This method now parses JSON instead of MessagePack
 - (void)connectionDidFinishLoadingWithData:(NSData *)data {
     [super connectionDidFinishLoadingWithData:data];
 
@@ -138,44 +164,72 @@
         return;
     }
 
-    // Unpacking response
-    BATMessagePackReader *reader = [[BATMessagePackReader alloc] initWithData:data];
-
-    NSError *readerError;
-
-    // Unpack root map header
-    [reader readDictionaryHeaderWithError:&readerError];
-    if ([self checkError:readerError]) {
-        _successHandler(@[]);
-        return;
-    }
-
-    // Unpack "eligibleCampaigns" key
-    NSString *key = [reader readStringAllowingNil:false error:&readerError];
-    if ([self checkError:readerError]) {
-        _successHandler(@[]);
-        return;
-    }
-    // Unpack list of campaign id
-    NSArray *eligibleCampaigns = [NSArray array];
-    if ([@"eligibleCampaigns" isEqual:key]) {
-        eligibleCampaigns = [reader readArrayAllowingNil:false error:&readerError];
-        if ([self checkError:readerError]) {
-            _successHandler(@[]);
+    @try {
+        // Check data.
+        if ([BANullHelper isNull:data]) {
+            [[NSException exceptionWithName:@"Empty content."
+                                     reason:[NSString stringWithFormat:@"Response is NULL or empty."]
+                                   userInfo:nil] raise];
             return;
         }
-        // Ensure array item type string not nil
-        for (id item in eligibleCampaigns) {
-            if ([BANullHelper isStringEmpty:item]) {
-                [BALogger errorForDomain:LOGGER_DOMAIN message:@"Unpacked JIT response is invalid."];
-                _successHandler(@[]);
-                return;
-            }
+
+        NSDictionary *startDict = [BAJson deserializeDataAsDictionary:data error:nil];
+
+        if (![BANullHelper isNull:startDict]) {
+            [self handleResponse:startDict];
+        } else {
+            [[NSException exceptionWithName:@"Invalid content."
+                                     reason:[NSString stringWithFormat:@"Response is NULL or empty."]
+                                   userInfo:nil] raise];
         }
-    } else {
-        [BALogger errorForDomain:LOGGER_DOMAIN message:@"Missing 'eligibleCampaigns' key in JIT response."];
+    } @catch (NSException *exception) {
+        [BALogger debugForDomain:LOGGER_DOMAIN message:@"Error webservice: %@", [exception description]];
+        NSMutableDictionary *info = [NSMutableDictionary dictionary];
+        [info setValue:exception.name forKey:@"ExceptionName"];
+        [info setValue:exception.reason forKey:@"ExceptionReason"];
+        [info setValue:exception.callStackReturnAddresses forKey:@"ExceptionCallStackReturnAddresses"];
+        [info setValue:exception.callStackSymbols forKey:@"ExceptionCallStackSymbols"];
+        [info setValue:exception.userInfo forKey:@"ExceptionUserInfo"];
+
+        NSError *error = [[NSError alloc] initWithDomain:LOGGER_DOMAIN code:500 userInfo:info];
+        _errorHandler(error, [self retryAfter:error]);
     }
-    _successHandler(eligibleCampaigns);
+}
+
+- (NSNumber *)retryAfter:(NSError *)error {
+    NSNumber *retryAfter = DEFAULT_RETRY_AFTER;
+    if (error.userInfo != nil) {
+        retryAfter = error.userInfo[@"retryAfter"];
+        if (retryAfter == nil) {
+            return DEFAULT_RETRY_AFTER;
+        }
+
+        return retryAfter;
+    }
+
+    return retryAfter;
+}
+
+- (void)handleResponse:(NSDictionary *)response {
+    // Unpacking response using NSJSONSerialization
+    NSError *err = nil;
+    // Unpack list of campaign id
+    BATJsonDictionary *dictionary = [[BATJsonDictionary alloc] initWithDictionary:response errorDomain:LOGGER_DOMAIN];
+
+    id eligibleCampaignsObject = [dictionary objectForKey:@"eligibleCampaigns"
+                                              kindOfClass:[NSArray class]
+                                                 allowNil:NO
+                                                    error:&err];
+    if (eligibleCampaignsObject == nil || err != nil) {
+        [BALogger debugForDomain:LOGGER_DOMAIN
+                         message:@"Could not fetch eligibleCampaigns: %@", [err localizedDescription]];
+
+        // Check if server respond with RetryAfter
+        _errorHandler(err, [self retryAfter:err]);
+        return;
+    }
+
+    _successHandler(eligibleCampaignsObject);
 }
 
 - (void)connectionFailedWithError:(NSError *)error {
@@ -192,15 +246,7 @@
     }
     [BALogger debugForDomain:LOGGER_DOMAIN message:@"Failure - %@", [error localizedDescription]];
 
-    // Check if server respond with RetryAfter
-    NSNumber *retryAfter = DEFAULT_RETRY_AFTER;
-    if (error.userInfo != nil) {
-        retryAfter = error.userInfo[@"retryAfter"];
-        if (retryAfter == nil) {
-            retryAfter = DEFAULT_RETRY_AFTER;
-        }
-    }
-    _errorHandler(error, retryAfter);
+    _errorHandler(error, [self retryAfter:error]);
 }
 
 - (BOOL)checkError:(NSError *)error {

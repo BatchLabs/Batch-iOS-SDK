@@ -6,6 +6,7 @@
 //
 
 #import <Batch/BAMSGMessage.h>
+#import <Batch/BatchMessagingPrivate.h>
 
 @implementation BAMSGHTMLText
 
@@ -16,6 +17,13 @@
 @end
 
 @implementation BAMSGMessage
+
+- (BOOL)isCEPMessage {
+    if (self.sourceMessage != nil) {
+        return self.sourceMessage.isCEPMessage;
+    }
+    return [self isKindOfClass:[BAMSGCEPMessage class]];
+}
 
 @end
 

@@ -240,9 +240,9 @@ NSString *const kBATPushOpenedNotificationOriginatesFromAppDelegate = @"is_from_
         BADelegatedApplicationDelegate *delegatedApplicationDelegate = [BADelegatedApplicationDelegate sharedInstance];
         delegatedApplicationDelegate.batchDelegate = self;
 
-        BOOL swizzleSuccess = [delegatedApplicationDelegate swizzleAppDelegate];
+        BOOL swizzleSuccess = [delegatedApplicationDelegate findAndSwizzleAppDelegate];
         [BALogger debugForDomain:NSStringFromClass([self class])
-                         message:swizzleSuccess ? @"Swizzing successful" : @"Swizzling errored"];
+                         message:swizzleSuccess ? @"Swizzling successful" : @"Swizzling errored"];
 
         self.swizzled = true;
 

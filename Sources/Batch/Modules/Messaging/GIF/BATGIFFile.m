@@ -8,6 +8,15 @@
     return false;
 
 /**
+ Frame fallback threshold duration
+ If a GIF frame requests duration faster than 50ms (20fps), fallback to default duration.
+ This provides stability by preventing excessively fast frame rates that could impact performance.
+ This is consistent with Firefox & WebKit behavior to prevent excessive CPU usage.
+ Reference: https://bugs.webkit.org/show_bug.cgi?id=36082
+ */
+const NSTimeInterval kBATGIFFrameFallbackThreshold = 0.05;
+
+/**
  Minimum duration of a frame
  Took this from FLAnimated image, which sourced it from a blog that experimented with various browsers
  */
@@ -208,13 +217,12 @@ const NSTimeInterval kBATGIFFrameDefaultDuration = 0.1;
         return nil;
     }
 
-    // Compute the duration (called DelayTime)
-    // First, try to read the unclamped delay time
-    // Fall back on the normal delay time
-    // Fall back on the previous duration
-    //    Which will itself should be the default duration for the first frame, but that's
-    //    handled elsewhere
-    // Then, make sure we don't go lower than the minimum duration
+    // Compute the frame duration (called DelayTime in GIF specification)
+    // First, try to read the unclamped delay time (more accurate)
+    // Fall back on the normal delay time (standard property)
+    // Fall back on the previous frame's duration
+    //    Which will itself be the default duration for the first frame, handled elsewhere
+    // Finally, enforce the minimum duration (20ms) to ensure smooth playback while preventing excessive CPU usage
 
     NSNumber *delayTime = gifProperties[(NSString *)kCGImagePropertyGIFUnclampedDelayTime];
     if (delayTime == nil) {
@@ -228,7 +236,18 @@ const NSTimeInterval kBATGIFFrameDefaultDuration = 0.1;
         duration = previousDuration;
     }
 
-    duration = MAX(kBATGIFFrameMinimumDuration, duration);
+    // Apply browser-compatible frame duration logic:
+    // 1. For very fast frames (< 50ms), use default duration for stability
+    // 2. Then ensure minimum duration (≥ 20ms) for performance
+
+    if (duration < kBATGIFFrameFallbackThreshold) {
+        // Frames faster than 50ms (20fps) are forced to 100ms (10fps)
+        // This matches Firefox/WebKit behavior for stability
+        duration = kBATGIFFrameDefaultDuration;
+    } else {
+        // Ensure absolute minimum duration (this mainly affects manually set durations)
+        duration = MAX(kBATGIFFrameMinimumDuration, duration);
+    }
 
     BATGIFFrame *frame = [[BATGIFFrame alloc] initWithSourceIndex:index duration:duration];
     frame.image = image;

@@ -33,7 +33,7 @@ xcodebuild clean archive -workspace SizeReport.xcworkspace -scheme $BITRISE_SIZE
 cd ..
 
 # Extracting archive and size report
-xcodebuild -exportArchive -archivePath SizeReport.xcarchive -exportPath "Generated" -exportOptionsPlist OptionsPlist.plist
+xcodebuild -exportArchive -archivePath SizeReport.xcarchive -exportPath "Generated" -exportOptionsPlist OptionsPlist.plist -allowProvisioningUpdates
 
 # Reading size report
 cat Generated/App\ Thinning\ Size\ Report.txt 

@@ -17,10 +17,10 @@
 
 @property (nullable, copy) NSString *label;
 
-@property (nullable, assign) BatchEventAttributes *attributes;
+@property (nullable, copy) NSDictionary *attributes;
 
 - (nonnull instancetype)initWithName:(nonnull NSString *)name
                                label:(nullable NSString *)label
-                          attributes:(nullable BatchEventAttributes *)attributes;
+                          attributes:(nullable NSDictionary *)attributes;
 
 @end
