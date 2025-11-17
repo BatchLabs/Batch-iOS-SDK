@@ -4,9 +4,10 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-@testable import Batch
 import Batch.Batch_Private
 import XCTest
+
+@testable import Batch
 
 final class pushAuthorizationTests: XCTestCase {
     func testRegister() async throws {
@@ -35,7 +36,7 @@ final class pushAuthorizationTests: XCTestCase {
 }
 
 @objc
-fileprivate class MockPushSystemHelper: NSObject, BAPushSystemHelperProtocol {
+private class MockPushSystemHelper: NSObject, BAPushSystemHelperProtocol {
     public var calledRegister = false
     public var calledProvisionalRegister = false
 

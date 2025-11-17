@@ -28,17 +28,17 @@ public enum InAppHeightType: Equatable {
     /// The integer value for a fixed height, or nil for dynamic heights.
     var value: Int? {
         switch self {
-            case .auto, .fill: return nil
-            case let .fixed(value): return value
+        case .auto, .fill: return nil
+        case let .fixed(value): return value
         }
     }
 
     /// The raw string representation of the height type, used for serialization.
     var rawValue: String {
         switch self {
-            case .auto: return Self.autoKey
-            case .fill: return Self.fillKey
-            case let .fixed(value): return "\(value)\(Self.fixedKey)"
+        case .auto: return Self.autoKey
+        case .fill: return Self.fillKey
+        case let .fixed(value): return "\(value)\(Self.fixedKey)"
         }
     }
 

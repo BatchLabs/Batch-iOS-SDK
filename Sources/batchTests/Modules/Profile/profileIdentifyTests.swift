@@ -4,9 +4,10 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-@testable import Batch
 import Batch.Batch_Private
 import Testing
+
+@testable import Batch
 
 /// Test suite for profile identification functionality, covering identity changes and JIT campaign cache management.
 @Suite(.serialized)
@@ -22,22 +23,32 @@ struct ProfileIdentifyTests {
 
         profileModule.identify(expectedCustomID)
 
-        #expect(eventTracker.findEvent(name: .profileIdentify, parameters: [
-            "identifiers": [
-                "custom_id": expectedCustomID,
-                "install_id": BatchUser.installationID!,
-            ],
-        ]) != nil)
+        #expect(
+            eventTracker.findEvent(
+                name: .profileIdentify,
+                parameters: [
+                    "identifiers": [
+                        "custom_id": expectedCustomID,
+                        "install_id": BatchUser.installationID!,
+                    ]
+                ]
+            ) != nil
+        )
 
         // Logout
         profileModule.identify(nil)
 
-        #expect(eventTracker.findEvent(name: .profileIdentify, parameters: [
-            "identifiers": [
-                "custom_id": NSNull(),
-                "install_id": BatchUser.installationID!,
-            ],
-        ]) != nil)
+        #expect(
+            eventTracker.findEvent(
+                name: .profileIdentify,
+                parameters: [
+                    "identifiers": [
+                        "custom_id": NSNull(),
+                        "install_id": BatchUser.installationID!,
+                    ]
+                ]
+            ) != nil
+        )
     }
 
     /// Tests that an invalid custom ID doesn't trigger an identify event.
@@ -56,12 +67,17 @@ struct ProfileIdentifyTests {
             print("Testing identify: '\(customID)'")
             profileModule.identify(customID)
 
-            #expect(eventTracker.findEvent(name: .profileIdentify, parameters: [
-                "identifiers": [
-                    "custom_id": customID,
-                    "install_id": BatchUser.installationID!,
-                ],
-            ]) == nil)
+            #expect(
+                eventTracker.findEvent(
+                    name: .profileIdentify,
+                    parameters: [
+                        "identifiers": [
+                            "custom_id": customID,
+                            "install_id": BatchUser.installationID!,
+                        ]
+                    ]
+                ) == nil
+            )
         }
     }
 

@@ -4,9 +4,10 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-@testable import Batch
 import Batch.Batch_Private
 import XCTest
+
+@testable import Batch
 
 final class BADomainStoreTests: XCTestCase {
     // MARK: - Setup
@@ -61,10 +62,11 @@ final class BADomainStoreTests: XCTestCase {
         let updateDate = Date().timeIntervalSince1970
 
         // Then the new domain should be the second element of `BADomainManager.domains`
-        let savedDomain = BAParameter.object(
-            forKey: kParametersDomainKey,
-            fallback: nil
-        ) as? String
+        let savedDomain =
+            BAParameter.object(
+                forKey: kParametersDomainKey,
+                fallback: nil
+            ) as? String
 
         XCTAssertEqual(newDomain, savedDomain)
 
@@ -73,10 +75,11 @@ final class BADomainStoreTests: XCTestCase {
         XCTAssertNil(BAParameter.object(forKey: kParametersDomainErrorUpdateDate, fallback: nil))
 
         // Then domain last update date sould be updated
-        let savedUpdateDate = BAParameter.object(
-            forKey: kParametersDomainLastUpdateDate,
-            fallback: nil
-        ) as? TimeInterval
+        let savedUpdateDate =
+            BAParameter.object(
+                forKey: kParametersDomainLastUpdateDate,
+                fallback: nil
+            ) as? TimeInterval
 
         XCTAssertNotNil(savedUpdateDate)
         XCTAssertEqual(savedUpdateDate!, updateDate, accuracy: 0.1)
@@ -89,10 +92,11 @@ final class BADomainStoreTests: XCTestCase {
         let updateDate = Date().timeIntervalSince1970
 
         // Then the new domain should be nil
-        let savedDomain = BAParameter.object(
-            forKey: kParametersDomainKey,
-            fallback: nil
-        ) as? String
+        let savedDomain =
+            BAParameter.object(
+                forKey: kParametersDomainKey,
+                fallback: nil
+            ) as? String
 
         XCTAssertNil(savedDomain)
 
@@ -103,10 +107,11 @@ final class BADomainStoreTests: XCTestCase {
         XCTAssertNil(BAParameter.object(forKey: kParametersDomainLastCheckDate, fallback: nil))
 
         // Then domain last update date sould be updated
-        let savedUpdateDate = BAParameter.object(
-            forKey: kParametersDomainLastUpdateDate,
-            fallback: nil
-        ) as? TimeInterval
+        let savedUpdateDate =
+            BAParameter.object(
+                forKey: kParametersDomainLastUpdateDate,
+                fallback: nil
+            ) as? TimeInterval
 
         XCTAssertNotNil(savedUpdateDate)
         XCTAssertEqual(savedUpdateDate!, updateDate, accuracy: 0.1)

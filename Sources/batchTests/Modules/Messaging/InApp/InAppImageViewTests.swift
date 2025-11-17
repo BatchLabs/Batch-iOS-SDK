@@ -4,8 +4,9 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-@testable import Batch
 import Testing
+
+@testable import Batch
 
 @Suite(.serialized, .disabled("Fail randomly on CI, needs more investigation"))
 struct InAppImageViewTests {

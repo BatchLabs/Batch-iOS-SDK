@@ -190,7 +190,8 @@ class InAppBaseBannerViewController: InAppViewController,
 
     /// Sets up vertical constraints based on the message's configured position (top, center, bottom).
     func setupVerticalConstraints(for contentView: UIView, viewGuide: UILayoutGuide) -> [NSLayoutConstraint] {
-        let constraints = switch configuration.placement.position {
+        let constraints =
+            switch configuration.placement.position {
             case .top:
                 [
                     contentView.topAnchor.constraint(equalTo: viewGuide.topAnchor),
@@ -212,7 +213,7 @@ class InAppBaseBannerViewController: InAppViewController,
                     contentView.topAnchor.constraint(equalTo: viewGuide.topAnchor),
                     contentView.bottomAnchor.constraint(equalTo: viewGuide.bottomAnchor),
                 ]
-        }
+            }
 
         NSLayoutConstraint.activate(constraints)
 
@@ -236,22 +237,22 @@ class InAppBaseBannerViewController: InAppViewController,
                 ]
 
                 switch configuration.placement.position {
-                    case .top:
-                        compactConstraints += [
-                            overleapSafeAreaView.topAnchor.constraint(equalTo: view.topAnchor),
-                            overleapSafeAreaView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-                        ]
-                    case .bottom:
-                        compactConstraints += [
-                            overleapSafeAreaView.topAnchor.constraint(equalTo: contentView.topAnchor),
-                            overleapSafeAreaView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-                        ]
-                    case .center:
-                        // This path should not be taken as `shouldOverleapSafeAreaForCurrentSize`
-                        // is false for center-aligned banners.
-                        break
-                    @unknown default:
-                        break
+                case .top:
+                    compactConstraints += [
+                        overleapSafeAreaView.topAnchor.constraint(equalTo: view.topAnchor),
+                        overleapSafeAreaView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+                    ]
+                case .bottom:
+                    compactConstraints += [
+                        overleapSafeAreaView.topAnchor.constraint(equalTo: contentView.topAnchor),
+                        overleapSafeAreaView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                    ]
+                case .center:
+                    // This path should not be taken as `shouldOverleapSafeAreaForCurrentSize`
+                    // is false for center-aligned banners.
+                    break
+                @unknown default:
+                    break
                 }
                 return compactConstraints
             } else {

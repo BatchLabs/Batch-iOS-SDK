@@ -151,7 +151,6 @@
     [[_metricRegistry localCampaignsJITResponseTime] startTimer];
 }
 
-// This method now parses JSON instead of MessagePack
 - (void)connectionDidFinishLoadingWithData:(NSData *)data {
     [super connectionDidFinishLoadingWithData:data];
 

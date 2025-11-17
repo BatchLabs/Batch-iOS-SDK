@@ -5,9 +5,9 @@
 //
 #import <Foundation/Foundation.h>
 
-#import <Batch/BAWebserviceMsgPackClient.h>
+#import <Batch/BAWebserviceJsonClient.h>
 
-@interface BAMetricWebserviceClient : BAWebserviceMsgPackClient <BAConnectionDelegate>
+@interface BAMetricWebserviceClient : BAWebserviceJsonClient <BAConnectionDelegate>
 
 - (nullable instancetype)initWithMetrics:(nonnull NSArray *)metrics
                                  success:(void (^_Nullable)(void))successHandler

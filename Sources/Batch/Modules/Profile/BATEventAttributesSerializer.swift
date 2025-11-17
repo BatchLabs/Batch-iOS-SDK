@@ -36,44 +36,44 @@ public class BATEventAttributesSerializer: NSObject {
         for (attributeName, attributeValue) in eventAttributes._attributes {
             let jsonKey = "\(attributeName).\(attributeValue.typeSuffix)"
             switch attributeValue.type {
-                case .date, .string, .double, .integer, .bool:
-                    jsonAttributes[jsonKey] = attributeValue.value
+            case .date, .string, .double, .integer, .bool:
+                jsonAttributes[jsonKey] = attributeValue.value
 
-                case .URL:
-                    if let urlValue = attributeValue.value as? URL {
-                        jsonAttributes[jsonKey] = urlValue.absoluteString
-                    } else {
-                        throw BATSDKError.sdkInternal(subcode: 1, reason: "attribute isn't an URL")
-                    }
+            case .URL:
+                if let urlValue = attributeValue.value as? URL {
+                    jsonAttributes[jsonKey] = urlValue.absoluteString
+                } else {
+                    throw BATSDKError.sdkInternal(subcode: 1, reason: "attribute isn't an URL")
+                }
 
-                case .stringArray:
-                    if let arrayValue = attributeValue.value as? [String] {
-                        jsonAttributes[jsonKey] = arrayValue
-                    } else {
-                        throw BATSDKError.sdkInternal(subcode: 2, reason: "attribute isn't a string array")
-                    }
+            case .stringArray:
+                if let arrayValue = attributeValue.value as? [String] {
+                    jsonAttributes[jsonKey] = arrayValue
+                } else {
+                    throw BATSDKError.sdkInternal(subcode: 2, reason: "attribute isn't a string array")
+                }
 
-                case .objectArray:
-                    if let arrayValue = attributeValue.value as? [BatchEventAttributes] {
-                        do {
-                            jsonAttributes[jsonKey] = try arrayValue.map { try BATEventAttributesSerializer.serializeAttributes(eventAttributes: $0) }
-                        } catch {
-                            throw error
-                        }
-                    } else {
-                        throw BATSDKError.sdkInternal(subcode: 3, reason: "attribute isn't a BatchEventAttributes array")
+            case .objectArray:
+                if let arrayValue = attributeValue.value as? [BatchEventAttributes] {
+                    do {
+                        jsonAttributes[jsonKey] = try arrayValue.map { try BATEventAttributesSerializer.serializeAttributes(eventAttributes: $0) }
+                    } catch {
+                        throw error
                     }
+                } else {
+                    throw BATSDKError.sdkInternal(subcode: 3, reason: "attribute isn't a BatchEventAttributes array")
+                }
 
-                case .object:
-                    if let objectValue = attributeValue.value as? BatchEventAttributes {
-                        do {
-                            try jsonAttributes[jsonKey] = BATEventAttributesSerializer.serializeAttributes(eventAttributes: objectValue)
-                        } catch {
-                            throw error
-                        }
-                    } else {
-                        throw BATSDKError.sdkInternal(subcode: 4, reason: "attribute isn't a BatchEventAttributes instance")
+            case .object:
+                if let objectValue = attributeValue.value as? BatchEventAttributes {
+                    do {
+                        try jsonAttributes[jsonKey] = BATEventAttributesSerializer.serializeAttributes(eventAttributes: objectValue)
+                    } catch {
+                        throw error
                     }
+                } else {
+                    throw BATSDKError.sdkInternal(subcode: 4, reason: "attribute isn't a BatchEventAttributes instance")
+                }
             }
         }
 

@@ -4,7 +4,7 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-fileprivate let loggerDomain = "BADomainManager"
+private let loggerDomain = "BADomainManager"
 
 @objc
 @objcMembers

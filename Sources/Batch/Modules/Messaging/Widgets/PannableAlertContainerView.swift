@@ -59,8 +59,10 @@ class PannableAlertContainerView: BAMSGBaseContainerView, BAMSGPannableContainer
 
     //  MARK: - Gesture Handling Logic
 
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
-                           shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer)
+    func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    )
         -> Bool
     {
         //  Allow the pan gesture and the scroll view's gestures to work together.
@@ -78,9 +80,9 @@ class PannableAlertContainerView: BAMSGBaseContainerView, BAMSGPannableContainer
 
             if lockVertically {
                 if !isAtBeginning, !isAtEnd {
-                    recognizer.isEnabled = false //  Temporarily disable the gesture
-                    recognizer.isEnabled = true //  Re-enable for future attempts
-                    return //  Exit, don't process the pan
+                    recognizer.isEnabled = false  //  Temporarily disable the gesture
+                    recognizer.isEnabled = true  //  Re-enable for future attempts
+                    return  //  Exit, don't process the pan
                 }
             } else {
                 if scrollableContentView.contentOffset.x != 0 || (!isAtBeginning && !isAtEnd) {
@@ -94,34 +96,36 @@ class PannableAlertContainerView: BAMSGBaseContainerView, BAMSGPannableContainer
         configureHapticFeedback(for: recognizer.state)
 
         switch recognizer.state {
-            case .began:
-                initialAlpha = self.alpha
-                linkedViewInitialAlpha = linkedView?.alpha ?? 1.0 //  Default to 1.0 if nil
-                if let linkedView {
-                    linkedViewInitialOffset = CGPoint(x: self.center.x - linkedView.center.x,
-                                                      y: self.center.y - linkedView.center.y)
-                }
-                shouldDismiss = false
-            case .changed:
-                applyTransformForPanChange(recognizer)
-            case .ended:
-                panEnded(recognizer)
-            case .failed, .cancelled:
-                shouldDismiss = false
-            default:
-                break
+        case .began:
+            initialAlpha = self.alpha
+            linkedViewInitialAlpha = linkedView?.alpha ?? 1.0  //  Default to 1.0 if nil
+            if let linkedView {
+                linkedViewInitialOffset = CGPoint(
+                    x: self.center.x - linkedView.center.x,
+                    y: self.center.y - linkedView.center.y
+                )
+            }
+            shouldDismiss = false
+        case .changed:
+            applyTransformForPanChange(recognizer)
+        case .ended:
+            panEnded(recognizer)
+        case .failed, .cancelled:
+            shouldDismiss = false
+        default:
+            break
         }
     }
 
     private func configureHapticFeedback(for state: UIGestureRecognizer.State) {
         switch state {
-            case .began:
-                hapticFeedbackGenerator = BATImpactFeedbackGenerator(style: .medium)
-                hapticFeedbackGenerator?.prepare()
-            case .cancelled, .failed, .ended:
-                hapticFeedbackGenerator = nil
-            default:
-                break
+        case .began:
+            hapticFeedbackGenerator = BATImpactFeedbackGenerator(style: .medium)
+            hapticFeedbackGenerator?.prepare()
+        case .cancelled, .failed, .ended:
+            hapticFeedbackGenerator = nil
+        default:
+            break
         }
     }
 
@@ -189,13 +193,15 @@ class PannableAlertContainerView: BAMSGBaseContainerView, BAMSGPannableContainer
     }
 
     private func resetAnimated() {
-        UIView.animate(withDuration: Self.animationDurationFast,
-                       delay: 0,
-                       options: .allowUserInteraction)
-        {
+        UIView.animate(
+            withDuration: Self.animationDurationFast,
+            delay: 0,
+            options: .allowUserInteraction
+        ) {
             self.alpha = self.initialAlpha
             self.linkedView?.alpha = self.linkedViewInitialAlpha
-        } completion: { _ in }
+        } completion: { _ in
+        }
 
         if UIAccessibility.isReduceMotionEnabled {
             //  Put back view with a simple translation
@@ -205,15 +211,17 @@ class PannableAlertContainerView: BAMSGBaseContainerView, BAMSGPannableContainer
             }
         } else {
             //  Spring animation
-            UIView.animate(withDuration: Self.animationDuration,
-                           delay: 0,
-                           usingSpringWithDamping: 0.5,
-                           initialSpringVelocity: 0,
-                           options: [.curveEaseInOut, .allowUserInteraction])
-            {
+            UIView.animate(
+                withDuration: Self.animationDuration,
+                delay: 0,
+                usingSpringWithDamping: 0.5,
+                initialSpringVelocity: 0,
+                options: [.curveEaseInOut, .allowUserInteraction]
+            ) {
                 self.transform = .identity
                 self.linkedView?.transform = .identity
-            } completion: { _ in }
+            } completion: { _ in
+            }
         }
     }
 
@@ -234,12 +242,12 @@ extension PannableAlertContainerView: UIGestureRecognizerDelegate {
 
             //  Check if the scroll view is scrolled
             if !isAtBeginning, !isAtEnd {
-                return false //  Don't begin pan if scrolled vertically
+                return false  //  Don't begin pan if scrolled vertically
             }
             if !lockVertically, scrollableContentView.contentOffset.x > 0 {
-                return false // Don't begin pan if scrolled horizontally
+                return false  // Don't begin pan if scrolled horizontally
             }
         }
-        return true //  Allow other gestures or pan if not the condition
+        return true  //  Allow other gestures or pan if not the condition
     }
 }

@@ -21,9 +21,15 @@
 #pragma mark Overridable request building methods
 
 - (nonnull NSMutableDictionary *)requestBodyDictionary {
-    // Children should implement this method to provide body data
+    // Children should implement this method to provide body data as a dictionary
     // This will not be used for GET requests
     return [NSMutableDictionary new];
+}
+
+- (nullable NSArray *)requestBodyArray {
+    // Children should implement this method to provide body data as an array
+    // This will not be used for GET requests
+    return nil;
 }
 
 #pragma mark -
@@ -33,7 +39,7 @@
     return [self generateBodyWithError:error];
 }
 
-// Generate the data body, which is the requestBodyDictionary encoded as json
+// Generate the data body, checking array first then dictionary
 - (NSData *)generateBodyWithError:(NSError **)error {
     // Replace error with a dummy variable if it's null, so we don't have to check each time
     if (error == NULL) {
@@ -42,12 +48,24 @@
     }
     *error = nil;
 
+    // Check if subclass provides an array first
+    NSArray *bodyArray = [self requestBodyArray];
+    if (bodyArray != nil) {
+        return [self serializeJSONObject:bodyArray error:error];
+    }
+
+    // Fall back to dictionary
     NSDictionary *bodyDictionary = [self requestBodyDictionary];
     if (bodyDictionary == nil) {
         bodyDictionary = [NSMutableDictionary new];
     }
 
-    if (![NSJSONSerialization isValidJSONObject:bodyDictionary]) {
+    return [self serializeJSONObject:bodyDictionary error:error];
+}
+
+// Helper method to serialize any JSON-compatible object
+- (nullable NSData *)serializeJSONObject:(id)object error:(NSError **)error {
+    if (![NSJSONSerialization isValidJSONObject:object]) {
         *error = [NSError errorWithDomain:NETWORKING_ERROR_DOMAIN
                                      code:BAConnectionErrorCauseSerialization
                                  userInfo:@{NSLocalizedDescriptionKey : @"Body is not a valid JSON object"}];
@@ -55,7 +73,7 @@
     }
 
     NSError *jsonErr = nil;
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:bodyDictionary options:0 error:&jsonErr];
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:object options:0 error:&jsonErr];
     if (jsonErr != nil) {
         *error = jsonErr;
         return nil;

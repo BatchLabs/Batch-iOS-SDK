@@ -12,12 +12,6 @@ extension InAppViewController {
         let borderColor: UIColor?
         let radius: [CGFloat]
 
-        init(borderWidth: CGFloat?, borderColor: UIColor?, radius: [CGFloat]) {
-            self.borderWidth = borderWidth
-            self.borderColor = borderColor
-            self.radius = radius
-        }
-
         static func empty() -> Self {
             Self(
                 borderWidth: nil,

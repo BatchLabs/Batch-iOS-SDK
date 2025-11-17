@@ -50,7 +50,8 @@ struct BatchEventAttributesTests {
 
         attributes.put(
             "A way too long string that goes for quiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiite too long"
-                + "Lorem ipsum dolor and other various stuff.", forKey: "string"
+                + "Lorem ipsum dolor and other various stuff.",
+            forKey: "string"
         )
         attributes.put("foobar", forKey: "invalid_key%%%")
         attributes.put("foobar", forKey: "key_that_is_too_long_really_it_should_be_more_than_thirty_chars")

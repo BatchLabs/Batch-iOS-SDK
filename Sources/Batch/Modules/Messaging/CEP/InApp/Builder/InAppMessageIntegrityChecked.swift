@@ -14,8 +14,8 @@ struct InAppMessageChecker {
 
         var value: Bool {
             return switch self {
-                case .true: true
-                case .false: false
+            case .true: true
+            case .false: false
             }
         }
     }
@@ -26,8 +26,8 @@ struct InAppMessageChecker {
 
         var description: String {
             return switch self {
-                case let .identifiable(identifiable): "\(identifiable)"
-                case let .identifier(identifier): identifier
+            case let .identifiable(identifiable): "\(identifiable)"
+            case let .identifier(identifier): identifier
             }
         }
     }
@@ -43,18 +43,18 @@ struct InAppMessageChecker {
         func description(component: Component, source: AnyKeyPath) -> String {
             let base = "\(component.description)-\(source):"
             return switch self {
-                case let .tooMuchValues(values):
-                    "\(base) Too much values: \(values)"
-                case .noValue:
-                    "\(base) No value: \(source)"
-                case let .negativeValue(value, index):
-                    "\(base) Negative value: \(value)\(index.map { " at index \($0)" })"
-                case let .emptyValue(index):
-                    "\(base) Empty value: \(index.map { " at index \($0)" })"
-                case let .notEquals(expected, actual):
-                    "\(base) Not equals: \(expected.formatted()) and \(actual.formatted())"
-                case let .badFormat(format):
-                    "\(base) Bad format: \(format)"
+            case let .tooMuchValues(values):
+                "\(base) Too much values: \(values)"
+            case .noValue:
+                "\(base) No value: \(source)"
+            case let .negativeValue(value, index):
+                "\(base) Negative value: \(value)\(index.map { " at index \($0)" })"
+            case let .emptyValue(index):
+                "\(base) Empty value: \(index.map { " at index \($0)" })"
+            case let .notEquals(expected, actual):
+                "\(base) Not equals: \(expected.formatted()) and \(actual.formatted())"
+            case let .badFormat(format):
+                "\(base) Bad format: \(format)"
             }
         }
     }
@@ -207,7 +207,7 @@ struct InAppMessageChecker {
 
     static func queryParameters(from url: URL) -> [String: String]? {
         guard let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false),
-              let queryItems = urlComponents.queryItems
+            let queryItems = urlComponents.queryItems
         else {
             return nil
         }
@@ -239,74 +239,77 @@ extension InAppMessageChecker {
             func description(component: Component, source: AnyKeyPath) -> String {
                 let base = "\(component.description)-\(source):"
                 return switch self {
-                    case let .missingMandatoryParameter(source):
-                        "\(base) Missing mandatory parameter: \(source)"
-                    case let .wrongRepartition(source):
-                        "\(base) Wrong repartition: \(source)"
-                    case let .actionWithUnsupportedParameters(source, name, key):
-                        "\(base) Action (\(name)) with unsupported parameters for key: \(key): \(source)"
+                case let .missingMandatoryParameter(source):
+                    "\(base) Missing mandatory parameter: \(source)"
+                case let .wrongRepartition(source):
+                    "\(base) Wrong repartition: \(source)"
+                case let .actionWithUnsupportedParameters(source, name, key):
+                    "\(base) Action (\(name)) with unsupported parameters for key: \(key): \(source)"
                 }
             }
         }
 
         static func sanitizeRadius(values: [Int]?, mandatory: Mandatory<Int>, arrayLimit: Int, source: AnyKeyPath, component: Component) throws -> [Int] {
-            let radius: [Int]? = if let values {
-                switch values.count {
+            let radius: [Int]? =
+                if let values {
+                    switch values.count {
                     case 0: nil
-                    case 1: (0 ..< arrayLimit).map { _ in values[0] }
+                    case 1: (0..<arrayLimit).map { _ in values[0] }
                     case 2: [values[0], values[1], values[0], values[1]]
                     case 3: throw errorWithLogs(InternalError.missingMandatoryParameter(source: source), component: component, source: source)
-                    default: values[0 ..< arrayLimit].map { $0 }
+                    default: values[0..<arrayLimit].map { $0 }
+                    }
+                } else {
+                    nil
                 }
-            } else {
-                nil
-            }
 
             switch mandatory {
-                case let .false(defaultValue):
-                    return radius ?? (0 ..< arrayLimit).map { _ in defaultValue }
-                case .true:
-                    if let radius {
-                        return radius
-                    } else {
-                        throw errorWithLogs(InternalError.missingMandatoryParameter(source: source), component: component, source: source)
-                    }
+            case let .false(defaultValue):
+                return radius ?? (0..<arrayLimit).map { _ in defaultValue }
+            case .true:
+                if let radius {
+                    return radius
+                } else {
+                    throw errorWithLogs(InternalError.missingMandatoryParameter(source: source), component: component, source: source)
+                }
             }
         }
 
         static func sanitizeMarginsOrPadding(values: [Int]?, mandatory: Mandatory<Int>, arrayLimit: Int, source: AnyKeyPath, component: Component) throws -> [Int] {
-            let margins: [Int]? = if let values {
-                switch values.count {
+            let margins: [Int]? =
+                if let values {
+                    switch values.count {
                     case 0: nil
-                    case 1: (0 ..< arrayLimit).map { _ in values[0] }
+                    case 1: (0..<arrayLimit).map { _ in values[0] }
                     case 2: [values[0], values[1], values[0], values[1]]
                     case 3: throw errorWithLogs(InternalError.missingMandatoryParameter(source: source), component: component, source: source)
-                    default: values[0 ..< arrayLimit].map { $0 }
+                    default: values[0..<arrayLimit].map { $0 }
+                    }
+                } else {
+                    nil
                 }
-            } else {
-                nil
-            }
 
             switch mandatory {
-                case let .false(defaultValue):
-                    return margins ?? (0 ..< arrayLimit).map { _ in defaultValue }
-                case .true:
-                    if let margins {
-                        return margins
-                    } else {
-                        throw errorWithLogs(InternalError.missingMandatoryParameter(source: source), component: component, source: source)
-                    }
+            case let .false(defaultValue):
+                return margins ?? (0..<arrayLimit).map { _ in defaultValue }
+            case .true:
+                if let margins {
+                    return margins
+                } else {
+                    throw errorWithLogs(InternalError.missingMandatoryParameter(source: source), component: component, source: source)
+                }
             }
         }
 
         static func sanitizeColors(values: [String]?, mandatory: Mandatory<(light: String, dark: String)>, source: AnyKeyPath, component: Component) throws -> UIColor {
-            let colors: [String] = switch mandatory {
+            let colors: [String] =
+                switch mandatory {
                 case .true:
                     if let values {
                         switch values.filter({ !$0.isEmpty }).count {
-                            case 0: throw errorWithLogs(InternalError.missingMandatoryParameter(source: source), component: component, source: source)
-                            case 1: [values[0], values[0]]
-                            default: values[0 ..< 2].map { $0 }
+                        case 0: throw errorWithLogs(InternalError.missingMandatoryParameter(source: source), component: component, source: source)
+                        case 1: [values[0], values[0]]
+                        default: values[0..<2].map { $0 }
                         }
                     } else {
                         throw errorWithLogs(InternalError.missingMandatoryParameter(source: source), component: component, source: source)
@@ -314,38 +317,38 @@ extension InAppMessageChecker {
                 case let .false(fallbackValues):
                     if let values {
                         switch values.filter({ !$0.isEmpty }).count {
-                            case 0: [fallbackValues.light, fallbackValues.dark]
-                            case 1: [values[0], values[0]]
-                            default: values[0 ..< 2].map { $0 }
+                        case 0: [fallbackValues.light, fallbackValues.dark]
+                        case 1: [values[0], values[0]]
+                        default: values[0..<2].map { $0 }
                         }
                     } else {
                         [fallbackValues.light, fallbackValues.dark]
                     }
-            }
+                }
 
             var lightColor = BAMSGStylableViewHelper.color(fromValue: colors[0])
             var darkColor = BAMSGStylableViewHelper.color(fromValue: colors[1])
             switch mandatory {
-                case .true:
-                    switch (lightColor, darkColor) {
-                        case (nil, nil): throw errorWithLogs(InternalError.missingMandatoryParameter(source: source), component: component, source: source)
-                        case (lightColor, nil):
-                            darkColor = lightColor
-                        case (nil, darkColor):
-                            lightColor = darkColor
-                        default: break
-                    }
-                case let .false((light, dark)):
-                    switch (lightColor, darkColor) {
-                        case (nil, nil):
-                            lightColor = BAMSGStylableViewHelper.color(fromValue: light)
-                            darkColor = BAMSGStylableViewHelper.color(fromValue: dark)
-                        case (lightColor, nil):
-                            darkColor = lightColor
-                        case (nil, darkColor):
-                            lightColor = darkColor
-                        default: break
-                    }
+            case .true:
+                switch (lightColor, darkColor) {
+                case (nil, nil): throw errorWithLogs(InternalError.missingMandatoryParameter(source: source), component: component, source: source)
+                case (lightColor, nil):
+                    darkColor = lightColor
+                case (nil, darkColor):
+                    lightColor = darkColor
+                default: break
+                }
+            case let .false((light, dark)):
+                switch (lightColor, darkColor) {
+                case (nil, nil):
+                    lightColor = BAMSGStylableViewHelper.color(fromValue: light)
+                    darkColor = BAMSGStylableViewHelper.color(fromValue: dark)
+                case (lightColor, nil):
+                    darkColor = lightColor
+                case (nil, darkColor):
+                    lightColor = darkColor
+                default: break
+                }
             }
 
             guard let lightColor, let darkColor else {
@@ -354,52 +357,52 @@ extension InAppMessageChecker {
 
             return UIColor { trait in
                 switch trait.userInterfaceStyle {
-                    case .dark: darkColor
-                    case .light, .unspecified: lightColor
-                    @unknown default: lightColor
+                case .dark: darkColor
+                case .light, .unspecified: lightColor
+                @unknown default: lightColor
                 }
             }
         }
 
         static func sanitizeValue(value: Int?, mandatory: Mandatory<Int>, acceptNegativeValue: Bool, source: AnyKeyPath, component: Component) throws -> Int {
             switch mandatory {
-                case let .false(defaultValue):
-                    if let value, !acceptNegativeValue, value < 0 {
-                        return defaultValue
-                    } else if let value {
-                        return value
-                    } else {
-                        return defaultValue
-                    }
-                case .true:
-                    if let value, !acceptNegativeValue, value < 0 {
-                        throw errorWithLogs(InternalError.missingMandatoryParameter(source: source), component: component, source: source)
-                    } else if let value {
-                        return value
-                    } else {
-                        throw errorWithLogs(InternalError.missingMandatoryParameter(source: source), component: component, source: source)
-                    }
+            case let .false(defaultValue):
+                if let value, !acceptNegativeValue, value < 0 {
+                    return defaultValue
+                } else if let value {
+                    return value
+                } else {
+                    return defaultValue
+                }
+            case .true:
+                if let value, !acceptNegativeValue, value < 0 {
+                    throw errorWithLogs(InternalError.missingMandatoryParameter(source: source), component: component, source: source)
+                } else if let value {
+                    return value
+                } else {
+                    throw errorWithLogs(InternalError.missingMandatoryParameter(source: source), component: component, source: source)
+                }
             }
         }
 
         static func sanitizeString(value: String?, mandatory: Mandatory<String>, source: AnyKeyPath, component: Component) throws -> String {
             switch mandatory {
-                case let .false(defaultValue):
-                    if value?.isEmpty == true {
-                        return defaultValue
-                    } else if let value {
-                        return value
-                    } else {
-                        return defaultValue
-                    }
-                case .true:
-                    if value?.isEmpty == true {
-                        throw errorWithLogs(InternalError.missingMandatoryParameter(source: source), component: component, source: source)
-                    } else if let value {
-                        return value
-                    } else {
-                        throw errorWithLogs(InternalError.missingMandatoryParameter(source: source), component: component, source: source)
-                    }
+            case let .false(defaultValue):
+                if value?.isEmpty == true {
+                    return defaultValue
+                } else if let value {
+                    return value
+                } else {
+                    return defaultValue
+                }
+            case .true:
+                if value?.isEmpty == true {
+                    throw errorWithLogs(InternalError.missingMandatoryParameter(source: source), component: component, source: source)
+                } else if let value {
+                    return value
+                } else {
+                    throw errorWithLogs(InternalError.missingMandatoryParameter(source: source), component: component, source: source)
+                }
             }
         }
 
@@ -408,7 +411,7 @@ extension InAppMessageChecker {
                 return values
             } else {
                 let defaultValue = 100 / count
-                var defaultValues = (0 ..< count).map { _ in defaultValue }
+                var defaultValues = (0..<count).map { _ in defaultValue }
 
                 if defaultValues.reduce(0, +) != 100 {
                     defaultValues[defaultValues.count - 1] = 100 - defaultValues.dropLast().reduce(0, +)
@@ -420,14 +423,14 @@ extension InAppMessageChecker {
 
         static func sanitizeAny<T>(value: T?, mandatory: Mandatory<T>, source: AnyKeyPath, component: Component) throws -> T {
             switch mandatory {
-                case let .false(defaultValue):
-                    return value ?? defaultValue
-                case .true:
-                    if let value {
-                        return value
-                    } else {
-                        throw errorWithLogs(InternalError.missingMandatoryParameter(source: source), component: component, source: source)
-                    }
+            case let .false(defaultValue):
+                return value ?? defaultValue
+            case .true:
+                if let value {
+                    return value
+                } else {
+                    throw errorWithLogs(InternalError.missingMandatoryParameter(source: source), component: component, source: source)
+                }
             }
         }
 
@@ -450,7 +453,9 @@ extension InAppMessageChecker {
         /// Sanitizes and provides default close button configuration for webview format
         /// Ensures webview messages always have a close button with appropriate default styling
         /// when no explicit close button configuration is provided
-        static func cross(format: InAppFormat, cross: InAppViewController.Configuration.CloseConfiguration.Cross?, source: AnyKeyPath, component: Component) throws -> InAppViewController.Configuration.CloseConfiguration.Cross? {
+        static func cross(format: InAppFormat, cross: InAppViewController.Configuration.CloseConfiguration.Cross?, source: AnyKeyPath, component: Component) throws -> InAppViewController.Configuration
+            .CloseConfiguration.Cross?
+        {
             guard let cross else {
                 // For webview format, provide default close button styling if none specified
                 if format == .webview {
@@ -512,7 +517,7 @@ extension InAppMessageChecker {
 
             // To much values
             if value.count > arrayLimit {
-                warnings.append(.tooMuchValues(value[arrayLimit ..< value.count].map(formatter)))
+                warnings.append(.tooMuchValues(value[arrayLimit..<value.count].map(formatter)))
             }
 
             logs(warnings, component: component, source: source)
@@ -524,11 +529,12 @@ extension InAppMessageChecker {
             var warnings: [Warning] = []
 
             // Negative value
-            values?.enumerated().forEach { value in
-                if value.element < 0 {
-                    warnings.append(.negativeValue(value.element.formatted(), index: value.offset))
+            values?.enumerated()
+                .forEach { value in
+                    if value.element < 0 {
+                        warnings.append(.negativeValue(value.element.formatted(), index: value.offset))
+                    }
                 }
-            }
 
             logs(warnings, component: component, source: source)
         }
@@ -537,11 +543,12 @@ extension InAppMessageChecker {
             var warnings: [Warning] = []
 
             // Negative value
-            values?.enumerated().forEach { value in
-                if value.element.isEmpty {
-                    warnings.append(.emptyValue(index: value.offset))
+            values?.enumerated()
+                .forEach { value in
+                    if value.element.isEmpty {
+                        warnings.append(.emptyValue(index: value.offset))
+                    }
                 }
-            }
 
             logs(warnings, component: component, source: source)
         }

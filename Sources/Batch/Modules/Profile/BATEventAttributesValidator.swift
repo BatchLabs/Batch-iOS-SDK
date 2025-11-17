@@ -6,23 +6,23 @@
 
 import Foundation
 
-fileprivate enum Maximums {
+private enum Maximums {
     static let labelLength = 200
     static let tagLength = 64
     static let tagsCount = 10
     static let attributesCount = 20
     static let urlLength = 2048
-    static let stringLength = 200
+    static let stringLength = 300
     static let arrayItemsCount = 25
 }
 
-fileprivate enum Consts {
+private enum Consts {
     static let attributeNamePattern = "^[a-zA-Z0-9_]{1,30}$"
 }
 
-fileprivate typealias ValidationErrorMessage = String
+private typealias ValidationErrorMessage = String
 
-fileprivate struct ValidationError {
+private struct ValidationError {
     let message: ValidationErrorMessage
     var breadcrumbs: Breadcrumbs
 
@@ -38,7 +38,7 @@ fileprivate struct ValidationError {
 /// Breadcrumbs is similar to an ariane thread, keeping track of where we are in an object
 /// For example, ["purchased_item", "name"] is the breadcrumb for a "name" attribute in a subobject
 /// attribute named "purchased_item".
-fileprivate struct Breadcrumbs {
+private struct Breadcrumbs {
     var items: [String]
 
     func appending(_ item: String) -> Breadcrumbs {
@@ -145,7 +145,10 @@ struct BATEventAttributesValidator {
         }
 
         if !attributeNameRegexp.matches(name) {
-            return ValidationError(message: "\(baseError) please make sure that the key is made of letters, underscores and numbers only (a-zA-Z0-9_). It also can't be longer than 30 characters", breadcrumbs: breadcrumbs)
+            return ValidationError(
+                message: "\(baseError) please make sure that the key is made of letters, underscores and numbers only (a-zA-Z0-9_). It also can't be longer than 30 characters",
+                breadcrumbs: breadcrumbs
+            )
         }
 
         return nil
@@ -157,51 +160,51 @@ struct BATEventAttributesValidator {
         let genericTypecastError = ValidationError(message: "attribute is not of the right underlying type. this is an internal error and should be reported", breadcrumbs: breadcrumbs)
 
         switch attribute.type {
-            case .URL:
-                if let url = attribute.value as? URL {
-                    mergeError(visitAttributeURLValue(url, breadcrumbs), into: &errors)
+        case .URL:
+            if let url = attribute.value as? URL {
+                mergeError(visitAttributeURLValue(url, breadcrumbs), into: &errors)
+            } else {
+                errors.append(genericTypecastError)
+            }
+        case .string:
+            if let stringValue = attribute.value as? String {
+                mergeError(visitAttributeStringValue(stringValue, breadcrumbs), into: &errors)
+            } else {
+                errors.append(genericTypecastError)
+            }
+        case .double, .integer, .bool, .date:
+            if !(attribute.value is NSNumber) {
+                errors.append(genericTypecastError)
+            }
+        case .objectArray, .stringArray:
+            if let anyArrayValue = attribute.value as? [Any] {
+                if let baseArrayError = visitAttributeArrayValueBase(anyArrayValue, breadcrumbs) {
+                    errors.append(baseArrayError)
                 } else {
-                    errors.append(genericTypecastError)
-                }
-            case .string:
-                if let stringValue = attribute.value as? String {
-                    mergeError(visitAttributeStringValue(stringValue, breadcrumbs), into: &errors)
-                } else {
-                    errors.append(genericTypecastError)
-                }
-            case .double, .integer, .bool, .date:
-                if !(attribute.value is NSNumber) {
-                    errors.append(genericTypecastError)
-                }
-            case .objectArray, .stringArray:
-                if let anyArrayValue = attribute.value as? [Any] {
-                    if let baseArrayError = visitAttributeArrayValueBase(anyArrayValue, breadcrumbs) {
-                        errors.append(baseArrayError)
-                    } else {
-                        // Only continue if the array passed base validation
-                        if attribute.type == .objectArray {
-                            if let objectArrayValue = attribute.value as? [BatchEventAttributes] {
-                                mergeErrors(visitAttributeObjectArrayValue(objectArrayValue, breadcrumbs), into: &errors)
-                            } else {
-                                errors.append(genericTypecastError)
-                            }
-                        } else if attribute.type == .stringArray {
-                            if let stringArrayValue = attribute.value as? [String] {
-                                mergeErrors(visitAttributeStringArrayValue(stringArrayValue, breadcrumbs), into: &errors)
-                            } else {
-                                errors.append(genericTypecastError)
-                            }
+                    // Only continue if the array passed base validation
+                    if attribute.type == .objectArray {
+                        if let objectArrayValue = attribute.value as? [BatchEventAttributes] {
+                            mergeErrors(visitAttributeObjectArrayValue(objectArrayValue, breadcrumbs), into: &errors)
+                        } else {
+                            errors.append(genericTypecastError)
+                        }
+                    } else if attribute.type == .stringArray {
+                        if let stringArrayValue = attribute.value as? [String] {
+                            mergeErrors(visitAttributeStringArrayValue(stringArrayValue, breadcrumbs), into: &errors)
+                        } else {
+                            errors.append(genericTypecastError)
                         }
                     }
-                } else {
-                    errors.append(genericTypecastError)
                 }
-            case .object:
-                if let objectValue = attribute.value as? BatchEventAttributes {
-                    mergeErrors(visitObject(eventAttributes: objectValue, breadcrumbs: breadcrumbs), into: &errors)
-                } else {
-                    errors.append(genericTypecastError)
-                }
+            } else {
+                errors.append(genericTypecastError)
+            }
+        case .object:
+            if let objectValue = attribute.value as? BatchEventAttributes {
+                mergeErrors(visitObject(eventAttributes: objectValue, breadcrumbs: breadcrumbs), into: &errors)
+            } else {
+                errors.append(genericTypecastError)
+            }
         }
 
         return errors
@@ -331,9 +334,11 @@ struct BATEventAttributesValidator {
     }
 
     private func wrapAndMergeErrorMessages(_ messages: [ValidationErrorMessage], breadcrumbs: Breadcrumbs, into accumulator: inout [ValidationError]) {
-        accumulator.append(contentsOf: messages.map { message in
-            return ValidationError(message: message, breadcrumbs: breadcrumbs)
-        })
+        accumulator.append(
+            contentsOf: messages.map { message in
+                return ValidationError(message: message, breadcrumbs: breadcrumbs)
+            }
+        )
     }
 
     private func mergeError(_ error: ValidationError?, into accumulator: inout [ValidationError]) {

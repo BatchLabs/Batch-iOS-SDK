@@ -175,11 +175,10 @@ NSErrorDomain const BAInstallDataEditorErrorDomain = @"com.batch.ios.installdata
     ENSURE_ATTRIBUTE_VALUE_CLASS(attribute, [NSString class])
 
     if ([((NSString *)attribute) length] > ATTR_STRING_MAX_LENGTH) {
-        *error = [self
-            logAndMakeSaveErrorWithCode:BAInstallDataEditorErrorInvalidValue
-                                 reason:
-                                     @"String attributes can't be longer than %d characters. Ignoring attribute '%@'.",
-                                     ATTR_STRING_MAX_LENGTH, key];
+        *error = [self logAndMakeSaveErrorWithCode:BAInstallDataEditorErrorInvalidValue
+                                            reason:@"String attributes can't be longer than %d characters for the "
+                                                   @"Mobile Engagement Platform (MEP). Ignoring attribute '%@'.",
+                                                   ATTR_STRING_MAX_LENGTH, key];
         return false;
     }
 
@@ -371,7 +370,8 @@ NSErrorDomain const BAInstallDataEditorErrorDomain = @"com.batch.ios.installdata
 
     if (!didTagValidate) {
         [BALogger publicForDomain:PUBLIC_DOMAIN
-                          message:@"Invalid tag. Please make sure that the tag is a non empty string. It also can't be "
+                          message:@"Invalid tag for the Mobile Engagement Platform (MEP). Please make sure that the "
+                                  @"tag is a non empty string. It also can't be "
                                   @"longer than %d characters. Ignoring tag '%@' for collection '%@'.",
                                   ATTR_STRING_MAX_LENGTH, tag, collection];
         return;
@@ -399,7 +399,8 @@ NSErrorDomain const BAInstallDataEditorErrorDomain = @"com.batch.ios.installdata
 
     if (!didTagValidate) {
         [BALogger publicForDomain:PUBLIC_DOMAIN
-                          message:@"Invalid tag. Please make sure that the tag is a non empty string. It also can't be "
+                          message:@"Invalid tag for the Mobile Engagement Platform (MEP). Please make sure that the "
+                                  @"tag is a non empty string. It also can't be "
                                   @"longer than %d characters. Ignoring tag '%@' for collection '%@'.",
                                   ATTR_STRING_MAX_LENGTH, tag, collection];
         return;

@@ -16,8 +16,8 @@ public enum InAppWidthType: Equatable {
 
     var value: Int? {
         return switch self {
-            case .auto: nil
-            case let .percent(value: value): value
+        case .auto: nil
+        case let .percent(value: value): value
         }
     }
 

@@ -95,20 +95,20 @@ class BatchUserDiffTests: XCTestCase {
 
     func testEventSerialization() {
         let newCollections: [String: Set<String>] = [
-            "newtags": ["new"],
+            "newtags": ["new"]
         ]
 
         let oldCollections: [String: Set<String>] = [
-            "oldtags": ["old"],
+            "oldtags": ["old"]
         ]
 
         let newAttributes: [String: BAUserAttribute] = [
-            "c.new": BAUserAttribute(value: "newvalue", type: .string),
+            "c.new": BAUserAttribute(value: "newvalue", type: .string)
         ]
 
         let attributeTimestamp = 12_345_678
         let oldAttributes: [String: BAUserAttribute] = [
-            "c.old": BAUserAttribute(value: Date(timeIntervalSince1970: 12_345_678), type: .date),
+            "c.old": BAUserAttribute(value: Date(timeIntervalSince1970: 12_345_678), type: .date)
         ]
 
         let serializedDiff = BAUserDataDiffTransformer.eventParameters(

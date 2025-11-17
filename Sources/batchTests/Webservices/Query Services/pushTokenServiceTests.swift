@@ -9,7 +9,7 @@ import Batch.Batch_Private
 import Foundation
 import XCTest
 
-fileprivate let expectedToken = "test_token"
+private let expectedToken = "test_token"
 
 class pushTokenServiceTests: XCTestCase {
     func testIdentifier() {

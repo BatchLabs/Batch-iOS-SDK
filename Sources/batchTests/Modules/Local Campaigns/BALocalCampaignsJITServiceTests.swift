@@ -28,20 +28,22 @@ struct BALocalCampaignsJITServiceTests {
         expectedEvent.count = 5
         expectedEvent.lastOccurrence = Date()
 
-        let service = try #require(BALocalCampaignsJITService(
-            localCampaigns: campaigns,
-            viewTracker: viewTracker,
-            version: .CEP,
-            success: { _ in },
-            error: { _, _ in }
-        ))
+        let service = try #require(
+            BALocalCampaignsJITService(
+                localCampaigns: campaigns,
+                viewTracker: viewTracker,
+                version: .CEP,
+                success: { _ in },
+                error: { _, _ in }
+            )
+        )
 
         let requestBody = service.requestBodyDictionary()
 
         #expect(requestBody["ids"] != nil)
         #expect(requestBody["campaigns"] != nil)
         #expect(requestBody["views"] != nil)
-        #expect(requestBody["attributes"] == nil) // CEP should not include attributes
+        #expect(requestBody["attributes"] == nil)  // CEP should not include attributes
 
         let campaignIds = try #require(requestBody["campaigns"] as? [String])
         #expect(campaignIds.count == 1)
@@ -54,20 +56,22 @@ struct BALocalCampaignsJITServiceTests {
         let viewTracker = BALocalCampaignsTracker()
         let campaigns = [mockCampaign]
 
-        let service = try #require(BALocalCampaignsJITService(
-            localCampaigns: campaigns,
-            viewTracker: viewTracker,
-            version: .MEP,
-            success: { _ in },
-            error: { _, _ in }
-        ))
+        let service = try #require(
+            BALocalCampaignsJITService(
+                localCampaigns: campaigns,
+                viewTracker: viewTracker,
+                version: .MEP,
+                success: { _ in },
+                error: { _, _ in }
+            )
+        )
 
         let requestBody = service.requestBodyDictionary()
 
         #expect(requestBody["ids"] != nil)
         #expect(requestBody["campaigns"] != nil)
         #expect(requestBody["views"] != nil)
-        #expect(requestBody["attributes"] != nil) // MEP should include attributes
+        #expect(requestBody["attributes"] != nil)  // MEP should include attributes
 
         let campaignIds = try #require(requestBody["campaigns"] as? [String])
         #expect(campaignIds.count == 1)
@@ -81,13 +85,15 @@ struct BALocalCampaignsJITServiceTests {
         let viewTracker = BALocalCampaignsTracker()
         let campaigns = [mockCampaign1, mockCampaign2]
 
-        let service = try #require(BALocalCampaignsJITService(
-            localCampaigns: campaigns,
-            viewTracker: viewTracker,
-            version: .CEP,
-            success: { _ in },
-            error: { _, _ in }
-        ))
+        let service = try #require(
+            BALocalCampaignsJITService(
+                localCampaigns: campaigns,
+                viewTracker: viewTracker,
+                version: .CEP,
+                success: { _ in },
+                error: { _, _ in }
+            )
+        )
 
         let requestBody = service.requestBodyDictionary()
 
@@ -126,25 +132,27 @@ struct BALocalCampaignsJITServiceTests {
         let campaigns = [Self.createMockCampaign(id: "campaign_1")]
 
         try await confirmation("Success handler called with correct campaigns") { confirm in
-            let service = try #require(BALocalCampaignsJITService(
-                localCampaigns: campaigns,
-                viewTracker: viewTracker,
-                version: .CEP,
-                success: { eligibleCampaigns in
-                    #expect(eligibleCampaigns.count == 2)
-                    confirm()
-                },
-                error: { _, _ in
-                    Issue.record("Error handler should not be called")
-                    confirm()
-                }
-            ))
+            let service = try #require(
+                BALocalCampaignsJITService(
+                    localCampaigns: campaigns,
+                    viewTracker: viewTracker,
+                    version: .CEP,
+                    success: { eligibleCampaigns in
+                        #expect(eligibleCampaigns.count == 2)
+                        confirm()
+                    },
+                    error: { _, _ in
+                        Issue.record("Error handler should not be called")
+                        confirm()
+                    }
+                )
+            )
 
             let validResponseJSON = """
-            {
-                "eligibleCampaigns": ["campaign_1", "campaign_2"]
-            }
-            """
+                {
+                    "eligibleCampaigns": ["campaign_1", "campaign_2"]
+                }
+                """
 
             let responseData = validResponseJSON.data(using: .utf8)!
             service.connectionDidFinishLoading(with: responseData)
@@ -196,10 +204,10 @@ struct BALocalCampaignsJITServiceTests {
             )
 
             let responseWithoutEligibleCampaigns = """
-            {
-                "otherField": "value"
-            }
-            """
+                {
+                    "otherField": "value"
+                }
+                """
 
             let responseData = responseWithoutEligibleCampaigns.data(using: .utf8)!
             service?.connectionDidFinishLoading(with: responseData)
@@ -227,10 +235,10 @@ struct BALocalCampaignsJITServiceTests {
             )
 
             let emptyResponseJSON = """
-            {
-                "eligibleCampaigns": []
-            }
-            """
+                {
+                    "eligibleCampaigns": []
+                }
+                """
 
             let responseData = emptyResponseJSON.data(using: .utf8)!
             service?.connectionDidFinishLoading(with: responseData)

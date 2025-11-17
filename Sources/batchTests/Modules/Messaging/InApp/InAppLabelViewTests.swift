@@ -4,8 +4,9 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-@testable import Batch
 import Testing
+
+@testable import Batch
 
 struct InAppLabelViewTests {
     let text = "Je suis un label"

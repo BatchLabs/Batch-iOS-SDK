@@ -7,9 +7,9 @@
 import Batch.Batch_Private
 import Foundation
 
-public extension BAInjection {
+extension BAInjection {
     // Inject a Class or Protocol. Structs are not supported.
-    static func inject<T>(_ requestedType: T.Type) -> T? {
+    public static func inject<T>(_ requestedType: T.Type) -> T? {
         // We have a single inject method as "T" matches Protocols in swift
         // The only way to get "is" to work on a protocol is to force downcast it as AnyObject first
         // as T.Type is actually an union. For example, calling `inject(EventTrackerProtocol)` makes

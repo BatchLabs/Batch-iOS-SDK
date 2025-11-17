@@ -6,13 +6,13 @@
 
 import Foundation
 
-fileprivate enum Maximums {
+private enum Maximums {
     static let stringArrayItems = 25
-    static let stringLength = 64
+    static let stringLength = 300
     static let urlLength = 2048
 }
 
-fileprivate enum Consts {
+private enum Consts {
     static let attributeNamePattern = "^[a-zA-Z0-9_]{1,30}$"
 }
 
@@ -120,7 +120,10 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
         try checkIfConsumed()
 
         if !isProfileIdentified() {
-            throw BatchProfileError(code: .editorInvalidValue, reason: "Emails cannot be set on a profile if it has not been identified first. Please call 'BatchProfile.idenfity()' with a non nil value beforehand.")
+            throw BatchProfileError(
+                code: .editorInvalidValue,
+                reason: "Emails cannot be set on a profile if it has not been identified first. Please call 'BatchProfile.idenfity()' with a non nil value beforehand."
+            )
         }
 
         if let value {
@@ -155,7 +158,10 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
         try checkIfConsumed()
 
         if !isProfileIdentified() {
-            throw BatchProfileError(code: .editorInvalidValue, reason: "Phone number cannot be set on a profile if it has not been identified first. Please call 'BatchProfile.idenfity()' with a non nil value beforehand.")
+            throw BatchProfileError(
+                code: .editorInvalidValue,
+                reason: "Phone number cannot be set on a profile if it has not been identified first. Please call 'BatchProfile.idenfity()' with a non nil value beforehand."
+            )
         }
 
         if let value {
@@ -388,7 +394,10 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
         let baseError = "invalid attribute name '\(name)':"
 
         if !attributeNameRegexp.matches(name) {
-            throw BatchProfileError(code: .editorInvalidKey, reason: "\(baseError) please make sure that the key is made of letters, underscores and numbers only (a-zA-Z0-9_). It also can't be longer than 30 characters")
+            throw BatchProfileError(
+                code: .editorInvalidKey,
+                reason: "\(baseError) please make sure that the key is made of letters, underscores and numbers only (a-zA-Z0-9_). It also can't be longer than 30 characters"
+            )
         }
 
         return normalizedName

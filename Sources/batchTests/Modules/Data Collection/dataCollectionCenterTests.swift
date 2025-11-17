@@ -4,9 +4,10 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-@testable import Batch
 import Batch.Batch_Private
 import XCTest
+
+@testable import Batch
 
 final class dataCollectionCenterTests: XCTestCase {
     // Mock event tracker
@@ -80,10 +81,15 @@ final class dataCollectionCenterTests: XCTestCase {
         }
 
         // Verify all data are sent
-        XCTAssertNotNil(eventTracker.findEvent(name: .nativeDataChanged, parameters: [
-            "geoip_resolution": true,
-            "device_model": "Simulator - arm64",
-        ]))
+        XCTAssertNotNil(
+            eventTracker.findEvent(
+                name: .nativeDataChanged,
+                parameters: [
+                    "geoip_resolution": true,
+                    "device_model": "Simulator - arm64",
+                ]
+            )
+        )
 
         // Disable only geoip
         BatchSDK.updateAutomaticDataCollection { config in
@@ -91,9 +97,14 @@ final class dataCollectionCenterTests: XCTestCase {
         }
 
         // Check geoip is sent
-        XCTAssertNotNil(eventTracker.findEvent(name: .nativeDataChanged, parameters: [
-            "geoip_resolution": false,
-        ]))
+        XCTAssertNotNil(
+            eventTracker.findEvent(
+                name: .nativeDataChanged,
+                parameters: [
+                    "geoip_resolution": false
+                ]
+            )
+        )
 
         // Disable only device model
         BatchSDK.updateAutomaticDataCollection { config in
@@ -101,9 +112,14 @@ final class dataCollectionCenterTests: XCTestCase {
         }
 
         // Check device model is sent with null
-        XCTAssertNotNil(eventTracker.findEvent(name: .nativeDataChanged, parameters: [
-            "device_model": NSNull(),
-        ]))
+        XCTAssertNotNil(
+            eventTracker.findEvent(
+                name: .nativeDataChanged,
+                parameters: [
+                    "device_model": NSNull()
+                ]
+            )
+        )
 
         eventTracker.reset()
 

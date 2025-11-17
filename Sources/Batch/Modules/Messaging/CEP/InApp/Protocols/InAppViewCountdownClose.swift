@@ -53,7 +53,7 @@ extension InAppViewCountdownClose where Self: InAppViewController {
 
         // Basic height constraint for the countdown bar.
         var constraints = [
-            countdownView.heightAnchor.constraint(equalToConstant: 2),
+            countdownView.heightAnchor.constraint(equalToConstant: 2)
         ]
 
         // Adjust horizontal constraints based on whether the safe area should be respected.
@@ -76,17 +76,17 @@ extension InAppViewCountdownClose where Self: InAppViewController {
         let anchorConstraint: NSLayoutConstraint
         if configuration.format == .modal {
             switch configuration.placement.position {
-                case .top:
-                    // For top-aligned modals, the countdown is at the bottom of the view.
-                    let bottomAnchor = withSafeArea ? view.safeAreaLayoutGuide.bottomAnchor : view.bottomAnchor
-                    anchorConstraint = countdownView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -additionnalBorderWidth)
-                case .center, .bottom:
-                    // For center and bottom-aligned modals, the countdown is at the top.
-                    let topAnchor = withSafeArea ? view.safeAreaLayoutGuide.topAnchor : view.topAnchor
-                    anchorConstraint = countdownView.topAnchor.constraint(equalTo: topAnchor, constant: additionnalBorderWidth)
-                @unknown default:
-                    let topAnchor = withSafeArea ? view.safeAreaLayoutGuide.topAnchor : view.topAnchor
-                    anchorConstraint = countdownView.topAnchor.constraint(equalTo: topAnchor, constant: additionnalBorderWidth)
+            case .top:
+                // For top-aligned modals, the countdown is at the bottom of the view.
+                let bottomAnchor = withSafeArea ? view.safeAreaLayoutGuide.bottomAnchor : view.bottomAnchor
+                anchorConstraint = countdownView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -additionnalBorderWidth)
+            case .center, .bottom:
+                // For center and bottom-aligned modals, the countdown is at the top.
+                let topAnchor = withSafeArea ? view.safeAreaLayoutGuide.topAnchor : view.topAnchor
+                anchorConstraint = countdownView.topAnchor.constraint(equalTo: topAnchor, constant: additionnalBorderWidth)
+            @unknown default:
+                let topAnchor = withSafeArea ? view.safeAreaLayoutGuide.topAnchor : view.topAnchor
+                anchorConstraint = countdownView.topAnchor.constraint(equalTo: topAnchor, constant: additionnalBorderWidth)
             }
         } else {
             // For non-modal formats (like banners and webview), the countdown is always at the top.
@@ -139,8 +139,13 @@ extension InAppViewCountdownClose where Self: InAppViewController {
         countdownView.layoutIfNeeded()
 
         // Animate the countdown bar from its current state to zero over the remaining time.
-        UIView.animate(withDuration: timeLeft, delay: 0, options: .curveLinear, animations: { [weak countdownView] in
-            countdownView?.setPercentage(0)
-        })
+        UIView.animate(
+            withDuration: timeLeft,
+            delay: 0,
+            options: .curveLinear,
+            animations: { [weak countdownView] in
+                countdownView?.setPercentage(0)
+            }
+        )
     }
 }

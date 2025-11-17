@@ -18,17 +18,18 @@ class MinimalWebviewJavascriptBridge: BATWebviewJavascriptBridge {
         NSString
     > {
         switch method {
-            case "success":
-                return BAPromise.resolved("ok")
-            case "failure":
-                return BAPromise.rejected(
-                    NSError(domain: "tests", code: 0, userInfo: [NSLocalizedDescriptionKey: expectedErrorMessage]))
-            case "echo":
-                return BAPromise.resolved((rawJSONArguments!["value"] as! NSString))
-            case "echo_nil":
-                return BAPromise.resolved(nil)
-            default:
-                return BAPromise.rejected(nil)
+        case "success":
+            return BAPromise.resolved("ok")
+        case "failure":
+            return BAPromise.rejected(
+                NSError(domain: "tests", code: 0, userInfo: [NSLocalizedDescriptionKey: expectedErrorMessage])
+            )
+        case "echo":
+            return BAPromise.resolved((rawJSONArguments!["value"] as! NSString))
+        case "echo_nil":
+            return BAPromise.resolved(nil)
+        default:
+            return BAPromise.rejected(nil)
         }
     }
 }

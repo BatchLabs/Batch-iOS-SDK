@@ -20,23 +20,20 @@
     // Put teardown code here. This method is called after the invocation of each test method in the class.
 }
 
-- (void)testPack {
-    NSError *error = nil;
-
+- (void)testToDictionary {
     BACounter *counter = [[BACounter alloc] initWithName:@"counter_test_metric" andLabelNames:@"label", nil];
     [counter increment];
 
-    const unsigned char expectedBytes[] = {0x83, 0xA4, 0x6E, 0x61, 0x6D, 0x65, 0xB3, 0x63, 0x6F, 0x75, 0x6E, 0x74,
-                                           0x65, 0x72, 0x5F, 0x74, 0x65, 0x73, 0x74, 0x5F, 0x6D, 0x65, 0x74, 0x72,
-                                           0x69, 0x63, 0xA4, 0x74, 0x79, 0x70, 0x65, 0xA7, 0x63, 0x6F, 0x75, 0x6E,
-                                           0x74, 0x65, 0x72, 0xA6, 0x76, 0x61, 0x6C, 0x75, 0x65, 0x73, 0x91, 0xCB,
-                                           0x3F, 0xF0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    NSDictionary *dict = [counter toDictionary];
 
-    NSData *expected = [NSData dataWithBytes:expectedBytes length:sizeof(expectedBytes)];
-    NSData *current = [counter pack:&error];
-
-    XCTAssertNil(error);
-    XCTAssert([expected isEqual:current]);
+    XCTAssertNotNil(dict);
+    XCTAssertEqualObjects(dict[@"name"], @"counter_test_metric");
+    XCTAssertEqualObjects(dict[@"type"], @"counter");
+    XCTAssertNotNil(dict[@"values"]);
+    XCTAssertTrue([dict[@"values"] isKindOfClass:[NSArray class]]);
+    NSArray *values = dict[@"values"];
+    XCTAssertEqual(values.count, 1);
+    XCTAssertEqualObjects(values[0], @1.0);
 }
 
 - (void)testHasChildren {

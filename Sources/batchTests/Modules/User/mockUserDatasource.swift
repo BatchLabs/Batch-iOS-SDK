@@ -4,10 +4,11 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-@testable import Batch
 import Batch.Batch_Private
 import Foundation
 import InstantMock
+
+@testable import Batch
 
 class MockUserDatasource: Mock, BAUserDatasourceProtocol {
     func close() {

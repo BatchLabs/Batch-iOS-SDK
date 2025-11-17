@@ -4,9 +4,10 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-@testable import Batch
 import Batch.Batch_Private
 import XCTest
+
+@testable import Batch
 
 class profileMigrationTests: XCTestCase {
     // Mock event tracker
@@ -48,12 +49,17 @@ class profileMigrationTests: XCTestCase {
         triggerMigrationsFromUserDataService()
 
         // Ensure identify event is sent
-        XCTAssertNotNil(eventTracker.findEvent(name: .profileIdentify, parameters: [
-            "identifiers": [
-                "custom_id": expectedCustomID,
-                "install_id": BatchUser.installationID!,
-            ],
-        ]))
+        XCTAssertNotNil(
+            eventTracker.findEvent(
+                name: .profileIdentify,
+                parameters: [
+                    "identifiers": [
+                        "custom_id": expectedCustomID,
+                        "install_id": BatchUser.installationID!,
+                    ]
+                ]
+            )
+        )
     }
 
     func testCustomIDMigrationDisabled() throws {
@@ -99,13 +105,13 @@ class profileMigrationTests: XCTestCase {
         XCTAssertEqual(event?.parametersDictionary["language"] as? String, "fr")
         XCTAssertEqual(event?.parametersDictionary["region"] as? String, "FR")
         // TODO: fix this test on CI
-//        let customAttributes = event?.parametersDictionary["custom_attributes"] as? NSDictionary
-//        XCTAssertEqual(customAttributes?["string.s"] as? String, "teststring")
-//        XCTAssertEqual(customAttributes?["long.i"] as? Int64, 3)
-//        XCTAssertEqual(customAttributes?["url.u"] as? String, "https://batch.com/pricing")
-//
-//        let tags = ["tag1"]
-//        XCTAssertEqual(customAttributes?["testco.a"] as? [String], tags)
+        //        let customAttributes = event?.parametersDictionary["custom_attributes"] as? NSDictionary
+        //        XCTAssertEqual(customAttributes?["string.s"] as? String, "teststring")
+        //        XCTAssertEqual(customAttributes?["long.i"] as? Int64, 3)
+        //        XCTAssertEqual(customAttributes?["url.u"] as? String, "https://batch.com/pricing")
+        //
+        //        let tags = ["tag1"]
+        //        XCTAssertEqual(customAttributes?["testco.a"] as? [String], tags)
     }
 
     func testCustomDataMigrationDisabled() throws {

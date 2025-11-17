@@ -4,8 +4,9 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-@testable import Batch
 import Testing
+
+@testable import Batch
 
 struct InAppDividerViewTests {
     static let height: Int = 4
@@ -14,17 +15,19 @@ struct InAppDividerViewTests {
 
     @MainActor
     @Test func testConfiguration() async throws {
-        let dividerView = InAppDividerView(configuration: InAppDividerView.Configuration(
-            style: InAppDividerView.Configuration.Style(
-                color: Self.color
-            ),
-            placement: InAppDividerView.Configuration.Placement(
-                margins: .zero,
-                widthType: nil,
-                heightType: Self.heightType,
-                horizontalAlignment: nil
+        let dividerView = InAppDividerView(
+            configuration: InAppDividerView.Configuration(
+                style: InAppDividerView.Configuration.Style(
+                    color: Self.color
+                ),
+                placement: InAppDividerView.Configuration.Placement(
+                    margins: .zero,
+                    widthType: nil,
+                    heightType: Self.heightType,
+                    horizontalAlignment: nil
+                )
             )
-        ))
+        )
 
         dividerView.configure()
         dividerView.layoutSubviews()

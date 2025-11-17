@@ -26,13 +26,13 @@ struct InAppFontStyleBuilder {
 /// According the decoration, wrap the content by the right tag
 /// Should be the same tags unsed in
 /// ``- (BATTextModifiers)modifierForTag:(NSString *)tag``
-fileprivate extension InAppFontDecoration {
-    func wrapped(content: String) -> String {
+extension InAppFontDecoration {
+    fileprivate func wrapped(content: String) -> String {
         return switch self {
-            case .bold: "<b>\(content)</b>"
-            case .italic: "<i>\(content)</i>"
-            case .stroke: "<s>\(content)</s>"
-            case .underline: "<u>\(content)</u>"
+        case .bold: "<b>\(content)</b>"
+        case .italic: "<i>\(content)</i>"
+        case .stroke: "<s>\(content)</s>"
+        case .underline: "<u>\(content)</u>"
         }
     }
 }

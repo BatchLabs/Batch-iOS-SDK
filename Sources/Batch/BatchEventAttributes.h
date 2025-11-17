@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Add an array of string attribute for the specified key.
 ///
 /// - Parameters:
-///   - value: Array of string values to add. Strings must not be longer than 200 characters. Cannot have more than 25
+///   - value: Array of string values to add. Strings must not be longer than 300 characters. Cannot have more than 25
 ///   items.
 ///   - key:  Attribute key. Should be made of letters, numbers or underscores ([a-z0-9_]) and can't be longer than 30
 ///   characters.
@@ -91,7 +91,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Add a string attribute for the specified key.
 ///
 /// - Parameters:
-///   -  value: String value to add. Can't be longer than 64 characters, and can't be empty or nil. For better results,
+///   -  value: String value to add. Can't be longer than 300 characters, and can't be empty or nil. For better results,
 ///   you should trim/lowercase your strings, and use slugs when possible.
 ///   -  key: Attribute key. Should be made of letters, numbers or underscores ([a-z0-9_]) and can't be longer than 30
 ///   characters.

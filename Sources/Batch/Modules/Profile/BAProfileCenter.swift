@@ -6,7 +6,7 @@
 
 import Foundation
 
-fileprivate let loggerDomain = "Profile"
+private let loggerDomain = "Profile"
 
 @objc
 public protocol BAProfileCenterProtocol {
@@ -165,14 +165,15 @@ public class BAProfileCenter: NSObject, BAProfileCenterProtocol {
         if let customRegion = BAUserProfile.default().region {
             try? profileEditor.setRegion(customRegion)
         }
-        BAUserDataManager.sharedQueue().async {
-            let datasource = BAInjection.inject(BAUserDatasourceProtocol.self)
+        BAUserDataManager.sharedQueue()
+            .async {
+                let datasource = BAInjection.inject(BAUserDatasourceProtocol.self)
 
-            // Add custom attributes
-            if let attributes = datasource?.attributes() {
-                attributes.forEach { (key: String, attribute: BAUserAttribute) in
-                    let untypedKey = String(key.dropFirst(2))
-                    switch attribute.type {
+                // Add custom attributes
+                if let attributes = datasource?.attributes() {
+                    attributes.forEach { (key: String, attribute: BAUserAttribute) in
+                        let untypedKey = String(key.dropFirst(2))
+                        switch attribute.type {
                         case BAUserAttributeType.string:
                             if let stringValue = attribute.value as? String {
                                 try? profileEditor.setCustom(stringAttribute: stringValue, forKey: untypedKey)
@@ -200,18 +201,18 @@ public class BAProfileCenter: NSObject, BAProfileCenterProtocol {
                         case .deleted:
                             break
                         @unknown default: break
+                        }
                     }
                 }
-            }
-            // Add custom tags
-            if let tags = datasource?.tagCollections() {
-                tags.forEach { (key: String, value: Set<String>) in
-                    try? profileEditor.setCustom(stringArrayAttribute: Array(value), forKey: key)
+                // Add custom tags
+                if let tags = datasource?.tagCollections() {
+                    tags.forEach { (key: String, value: Set<String>) in
+                        try? profileEditor.setCustom(stringArrayAttribute: Array(value), forKey: key)
+                    }
                 }
+                // Serialize and send event
+                self.applyEditor(profileEditor)
             }
-            // Serialize and send event
-            self.applyEditor(profileEditor)
-        }
     }
 
     func sendIdentifyEvent(customID: String?) {
@@ -227,7 +228,7 @@ public class BAProfileCenter: NSObject, BAProfileCenterProtocol {
             "install_id": installID,
         ]
         let eventParameters: [AnyHashable: Any] = [
-            "identifiers": identifiers,
+            "identifiers": identifiers
         ]
         BAInjection.inject(BATEventTracker.self)?.trackPrivateEvent(event: .profileIdentify, parameters: eventParameters, collapsable: false)
     }

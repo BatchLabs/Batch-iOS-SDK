@@ -21,9 +21,17 @@
                                delegate:(nullable id<BAConnectionDelegate>)delegate;
 
 /*
-Body parameters to add
+Body parameters to add (dictionary format)
 Unused for GET requests
+Override this method if your endpoint expects a JSON object
 */
 - (nonnull NSMutableDictionary *)requestBodyDictionary;
+
+/*
+Body parameters to add (array format)
+Unused for GET requests
+Override this method if your endpoint expects a JSON array
+*/
+- (nullable NSArray *)requestBodyArray;
 
 @end

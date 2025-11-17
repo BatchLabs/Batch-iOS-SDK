@@ -13,17 +13,29 @@ struct BAPublicEventTrackedSignalTests {
     @Test func equal() async throws {
         // GIVEN: A signal and a trigger are created with the exact same name, label, and attributes.
         // This sets up a scenario where the signal is expected to match the trigger's conditions.
-        let signal = BAPublicEventTrackedSignal(name: "name", label: "label", attributes: ["key": "value",
-                                                                                           "key2": "value2",
-                                                                                           "key3": 3,
-                                                                                           "arrayKey": ["item1", "item2", "item3"],
-                                                                                           "arrayKey2": [1, 2, 3],
-                                                                                           "objectKey": ["sub_string": "mysubstring", "sub_bool": true]])
-        let trigger = BAEventTrigger(name: "name", label: "label", attributes: ["key": "value",
-                                                                                "key3": 3,
-                                                                                "arrayKey2": [2, 3, 1],
-                                                                                "arrayKey": ["item1", "item2", "item3"],
-                                                                                "objectKey": ["sub_string": "mysubstring", "sub_bool": true]])
+        let signal = BAPublicEventTrackedSignal(
+            name: "name",
+            label: "label",
+            attributes: [
+                "key": "value",
+                "key2": "value2",
+                "key3": 3,
+                "arrayKey": ["item1", "item2", "item3"],
+                "arrayKey2": [1, 2, 3],
+                "objectKey": ["sub_string": "mysubstring", "sub_bool": true],
+            ]
+        )
+        let trigger = BAEventTrigger(
+            name: "name",
+            label: "label",
+            attributes: [
+                "key": "value",
+                "key3": 3,
+                "arrayKey2": [2, 3, 1],
+                "arrayKey": ["item1", "item2", "item3"],
+                "objectKey": ["sub_string": "mysubstring", "sub_bool": true],
+            ]
+        )
 
         // WHEN: The signal's `doesSatisfyTrigger` method is called with the trigger.
         // This is the action being tested: checking if the signal fulfills the trigger's requirements.
@@ -54,17 +66,29 @@ struct BAPublicEventTrackedSignalTests {
     @Test func sensitiveNotEqual() async throws {
         // GIVEN: A signal and a trigger are created with the exact same name, label, and attributes.
         // This sets up a scenario where the signal is expected to match the trigger's conditions.
-        let signal = BAPublicEventTrackedSignal(name: "name", label: "label", attributes: ["key": "Value",
-                                                                                           "key2": "value2",
-                                                                                           "key3": 3,
-                                                                                           "arrayKey": ["Item1", "item2", "item3"],
-                                                                                           "arrayKey2": [1, 2, 3],
-                                                                                           "objectKey": ["sub_string": "mysubstring", "sub_bool": true]])
-        let trigger = BAEventTrigger(name: "name", label: "label", attributes: ["key": "value",
-                                                                                "key3": 3,
-                                                                                "arrayKey2": [2, 3, 1],
-                                                                                "arrayKey": ["item1", "item2", "item3"],
-                                                                                "objectKey": ["sub_string": "mysubstring", "sub_bool": true]])
+        let signal = BAPublicEventTrackedSignal(
+            name: "name",
+            label: "label",
+            attributes: [
+                "key": "Value",
+                "key2": "value2",
+                "key3": 3,
+                "arrayKey": ["Item1", "item2", "item3"],
+                "arrayKey2": [1, 2, 3],
+                "objectKey": ["sub_string": "mysubstring", "sub_bool": true],
+            ]
+        )
+        let trigger = BAEventTrigger(
+            name: "name",
+            label: "label",
+            attributes: [
+                "key": "value",
+                "key3": 3,
+                "arrayKey2": [2, 3, 1],
+                "arrayKey": ["item1", "item2", "item3"],
+                "objectKey": ["sub_string": "mysubstring", "sub_bool": true],
+            ]
+        )
 
         // WHEN: The signal's `doesSatisfyTrigger` method is called with the trigger.
         // This is the action being tested: checking if the signal fulfills the trigger's requirements.

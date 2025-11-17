@@ -4,8 +4,9 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-@testable import Batch
 import Testing
+
+@testable import Batch
 
 @Suite("InAppMessageChecker") struct InAppMessageCheckerTests {
     static let component = InAppMessageChecker.Component.identifier("InAppMessageCheckerTests")
@@ -22,9 +23,12 @@ import Testing
         }
 
         @Test func throwing() throws {
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.text(for: nil, mandatory: .true, source: source, component: component)
-            })
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.text(for: nil, mandatory: .true, source: source, component: component)
+                }
+            )
         }
 
         @Test func defaultValue() throws {
@@ -50,9 +54,12 @@ import Testing
         }
 
         @Test func throwing() throws {
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.horizontalAlignment(for: nil, mandatory: .true, source: source, component: component)
-            })
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.horizontalAlignment(for: nil, mandatory: .true, source: source, component: component)
+                }
+            )
         }
 
         @Test func defaultValue() throws {
@@ -78,9 +85,12 @@ import Testing
         }
 
         @Test func throwing() throws {
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.verticalAlignment(for: nil, mandatory: .true, source: source, component: component)
-            })
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.verticalAlignment(for: nil, mandatory: .true, source: source, component: component)
+                }
+            )
         }
 
         @Test func defaultValue() throws {
@@ -106,9 +116,12 @@ import Testing
         }
 
         @Test func throwing() throws {
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.fontSize(for: -1, mandatory: .true, source: source, component: component)
-            })
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.fontSize(for: -1, mandatory: .true, source: source, component: component)
+                }
+            )
         }
 
         @Test func defaultValue() throws {
@@ -135,15 +148,24 @@ import Testing
 
         @Test func throwing() throws {
             // Should throws
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.margins(for: nil, mandatory: .true, source: source, component: component)
-            })
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.margins(for: [], mandatory: .true, source: source, component: component)
-            })
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.margins(for: [1, 1, 1], mandatory: .true, source: source, component: component)
-            })
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.margins(for: nil, mandatory: .true, source: source, component: component)
+                }
+            )
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.margins(for: [], mandatory: .true, source: source, component: component)
+                }
+            )
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.margins(for: [1, 1, 1], mandatory: .true, source: source, component: component)
+                }
+            )
 
             // Should not throws
             _ = try InAppMessageChecker.margins(for: [1, 1, 1, 1, 1], mandatory: .false(2), source: source, component: component)
@@ -153,9 +175,12 @@ import Testing
         }
 
         @Test func defaultValue() throws {
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.margins(for: [1, 1, 1], mandatory: .false(2), source: source, component: component)
-            })
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.margins(for: [1, 1, 1], mandatory: .false(2), source: source, component: component)
+                }
+            )
 
             let result1 = try InAppMessageChecker.margins(for: [1, 1, 1, 1], mandatory: .false(2), source: source, component: component)
             let result2 = try InAppMessageChecker.margins(for: [1], mandatory: .false(2), source: source, component: component)
@@ -185,15 +210,24 @@ import Testing
 
         @Test func throwing() throws {
             // Should throws
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.paddings(for: nil, mandatory: .true, source: source, component: component)
-            })
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.paddings(for: [], mandatory: .true, source: source, component: component)
-            })
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.paddings(for: [1, 1, 1], mandatory: .true, source: source, component: component)
-            })
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.paddings(for: nil, mandatory: .true, source: source, component: component)
+                }
+            )
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.paddings(for: [], mandatory: .true, source: source, component: component)
+                }
+            )
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.paddings(for: [1, 1, 1], mandatory: .true, source: source, component: component)
+                }
+            )
 
             // Should not throws
             _ = try InAppMessageChecker.paddings(for: [1, 1, 1, 1, 1], mandatory: .true, source: source, component: component)
@@ -203,9 +237,12 @@ import Testing
         }
 
         @Test func defaultValue() throws {
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.margins(for: [1, 1, 1], mandatory: .false(2), source: source, component: component)
-            })
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.margins(for: [1, 1, 1], mandatory: .false(2), source: source, component: component)
+                }
+            )
 
             let result1 = try InAppMessageChecker.paddings(for: [1, 1, 1, 1], mandatory: .false(2), source: source, component: component)
             let result2 = try InAppMessageChecker.paddings(for: [1], mandatory: .false(2), source: source, component: component)
@@ -235,15 +272,24 @@ import Testing
 
         @Test func throwing() throws {
             // Should throws
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.radius(for: nil, mandatory: .true, source: source, component: component)
-            })
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.radius(for: [], mandatory: .true, source: source, component: component)
-            })
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.radius(for: [1, 1, 1], mandatory: .true, source: source, component: component)
-            })
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.radius(for: nil, mandatory: .true, source: source, component: component)
+                }
+            )
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.radius(for: [], mandatory: .true, source: source, component: component)
+                }
+            )
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.radius(for: [1, 1, 1], mandatory: .true, source: source, component: component)
+                }
+            )
 
             // Should not throws
             _ = try InAppMessageChecker.radius(for: [1, 1, 1, 1, 1], mandatory: .true, source: source, component: component)
@@ -253,9 +299,12 @@ import Testing
         }
 
         @Test func defaultValue() throws {
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.radius(for: [1, 1, 1], mandatory: .false(2), source: source, component: component)
-            })
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.radius(for: [1, 1, 1], mandatory: .false(2), source: source, component: component)
+                }
+            )
 
             let result1 = try InAppMessageChecker.radius(for: [1, 1, 1, 1], mandatory: .false(2), source: source, component: component)
             let result2 = try InAppMessageChecker.radius(for: [1], mandatory: .false(2), source: source, component: component)
@@ -284,9 +333,12 @@ import Testing
         }
 
         @Test func throwing() throws {
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.aspectRatio(for: nil, mandatory: .true, source: source, component: component)
-            })
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.aspectRatio(for: nil, mandatory: .true, source: source, component: component)
+                }
+            )
         }
 
         @Test func defaultValue() throws {
@@ -312,12 +364,18 @@ import Testing
         }
 
         @Test func throwing() throws {
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.borderWidth(for: nil, mandatory: .true, source: source, component: component)
-            })
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.borderWidth(for: -1, mandatory: .true, source: source, component: component)
-            })
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.borderWidth(for: nil, mandatory: .true, source: source, component: component)
+                }
+            )
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.borderWidth(for: -1, mandatory: .true, source: source, component: component)
+                }
+            )
         }
 
         @Test func defaultValue() throws {
@@ -345,9 +403,12 @@ import Testing
         }
 
         @Test func throwing() throws {
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.maxLines(for: nil, mandatory: .true, source: source, component: component)
-            })
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.maxLines(for: nil, mandatory: .true, source: source, component: component)
+                }
+            )
 
             // Should not throw
             _ = try InAppMessageChecker.maxLines(for: -5, mandatory: .true, source: source, component: component)
@@ -379,12 +440,18 @@ import Testing
         }
 
         @Test func throwing() throws {
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.heightType(for: nil, mandatory: .true, source: source, component: component)
-            })
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.heightType(for: .init(stringValue: "unknow"), mandatory: .true, source: source, component: component)
-            })
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.heightType(for: nil, mandatory: .true, source: source, component: component)
+                }
+            )
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.heightType(for: .init(stringValue: "unknow"), mandatory: .true, source: source, component: component)
+                }
+            )
         }
 
         @Test func defaultValue() throws {
@@ -413,12 +480,18 @@ import Testing
         }
 
         @Test func throwing() throws {
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.heightType(for: nil, mandatory: .true, source: source, component: component)
-            })
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.heightType(for: .init(stringValue: "unknow"), mandatory: .true, source: source, component: component)
-            })
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.heightType(for: nil, mandatory: .true, source: source, component: component)
+                }
+            )
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.heightType(for: .init(stringValue: "unknow"), mandatory: .true, source: source, component: component)
+                }
+            )
         }
 
         @Test func defaultValue() throws {
@@ -447,9 +520,9 @@ import Testing
             let light = BAMSGStylableViewHelper.color(fromValue: value[0]) ?? .clear
             let color = UIColor { trait in
                 switch trait.userInterfaceStyle {
-                    case .dark: dark
-                    case .light, .unspecified: light
-                    @unknown default: light
+                case .dark: dark
+                case .light, .unspecified: light
+                @unknown default: light
                 }
             }
 
@@ -457,15 +530,24 @@ import Testing
         }
 
         @Test func throwing() throws {
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.colors(for: nil, mandatory: .true, source: source, component: component)
-            })
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.colors(for: [], mandatory: .true, source: source, component: component)
-            })
-            #expect(throws: (any Error).self, performing: {
-                try InAppMessageChecker.colors(for: ["ad", "adzazd"], mandatory: .true, source: source, component: component)
-            })
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.colors(for: nil, mandatory: .true, source: source, component: component)
+                }
+            )
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.colors(for: [], mandatory: .true, source: source, component: component)
+                }
+            )
+            #expect(
+                throws: (any Error).self,
+                performing: {
+                    try InAppMessageChecker.colors(for: ["ad", "adzazd"], mandatory: .true, source: source, component: component)
+                }
+            )
         }
 
         @Test func defaultValue() throws {
@@ -478,17 +560,17 @@ import Testing
 
             let colorValue = UIColor { trait in
                 switch trait.userInterfaceStyle {
-                    case .dark: BAMSGStylableViewHelper.color(fromValue: value[1]) ?? .clear
-                    case .light, .unspecified: BAMSGStylableViewHelper.color(fromValue: value[0]) ?? .clear
-                    @unknown default: BAMSGStylableViewHelper.color(fromValue: value[0]) ?? .clear
+                case .dark: BAMSGStylableViewHelper.color(fromValue: value[1]) ?? .clear
+                case .light, .unspecified: BAMSGStylableViewHelper.color(fromValue: value[0]) ?? .clear
+                @unknown default: BAMSGStylableViewHelper.color(fromValue: value[0]) ?? .clear
                 }
             }
 
             let colorDefaultValue = UIColor { trait in
                 switch trait.userInterfaceStyle {
-                    case .dark: BAMSGStylableViewHelper.color(fromValue: defaultValue.dark) ?? .clear
-                    case .light, .unspecified: BAMSGStylableViewHelper.color(fromValue: defaultValue.light) ?? .clear
-                    @unknown default: BAMSGStylableViewHelper.color(fromValue: defaultValue.light) ?? .clear
+                case .dark: BAMSGStylableViewHelper.color(fromValue: defaultValue.dark) ?? .clear
+                case .light, .unspecified: BAMSGStylableViewHelper.color(fromValue: defaultValue.light) ?? .clear
+                @unknown default: BAMSGStylableViewHelper.color(fromValue: defaultValue.light) ?? .clear
                 }
             }
 
@@ -516,7 +598,7 @@ import Testing
             let defaultValueResult = InAppMessageChecker.ratio(for: nil, count: values.count, mandatory: .false(defaultValue), source: source, component: component)
 
             #expect(valueResult == defaultValueResult)
-            #expect(defaultValueResult == (0 ..< values.count).map { _ in defaultValue })
+            #expect(defaultValueResult == (0..<values.count).map { _ in defaultValue })
         }
 
         @Test func testDefaultValueRatioWrongCount() {
@@ -526,7 +608,7 @@ import Testing
 
             let valueResult = InAppMessageChecker.ratio(for: values, count: count, mandatory: .true, source: source, component: component)
 
-            #expect(valueResult == (0 ..< count).map { _ in defaultValue })
+            #expect(valueResult == (0..<count).map { _ in defaultValue })
         }
     }
 }

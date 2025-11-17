@@ -170,8 +170,6 @@
     switch (_contentType) {
         case BAConnectionContentTypeJSON:
             return @"application/json";
-        case BAConnectionContentTypeMessagePack:
-            return @"application/msgpack";
     }
     return nil;
 }

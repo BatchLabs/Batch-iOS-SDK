@@ -17,7 +17,7 @@ struct BALocalCampaignsParserTests {
     /// A collection of static JSON-like dictionaries used as mock responses for testing the parser.
     fileprivate enum TestResponses {
         static let empty: [AnyHashable: Any] = [
-            "campaigns": [],
+            "campaigns": []
         ]
 
         static let cappingPayload: [AnyHashable: Any] = [
@@ -28,7 +28,7 @@ struct BALocalCampaignsParserTests {
                     ["views": 0, "duration": 3600],
                     ["views": 1, "duration": 0],
                 ],
-            ],
+            ]
         ]
 
         static let quietHoursPayload: NSDictionary = [
@@ -38,11 +38,11 @@ struct BALocalCampaignsParserTests {
                 "endHour": 18,
                 "endMin": 0,
                 "quietDaysOfWeek": [0, 2, 3, 4, 5],
-            ],
+            ]
         ]
 
         static let versionPayload: [AnyHashable: Any] = [
-            "campaigns_version": "CEP",
+            "campaigns_version": "CEP"
         ]
 
         static let sizeEventPayload: [AnyHashable: Any] = [
@@ -57,7 +57,7 @@ struct BALocalCampaignsParserTests {
             "minimumApiLevel": 6,
             "minDisplayInterval": 3600,
             "triggers": [
-                ["type": "NEXT_SESSION"],
+                ["type": "NEXT_SESSION"]
             ],
             "quietHours": [
                 "startHour": 10,
@@ -86,7 +86,7 @@ struct BALocalCampaignsParserTests {
             "minimumApiLevel": 6,
             "minDisplayInterval": 3600,
             "triggers": [
-                sizeEventPayload,
+                sizeEventPayload
             ],
             "quietHours": [
                 "startHour": 10,

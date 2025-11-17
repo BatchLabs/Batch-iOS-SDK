@@ -7,5 +7,4 @@
 
 typedef NS_ENUM(NSUInteger, BAConnectionContentType) {
     BAConnectionContentTypeJSON,
-    BAConnectionContentTypeMessagePack,
 };

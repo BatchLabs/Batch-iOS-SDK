@@ -23,11 +23,12 @@ public class BATImpactFeedbackGenerator: NSObject {
 
     public required init(style: FeedbackStyle) {
         #if !os(visionOS)
-            let convertedStyle: UIImpactFeedbackGenerator.FeedbackStyle = switch style {
+            let convertedStyle: UIImpactFeedbackGenerator.FeedbackStyle =
+                switch style {
                 case .light: UIImpactFeedbackGenerator.FeedbackStyle.light
                 case .medium: UIImpactFeedbackGenerator.FeedbackStyle.medium
                 case .heavy: UIImpactFeedbackGenerator.FeedbackStyle.heavy
-            }
+                }
             self.feedbackGenerator = UIImpactFeedbackGenerator(style: convertedStyle)
         #endif
         super.init()
@@ -76,11 +77,12 @@ public class BATNotificationFeedbackGenerator: NSObject {
 
     public func notificationOccurred(_ type: FeedbackType) {
         #if !os(visionOS)
-            let convertedType: UINotificationFeedbackGenerator.FeedbackType = switch type {
+            let convertedType: UINotificationFeedbackGenerator.FeedbackType =
+                switch type {
                 case .success: UINotificationFeedbackGenerator.FeedbackType.success
                 case .warning: UINotificationFeedbackGenerator.FeedbackType.warning
                 case .error: UINotificationFeedbackGenerator.FeedbackType.error
-            }
+                }
             feedbackGenerator.notificationOccurred(convertedType)
         #endif
     }

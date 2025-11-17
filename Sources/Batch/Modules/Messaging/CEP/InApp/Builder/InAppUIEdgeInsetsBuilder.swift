@@ -12,12 +12,14 @@ extension InAppMessageChecker {
         /// - Parameter array: Insets
         /// - Returns: UIEdgeInsets
         static func build(from array: [Int]?) -> UIEdgeInsets {
-            return array.map { UIEdgeInsets(
-                top: $0[edge: .top],
-                left: $0[edge: .left],
-                bottom: $0[edge: .bottom],
-                right: $0[edge: .right]
-            ) } ?? .zero
+            return array.map {
+                UIEdgeInsets(
+                    top: $0[edge: .top],
+                    left: $0[edge: .left],
+                    bottom: $0[edge: .bottom],
+                    right: $0[edge: .right]
+                )
+            } ?? .zero
         }
     }
 }

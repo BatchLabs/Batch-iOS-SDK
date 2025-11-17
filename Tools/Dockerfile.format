@@ -1,22 +1,26 @@
-FROM ghcr.io/nicklockwood/swiftformat:0.54.5 as swiftformat
-
-FROM swift:5.9.2-jammy
+# syntax=docker/dockerfile:1.7-labs
+FROM swift:6.2.0-jammy
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-ENV USE_SYSTEM_SWIFTFORMAT=1
-
-# Clang-format
+# Install clang-format and setup for non-root users
 RUN apt-get update -y && apt-get install -y clang-format-14 && \
-	mv /usr/bin/clang-format-14 /usr/bin/clang-format
+    mv /usr/bin/clang-format-14 /usr/bin/clang-format && \
+    # Create a generic user directory structure
+    mkdir -p /tmp/home && \
+    chmod 777 /tmp/home
 
-COPY --from=swiftformat /usr/bin/swiftformat /usr/bin
-
+# Copy configuration files and scripts
 COPY .clang-format /data/.clang-format
 COPY .clang-format-version /data/.clang-format-version
 COPY .swift-version /data/.swift-version
-COPY .swiftformat /data/.swiftformat
+COPY .swift-format /data/.swift-format
 COPY Tools /data/Tools
 
-WORKDIR "/data/Tools/Scripts"
+# Make scripts executable and set proper permissions
+RUN chmod +x /data/Tools/Scripts/*.sh
+
+# Set HOME for non-root users and ensure permissions
+ENV HOME=/tmp/home
+WORKDIR /data
 ENTRYPOINT ["/bin/bash"]

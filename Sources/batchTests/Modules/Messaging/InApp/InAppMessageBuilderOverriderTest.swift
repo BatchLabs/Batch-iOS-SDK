@@ -4,8 +4,9 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-@testable import Batch
 import Testing
+
+@testable import Batch
 
 struct InAppMessageBuilderOverriderTest {
     @Test func overrideValues() async throws {

@@ -214,20 +214,24 @@ extension InAppImageView.Configuration {
         func applyHeightConstraint(on image: InAppImageView) {
             guard heightType != .fill else { return }
 
-            let constant: CGFloat = switch heightType {
+            let constant: CGFloat =
+                switch heightType {
                 case let .fixed(value): CGFloat(value)
                 case .auto:
-                    if let estimateHeight, let estimateWidth { (image.frame.width / CGFloat(estimateWidth)) * CGFloat(estimateHeight)
-                    } else { 0 }
+                    if let estimateHeight, let estimateWidth {
+                        (image.frame.width / CGFloat(estimateWidth)) * CGFloat(estimateHeight)
+                    } else {
+                        0
+                    }
                 default: 0
-            }
+                }
 
             image.heightConstraint = image.heightAnchor.constraint(equalToConstant: constant)
 
             guard let heightConstraint = image.heightConstraint else { return }
 
             NSLayoutConstraint.activate([
-                heightConstraint,
+                heightConstraint
             ])
         }
     }
@@ -244,10 +248,11 @@ extension InAppImageView.Configuration {
         // MARK: -
 
         init(aspect: InAppAspectRatio, radius: [Int]) {
-            self.aspect = switch aspect {
+            self.aspect =
+                switch aspect {
                 case .fill: .scaleAspectFill
                 case .fit: .scaleAspectFit
-            }
+                }
             self.radius = radius.map(CGFloat.init)
         }
 

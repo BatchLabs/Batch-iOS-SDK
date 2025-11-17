@@ -138,8 +138,8 @@ class InAppWebviewViewController:
 
     private func loadWebviewWithCacheEnabled(_ cacheEnabled: Bool) {
         guard let webView,
-              let webviewComponent = configuration.builder.viewsBuilder.first(where: { $0.component.type == .webview })?.component as? InAppWebview,
-              let url = (webView as? InAppWebviewView)?.webviewConfiguration.content.url
+            let webviewComponent = configuration.builder.viewsBuilder.first(where: { $0.component.type == .webview })?.component as? InAppWebview,
+            let url = (webView as? InAppWebviewView)?.webviewConfiguration.content.url
         else {
             BALogger.debug(domain: String(describing: Self.self), message: "Webview component not found for reload")
             return
@@ -266,7 +266,7 @@ extension InAppWebviewViewController: WKNavigationDelegate {
 
     func webView(_: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
         guard navigationResponse.isForMainFrame,
-              let httpResponse = navigationResponse.response as? HTTPURLResponse
+            let httpResponse = navigationResponse.response as? HTTPURLResponse
         else {
             decisionHandler(.allow)
             return
@@ -315,9 +315,11 @@ extension InAppWebviewViewController: WKNavigationDelegate {
 
     private func showDevelopmentError(_ errorMessage: String, sourceError: Error?) {
         let alert = UIAlertController(title: "WebView Error", message: errorMessage, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .cancel) { _ in
-            self.closeAfterError(sourceError)
-        })
+        alert.addAction(
+            UIAlertAction(title: "OK", style: .cancel) { _ in
+                self.closeAfterError(sourceError)
+            }
+        )
         present(alert, animated: true)
     }
 
@@ -343,9 +345,11 @@ extension InAppWebviewViewController: WKUIDelegate {
         }
 
         let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .cancel) { _ in
-            completionHandler()
-        })
+        alert.addAction(
+            UIAlertAction(title: "OK", style: .cancel) { _ in
+                completionHandler()
+            }
+        )
         present(alert, animated: true)
     }
 
@@ -356,12 +360,16 @@ extension InAppWebviewViewController: WKUIDelegate {
         }
 
         let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
-            completionHandler(true)
-        })
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
-            completionHandler(false)
-        })
+        alert.addAction(
+            UIAlertAction(title: "OK", style: .default) { _ in
+                completionHandler(true)
+            }
+        )
+        alert.addAction(
+            UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                completionHandler(false)
+            }
+        )
         present(alert, animated: true)
     }
 
@@ -376,14 +384,18 @@ extension InAppWebviewViewController: WKUIDelegate {
             textField.text = defaultText
         }
 
-        alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
-            let text = alert.textFields?.first?.text
-            completionHandler(text)
-        })
+        alert.addAction(
+            UIAlertAction(title: "OK", style: .default) { _ in
+                let text = alert.textFields?.first?.text
+                completionHandler(text)
+            }
+        )
 
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
-            completionHandler(nil)
-        })
+        alert.addAction(
+            UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                completionHandler(nil)
+            }
+        )
 
         present(alert, animated: true)
     }
@@ -438,8 +450,8 @@ extension InAppWebviewViewController {
 
         var description: String {
             return switch self {
-                case let .actionWithUnsupportedParameters(name, key):
-                    "Action (\(name)) with unsupported parameters for key: \(key)"
+            case let .actionWithUnsupportedParameters(name, key):
+                "Action (\(name)) with unsupported parameters for key: \(key)"
             }
         }
     }
@@ -491,7 +503,11 @@ extension InAppWebviewViewController {
         var sanitizedAnalyticsID = analyticsIdentifier
         if let id = analyticsIdentifier, !id.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             if id.count > 30 {
-                BALogger.public(domain: "Messaging", message: "Could not track webview event: The analytics ID is invalid: it should be 30 characters or less. The action will be tracked without an analytics ID, but will still be performed.")
+                BALogger.public(
+                    domain: "Messaging",
+                    message:
+                        "Could not track webview event: The analytics ID is invalid: it should be 30 characters or less. The action will be tracked without an analytics ID, but will still be performed."
+                )
                 sanitizedAnalyticsID = nil
             }
         } else {
@@ -507,25 +523,27 @@ extension InAppWebviewViewController {
         // Track webview click using the new analytics format
         analyticManager.track(.webView(component: component))
 
-        dismiss().then { [configuration = self.configuration] _ in
-            if let action = component.action {
-                BAMessagingCenter.instance().perform(
-                    action,
-                    source: configuration.content.message.sourceMessage,
-                    ctaIdentifier: component.analyticsIdentifier,
-                    messageIdentifier: configuration.content.message.sourceMessage.devTrackingIdentifier
-                )
+        dismiss()
+            .then { [configuration = self.configuration] _ in
+                if let action = component.action {
+                    BAMessagingCenter.instance()
+                        .perform(
+                            action,
+                            source: configuration.content.message.sourceMessage,
+                            ctaIdentifier: component.analyticsIdentifier,
+                            messageIdentifier: configuration.content.message.sourceMessage.devTrackingIdentifier
+                        )
+                }
             }
-        }
     }
 }
 
-fileprivate extension UIView {
+extension UIView {
     /// Recursively finds the first subview of a specified type in the view hierarchy.
     ///
     /// - Parameter type: The type of the subview to find.
     /// - Returns: The first subview of the specified type found, or `nil` if none exists.
-    func findFirstSubview<T: UIView>(ofType type: T.Type) -> T? {
+    fileprivate func findFirstSubview<T: UIView>(ofType type: T.Type) -> T? {
         // Check if the current view is of the desired type
         if let webView = self as? T {
             return webView

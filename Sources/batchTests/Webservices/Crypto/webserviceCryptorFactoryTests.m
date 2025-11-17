@@ -41,11 +41,6 @@
     OCMStub([connection contentType]).andReturn(BAConnectionContentTypeJSON);
     XCTAssertTrue([[BAWebserviceCryptorFactory outboundCryptorForConnection:connection]
         isKindOfClass:[BAWebserviceAESGCMGzipCryptor class]]);
-
-    connection = OCMClassMock([BAConnection class]);
-    OCMStub([connection contentType]).andReturn(BAConnectionContentTypeMessagePack);
-    XCTAssertTrue([[BAWebserviceCryptorFactory outboundCryptorForConnection:connection]
-        isKindOfClass:[BAWebserviceStubCryptor class]]);
 }
 
 - (void)testInbound {
@@ -96,13 +91,6 @@
                                                      connection:connection
                                                        response:response];
     XCTAssertTrue([cryptor isKindOfClass:[BAWebserviceAESGCMCryptor class]]);
-
-    connection = OCMClassMock([BAConnection class]);
-    OCMStub([connection contentType]).andReturn(BAConnectionContentTypeMessagePack);
-    cryptor = [BAWebserviceCryptorFactory inboundCryptorForData:ciphedInboundPayload
-                                                     connection:connection
-                                                       response:response];
-    XCTAssertTrue([cryptor isKindOfClass:[BAWebserviceStubCryptor class]]);
 }
 
 @end

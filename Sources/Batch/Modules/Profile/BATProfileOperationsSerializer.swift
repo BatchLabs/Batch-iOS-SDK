@@ -85,15 +85,15 @@ class BATProfileOperationsSerializer: NSObject {
 
     private static func serialize(state: BATProfileEditorSMSSubscriptionState) -> String {
         return switch state {
-            case .subscribed: "subscribed"
-            case .unsubscribed: "unsubscribed"
+        case .subscribed: "subscribed"
+        case .unsubscribed: "unsubscribed"
         }
     }
 
     private static func serialize(state: BATProfileEditorEmailSubscriptionState) -> String {
         return switch state {
-            case .subscribed: "subscribed"
-            case .unsubscribed: "unsubscribed"
+        case .subscribed: "subscribed"
+        case .unsubscribed: "unsubscribed"
         }
     }
 }

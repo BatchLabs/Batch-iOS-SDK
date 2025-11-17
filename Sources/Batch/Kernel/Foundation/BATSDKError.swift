@@ -21,10 +21,10 @@ extension BATSDKError: CustomNSError {
 
     public var errorCode: Int {
         switch self {
-            case .sdkInternal:
-                return 1
-            case .userInputValidation:
-                return 20
+        case .sdkInternal:
+            return 1
+        case .userInputValidation:
+            return 20
         }
     }
 
@@ -36,14 +36,14 @@ extension BATSDKError: CustomNSError {
 extension BATSDKError: LocalizedError {
     public var errorDescription: String? {
         switch self {
-            case let .sdkInternal(subcode, reason):
-                var description = "Internal error (code \(subcode))"
-                if let reason {
-                    description += " Reason: \(reason)"
-                }
-                return description
-            case let .userInputValidation(reason):
-                return reason
+        case let .sdkInternal(subcode, reason):
+            var description = "Internal error (code \(subcode))"
+            if let reason {
+                description += " Reason: \(reason)"
+            }
+            return description
+        case let .userInputValidation(reason):
+            return reason
         }
     }
 }

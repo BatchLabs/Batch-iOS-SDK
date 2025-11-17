@@ -54,32 +54,38 @@ struct LocalCampaignsSQLTrackerTests {
         let campaignID = "test_campaign"
         let customUserID = "user123"
 
-        let event = try #require(datasource.trackEvent(
-            forCampaignID: campaignID,
-            kind: .view,
-            version: .MEP,
-            customUserID: customUserID
-        ))
+        let event = try #require(
+            datasource.trackEvent(
+                forCampaignID: campaignID,
+                kind: .view,
+                version: .MEP,
+                customUserID: customUserID
+            )
+        )
 
         #expect(event.count == 1)
         #expect(event.campaignID == campaignID)
         #expect(event.kind == .view)
 
-        let secondEvent = try #require(datasource.trackEvent(
-            forCampaignID: campaignID,
-            kind: .view,
-            version: .MEP,
-            customUserID: customUserID
-        ))
+        let secondEvent = try #require(
+            datasource.trackEvent(
+                forCampaignID: campaignID,
+                kind: .view,
+                version: .MEP,
+                customUserID: customUserID
+            )
+        )
 
         #expect(secondEvent.count == 2)
 
-        let cepEvent = try #require(datasource.trackEvent(
-            forCampaignID: campaignID,
-            kind: .view,
-            version: .CEP,
-            customUserID: customUserID
-        ))
+        let cepEvent = try #require(
+            datasource.trackEvent(
+                forCampaignID: campaignID,
+                kind: .view,
+                version: .CEP,
+                customUserID: customUserID
+            )
+        )
 
         #expect(cepEvent.count == 1)
 
@@ -93,55 +99,67 @@ struct LocalCampaignsSQLTrackerTests {
         let userID1 = "user1"
         let userID2 = "user2"
 
-        let event1 = try #require(datasource.trackEvent(
-            forCampaignID: campaignID,
-            kind: .view,
-            version: .MEP,
-            customUserID: userID1
-        ))
+        let event1 = try #require(
+            datasource.trackEvent(
+                forCampaignID: campaignID,
+                kind: .view,
+                version: .MEP,
+                customUserID: userID1
+            )
+        )
 
-        let event2 = try #require(datasource.trackEvent(
-            forCampaignID: campaignID,
-            kind: .view,
-            version: .MEP,
-            customUserID: userID2
-        ))
+        let event2 = try #require(
+            datasource.trackEvent(
+                forCampaignID: campaignID,
+                kind: .view,
+                version: .MEP,
+                customUserID: userID2
+            )
+        )
 
-        let event1Updated = try #require(datasource.trackEvent(
-            forCampaignID: campaignID,
-            kind: .view,
-            version: .MEP,
-            customUserID: userID1
-        ))
+        let event1Updated = try #require(
+            datasource.trackEvent(
+                forCampaignID: campaignID,
+                kind: .view,
+                version: .MEP,
+                customUserID: userID1
+            )
+        )
 
         #expect(event1.count == 1)
         #expect(event2.count == 2)
         #expect(event1Updated.count == 3)
 
-        let event1CEP = try #require(datasource.trackEvent(
-            forCampaignID: campaignID,
-            kind: .view,
-            version: .CEP,
-            customUserID: userID1
-        ))
+        let event1CEP = try #require(
+            datasource.trackEvent(
+                forCampaignID: campaignID,
+                kind: .view,
+                version: .CEP,
+                customUserID: userID1
+            )
+        )
 
         #expect(event1CEP.count == 1)
 
-        let event2CEP = try #require(datasource.trackEvent(
-            forCampaignID: campaignID,
-            kind: .view,
-            version: .CEP,
-            customUserID: userID2
-        ))
+        let event2CEP = try #require(
+            datasource.trackEvent(
+                forCampaignID: campaignID,
+                kind: .view,
+                version: .CEP,
+                customUserID: userID2
+            )
+        )
 
         #expect(event2CEP.count == 1)
 
-        let event3CEP = try #require(datasource.trackEvent(
-            forCampaignID: campaignID,
-            kind: .view,
-            version: .CEP,
-            customUserID: userID2
-        ))
+        let event3CEP = try #require(
+            datasource.trackEvent(
+                forCampaignID: campaignID,
+                kind: .view,
+                version: .CEP,
+                customUserID: userID2
+            )
+        )
 
         #expect(event3CEP.count == 2)
 
@@ -164,12 +182,14 @@ struct LocalCampaignsSQLTrackerTests {
         #expect(event.count == 0)
         #expect(event.campaignID == campaignID)
 
-        let updatedEvent = try #require(datasource.trackEvent(
-            forCampaignID: campaignID,
-            kind: .view,
-            version: .MEP,
-            customUserID: customUserID
-        ))
+        let updatedEvent = try #require(
+            datasource.trackEvent(
+                forCampaignID: campaignID,
+                kind: .view,
+                version: .MEP,
+                customUserID: customUserID
+            )
+        )
 
         #expect(updatedEvent.count == 1)
         #expect(updatedEvent.lastOccurrence != nil)
@@ -183,12 +203,14 @@ struct LocalCampaignsSQLTrackerTests {
 
         #expect(eventCEP.count == 0)
 
-        let updatedEventCEP = try #require(datasource.trackEvent(
-            forCampaignID: campaignID,
-            kind: .view,
-            version: .CEP,
-            customUserID: customUserID
-        ))
+        let updatedEventCEP = try #require(
+            datasource.trackEvent(
+                forCampaignID: campaignID,
+                kind: .view,
+                version: .CEP,
+                customUserID: customUserID
+            )
+        )
 
         #expect(updatedEventCEP.count == 1)
         #expect(updatedEventCEP.lastOccurrence != nil)
@@ -264,57 +286,69 @@ struct LocalCampaignsSQLTrackerTests {
 
         #expect(base.count == 0)
 
-        let event = try #require(datasource.trackEvent(
-            forCampaignID: campaignID,
-            kind: .view,
-            version: .MEP,
-            customUserID: nil
-        ))
+        let event = try #require(
+            datasource.trackEvent(
+                forCampaignID: campaignID,
+                kind: .view,
+                version: .MEP,
+                customUserID: nil
+            )
+        )
 
         #expect(event.count == 1)
 
-        let secondEvent = try #require(datasource.trackEvent(
-            forCampaignID: campaignID,
-            kind: .view,
-            version: .MEP,
-            customUserID: nil
-        ))
+        let secondEvent = try #require(
+            datasource.trackEvent(
+                forCampaignID: campaignID,
+                kind: .view,
+                version: .MEP,
+                customUserID: nil
+            )
+        )
 
         #expect(secondEvent.count == 2)
 
-        let emptyStringEvent = try #require(datasource.trackEvent(
-            forCampaignID: campaignID,
-            kind: .view,
-            version: .MEP,
-            customUserID: ""
-        ))
+        let emptyStringEvent = try #require(
+            datasource.trackEvent(
+                forCampaignID: campaignID,
+                kind: .view,
+                version: .MEP,
+                customUserID: ""
+            )
+        )
 
         #expect(emptyStringEvent.count == 3)
 
-        let eventCEP = try #require(datasource.trackEvent(
-            forCampaignID: campaignID,
-            kind: .view,
-            version: .CEP,
-            customUserID: nil
-        ))
+        let eventCEP = try #require(
+            datasource.trackEvent(
+                forCampaignID: campaignID,
+                kind: .view,
+                version: .CEP,
+                customUserID: nil
+            )
+        )
 
         #expect(eventCEP.count == 1)
 
-        let secondEventCEP = try #require(datasource.trackEvent(
-            forCampaignID: campaignID,
-            kind: .view,
-            version: .CEP,
-            customUserID: nil
-        ))
+        let secondEventCEP = try #require(
+            datasource.trackEvent(
+                forCampaignID: campaignID,
+                kind: .view,
+                version: .CEP,
+                customUserID: nil
+            )
+        )
 
         #expect(secondEventCEP.count == 2)
 
-        let emptyStringEventCEP = try #require(datasource.trackEvent(
-            forCampaignID: campaignID,
-            kind: .view,
-            version: .CEP,
-            customUserID: ""
-        ))
+        let emptyStringEventCEP = try #require(
+            datasource.trackEvent(
+                forCampaignID: campaignID,
+                kind: .view,
+                version: .CEP,
+                customUserID: ""
+            )
+        )
 
         #expect(emptyStringEventCEP.count == 1)
 

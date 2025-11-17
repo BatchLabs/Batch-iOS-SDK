@@ -174,9 +174,11 @@ struct BAEventTriggerTests {
             let trigger = BAEventTrigger(name: "nameeeee", label: "label", attributes: eventAttributes)
 
             // WHEN: The `isSatisfied` method is called with a different, incomplete set of attributes.
-            let eventAttributes2 = try BATEventAttributesSerializer.serialize(eventAttributes: BatchEventAttributes { a in
-                a.put("test_label", forKey: "$label")
-            })
+            let eventAttributes2 = try BATEventAttributesSerializer.serialize(
+                eventAttributes: BatchEventAttributes { a in
+                    a.put("test_label", forKey: "$label")
+                }
+            )
             let isSatisfied = trigger.isSatisfied(forAttributes: eventAttributes2)
 
             // THEN: The result is `false`.
@@ -193,10 +195,13 @@ struct BAEventTriggerTests {
 
             // WHEN: The `isSatisfied` method is called with a different, incomplete set of attributes.
             let copy2 = eventAttributes
-            copy2.put(BatchEventAttributes { a in
-                a.put(13.4567, forKey: "double_attr")
-                a.put(Date(timeIntervalSince1970: 1_596_975_144), forKey: "date_attr")
-            }, forKey: "other")
+            copy2.put(
+                BatchEventAttributes { a in
+                    a.put(13.4567, forKey: "double_attr")
+                    a.put(Date(timeIntervalSince1970: 1_596_975_144), forKey: "date_attr")
+                },
+                forKey: "other"
+            )
 
             let serializedEventAttributes2 = try BATEventAttributesSerializer.serialize(eventAttributes: copy2)
             let isSatisfied = trigger.isSatisfied(forAttributes: serializedEventAttributes2)
@@ -215,10 +220,16 @@ struct BAEventTriggerTests {
 
             // WHEN: The `isSatisfied` method is called with a different, incomplete set of attributes.
             let copy2 = eventAttributes
-            copy2.put([otherEventAttributes, BatchEventAttributes { a in
-                a.put(13.4567, forKey: "double_attr")
-                a.put(Date(timeIntervalSince1970: 1_596_975_144), forKey: "date_attr")
-            }], forKey: "other")
+            copy2.put(
+                [
+                    otherEventAttributes,
+                    BatchEventAttributes { a in
+                        a.put(13.4567, forKey: "double_attr")
+                        a.put(Date(timeIntervalSince1970: 1_596_975_144), forKey: "date_attr")
+                    },
+                ],
+                forKey: "other"
+            )
 
             let serializedEventAttributes2 = try BATEventAttributesSerializer.serialize(eventAttributes: copy2)
             let isSatisfied = trigger.isSatisfied(forAttributes: serializedEventAttributes2)
@@ -234,15 +245,17 @@ struct BAEventTriggerTests {
             let trigger = BAEventTrigger(name: "nameeeee", label: "label", attributes: eventAttributes)
 
             // WHEN: The `isSatisfied` method is called with attributes where that same array has an extra element.
-            let eventAttributes2 = try BATEventAttributesSerializer.serialize(eventAttributes: BatchEventAttributes { a in
-                a.put("test_label", forKey: "$label")
-                a.put("a_test_string", forKey: "string_attr")
-                a.put(13, forKey: "int_attr")
-                a.put(13.4567, forKey: "double_attr")
-                a.put(Date(timeIntervalSince1970: 1_596_975_143), forKey: "date_attr")
-                a.put(URL(string: "https://batch.com/")!, forKey: "url_attr")
-                a.put(["A", "B", "C", "D"], forKey: "string_list")
-            })
+            let eventAttributes2 = try BATEventAttributesSerializer.serialize(
+                eventAttributes: BatchEventAttributes { a in
+                    a.put("test_label", forKey: "$label")
+                    a.put("a_test_string", forKey: "string_attr")
+                    a.put(13, forKey: "int_attr")
+                    a.put(13.4567, forKey: "double_attr")
+                    a.put(Date(timeIntervalSince1970: 1_596_975_143), forKey: "date_attr")
+                    a.put(URL(string: "https://batch.com/")!, forKey: "url_attr")
+                    a.put(["A", "B", "C", "D"], forKey: "string_list")
+                }
+            )
 
             let isSatisfied = trigger.isSatisfied(forAttributes: eventAttributes2)
 

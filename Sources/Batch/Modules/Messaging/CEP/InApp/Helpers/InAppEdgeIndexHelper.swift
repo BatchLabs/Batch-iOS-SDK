@@ -6,7 +6,8 @@
 
 /// Helper to centralize index logic
 enum InAppEdgeIndexHelper: Int {
-    case top = 0, right, bottom, left
+    case top = 0
+    case right, bottom, left
 }
 
 /// Ease the get of edge inset

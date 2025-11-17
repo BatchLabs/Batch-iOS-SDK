@@ -44,30 +44,32 @@ struct InAppMessageBuilder {
     /// - Parameter inAppMessage: The raw in-app message data.
     /// - Returns: An array of configured `InAppViewBuilder`s.
     static func viewBuilders(for inAppMessage: InAppMessage) throws -> [InAppViewBuilder] {
-        var contentViewBuilders = try InAppAnyObjectTypeBuilder.build(
-            urls: inAppMessage.urls ?? [:],
-            texts: inAppMessage.texts ?? [:],
-            actions: inAppMessage.actions ?? [:],
-            componentTypes: inAppMessage.root.children,
-            format: inAppMessage.format
-        ).compactMap { $0 }
+        var contentViewBuilders =
+            try InAppAnyObjectTypeBuilder.build(
+                urls: inAppMessage.urls ?? [:],
+                texts: inAppMessage.texts ?? [:],
+                actions: inAppMessage.actions ?? [:],
+                componentTypes: inAppMessage.root.children,
+                format: inAppMessage.format
+            )
+            .compactMap { $0 }
 
         // For fullscreen messages, if no component is expandable, add spacers to correctly
         // position the content (top, center, or bottom).
         if inAppMessage.format == .fullscreen,
-           let position = inAppMessage.position,
-           contentViewBuilders.allSatisfy({ $0.expandable.isExpandable == false }),
-           let component = InAppAnyTypedComponent(InAppSpacer(height: InAppHeightType.fill.rawValue)).component,
-           let spacer = try component.uiBuilder(format: inAppMessage.format, urls: [:], texts: [:], actions: [:])
+            let position = inAppMessage.position,
+            contentViewBuilders.allSatisfy({ $0.expandable.isExpandable == false }),
+            let component = InAppAnyTypedComponent(InAppSpacer(height: InAppHeightType.fill.rawValue)).component,
+            let spacer = try component.uiBuilder(format: inAppMessage.format, urls: [:], texts: [:], actions: [:])
         {
             switch position {
-                case .top: // Add a spacer at the bottom to push content up.
-                    contentViewBuilders.append(spacer)
-                case .bottom: // Add a spacer at the top to push content down.
-                    contentViewBuilders.insert(spacer, at: 0)
-                case .center: // Add spacers on both sides to center the content.
-                    contentViewBuilders.append(spacer)
-                    contentViewBuilders.insert(spacer, at: 0)
+            case .top:  // Add a spacer at the bottom to push content up.
+                contentViewBuilders.append(spacer)
+            case .bottom:  // Add a spacer at the top to push content down.
+                contentViewBuilders.insert(spacer, at: 0)
+            case .center:  // Add spacers on both sides to center the content.
+                contentViewBuilders.append(spacer)
+                contentViewBuilders.insert(spacer, at: 0)
             }
         }
 
@@ -140,7 +142,12 @@ struct InAppMessageBuilder {
             ),
             closeConfiguration: InAppViewController.Configuration.CloseConfiguration(
                 // Apply cross sanitization to ensure webview messages have default close button styling
-                cross: try InAppMessageChecker.Sanitizer.cross(format: inAppMessage.format, cross: try inAppMessage.closeOptions.button.map(closeCross), source: \InAppMessage.closeOptions.button, component: rootContainerComponent),
+                cross: try InAppMessageChecker.Sanitizer.cross(
+                    format: inAppMessage.format,
+                    cross: try inAppMessage.closeOptions.button.map(closeCross),
+                    source: \InAppMessage.closeOptions.button,
+                    component: rootContainerComponent
+                ),
                 delay: try inAppMessage.closeOptions.auto.map(closeDelay)
             )
         )
@@ -159,85 +166,85 @@ extension InAppTypedComponent {
     /// - Returns: An optional `InAppViewBuilder` instance.
     func uiBuilder(format: InAppFormat, urls: [String: String], texts: [String: String], actions: [String: InAppAction]) throws -> InAppViewBuilder? {
         switch type {
-            // Build a button
-            case .button:
-                guard let button = self as? InAppButton else { return nil }
+        // Build a button
+        case .button:
+            guard let button = self as? InAppButton else { return nil }
 
-                let configuration = try InAppMessageBuilder.button(text: texts[button.id], action: actions[button.id], button: button)
+            let configuration = try InAppMessageBuilder.button(text: texts[button.id], action: actions[button.id], button: button)
 
-                return InAppViewBuilder(component: self, expandable: configuration.placement) { onClosureTap, _ in
-                    try InAppContainer(configuration: configuration.placement) {
-                        InAppButtonView(configuration: configuration, onClosureTap: onClosureTap)
-                    }
+            return InAppViewBuilder(component: self, expandable: configuration.placement) { onClosureTap, _ in
+                try InAppContainer(configuration: configuration.placement) {
+                    InAppButtonView(configuration: configuration, onClosureTap: onClosureTap)
                 }
-            // Build a divider
-            case .divider:
-                guard let divider = self as? InAppDivider else { return nil }
+            }
+        // Build a divider
+        case .divider:
+            guard let divider = self as? InAppDivider else { return nil }
 
-                let configuration = try InAppMessageBuilder.divider(divider: divider)
+            let configuration = try InAppMessageBuilder.divider(divider: divider)
 
-                return InAppViewBuilder(component: self, expandable: configuration.placement) { _, _ in
-                    try InAppContainer(configuration: configuration.placement) {
-                        InAppDividerView(configuration: configuration)
-                    }
+            return InAppViewBuilder(component: self, expandable: configuration.placement) { _, _ in
+                try InAppContainer(configuration: configuration.placement) {
+                    InAppDividerView(configuration: configuration)
                 }
-            // Build a spacer
-            case .spacer:
-                guard let spacer = self as? InAppSpacer else { return nil }
+            }
+        // Build a spacer
+        case .spacer:
+            guard let spacer = self as? InAppSpacer else { return nil }
 
-                let configuration = try InAppMessageBuilder.spacer(spacer: spacer, format: format)
+            let configuration = try InAppMessageBuilder.spacer(spacer: spacer, format: format)
 
-                return InAppViewBuilder(component: self, expandable: configuration.placement) { _, _ in
-                    try InAppContainer(configuration: configuration.placement) {
-                        InAppSpacerView(configuration: configuration)
-                    }
+            return InAppViewBuilder(component: self, expandable: configuration.placement) { _, _ in
+                try InAppContainer(configuration: configuration.placement) {
+                    InAppSpacerView(configuration: configuration)
                 }
-            // Build an image
-            case .image:
-                guard let image = self as? InAppImage, let urlString = urls[image.id] else { return nil }
+            }
+        // Build an image
+        case .image:
+            guard let image = self as? InAppImage, let urlString = urls[image.id] else { return nil }
 
-                let url = URL(string: urlString) ?? URL(fileURLWithPath: urlString)
-                let configuration = try InAppMessageBuilder.image(url: url, action: actions[image.id], image: image, contentDescription: texts[image.id], format: format)
+            let url = URL(string: urlString) ?? URL(fileURLWithPath: urlString)
+            let configuration = try InAppMessageBuilder.image(url: url, action: actions[image.id], image: image, contentDescription: texts[image.id], format: format)
 
-                return InAppViewBuilder(component: self, expandable: configuration.placement) { onClosureTap, onError in
-                    try InAppContainer(configuration: configuration.placement) {
-                        InAppImageView(configuration: configuration, onClosureTap: onClosureTap, onError: onError)
-                    }
+            return InAppViewBuilder(component: self, expandable: configuration.placement) { onClosureTap, onError in
+                try InAppContainer(configuration: configuration.placement) {
+                    InAppImageView(configuration: configuration, onClosureTap: onClosureTap, onError: onError)
                 }
-            // Build a text label
-            case .text:
-                guard let label = self as? InAppLabel else { return nil }
+            }
+        // Build a text label
+        case .text:
+            guard let label = self as? InAppLabel else { return nil }
 
-                let configuration = try InAppMessageBuilder.label(text: texts[label.id], label: label)
+            let configuration = try InAppMessageBuilder.label(text: texts[label.id], label: label)
 
-                return InAppViewBuilder(component: self, expandable: configuration.placement) { _, _ in
-                    try InAppContainer(configuration: configuration.placement) {
-                        InAppLabelView(configuration: configuration)
-                    }
+            return InAppViewBuilder(component: self, expandable: configuration.placement) { _, _ in
+                try InAppContainer(configuration: configuration.placement) {
+                    InAppLabelView(configuration: configuration)
                 }
-            // Build a columns container
-            case .columns:
-                guard let columns = self as? InAppColumns else { return nil }
+            }
+        // Build a columns container
+        case .columns:
+            guard let columns = self as? InAppColumns else { return nil }
 
-                let configuration = try InAppMessageBuilder.columns(urls: urls, texts: texts, actions: actions, columns: columns, format: format)
+            let configuration = try InAppMessageBuilder.columns(urls: urls, texts: texts, actions: actions, columns: columns, format: format)
 
-                return InAppViewBuilder(component: self, expandable: configuration.placement) { onClosureTap, onError in
-                    try InAppContainer(configuration: configuration.placement) {
-                        InAppColumnsView(configuration: configuration, onClosureTap: onClosureTap, onError: onError)
-                    }
+            return InAppViewBuilder(component: self, expandable: configuration.placement) { onClosureTap, onError in
+                try InAppContainer(configuration: configuration.placement) {
+                    InAppColumnsView(configuration: configuration, onClosureTap: onClosureTap, onError: onError)
                 }
-            case .webview:
-                guard let webview = self as? InAppWebview else { return nil }
-                let configuration = try InAppMessageBuilder.webview(
-                    webview: webview,
-                    urls: urls
-                )
+            }
+        case .webview:
+            guard let webview = self as? InAppWebview else { return nil }
+            let configuration = try InAppMessageBuilder.webview(
+                webview: webview,
+                urls: urls
+            )
 
-                return InAppViewBuilder(component: self, expandable: configuration.placement) { _, onError in
-                    try InAppContainer(configuration: configuration.placement) {
-                        InAppWebviewView(configuration: configuration, onError: onError)
-                    }
+            return InAppViewBuilder(component: self, expandable: configuration.placement) { _, onError in
+                try InAppContainer(configuration: configuration.placement) {
+                    InAppWebviewView(configuration: configuration, onError: onError)
                 }
+            }
         }
     }
 }
@@ -426,12 +433,14 @@ extension InAppMessageBuilder {
     static func button(text: String?, action: InAppAction?, button: InAppButton) throws -> InAppButtonView.Configuration {
         let component: InAppMessageChecker.Component = .identifiable(button)
         return InAppButtonView.Configuration(
-            content: InAppButtonView.Configuration.Content(text: try InAppMessageChecker.text(
-                for: text,
-                mandatory: .false(""),
-                source: \String.self,
-                component: component
-            )),
+            content: InAppButtonView.Configuration.Content(
+                text: try InAppMessageChecker.text(
+                    for: text,
+                    mandatory: .false(""),
+                    source: \String.self,
+                    component: component
+                )
+            ),
             fontStyle: InAppButtonView.Configuration.FontStyle(
                 fontSize: try InAppMessageChecker.fontSize(
                     for: button.fontSize,
@@ -460,12 +469,14 @@ extension InAppMessageBuilder {
                     source: \InAppButton.borderWidth,
                     component: component
                 ),
-                borderColor: try button.borderColor.map { try InAppMessageChecker.colors(
-                    for: $0,
-                    mandatory: .false(transparentColor),
-                    source: \InAppButton.borderColor,
-                    component: component
-                ) },
+                borderColor: try button.borderColor.map {
+                    try InAppMessageChecker.colors(
+                        for: $0,
+                        mandatory: .false(transparentColor),
+                        source: \InAppButton.borderColor,
+                        component: component
+                    )
+                },
                 textAlign: try InAppMessageChecker.horizontalAlignment(
                     for: button.textAlign,
                     mandatory: .false(.center),
@@ -523,11 +534,14 @@ extension InAppMessageBuilder {
     static func label(text: String?, label: InAppLabel) throws -> InAppLabelView.Configuration {
         let component: InAppMessageChecker.Component = .identifiable(label)
         return InAppLabelView.Configuration(
-            content: InAppLabelView.Configuration.Content(text: try InAppMessageChecker.text(
-                for: text, mandatory: .false(""),
-                source: \String.self,
-                component: component
-            )),
+            content: InAppLabelView.Configuration.Content(
+                text: try InAppMessageChecker.text(
+                    for: text,
+                    mandatory: .false(""),
+                    source: \String.self,
+                    component: component
+                )
+            ),
             fontStyle: InAppLabelView.Configuration.FontStyle(
                 fontSize: try InAppMessageChecker.fontSize(
                     for: label.fontSize,
@@ -558,12 +572,14 @@ extension InAppMessageBuilder {
                     component: component
                 )
             ),
-            placement: InAppLabelView.Configuration.Placement(margins: try InAppMessageChecker.margins(
-                for: label.margin,
-                mandatory: .false(0),
-                source: \InAppLabel.margin,
-                component: component
-            ))
+            placement: InAppLabelView.Configuration.Placement(
+                margins: try InAppMessageChecker.margins(
+                    for: label.margin,
+                    mandatory: .false(0),
+                    source: \InAppLabel.margin,
+                    component: component
+                )
+            )
         )
     }
 
@@ -638,7 +654,7 @@ extension InAppMessageBuilder {
                     for: columns.margin,
                     mandatory: .false(0),
                     source: \InAppColumns.margin,
-                    component: component,
+                    component: component
                 ),
                 heightType: builders.contains(where: { $0?.expandable.isExpandable == true }) ? .fill : nil
             )

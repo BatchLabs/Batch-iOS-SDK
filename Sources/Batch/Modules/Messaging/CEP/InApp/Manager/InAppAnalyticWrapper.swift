@@ -34,24 +34,24 @@ struct InAppAnalyticWrapper {
 
     func track(_ source: Kind) {
         switch source {
-            case .automaticallyClosed:
-                analyticsDelegate?.messageAutomaticallyClosed(message)
-            case .closed:
-                analyticsDelegate?.messageClosed(message)
-            case .dismissed:
-                analyticsDelegate?.messageDismissed(message)
-            case .shown:
-                analyticsDelegate?.messageShown(message)
-            case let .cta(component):
-                guard let action = component.action else { return }
+        case .automaticallyClosed:
+            analyticsDelegate?.messageAutomaticallyClosed(message)
+        case .closed:
+            analyticsDelegate?.messageClosed(message)
+        case .dismissed:
+            analyticsDelegate?.messageDismissed(message)
+        case .shown:
+            analyticsDelegate?.messageShown(message)
+        case let .cta(component):
+            guard let action = component.action else { return }
 
-                analyticsDelegate?.messageButtonClicked(message, ctaIdentifier: component.analyticsIdentifier, ctaType: component.type.rawValue, action: action)
-            case let .webView(component):
-                guard let action = component.action else { return }
+            analyticsDelegate?.messageButtonClicked(message, ctaIdentifier: component.analyticsIdentifier, ctaType: component.type.rawValue, action: action)
+        case let .webView(component):
+            guard let action = component.action else { return }
 
-                analyticsDelegate?.messageWebViewClickTracked(message, action: action, analyticsIdentifier: component.analyticsIdentifier)
-            case let .closeError(error):
-                analyticsDelegate?.messageClosed(message, byError: error)
+            analyticsDelegate?.messageWebViewClickTracked(message, action: action, analyticsIdentifier: component.analyticsIdentifier)
+        case let .closeError(error):
+            analyticsDelegate?.messageClosed(message, byError: error)
         }
     }
 }

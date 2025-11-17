@@ -4,8 +4,9 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-@testable import Batch
 import Testing
+
+@testable import Batch
 
 struct InAppColumnsViewTests {
     // Columns
@@ -52,39 +53,45 @@ struct InAppColumnsViewTests {
 
     static let componentsTypes: [InAppAnyTypedComponent?] = [
         InAppAnyTypedComponent(InAppImage(id: imageId, aspect: aspect, margin: margin, height: height, radius: radius)),
-        InAppAnyTypedComponent(InAppLabel(id: titleId, margin: margin, textAlign: textAlign, fontSize: fontSize, color: ["#000000FF", "#FFFFFFFF"], maxLines: maxLines, fontDecoration: fontDecoration)),
-        InAppAnyTypedComponent(InAppButton(
-            id: button1Id,
-            margin: margin,
-            padding: padding,
-            width: "auto",
-            align: textAlign,
-            backgroundColor: ["#FFFFFFFF", "#000000FF"],
-            radius: radius,
-            borderWidth: borderWidth,
-            borderColor: ["#FFFFFFFF", "#000000FF"],
-            fontSize: fontSize,
-            textAlign: textAlign,
-            textColor: ["#000000FF", "#FFFFFFFF"],
-            maxLines: maxLines,
-            fontDecoration: fontDecoration
-        )),
-        InAppAnyTypedComponent(InAppButton(
-            id: button2Id,
-            margin: margin,
-            padding: padding,
-            width: "auto",
-            align: textAlign,
-            backgroundColor: ["#FFFFFFFF", "#000000FF"],
-            radius: radius,
-            borderWidth: borderWidth,
-            borderColor: ["#FFFFFFFF", "#000000FF"],
-            fontSize: fontSize,
-            textAlign: textAlign,
-            textColor: ["#000000FF", "#FFFFFFFF"],
-            maxLines: maxLines,
-            fontDecoration: fontDecoration
-        )),
+        InAppAnyTypedComponent(
+            InAppLabel(id: titleId, margin: margin, textAlign: textAlign, fontSize: fontSize, color: ["#000000FF", "#FFFFFFFF"], maxLines: maxLines, fontDecoration: fontDecoration)
+        ),
+        InAppAnyTypedComponent(
+            InAppButton(
+                id: button1Id,
+                margin: margin,
+                padding: padding,
+                width: "auto",
+                align: textAlign,
+                backgroundColor: ["#FFFFFFFF", "#000000FF"],
+                radius: radius,
+                borderWidth: borderWidth,
+                borderColor: ["#FFFFFFFF", "#000000FF"],
+                fontSize: fontSize,
+                textAlign: textAlign,
+                textColor: ["#000000FF", "#FFFFFFFF"],
+                maxLines: maxLines,
+                fontDecoration: fontDecoration
+            )
+        ),
+        InAppAnyTypedComponent(
+            InAppButton(
+                id: button2Id,
+                margin: margin,
+                padding: padding,
+                width: "auto",
+                align: textAlign,
+                backgroundColor: ["#FFFFFFFF", "#000000FF"],
+                radius: radius,
+                borderWidth: borderWidth,
+                borderColor: ["#FFFFFFFF", "#000000FF"],
+                fontSize: fontSize,
+                textAlign: textAlign,
+                textColor: ["#000000FF", "#FFFFFFFF"],
+                maxLines: maxLines,
+                fontDecoration: fontDecoration
+            )
+        ),
     ]
 
     @MainActor
@@ -141,7 +148,7 @@ struct InAppColumnsViewTests {
     @MainActor
     @Test func testFillConfiguration() async throws {
         var components = Self.componentsTypes
-        components.replaceSubrange(0 ..< 1, with: [.init(InAppSpacer(height: "fill"))])
+        components.replaceSubrange(0..<1, with: [.init(InAppSpacer(height: "fill"))])
 
         let columnsView = InAppColumnsView(
             configuration: InAppColumnsView.Configuration(

@@ -170,7 +170,7 @@ typedef NS_ENUM(NSUInteger, BatchSMSSubscriptionState) {
 
 /// Set a string profile attribute for a key.
 ///
-/// Must not be longer than 64 characters. Can be empty.
+/// Must not be longer than 300 characters. Can be empty.
 /// For better results, you should make them upper/lowercase and trim the whitespaces.
 /// - Parameters:
 ///   - attribute: The attribute value.
@@ -188,7 +188,7 @@ typedef NS_ENUM(NSUInteger, BatchSMSSubscriptionState) {
 ///
 /// - Parameters:
 ///   - attribute: The attribute value. Cannot have more than 25 items.
-///     Individual items cannot be longer than 64 characters.
+///     Individual items cannot be longer than 300 characters.
 ///     For better results, you should make them upper/lowercase and trim the whitespaces.
 ///   - key: The attribute key. Can't be nil. It should be made of letters, numbers or underscores (`[a-z0-9_]`) and
 ///     can't be longer than 30 characters.
@@ -207,7 +207,7 @@ typedef NS_ENUM(NSUInteger, BatchSMSSubscriptionState) {
 ///
 /// - Parameters:
 ///   - attribute: The attribute value. Cannot have more than 25 operations pending on an array attribute.
-///     Individual items cannot be longer than 64 characters.
+///     Individual items cannot be longer than 300 characters.
 ///     For better results, you should make them upper/lowercase and trim the whitespaces.
 ///   - key: The attribute key. Can't be nil. It should be made of letters, numbers or underscores (`[a-z0-9_]`) and
 ///     can't be longer than 30 characters.
@@ -226,7 +226,7 @@ typedef NS_ENUM(NSUInteger, BatchSMSSubscriptionState) {
 ///
 /// - Parameters:
 ///   - attribute: The attribute value. Cannot have more than 25 operations pending on an array attribute.
-///     Individual items cannot be longer than 64 characters.
+///     Individual items cannot be longer than 300 characters.
 ///     For better results, you should make them upper/lowercase and trim the whitespaces.
 ///   - key: The attribute key. Can't be nil. It should be made of letters, numbers or underscores (`[a-z0-9_]`) and
 ///     can't be longer than 30 characters.

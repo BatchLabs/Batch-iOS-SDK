@@ -8,7 +8,6 @@
 #import <Batch/BAInjection.h>
 #import <Batch/BAMetric.h>
 #import <Batch/BAMetricWebserviceClient.h>
-#import <Batch/BATMessagePackWriter.h>
 #import <Batch/BAWebserviceURLBuilder.h>
 #import <Batch/Batch-Swift.h>
 
@@ -36,22 +35,20 @@
     return self;
 }
 
-- (nullable NSData *)requestBody:(NSError **)error {
+- (nullable NSArray *)requestBodyArray {
     if ([_metrics count] <= 0) {
         return nil;
     }
 
-    BATMessagePackWriter *writer = [[BATMessagePackWriter alloc] init];
-    if (![writer writeArraySize:[_metrics count] error:error]) {
-        return nil;
+    // Build the metrics array by converting each metric to its dictionary representation
+    // Note: We return the array itself, not wrapped in an object, to match the interface.metrics schema
+    // Expected format: [{name: "...", type: "...", values: [...], labels: {...}}, ...]
+    NSMutableArray *metricsArray = [NSMutableArray arrayWithCapacity:[_metrics count]];
+    for (BAMetric *metric in _metrics) {
+        [metricsArray addObject:[metric toDictionary]];
     }
 
-    for (BAMetric *metric in _metrics) {
-        if (![metric packToWriter:writer error:error]) {
-            return nil;
-        }
-    }
-    return writer.data;
+    return metricsArray;
 }
 
 - (void)connectionDidFinishLoadingWithData:(NSData *)data {
@@ -64,11 +61,7 @@
 
 - (void)connectionFailedWithError:(NSError *)error {
     [super connectionFailedWithError:error];
-    if ([error.domain isEqualToString:NETWORKING_ERROR_DOMAIN] && error.code == BAConnectionErrorCauseOptedOut) {
-        error = [BAErrorHelper optedOutError];
-    }
 
-    [BALogger debugForDomain:LOGGER_DOMAIN message:@"Failure - %@", [error localizedDescription]];
     if (error != nil && _errorHandler != nil) {
         _errorHandler(error);
     }

@@ -4,9 +4,10 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-@testable import Batch
 import Batch.Batch_Private
 import XCTest
+
+@testable import Batch
 
 final class profileOperationsSerializerTests: XCTestCase {
     func testEmptySerialization() throws {
@@ -52,6 +53,8 @@ final class profileOperationsSerializerTests: XCTestCase {
             try editor.deleteCustomAttribute(forKey: "delete_att")
 
             try editor.setCustom(stringAttribute: "foo", forKey: "overwrite")
+            try editor.setCustom(stringAttribute: String(repeating: "not_too_long", count: 25), forKey: "string_not_too_long")
+            try? editor.setCustom(stringAttribute: String(repeating: "too_long", count: 40), forKey: "string_too_long")
             try editor.setCustom(int64Attribute: 5, forKey: "overwrite")
 
             try editor.setCustom(stringAttribute: "foo", forKey: "overwrite_array")
@@ -59,7 +62,10 @@ final class profileOperationsSerializerTests: XCTestCase {
 
             try editor.add(value: "foo", toArray: "append_array_att")
             try editor.add(value: "bar", toArray: "append_array_att")
+            try? editor.add(value: String(repeating: "too_long", count: 40), toArray: "append_array_att")
+
             try editor.remove(value: "baz", fromArray: "remove_array_att")
+            try? editor.add(value: String(repeating: "too_long", count: 40), toArray: "remove_array_att")
 
             try editor.setCustom(stringArrayAttribute: ["foo", "bar"], forKey: "complex_string_array_att")
             try editor.remove(value: "bar", fromArray: "complex_string_array_att")
@@ -67,6 +73,7 @@ final class profileOperationsSerializerTests: XCTestCase {
             try editor.add(value: "foo", toArray: "complex_string_array_att")
             try editor.add(value: "baz", toArray: "complex_string_array_att")
             try editor.add(value: "baz2", toArray: "complex_string_array_att")
+            try? editor.add(value: String(repeating: "too_long", count: 40), toArray: "complex_string_array_att")
             try editor.remove(value: "baz", fromArray: "complex_string_array_att")
 
             // Making an array and removing all its values should make it deleted
@@ -101,6 +108,10 @@ final class profileOperationsSerializerTests: XCTestCase {
         XCTAssertEqual(serializedAttributes["complex_string_array_att.a"] as? [String], ["foo", "foo", "baz2"])
 
         XCTAssertNil(serializedAttributes["absent_array_att.a"])
+
+        XCTAssertNotNil(serializedAttributes["string_not_too_long.s"])
+        XCTAssertNil(serializedAttributes["string_too_long.s"])
+
     }
 
     /// Test that overriding previously set attributes properly works

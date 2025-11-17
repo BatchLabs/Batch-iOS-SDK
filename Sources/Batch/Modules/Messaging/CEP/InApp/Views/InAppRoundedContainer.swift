@@ -28,11 +28,12 @@ class InAppRoundedContainer<T: InAppRoundableCorners & InAppBorderable>: UIView 
     }
 
     func layoutStyle() {
-        let styleToUse: any InAppRoundableCorners & InAppBorderable = if traitCollection.horizontalSizeClass != .compact, format == .modal {
-            regularStyle
-        } else {
-            style
-        }
+        let styleToUse: any InAppRoundableCorners & InAppBorderable =
+            if traitCollection.horizontalSizeClass != .compact, format == .modal {
+                regularStyle
+            } else {
+                style
+            }
 
         // Corners
         let path = styleToUse.layoutRoundedCorners(on: self)
@@ -58,7 +59,7 @@ class InAppRoundedContainer<T: InAppRoundableCorners & InAppBorderable>: UIView 
     }
 }
 
-fileprivate struct InAppRoundedContainerIpadStyle: InAppRoundableCorners, InAppBorderable {
+private struct InAppRoundedContainerIpadStyle: InAppRoundableCorners, InAppBorderable {
     let radius: [CGFloat]
     let borderWidth: CGFloat? = nil
     let borderColor: UIColor? = nil

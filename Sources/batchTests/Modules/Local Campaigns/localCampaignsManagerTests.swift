@@ -16,13 +16,14 @@ struct BALocalCampaignsManagerTests {
         // GIVEN a list of campaigns with different priorities.
         let dateProvider = BASecureDateProvider()
         let manager = BALocalCampaignsManager(
-            dateProvider: dateProvider, viewTracker: BALocalCampaignsSQLTracker()
+            dateProvider: dateProvider,
+            viewTracker: BALocalCampaignsSQLTracker()
         )
 
         let campaigns: [BALocalCampaign] = [
-            Self.createFakeCampaignWith(priority: 0, jit: false), // Low priority
-            Self.createFakeCampaignWith(priority: 50, jit: false), // High priority
-            Self.createFakeCampaignWith(priority: 10, jit: false), // Medium priority
+            Self.createFakeCampaignWith(priority: 0, jit: false),  // Low priority
+            Self.createFakeCampaignWith(priority: 50, jit: false),  // High priority
+            Self.createFakeCampaignWith(priority: 10, jit: false),  // Medium priority
         ]
         manager.load(campaigns, fromCache: false)
 
@@ -30,9 +31,9 @@ struct BALocalCampaignsManagerTests {
         let sortedCampaigns: [BALocalCampaign] = manager.eligibleCampaignsSorted(byPriority: BANewSessionSignal())
 
         // THEN the campaigns should be ordered from highest priority to lowest.
-        #expect(sortedCampaigns[0] == campaigns[1]) // Priority 50
-        #expect(sortedCampaigns[1] == campaigns[2]) // Priority 10
-        #expect(sortedCampaigns[2] == campaigns[0]) // Priority 0
+        #expect(sortedCampaigns[0] == campaigns[1])  // Priority 50
+        #expect(sortedCampaigns[1] == campaigns[2])  // Priority 10
+        #expect(sortedCampaigns[2] == campaigns[0])  // Priority 0
     }
 
     /// Tests that the manager can correctly filter and return only the campaigns that require a Just-In-Time (JIT) sync.
@@ -40,7 +41,8 @@ struct BALocalCampaignsManagerTests {
         // GIVEN a list of campaigns where some require JIT sync and others don't.
         let dateProvider = BASecureDateProvider()
         let manager = BALocalCampaignsManager(
-            dateProvider: dateProvider, viewTracker: BALocalCampaignsSQLTracker()
+            dateProvider: dateProvider,
+            viewTracker: BALocalCampaignsSQLTracker()
         )
 
         let campaigns: [BALocalCampaign] = [
@@ -63,7 +65,8 @@ struct BALocalCampaignsManagerTests {
         // GIVEN a list of campaigns where some require JIT sync and one doesn't.
         let dateProvider = BASecureDateProvider()
         let manager = BALocalCampaignsManager(
-            dateProvider: dateProvider, viewTracker: BALocalCampaignsSQLTracker()
+            dateProvider: dateProvider,
+            viewTracker: BALocalCampaignsSQLTracker()
         )
 
         let campaigns: [BALocalCampaign] = [
@@ -84,7 +87,8 @@ struct BALocalCampaignsManagerTests {
         // GIVEN a default manager state.
         let dateProvider = BASecureDateProvider()
         let manager = BALocalCampaignsManager(
-            dateProvider: dateProvider, viewTracker: BALocalCampaignsSQLTracker()
+            dateProvider: dateProvider,
+            viewTracker: BALocalCampaignsSQLTracker()
         )
 
         // THEN the JIT service should be available.
@@ -133,7 +137,8 @@ struct BALocalCampaignsManagerTests {
         static let dateProvider = BAMutableDateProvider(timestamp: friday.timeIntervalSince1970)
 
         static let manager = BALocalCampaignsManager(
-            dateProvider: dateProvider, viewTracker: BALocalCampaignsSQLTracker()
+            dateProvider: dateProvider,
+            viewTracker: BALocalCampaignsSQLTracker()
         )
 
         struct Outside {
@@ -207,7 +212,7 @@ struct BALocalCampaignsManagerTests {
                 let quietHoursOvernight = BALocalCampaignQuietHours()
                 quietHoursOvernight.startHour = 18
                 quietHoursOvernight.startMin = 0
-                quietHoursOvernight.endHour = 13 // Ends next day
+                quietHoursOvernight.endHour = 13  // Ends next day
                 quietHoursOvernight.endMin = 0
                 let campaign2 = createFakeCampaignWith(priority: 0, jit: false, quietHours: quietHoursOvernight)
                 #expect(manager.isCampaignDate(inQuietHours: campaign2) == false)
@@ -283,7 +288,8 @@ struct BALocalCampaignsManagerTests {
                 let dateProvider = BAMutableDateProvider(timestamp: friday.timeIntervalSince1970)
 
                 let manager = BALocalCampaignsManager(
-                    dateProvider: dateProvider, viewTracker: BALocalCampaignsSQLTracker()
+                    dateProvider: dateProvider,
+                    viewTracker: BALocalCampaignsSQLTracker()
                 )
 
                 // Test Case 1: Same-day quiet hours.
@@ -329,7 +335,7 @@ struct BALocalCampaignsManagerTests {
         let syncedJITCampaigns = manager.value(forKey: "_syncedJITCampaigns") as? NSMutableDictionary
 
         #expect(syncedJITCampaigns != nil)
-        #expect(syncedJITCampaigns?.count == 2) // All campaigns should have entries
+        #expect(syncedJITCampaigns?.count == 2)  // All campaigns should have entries
 
         // Verify JIT campaigns have appropriate sync results
         let syncResult1 = syncedJITCampaigns?["jit_campaign_1"] as? BATSyncedJITResult
@@ -438,7 +444,7 @@ struct BALocalCampaignsManagerTests {
 
         // WHEN we reload with only one campaign
         dateProvider.setTime(600)
-        manager.load([campaign1], fromCache: false) // Only campaign1 persists
+        manager.load([campaign1], fromCache: false)  // Only campaign1 persists
 
         // THEN the persistent campaign should remain with updated timestamp
         syncedJITCampaigns = manager.value(forKey: "_syncedJITCampaigns") as? NSMutableDictionary

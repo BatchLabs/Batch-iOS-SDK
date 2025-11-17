@@ -61,8 +61,8 @@ class webserviceHMACTests: XCTestCase {
         // key: 12345
         let precomputedHmacWithHeaders =
             "SHA256 content-type,foo,x-batch-cipher-version 8Qc8LvpoiakXejOZ9HzkxJOhLulKUdU3fzIL8dk720M="
-        let precomputedHmacWithoutHeaders = "SHA256 GuWkDmJXZa5LJCRCDw5DZEWMm+BWUFL3b8ZjV1oEOcU=" // key: 12345
-        let precomputedHmacWithNoPath = "SHA256 jqvGLeh81CwCwjJxbTDWtmbk9F+kKnfpWqtI4+RbTkY=" // key: 12345
+        let precomputedHmacWithoutHeaders = "SHA256 GuWkDmJXZa5LJCRCDw5DZEWMm+BWUFL3b8ZjV1oEOcU="  // key: 12345
+        let precomputedHmacWithNoPath = "SHA256 jqvGLeh81CwCwjJxbTDWtmbk9F+kKnfpWqtI4+RbTkY="  // key: 12345
         XCTAssertEqual(
             precomputedHmacWithHeaders,
             hmac.hmac(
@@ -125,7 +125,7 @@ class webserviceHMACTests: XCTestCase {
 
     func testShaHMAC() {
         var testString = "Lorem Ipsum Dolor 😂"
-        var b64PrecomputedHmac256 = "mih9WNLUTSrPTUOpoviX/PWCHaD2ie0ju716raNCv3Y=" // key: 12345
+        var b64PrecomputedHmac256 = "mih9WNLUTSrPTUOpoviX/PWCHaD2ie0ju716raNCv3Y="  // key: 12345
         var precomputedHmac256 = Data(base64Encoded: b64PrecomputedHmac256)!
         XCTAssertEqual(precomputedHmac256, hmac._sha256Hmac(of: testString.data(using: .utf8)!))
 
@@ -175,7 +175,8 @@ class webserviceHMACTests: XCTestCase {
                 "pro",
                 "User-Agent",
                 "X-Batch-Cipher-Version",
-            ], hmac._sortedHeaderKeys(headers)
+            ],
+            hmac._sortedHeaderKeys(headers)
         )
     }
 

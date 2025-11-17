@@ -29,14 +29,16 @@ class groupActionTest: XCTestCase {
                 actionBlock: { (_: String, _: [String: Any], _: BatchUserActionSource?) in
                     first.run()
                 }
-            ))
+            )
+        )
         actionsCenter.register(
             BatchUserAction(
                 identifier: "second",
                 actionBlock: { (_: String, _: [String: Any], _: BatchUserActionSource?) in
                     second.run()
                 }
-            ))
+            )
+        )
 
         let groupJSON = "{\"actions\":[[\"first\", {\"foo\": \"bar\"}],[],[\"invalid\"],[\"second\"]]}"
 
@@ -76,7 +78,8 @@ class groupActionTest: XCTestCase {
                 actionBlock: { (_: String, _: [String: Any], _: BatchUserActionSource?) in
                     shouldNotRun.run()
                 }
-            ))
+            )
+        )
 
         let nestedAction = "{\"actions\":[[\"batch.group\", {\"actions\": [\"shouldNotRun\"]}]]}"
 
@@ -96,14 +99,16 @@ class groupActionTest: XCTestCase {
                 actionBlock: { (_: String, _: [String: Any], _: BatchUserActionSource?) in
                     shouldNotRun.run()
                 }
-            ))
+            )
+        )
         actionsCenter.register(
             BatchUserAction(
                 identifier: "dummy",
                 actionBlock: { (_: String, _: [String: Any], _: BatchUserActionSource?) in
                     dummy.run()
                 }
-            ))
+            )
+        )
 
         // Make sure that 10 actions max can run
         // This should only count valid actions

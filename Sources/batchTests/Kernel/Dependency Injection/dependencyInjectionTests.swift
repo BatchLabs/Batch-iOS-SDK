@@ -25,7 +25,8 @@ class dependencyInjectionTests: XCTestCase {
 
         let injectedClass = try XCTUnwrap(registry.inject(class: injectionTestClass.self) as? injectionTestClass)
         let injectedProtocol = try XCTUnwrap(
-            registry.inject(protocol: injectionTestProtocol.self) as? injectionTestProtocol)
+            registry.inject(protocol: injectionTestProtocol.self) as? injectionTestProtocol
+        )
 
         XCTAssertTrue(injectedClass === classToInject)
         XCTAssertTrue(injectedProtocol === classToInject)
@@ -83,9 +84,11 @@ class dependencyInjectionTests: XCTestCase {
         registry.register(injectable: injectable, forProtocol: injectionTestProtocol.self)
 
         var injectedClass = try XCTUnwrap(
-            registry.inject(class: injectionOffsetableTestClass.self) as? injectionOffsetableTestClass)
+            registry.inject(class: injectionOffsetableTestClass.self) as? injectionOffsetableTestClass
+        )
         var injectedProtocol = try XCTUnwrap(
-            registry.inject(protocol: injectionTestProtocol.self) as? injectionTestProtocol)
+            registry.inject(protocol: injectionTestProtocol.self) as? injectionTestProtocol
+        )
 
         // Echo is offsetted by blockInstantiatorCounter
 
@@ -95,9 +98,11 @@ class dependencyInjectionTests: XCTestCase {
         blockInstantiatorCounter = 2
 
         injectedClass = try XCTUnwrap(
-            registry.inject(class: injectionOffsetableTestClass.self) as? injectionOffsetableTestClass)
+            registry.inject(class: injectionOffsetableTestClass.self) as? injectionOffsetableTestClass
+        )
         injectedProtocol = try XCTUnwrap(
-            registry.inject(protocol: injectionTestProtocol.self) as? injectionTestProtocol)
+            registry.inject(protocol: injectionTestProtocol.self) as? injectionTestProtocol
+        )
         XCTAssertEqual(2, injectedClass.echo(0))
         XCTAssertEqual(2, injectedProtocol.echo(0))
         blockInstantiatorCounter = 1
@@ -125,11 +130,14 @@ class dependencyInjectionTests: XCTestCase {
 
         func refreshInjections() throws {
             injectedClass = try XCTUnwrap(
-                registry.inject(class: injectionOffsetableTestClass.self) as? injectionOffsetableTestClass)
+                registry.inject(class: injectionOffsetableTestClass.self) as? injectionOffsetableTestClass
+            )
             injectedProtocol = try XCTUnwrap(
-                registry.inject(protocol: injectionTestProtocol.self) as? injectionTestProtocol)
+                registry.inject(protocol: injectionTestProtocol.self) as? injectionTestProtocol
+            )
             injectedUntouchedClass = try XCTUnwrap(
-                registry.inject(class: injectionTestClass.self) as? injectionTestClass)
+                registry.inject(class: injectionTestClass.self) as? injectionTestClass
+            )
         }
         try refreshInjections()
 

@@ -4,9 +4,10 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-@testable import Batch
 import Batch.Batch_Private
 import Foundation
+
+@testable import Batch
 
 @objc
 class MockEventTracker: NSObject, BATEventTracker {
@@ -49,20 +50,22 @@ class MockEventTracker: NSObject, BATEventTracker {
     // To match events without parameters, provide an empty dictionary
     @objc
     func findEvent(name: String, parameters: [AnyHashable: Any]?) -> BAEvent? {
-        return trackedEvents.filter { event in
-            if event.name != name {
-                return false
-            }
-
-            if let parameters {
-                let eventParameters = (event.parametersDictionary ?? [:]) as NSDictionary
-                if !eventParameters.isEqual(to: parameters) {
+        return
+            trackedEvents.filter { event in
+                if event.name != name {
                     return false
                 }
-            }
 
-            return true
-        }.first
+                if let parameters {
+                    let eventParameters = (event.parametersDictionary ?? [:]) as NSDictionary
+                    if !eventParameters.isEqual(to: parameters) {
+                        return false
+                    }
+                }
+
+                return true
+            }
+            .first
     }
 
     @objc

@@ -94,14 +94,6 @@ extension InAppLabelView.Configuration {
 
         // MARK: -
 
-        init(
-            fontSize: Int?,
-            fontDecoration: [InAppFontDecoration]?
-        ) {
-            self.fontSize = fontSize
-            self.fontDecoration = fontDecoration
-        }
-
         func apply(on _: InAppLabelView) {}
     }
 
@@ -119,11 +111,12 @@ extension InAppLabelView.Configuration {
             color: UIColor,
             maxLines: Int
         ) {
-            self.textAlign = switch textAlign {
+            self.textAlign =
+                switch textAlign {
                 case .left: .left
                 case .center: .center
                 case .right: .right
-            }
+                }
             self.color = color
             self.maxLines = maxLines
         }

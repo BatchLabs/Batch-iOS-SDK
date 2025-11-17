@@ -20,7 +20,9 @@ extension InAppViewController {
                 || shouldOverleapTopSafeArea(size: size)
         }
 
-        private func shouldOverleapSafeArea(margins: UIEdgeInsets, position: InAppVerticalAlignment, size: UIUserInterfaceSizeClass) -> Bool { margins == .zero && placement.position == position && format == .modal && size == .compact }
+        private func shouldOverleapSafeArea(margins: UIEdgeInsets, position: InAppVerticalAlignment, size: UIUserInterfaceSizeClass) -> Bool {
+            margins == .zero && placement.position == position && format == .modal && size == .compact
+        }
 
         func shouldOverleapBottomSafeArea(size: UIUserInterfaceSizeClass) -> Bool { shouldOverleapSafeArea(margins: placement.margins, position: .bottom, size: size) }
         func shouldOverleapTopSafeArea(size: UIUserInterfaceSizeClass) -> Bool { shouldOverleapSafeArea(margins: placement.margins, position: .top, size: size) }
@@ -51,13 +53,6 @@ extension InAppViewController.Configuration {
 
         let cross: Cross?
         let delay: Delay?
-
-        // MARK: -
-
-        init(cross: Cross?, delay: Delay?) {
-            self.cross = cross
-            self.delay = delay
-        }
     }
 
     struct Placement: InAppContainerizable {

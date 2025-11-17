@@ -111,11 +111,9 @@
                 format:@"You must override %@ in a subclass", NSStringFromSelector(_cmd)];
 }
 
-#pragma mark - MsgPack methods
+#pragma mark - Serialization methods
 
-- (BOOL)packToWriter:(nonnull BATMessagePackWriter *)writer error:(NSError **)error {
-    NSError *writerError;
-
+- (nonnull NSDictionary *)toDictionary {
     NSMutableDictionary *metricDict = [NSMutableDictionary dictionary];
     [metricDict setObject:_name forKey:@"name"];
     [metricDict setObject:_type forKey:@"type"];
@@ -128,23 +126,7 @@
         }
         [metricDict setObject:labelsDict forKey:@"labels"];
     }
-    [writer writeDictionary:metricDict error:&writerError];
-    if (writerError != nil) {
-        [BALogger debugForDomain:LOGGER_DOMAIN message:@"Could not pack metric"];
-        if (error != nil) {
-            *error = writerError;
-        }
-        return false;
-    }
-    return true;
-}
-
-- (nullable NSData *)pack:(NSError *_Nullable *_Nullable)error {
-    BATMessagePackWriter *writer = [BATMessagePackWriter new];
-    if ([self packToWriter:writer error:error]) {
-        return writer.data;
-    }
-    return nil;
+    return metricDict;
 }
 
 #pragma mark - NSCopying methods

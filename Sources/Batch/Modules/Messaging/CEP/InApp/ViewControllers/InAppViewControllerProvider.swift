@@ -22,7 +22,7 @@ public class InAppViewControllerProvider: NSObject {
     /// - Throws: `PayloadError.invalidPayload` if the payload cannot be parsed into a valid message.
     public static func viewController(pushPayload: [String: Any]) throws -> UIViewController {
         guard let sourceMessage = BatchMessaging.message(fromPushPayload: pushPayload),
-              let message = BAMSGPayloadParser.message(forCEPRawMessage: sourceMessage, bailIfNotAlert: false)
+            let message = BAMSGPayloadParser.message(forCEPRawMessage: sourceMessage, bailIfNotAlert: false)
         else { throw PayloadError.invalidPayload }
 
         return try viewController(message: message)
@@ -43,18 +43,18 @@ public class InAppViewControllerProvider: NSObject {
 
         // 3. Switch on the format and position to instantiate the correct UIViewController subclass.
         return switch inAppMessage.format {
-            case .webview:
-                // For webview format, create webview controller with configuration
-                InAppWebviewViewController(configuration: configuration)
-            case .modal, .fullscreen:
-                switch (configuration.format, configuration.placement.position) {
-                    case (.modal, .center): // A centered modal.
-                        InAppModalViewController(configuration: configuration)
-                    case (.modal, _): // A modal that behaves like a banner (e.g., top or bottom of the screen).
-                        InAppBannerViewController(configuration: configuration)
-                    case (_, _): // Any non-modal format is treated as fullscreen.
-                        InAppFullscreenViewController(configuration: configuration)
-                }
+        case .webview:
+            // For webview format, create webview controller with configuration
+            InAppWebviewViewController(configuration: configuration)
+        case .modal, .fullscreen:
+            switch (configuration.format, configuration.placement.position) {
+            case (.modal, .center):  // A centered modal.
+                InAppModalViewController(configuration: configuration)
+            case (.modal, _):  // A modal that behaves like a banner (e.g., top or bottom of the screen).
+                InAppBannerViewController(configuration: configuration)
+            case (_, _):  // Any non-modal format is treated as fullscreen.
+                InAppFullscreenViewController(configuration: configuration)
+            }
         }
     }
 }

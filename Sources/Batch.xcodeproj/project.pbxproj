@@ -278,9 +278,6 @@
 				Kernel/Logger/BALogger.h,
 				Kernel/Logger/BALoggerProtocol.h,
 				Kernel/Logger/BALoggerUnified.h,
-				Kernel/MessagePack/BATMessagePackReader.h,
-				Kernel/MessagePack/BATMessagePackWriter.h,
-				"Kernel/MessagePack/msgpack-c.h",
 				Kernel/Parameters/BAParameter.h,
 				Kernel/Parameters/BAPropertiesCenter.h,
 				Kernel/Parameters/BAUserDefaults.h,
@@ -442,14 +439,13 @@
 				Webservices/Core/BAWebserviceClient.h,
 				Webservices/Core/BAWebserviceClientExecutor.h,
 				Webservices/Core/BAWebserviceJsonClient.h,
-				Webservices/Core/BAWebserviceMsgPackClient.h,
 				Webservices/Crypto/BAWebserviceAESGCMCryptor.h,
 				Webservices/Crypto/BAWebserviceAESGCMGzipCryptor.h,
 				Webservices/Crypto/BAWebserviceCryptor.h,
 				Webservices/Crypto/BAWebserviceCryptorFactory.h,
 				Webservices/Crypto/BAWebserviceStubCryptor.h,
 				Webservices/Crypto/HMAC/BATWebserviceHMAC.h,
-				"Webservices/MsgPack Services implementations/BALocalCampaignsJITService.h",
+				"Webservices/JSON Services implementations/BALocalCampaignsJITService.h",
 				"Webservices/Query Services Implementations/BAEventTrackerService.h",
 				"Webservices/Query Services Implementations/BALocalCampaignsService.h",
 				"Webservices/Query Services Implementations/BAPushTokenService.h",
@@ -722,7 +718,7 @@
 				517D701422BBC34A00E374FB /* Sources */,
 				517D701522BBC34A00E374FB /* Frameworks */,
 				517D701622BBC34A00E374FB /* Resources */,
-				5113932C2BA3011B00DB58CE /* ShellScript */,
+				5113932C2BA3011B00DB58CE /* Run Script */,
 			);
 			buildRules = (
 			);
@@ -820,9 +816,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# workaround for bitcode generation problem with Xcode 7.3\nunset TOOLCHAINS\n\nexport CONFIGURATION=Release\n\n# define output folder environment variable\nUNIVERSAL_OUTPUTFOLDER=${PROJECT_DIR}/universal/Batch.embeddedframework\n\n# Step 1. Build Device and Simulator versions\nxcodebuild OTHER_CFLAGS=\"-fembed-bitcode\" -target Batch ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk iphoneos  BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\"\nxcodebuild OTHER_CFLAGS=\"-fembed-bitcode\" -target Batch ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk iphonesimulator BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\"\n\n# Remove the old output folder\nrm -rf \"${UNIVERSAL_OUTPUTFOLDER}\"\n\n# Recreate it\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}\"\n\n# Copy the generated framework\ncp -R \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/Batch.framework\" \"${UNIVERSAL_OUTPUTFOLDER}/\"\n\n# Remove the old binary\nrm \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/Batch\"\n\n# Extract Intel slices from the simulator binary\n# We can't support arm64 and arm64e for silicon macs in a fat framework, lipo will fail\nSIMULATOR_FRAMEWORK_PATH=\"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/Batch.framework/Batch\"\nlipo -extract \"x86_64\" -output \"${SIMULATOR_FRAMEWORK_PATH}-x86_64\" \"${SIMULATOR_FRAMEWORK_PATH}\"\n\n# Create universal binary file using lipo\nlipo -create -output \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/Batch\" \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/Batch.framework/Batch\" \"${SIMULATOR_FRAMEWORK_PATH}-x86_64\" \n\n# make sure the resource directory exists\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}/Batch.bundle\"\nrm -R \"${UNIVERSAL_OUTPUTFOLDER}/Batch.bundle/\"\n\n# Move ressources.\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/en.lproj/\" #this may not exist\ncp -R \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/en.lproj/\" \"${UNIVERSAL_OUTPUTFOLDER}/Batch.bundle/\"\nrm -R \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/en.lproj/\"\ntouch \"${UNIVERSAL_OUTPUTFOLDER}/Batch.bundle/.gitignore\"\n\n# Clean up framework for public use\ncd \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/\"\nsh ${PROJECT_DIR}/../Tools/Scripts/strip_public_swift_framework.sh\n";
+			shellScript = "# workaround for bitcode generation problem with Xcode 7.3\nunset TOOLCHAINS\n\nexport CONFIGURATION=Release\n\n# define output folder environment variable\nUNIVERSAL_OUTPUTFOLDER=${PROJECT_DIR}/universal/Batch.embeddedframework\n\n# Step 1. Build Device and Simulator versions\nxcodebuild -target Batch ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk iphoneos  BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\"\nxcodebuild -target Batch ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk iphonesimulator BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\"\n\n# Remove the old output folder\nrm -rf \"${UNIVERSAL_OUTPUTFOLDER}\"\n\n# Recreate it\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}\"\n\n# Copy the generated framework\ncp -R \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/Batch.framework\" \"${UNIVERSAL_OUTPUTFOLDER}/\"\n\n# Remove the old binary\nrm \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/Batch\"\n\n# Extract Intel slices from the simulator binary\n# We can't support arm64 and arm64e for silicon macs in a fat framework, lipo will fail\nSIMULATOR_FRAMEWORK_PATH=\"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/Batch.framework/Batch\"\nlipo -extract \"x86_64\" -output \"${SIMULATOR_FRAMEWORK_PATH}-x86_64\" \"${SIMULATOR_FRAMEWORK_PATH}\"\n\n# Create universal binary file using lipo\nlipo -create -output \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/Batch\" \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/Batch.framework/Batch\" \"${SIMULATOR_FRAMEWORK_PATH}-x86_64\" \n\n# make sure the resource directory exists\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}/Batch.bundle\"\nrm -R \"${UNIVERSAL_OUTPUTFOLDER}/Batch.bundle/\"\n\n# Move ressources.\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/en.lproj/\" #this may not exist\ncp -R \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/en.lproj/\" \"${UNIVERSAL_OUTPUTFOLDER}/Batch.bundle/\"\nrm -R \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/en.lproj/\"\ntouch \"${UNIVERSAL_OUTPUTFOLDER}/Batch.bundle/.gitignore\"\n\n# Clean up framework for public use\ncd \"${UNIVERSAL_OUTPUTFOLDER}/Batch.framework/\"\nsh ${PROJECT_DIR}/../Tools/Scripts/strip_public_swift_framework.sh\n";
 		};
-		5113932C2BA3011B00DB58CE /* ShellScript */ = {
+		5113932C2BA3011B00DB58CE /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 8;
@@ -832,6 +828,7 @@
 			);
 			inputPaths = (
 			);
+			name = "Run Script";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -854,7 +851,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# workaround for bitcode generation problem with Xcode 7.3\nunset TOOLCHAINS\n\nexport CONFIGURATION=Release\n\n# define output folder environment variable\nARCHIVES_OUTPUTFOLDER=${PROJECT_DIR}/universal/Archives\nDSYMS_OUTPUTFOLDER=${PROJECT_DIR}/universal/dSYMs\nXCFRAMEWORK_OUTPUT=${PROJECT_DIR}/universal/Batch.xcframework\n\n# Create the output folders\nmkdir -p \"${ARCHIVES_OUTPUTFOLDER}\"\nmkdir -p \"${DSYMS_OUTPUTFOLDER}\"\nrm -f \"${DSYMS_OUTPUTFOLDER}/*.dSYM\"\n\n# Step 1. Build Device, Simulator, macOS and visionOS versions\nxcodebuild archive -scheme Batch -destination \"generic/platform=iOS\" -configuration ${CONFIGURATION} -archivePath \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphoneos.xcarchive\" SKIP_INSTALL=NO ONLY_ACTIVE_ARCH=NO ARCHS=\"arm64\" VALID_ARCHS=\"arm64\"\nxcodebuild archive -scheme Batch -destination \"generic/platform=iOS Simulator\" -configuration ${CONFIGURATION} -archivePath \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphonesimulator.xcarchive\" SKIP_INSTALL=NO ONLY_ACTIVE_ARCH=NO\nxcodebuild archive -scheme Batch -destination \"platform=macOS\" -configuration ${CONFIGURATION} -archivePath \"${ARCHIVES_OUTPUTFOLDER}/Batch-macos.xcarchive\" SKIP_INSTALL=NO ONLY_ACTIVE_ARCH=NO\n\n# We need a xcconfig to override SDKROOT to fix an issue with visionOS SDK being\n# required to build xros frameworks https://forums.developer.apple.com/forums/thread/743246\n# Setting SDKROOT or even making a new configuration does not work\ncp \"${PROJECT_DIR}/Batch/ReleaseConfig-visionos-workaround-vision.xcconfig\" \"${PROJECT_DIR}/Batch/ReleaseConfig.xcconfig\"\nxcodebuild archive -scheme Batch -destination \"generic/platform=visionOS\" -configuration ${CONFIGURATION} -archivePath \"${ARCHIVES_OUTPUTFOLDER}/Batch-xros.xcarchive\" SKIP_INSTALL=NO ONLY_ACTIVE_ARCH=NO SDKROOT=xros\nxcodebuild archive -scheme Batch -destination \"generic/platform=visionOS Simulator\" -configuration ${CONFIGURATION} -archivePath \"${ARCHIVES_OUTPUTFOLDER}/Batch-xrossimulator.xcarchive\" SKIP_INSTALL=NO ONLY_ACTIVE_ARCH=NO\ncp \"${PROJECT_DIR}/Batch/ReleaseConfig-visionos-workaround-initial.xcconfig\" \"${PROJECT_DIR}/Batch/ReleaseConfig.xcconfig\"\n\n# Step 2. Copy the dSYMs\n\ncp -a \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphoneos.xcarchive/dSYMs/Batch.framework.dSYM\" \"${DSYMS_OUTPUTFOLDER}/Batch_iphoneos.framework.dSYM\"\ncp -a \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphonesimulator.xcarchive/dSYMs/Batch.framework.dSYM\" \"${DSYMS_OUTPUTFOLDER}/Batch_iphonesimulator.framework.dSYM\"\ncp -a \"${ARCHIVES_OUTPUTFOLDER}/Batch-macos.xcarchive/dSYMs/Batch.framework.dSYM\" \"${DSYMS_OUTPUTFOLDER}/Batch_macos.framework.dSYM\"\ncp -a \"${ARCHIVES_OUTPUTFOLDER}/Batch-xros.xcarchive/dSYMs/Batch.framework.dSYM\" \"${DSYMS_OUTPUTFOLDER}/Batch_xros.framework.dSYM\"\ncp -a \"${ARCHIVES_OUTPUTFOLDER}/Batch-xrossimulator.xcarchive/dSYMs/Batch.framework.dSYM\" \"${DSYMS_OUTPUTFOLDER}/Batch_xrossimulator.framework.dSYM\"\n\n# Step 3. Clean up the frameworks\n\npushd .\n\ncd \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphoneos.xcarchive/Products/Library/Frameworks/Batch.framework/\"\nsh ${PROJECT_DIR}/../Tools/Scripts/strip_public_swift_framework.sh\n\ncd \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphonesimulator.xcarchive/Products/Library/Frameworks/Batch.framework/\"\nsh ${PROJECT_DIR}/../Tools/Scripts/strip_public_swift_framework.sh\n\ncd \"${ARCHIVES_OUTPUTFOLDER}/Batch-macos.xcarchive/Products/Library/Frameworks/Batch.framework/Versions/A/\"\nsh ${PROJECT_DIR}/../Tools/Scripts/strip_public_swift_framework.sh\n\ncd \"${ARCHIVES_OUTPUTFOLDER}/Batch-xros.xcarchive/Products/Library/Frameworks/Batch.framework/\"\nsh ${PROJECT_DIR}/../Tools/Scripts/strip_public_swift_framework.sh\n\ncd \"${ARCHIVES_OUTPUTFOLDER}/Batch-xrossimulator.xcarchive/Products/Library/Frameworks/Batch.framework/\"\nsh ${PROJECT_DIR}/../Tools/Scripts/strip_public_swift_framework.sh\n\n## 3.1: Fix Xcode not creating the \"PrivateHeaders\" folder, which can break Azure Pipelines\n## https://github.com/bamlab/react-native-batch-push/issues/67\nmkdir \"PrivateHeaders\"\n\npopd\n\n# Step 4. Make the xcframework\n# Remove the old xcframework\nrm -rf \"${XCFRAMEWORK_OUTPUT}\"\n\n# Build the xcframework\n\npushd .\ncd \"${PROJECT_DIR}/universal\"\nxcodebuild -create-xcframework \\\n    -framework \"Archives/Batch-iphoneos.xcarchive/Products/Library/Frameworks/Batch.framework\" \\\n    -framework \"Archives/Batch-iphonesimulator.xcarchive/Products/Library/Frameworks/Batch.framework\" \\\n    -framework \"Archives/Batch-macos.xcarchive/Products/Library/Frameworks/Batch.framework\" \\\n    -framework \"Archives/Batch-xros.xcarchive/Products/Library/Frameworks/Batch.framework\" \\\n    -framework \"Archives/Batch-xrossimulator.xcarchive/Products/Library/Frameworks/Batch.framework\" \\\n    -output \"Batch.xcframework\"\n\n# Sign it for distribution\n# (Apple Enterprise Account)\n\nif [ \"$BATCHSDK_SIGN_XCFRAMEWORK\" == \"1\" ]\nthen\n    echo \"Signing Batch.xcframework\"\n    codesign --timestamp -v --sign \"iPhone Distribution: IMEDIAPP\" \"${XCFRAMEWORK_OUTPUT}\"\nfi\n";
+			shellScript = "# workaround for bitcode generation problem with Xcode 7.3\nunset TOOLCHAINS\n\nexport CONFIGURATION=Release\n\n# define output folder environment variable\nARCHIVES_OUTPUTFOLDER=${PROJECT_DIR}/universal/Archives\nDSYMS_OUTPUTFOLDER=${PROJECT_DIR}/universal/dSYMs\nXCFRAMEWORK_OUTPUT=${PROJECT_DIR}/universal/Batch.xcframework\n\n# Create the output folders\nmkdir -p \"${ARCHIVES_OUTPUTFOLDER}\"\nmkdir -p \"${DSYMS_OUTPUTFOLDER}\"\nrm -f \"${DSYMS_OUTPUTFOLDER}/*.dSYM\"\n\n# Step 1. Build Device, Simulator, macOS and visionOS versions\nxcodebuild archive -scheme Batch -destination \"generic/platform=iOS\" -configuration ${CONFIGURATION} -archivePath \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphoneos.xcarchive\" SKIP_INSTALL=NO ONLY_ACTIVE_ARCH=NO ARCHS=\"arm64 arm64e\" VALID_ARCHS=\"arm64 arm64e\"\nxcodebuild archive -scheme Batch -destination \"generic/platform=iOS Simulator\" -configuration ${CONFIGURATION} -archivePath \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphonesimulator.xcarchive\" SKIP_INSTALL=NO ONLY_ACTIVE_ARCH=NO\nxcodebuild archive -scheme Batch -destination \"platform=macOS\" -configuration ${CONFIGURATION} -archivePath \"${ARCHIVES_OUTPUTFOLDER}/Batch-macos.xcarchive\" SKIP_INSTALL=NO ONLY_ACTIVE_ARCH=NO IPHONEOS_DEPLOYMENT_TARGET=\"16.0\"\n\n# We need a xcconfig to override SDKROOT to fix an issue with visionOS SDK being\n# required to build xros frameworks https://forums.developer.apple.com/forums/thread/743246\n# Setting SDKROOT or even making a new configuration does not work\ncp \"${PROJECT_DIR}/Batch/ReleaseConfig-visionos-workaround-vision.xcconfig\" \"${PROJECT_DIR}/Batch/ReleaseConfig.xcconfig\"\nxcodebuild archive -scheme Batch -destination \"generic/platform=visionOS\" -configuration ${CONFIGURATION} -archivePath \"${ARCHIVES_OUTPUTFOLDER}/Batch-xros.xcarchive\" SKIP_INSTALL=NO ONLY_ACTIVE_ARCH=NO SDKROOT=xros\nxcodebuild archive -scheme Batch -destination \"generic/platform=visionOS Simulator\" -configuration ${CONFIGURATION} -archivePath \"${ARCHIVES_OUTPUTFOLDER}/Batch-xrossimulator.xcarchive\" SKIP_INSTALL=NO ONLY_ACTIVE_ARCH=NO\ncp \"${PROJECT_DIR}/Batch/ReleaseConfig-visionos-workaround-initial.xcconfig\" \"${PROJECT_DIR}/Batch/ReleaseConfig.xcconfig\"\n\n# Step 2. Copy the dSYMs\n\ncp -a \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphoneos.xcarchive/dSYMs/Batch.framework.dSYM\" \"${DSYMS_OUTPUTFOLDER}/Batch_iphoneos.framework.dSYM\"\ncp -a \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphonesimulator.xcarchive/dSYMs/Batch.framework.dSYM\" \"${DSYMS_OUTPUTFOLDER}/Batch_iphonesimulator.framework.dSYM\"\ncp -a \"${ARCHIVES_OUTPUTFOLDER}/Batch-macos.xcarchive/dSYMs/Batch.framework.dSYM\" \"${DSYMS_OUTPUTFOLDER}/Batch_macos.framework.dSYM\"\ncp -a \"${ARCHIVES_OUTPUTFOLDER}/Batch-xros.xcarchive/dSYMs/Batch.framework.dSYM\" \"${DSYMS_OUTPUTFOLDER}/Batch_xros.framework.dSYM\"\ncp -a \"${ARCHIVES_OUTPUTFOLDER}/Batch-xrossimulator.xcarchive/dSYMs/Batch.framework.dSYM\" \"${DSYMS_OUTPUTFOLDER}/Batch_xrossimulator.framework.dSYM\"\n\n# Step 3. Clean up the frameworks\n\npushd .\n\ncd \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphoneos.xcarchive/Products/Library/Frameworks/Batch.framework/\"\nsh ${PROJECT_DIR}/../Tools/Scripts/strip_public_swift_framework.sh\n\ncd \"${ARCHIVES_OUTPUTFOLDER}/Batch-iphonesimulator.xcarchive/Products/Library/Frameworks/Batch.framework/\"\nsh ${PROJECT_DIR}/../Tools/Scripts/strip_public_swift_framework.sh\n\ncd \"${ARCHIVES_OUTPUTFOLDER}/Batch-macos.xcarchive/Products/Library/Frameworks/Batch.framework/Versions/A/\"\nsh ${PROJECT_DIR}/../Tools/Scripts/strip_public_swift_framework.sh\n\ncd \"${ARCHIVES_OUTPUTFOLDER}/Batch-xros.xcarchive/Products/Library/Frameworks/Batch.framework/\"\nsh ${PROJECT_DIR}/../Tools/Scripts/strip_public_swift_framework.sh\n\ncd \"${ARCHIVES_OUTPUTFOLDER}/Batch-xrossimulator.xcarchive/Products/Library/Frameworks/Batch.framework/\"\nsh ${PROJECT_DIR}/../Tools/Scripts/strip_public_swift_framework.sh\n\n## 3.1: Fix Xcode not creating the \"PrivateHeaders\" folder, which can break Azure Pipelines\n## https://github.com/bamlab/react-native-batch-push/issues/67\nmkdir \"PrivateHeaders\"\n\npopd\n\n# Step 4. Make the xcframework\n# Remove the old xcframework\nrm -rf \"${XCFRAMEWORK_OUTPUT}\"\n\n# Build the xcframework\n\npushd .\ncd \"${PROJECT_DIR}/universal\"\nxcodebuild -create-xcframework \\\n    -framework \"Archives/Batch-iphoneos.xcarchive/Products/Library/Frameworks/Batch.framework\" \\\n    -framework \"Archives/Batch-iphonesimulator.xcarchive/Products/Library/Frameworks/Batch.framework\" \\\n    -framework \"Archives/Batch-macos.xcarchive/Products/Library/Frameworks/Batch.framework\" \\\n    -framework \"Archives/Batch-xros.xcarchive/Products/Library/Frameworks/Batch.framework\" \\\n    -framework \"Archives/Batch-xrossimulator.xcarchive/Products/Library/Frameworks/Batch.framework\" \\\n    -output \"Batch.xcframework\"\n\n# Sign it for distribution\n# (Apple Enterprise Account)\n\nif [ \"$BATCHSDK_SIGN_XCFRAMEWORK\" == \"1\" ]\nthen\n    echo \"Signing Batch.xcframework\"\n    codesign --timestamp -v --sign \"iPhone Distribution: IMEDIAPP\" \"${XCFRAMEWORK_OUTPUT}\"\nfi\n";
 		};
 		516C406723D9FD63000C11CF /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -980,6 +977,7 @@
 		02849C3419BA00350013408B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMPILATION_CACHE_ENABLE_CACHING = YES;
 				DEFINES_MODULE = NO;
 			};
 			name = Debug;
@@ -987,6 +985,7 @@
 		02849C3519BA00350013408B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMPILATION_CACHE_ENABLE_CACHING = YES;
 				DEFINES_MODULE = NO;
 			};
 			name = Release;
@@ -1046,6 +1045,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos xrsimulator xros";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1100,6 +1100,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos xrsimulator xros";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -1253,6 +1254,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
+				COMPILATION_CACHE_ENABLE_CACHING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = U5K2ETC2Y6;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1294,8 +1296,14 @@
 		517D701F22BBC34A00E374FB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"ARCHS[sdk=iphoneos*]" = "$(ARCHS_STANDARD)";
-				"ARCHS[sdk=xros*]" = "$(ARCHS_STANDARD)";
+				"ARCHS[sdk=iphoneos*]" = (
+					"$(ARCHS_STANDARD)",
+					arm64e,
+				);
+				"ARCHS[sdk=xros*]" = (
+					"$(ARCHS_STANDARD)",
+					arm64e,
+				);
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1306,6 +1314,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
+				COMPILATION_CACHE_ENABLE_CACHING = YES;
 				COPY_PHASE_STRIP = YES;
 				DEFINES_MODULE = YES;
 				DEPLOYMENT_POSTPROCESSING = YES;

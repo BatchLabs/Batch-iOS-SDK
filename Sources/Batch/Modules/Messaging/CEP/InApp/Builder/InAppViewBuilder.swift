@@ -22,8 +22,9 @@ struct InAppViewBuilder {
     /// - Parameters:
     ///   - onClosureTap: A closure to handle user actions (e.g., button taps).
     ///   - onError: A closure to handle errors (e.g., image loading failure).
-    let content: @MainActor (
-        _ onClosureTap: @escaping InAppClosureDelegate.Closure,
-        _ onError: @escaping InAppErrorDelegate.Closure
-    ) throws -> UIView
+    let content:
+        @MainActor (
+            _ onClosureTap: @escaping InAppClosureDelegate.Closure,
+            _ onError: @escaping InAppErrorDelegate.Closure
+        ) throws -> UIView
 }

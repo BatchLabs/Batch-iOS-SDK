@@ -31,44 +31,44 @@ enum SystemParameterShortname: String {
     /// Event serialized name computed property
     var serializedName: String? {
         switch self {
-            case .installationID:
-                return nil
-            case .customIdentifier:
-                return nil
-            case .applicationID:
-                return nil
-            case .deviceDate:
-                return nil
-            case .platform:
-                return nil
-            case .sessionIdentifier:
-                return nil
-            case .deviceRegion:
-                return "device_region"
-            case .deviceLanguage:
-                return "device_language"
-            case .deviceTimezone:
-                return "device_timezone"
-            case .sdkInstallDate:
-                return "device_installation_date"
-            case .deviceModel:
-                return "device_model"
-            case .deviceOSVersion:
-                return "os_version"
-            case .bundleID:
-                return "app_bundle_id"
-            case .apiLevel:
-                return "sdk_api_level"
-            case .messagingAPILevel:
-                return "sdk_m_api_level"
-            case .appVersion:
-                return "app_version"
-            case .versionCode:
-                return "app_build_number"
-            case .pluginVersion:
-                return "plugin_version"
-            case .bridgeVersion:
-                return "bridge_version"
+        case .installationID:
+            return nil
+        case .customIdentifier:
+            return nil
+        case .applicationID:
+            return nil
+        case .deviceDate:
+            return nil
+        case .platform:
+            return nil
+        case .sessionIdentifier:
+            return nil
+        case .deviceRegion:
+            return "device_region"
+        case .deviceLanguage:
+            return "device_language"
+        case .deviceTimezone:
+            return "device_timezone"
+        case .sdkInstallDate:
+            return "device_installation_date"
+        case .deviceModel:
+            return "device_model"
+        case .deviceOSVersion:
+            return "os_version"
+        case .bundleID:
+            return "app_bundle_id"
+        case .apiLevel:
+            return "sdk_api_level"
+        case .messagingAPILevel:
+            return "sdk_m_api_level"
+        case .appVersion:
+            return "app_version"
+        case .versionCode:
+            return "app_build_number"
+        case .pluginVersion:
+            return "plugin_version"
+        case .bridgeVersion:
+            return "bridge_version"
         }
     }
 }
@@ -110,7 +110,11 @@ enum SystemParameterRegistry {
     public static let sdkInstallDate = BATSystemParameter(shortname: .sdkInstallDate, watched: true, allowed: true)
 
     /// Device model
-    public static let deviceModel = BATSystemParameter(shortname: .deviceModel, watched: true, allowed: BATDataCollectionCenter.sharedInstance.dataCollectionConfig.deviceModelEnabled()?.boolValue ?? false)
+    public static let deviceModel = BATSystemParameter(
+        shortname: .deviceModel,
+        watched: true,
+        allowed: BATDataCollectionCenter.sharedInstance.dataCollectionConfig.deviceModelEnabled()?.boolValue ?? false
+    )
 
     /// Device OS version
     public static let deviceOSVersion = BATSystemParameter(shortname: .deviceOSVersion, watched: true, allowed: true)
@@ -137,7 +141,10 @@ enum SystemParameterRegistry {
     public static let bridgeVersion = BATSystemParameter(shortname: .bridgeVersion, watched: true, allowed: true)
 
     /// All registred system parameters
-    public static let all = [installationID, customUserID, sessionID, deviceDate, deviceRegion, deviceLanguage, deviceTimezone, sdkInstallDate, deviceModel, deviceOSVersion, bundleID, applicationID, platform, apiLevel, messagingAPILevel, appVersion, versionCode, pluginVersion, bridgeVersion]
+    public static let all = [
+        installationID, customUserID, sessionID, deviceDate, deviceRegion, deviceLanguage, deviceTimezone, sdkInstallDate, deviceModel, deviceOSVersion, bundleID, applicationID, platform, apiLevel,
+        messagingAPILevel, appVersion, versionCode, pluginVersion, bridgeVersion,
+    ]
 }
 
 /// System Parameter

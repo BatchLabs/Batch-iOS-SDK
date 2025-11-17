@@ -187,16 +187,18 @@ extension InAppButtonView.Configuration {
             self.radius = radius.map(CGFloat.init)
             self.borderWidth = borderWidth.map(CGFloat.init)
             self.borderColor = borderColor
-            self.textAlign = switch textAlign {
+            self.textAlign =
+                switch textAlign {
                 case .left: .left
                 case .center: .center
                 case .right: .right
-            }
-            self.contentHorizontalAlignment = switch textAlign {
+                }
+            self.contentHorizontalAlignment =
+                switch textAlign {
                 case .left: .left
                 case .center: .center
                 case .right: .right
-            }
+                }
             self.textColor = textColor
             self.maxLines = maxLines
         }

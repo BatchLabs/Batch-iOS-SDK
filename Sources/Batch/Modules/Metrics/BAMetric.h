@@ -4,7 +4,6 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 #import <Batch/BAMetricProtocol.h>
-#import <Batch/BATMessagePackWriter.h>
 #import <Foundation/Foundation.h>
 
 @interface BAMetric : NSObject <BAMetricProtocol, NSCopying>
@@ -47,10 +46,7 @@
 /// Flag indicating whether the metric values has changed
 - (BOOL)hasChanged;
 
-/// MsgPack method
-- (BOOL)packToWriter:(nonnull BATMessagePackWriter *)writer error:(NSError *_Nullable *_Nullable)error;
-
-/// MsgPack method
-- (nullable NSData *)pack:(NSError *_Nullable *_Nullable)error;
+/// Convert metric to dictionary for serialization
+- (nonnull NSDictionary *)toDictionary;
 
 @end

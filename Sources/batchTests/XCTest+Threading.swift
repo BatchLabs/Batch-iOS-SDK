@@ -9,11 +9,11 @@ import Foundation
 import XCTest
 
 /// XCTestCase extension to help with threading
-public extension XCTestCase {
+extension XCTestCase {
     /// Waits for the main thread to consume its tasks before continuing. Useful for tests that need to wait on something
     /// that has been dispatched on the main thread.
     @objc
-    func waitForMainThreadLoop() {
+    public func waitForMainThreadLoop() {
         // Since some tests use methods that schedules async work on the main thread, we have
         // to perform a little dance to correctly test the behaviour
         // To work around this, we schedule something to run on the main thread
@@ -27,7 +27,7 @@ public extension XCTestCase {
     }
 
     @objc
-    func waitForQueueLoop(queue: DispatchQueue) {
+    public func waitForQueueLoop(queue: DispatchQueue) {
         // Since some tests use methods that schedules async work on dispatch queue, we have
         // to perform a little dance to correctly test the behaviour
         // To work around this, we schedule something to run on the given queue

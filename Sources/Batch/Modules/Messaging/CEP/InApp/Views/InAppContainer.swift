@@ -63,7 +63,8 @@ final class InAppContainer: UIView, InAppExpandableView {
         addSubview(view)
 
         // Set up horizontal and vertical constraints and activate them.
-        let constraints = setupHorizontal(view: view, type: widthType, alignment: horizontalAlignment, margins: margins, paddings: paddings)
+        let constraints =
+            setupHorizontal(view: view, type: widthType, alignment: horizontalAlignment, margins: margins, paddings: paddings)
             + setupVertical(view: view, type: heightType, alignment: verticalAlignment, margins: margins, paddings: paddings)
 
         NSLayoutConstraint.activate(constraints)
@@ -76,15 +77,15 @@ final class InAppContainer: UIView, InAppExpandableView {
         let heightConstraints: [NSLayoutConstraint?]
 
         switch type {
-            case .auto, .fill:
-                // For auto and fill, the container's height is determined by the child's height plus margins.
-                heightConstraints = [heightAnchor.constraint(equalTo: view.heightAnchor, constant: margins.top + margins.bottom)]
-            case let .fixed(value):
-                // For fixed height, both the child and the container have a fixed height.
-                heightConstraints = [
-                    view.heightAnchor.constraint(equalToConstant: CGFloat(value)),
-                    heightAnchor.constraint(equalToConstant: CGFloat(value) + margins.top + margins.bottom),
-                ]
+        case .auto, .fill:
+            // For auto and fill, the container's height is determined by the child's height plus margins.
+            heightConstraints = [heightAnchor.constraint(equalTo: view.heightAnchor, constant: margins.top + margins.bottom)]
+        case let .fixed(value):
+            // For fixed height, both the child and the container have a fixed height.
+            heightConstraints = [
+                view.heightAnchor.constraint(equalToConstant: CGFloat(value)),
+                heightAnchor.constraint(equalToConstant: CGFloat(value) + margins.top + margins.bottom),
+            ]
         }
 
         return setupVerticalAlignment(view: view, alignment: alignment, top: margins.top, bottom: margins.bottom)
@@ -94,20 +95,20 @@ final class InAppContainer: UIView, InAppExpandableView {
     /// Sets up vertical alignment constraints (top, center, bottom).
     func setupVerticalAlignment(view: UIView, alignment: InAppVerticalAlignment, top: CGFloat, bottom: CGFloat) -> [NSLayoutConstraint] {
         return switch alignment {
-            case .top:
-                [
-                    view.topAnchor.constraint(equalTo: topAnchor, constant: top),
-                    bottomAnchor.constraint(greaterThanOrEqualTo: view.bottomAnchor, constant: bottom),
-                ]
-            case .center:
-                [
-                    view.centerYAnchor.constraint(equalTo: centerYAnchor),
-                ]
-            case .bottom:
-                [
-                    view.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: top),
-                    bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: bottom),
-                ]
+        case .top:
+            [
+                view.topAnchor.constraint(equalTo: topAnchor, constant: top),
+                bottomAnchor.constraint(greaterThanOrEqualTo: view.bottomAnchor, constant: bottom),
+            ]
+        case .center:
+            [
+                view.centerYAnchor.constraint(equalTo: centerYAnchor)
+            ]
+        case .bottom:
+            [
+                view.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: top),
+                bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: bottom),
+            ]
         }
     }
 
@@ -116,12 +117,12 @@ final class InAppContainer: UIView, InAppExpandableView {
         let widthConstraint: NSLayoutConstraint
 
         switch type {
-            case .auto:
-                // For auto width, the container's width is determined by the child's width plus margins.
-                widthConstraint = widthAnchor.constraint(equalTo: view.widthAnchor, constant: margins.left + margins.right)
-            case let .percent(value):
-                // For percent width, the child's width is a percentage of the container's width.
-                widthConstraint = view.widthAnchor.constraint(equalTo: widthAnchor, multiplier: CGFloat(value) / 100, constant: -(margins.left + margins.right))
+        case .auto:
+            // For auto width, the container's width is determined by the child's width plus margins.
+            widthConstraint = widthAnchor.constraint(equalTo: view.widthAnchor, constant: margins.left + margins.right)
+        case let .percent(value):
+            // For percent width, the child's width is a percentage of the container's width.
+            widthConstraint = view.widthAnchor.constraint(equalTo: widthAnchor, multiplier: CGFloat(value) / 100, constant: -(margins.left + margins.right))
         }
 
         return setupHorizontalAlignment(view: view, alignment: alignment, left: margins.left, right: margins.right)
@@ -131,20 +132,20 @@ final class InAppContainer: UIView, InAppExpandableView {
     /// Sets up horizontal alignment constraints (left, center, right).
     func setupHorizontalAlignment(view: UIView, alignment: InAppHorizontalAlignment, left: CGFloat, right: CGFloat) -> [NSLayoutConstraint] {
         return switch alignment {
-            case .left:
-                [
-                    view.leadingAnchor.constraint(equalTo: leadingAnchor, constant: left),
-                    trailingAnchor.constraint(greaterThanOrEqualTo: view.trailingAnchor, constant: right),
-                ]
-            case .center:
-                [
-                    view.centerXAnchor.constraint(equalTo: centerXAnchor),
-                ]
-            case .right:
-                [
-                    view.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: left),
-                    trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: right),
-                ]
+        case .left:
+            [
+                view.leadingAnchor.constraint(equalTo: leadingAnchor, constant: left),
+                trailingAnchor.constraint(greaterThanOrEqualTo: view.trailingAnchor, constant: right),
+            ]
+        case .center:
+            [
+                view.centerXAnchor.constraint(equalTo: centerXAnchor)
+            ]
+        case .right:
+            [
+                view.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: left),
+                trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: right),
+            ]
         }
     }
 }

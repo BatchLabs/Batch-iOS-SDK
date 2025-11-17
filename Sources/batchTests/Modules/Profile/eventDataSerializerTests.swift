@@ -4,9 +4,10 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-@testable import Batch
 import Batch.Batch_Private
 import XCTest
+
+@testable import Batch
 
 final class eventDataSerializerTests: XCTestCase {
     func testAttributesSerialization() throws {
@@ -66,12 +67,15 @@ final class eventDataSerializerTests: XCTestCase {
             a.put(2024, forKey: "year")
             a.put(false, forKey: "4x4")
             a.put(URL(string: "https://batch.com/")!, forKey: "model_url")
-            a.put(BatchEventAttributes { a in
-                a.put("manu", forKey: "manufacturer")
-                a.put(6, forKey: "cylinders")
-                a.put(3.5, forKey: "cylinder_capacity")
-                a.put(Date(timeIntervalSince1970: 1_596_975_143), forKey: "manufacturing_date")
-            }, forKey: "engine")
+            a.put(
+                BatchEventAttributes { a in
+                    a.put("manu", forKey: "manufacturer")
+                    a.put(6, forKey: "cylinders")
+                    a.put(3.5, forKey: "cylinder_capacity")
+                    a.put(Date(timeIntervalSince1970: 1_596_975_143), forKey: "manufacturing_date")
+                },
+                forKey: "engine"
+            )
         }
     }
 

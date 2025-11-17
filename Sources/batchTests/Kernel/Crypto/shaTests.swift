@@ -12,7 +12,7 @@ import XCTest
 class shaTests: XCTestCase {
     static let testData =
         "!&é\"'(§è!çà)-12567890°_%^$mù`=*/.,?,;:=‘{«ÇøÇø}—ë‘¶Ç¡@#|¿¡ïŒ€£µ~©®†™≈<>≤≥êÊ•π‡∂ƒÌ¬◊ß∞÷≠+∫√¢‰∆∑Ω¥∏ªŸ[]å”„ック金型илджفيحةحديد"
-            .data(using: .utf8)!
+        .data(using: .utf8)!
 
     func testSHA1() {
         let expected = "pG+tIWKFrPjoZ4RHGLE4/mQllCE="

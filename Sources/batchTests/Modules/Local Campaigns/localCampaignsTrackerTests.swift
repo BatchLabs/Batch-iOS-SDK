@@ -11,16 +11,16 @@ import Testing
 @testable import Batch
 
 /// Test responses and mock data for local campaigns tracker tests
-fileprivate enum TestResponses {
+private enum TestResponses {
     /// Mock capping payload for testing global capping functionality
     /// Contains session limit of 2 and time-based limit of 1 view per hour
     static let cappingPayload: [AnyHashable: Any] = [
         "cappings": [
             "session": 2,
             "time": [
-                ["views": 1, "duration": 3600],
+                ["views": 1, "duration": 3600]
             ],
-        ],
+        ]
     ]
 }
 
@@ -98,7 +98,7 @@ struct LocalCampaignsTrackerTests {
 
         // Initialize tracker and campaign manager with test date provider
         let tracker = BALocalCampaignsTracker()
-        tracker.clear() // Ensure clean state
+        tracker.clear()  // Ensure clean state
         let campaignManager = BALocalCampaignsManager(dateProvider: dateProvider, viewTracker: tracker)
 
         // Parse and apply test capping configuration (2/session, 1/hour)
@@ -285,7 +285,7 @@ struct LocalCampaignsTrackerTests {
         tracker.trackEvent(forCampaignID: "campaign2", kind: .view, version: .CEP, customUserID: "user2")
 
         // Verify session count includes all events (3 MEP + 2 CEP = 5 total)
-        #expect(tracker.sessionViewsCount == 5) // 3 MEP + 2 CEP events
+        #expect(tracker.sessionViewsCount == 5)  // 3 MEP + 2 CEP events
 
         // Reset session counter and verify it clears
         tracker.resetSessionViewsCount()
@@ -374,36 +374,42 @@ struct LocalCampaignsTrackerTests {
 
         // Track event with nil custom user ID using CEP version
         // This should create a tracking entry for nil user
-        let event = try #require(tracker.trackEvent(
-            forCampaignID: campaignID,
-            kind: .view,
-            version: .CEP,
-            customUserID: nil
-        ))
+        let event = try #require(
+            tracker.trackEvent(
+                forCampaignID: campaignID,
+                kind: .view,
+                version: .CEP,
+                customUserID: nil
+            )
+        )
 
         // Verify nil user tracking works
         #expect(event.count == 1)
 
         // Track another event with nil custom user ID using CEP version
         // This should increment the nil user counter
-        let event2 = try #require(tracker.trackEvent(
-            forCampaignID: campaignID,
-            kind: .view,
-            version: .CEP,
-            customUserID: nil
-        ))
+        let event2 = try #require(
+            tracker.trackEvent(
+                forCampaignID: campaignID,
+                kind: .view,
+                version: .CEP,
+                customUserID: nil
+            )
+        )
 
         // Verify counter incremented
         #expect(event2.count == 2)
 
         // Verify nil and empty string are treated as same users
         // Track event with empty string user ID
-        let event3 = try #require(tracker.trackEvent(
-            forCampaignID: campaignID,
-            kind: .view,
-            version: .CEP,
-            customUserID: ""
-        ))
+        let event3 = try #require(
+            tracker.trackEvent(
+                forCampaignID: campaignID,
+                kind: .view,
+                version: .CEP,
+                customUserID: ""
+            )
+        )
 
         // Empty string should start its own counter
         #expect(event3.count == 3)

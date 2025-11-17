@@ -4,9 +4,10 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-@testable import Batch
 import SampleShared
 import Testing
+
+@testable import Batch
 
 struct BatchInAppMessageTests {
     @Suite("MEP message")

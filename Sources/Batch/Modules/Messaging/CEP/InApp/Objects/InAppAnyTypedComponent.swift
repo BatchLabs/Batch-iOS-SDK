@@ -32,22 +32,22 @@ public struct InAppAnyTypedComponent: Codable {
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         switch component {
-            case let button as InAppButton:
-                try container.encode(button)
-            case let columns as InAppColumns:
-                try container.encode(columns)
-            case let divider as InAppDivider:
-                try container.encode(divider)
-            case let image as InAppImage:
-                try container.encode(image)
-            case let label as InAppLabel:
-                try container.encode(label)
-            case let spacer as InAppSpacer:
-                try container.encode(spacer)
-            case let webview as InAppWebview:
-                try container.encode(webview)
-            default:
-                throw CodableError.unknownType
+        case let button as InAppButton:
+            try container.encode(button)
+        case let columns as InAppColumns:
+            try container.encode(columns)
+        case let divider as InAppDivider:
+            try container.encode(divider)
+        case let image as InAppImage:
+            try container.encode(image)
+        case let label as InAppLabel:
+            try container.encode(label)
+        case let spacer as InAppSpacer:
+            try container.encode(spacer)
+        case let webview as InAppWebview:
+            try container.encode(webview)
+        default:
+            throw CodableError.unknownType
         }
     }
 
@@ -56,26 +56,26 @@ public struct InAppAnyTypedComponent: Codable {
     public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         switch (try? container.decode(TypedComponent.self))?.type {
-            case .button:
-                self.init(try container.decode(InAppButton.self))
-            case .columns:
-                self.init(try container.decode(InAppColumns.self))
-            case .divider:
-                self.init(try container.decode(InAppDivider.self))
-            case .image:
-                self.init(try container.decode(InAppImage.self))
-            case .text:
-                self.init(try container.decode(InAppLabel.self))
-            case .spacer:
-                self.init(try container.decode(InAppSpacer.self))
-            case .webview:
-                self.init(try container.decode(InAppWebview.self))
-            case .none:
-                throw CodableError.unknownType
+        case .button:
+            self.init(try container.decode(InAppButton.self))
+        case .columns:
+            self.init(try container.decode(InAppColumns.self))
+        case .divider:
+            self.init(try container.decode(InAppDivider.self))
+        case .image:
+            self.init(try container.decode(InAppImage.self))
+        case .text:
+            self.init(try container.decode(InAppLabel.self))
+        case .spacer:
+            self.init(try container.decode(InAppSpacer.self))
+        case .webview:
+            self.init(try container.decode(InAppWebview.self))
+        case .none:
+            throw CodableError.unknownType
         }
     }
 }
 
-fileprivate struct TypedComponent: InAppTypedComponent {
+private struct TypedComponent: InAppTypedComponent {
     let type: InAppComponent
 }

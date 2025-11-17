@@ -39,7 +39,7 @@
 #import <Batch/BAURLSessionProtocol.h>
 #import <Batch/BAWebserviceClient.h>
 #import <Batch/BAURLSession.h>
-#import <Batch/BAWebserviceMsgPackClient.h>
+#import <Batch/BALocalCampaignsJITService.h>
 #import <Batch/BAGETWebserviceClient.h>
 #import <Batch/BAResponseHelper.h>
 #import <Batch/BAWebserviceURLBuilder.h>
@@ -48,7 +48,6 @@
 #import <Batch/BAStandardQueryWebserviceIdentifiersProvider.h>
 #import <Batch/BAQueryWebserviceClientDelegate.h>
 #import <Batch/BAQueryWebserviceClientDatasource.h>
-#import <Batch/BALocalCampaignsJITService.h>
 #import <Batch/BatchEventAttributesPrivate.h>
 #import <Batch/BatchMessagingPrivate.h>
 #import <Batch/BANotificationCenter.h>
@@ -229,9 +228,6 @@
 #import <Batch/BAParameter.h>
 #import <Batch/BAUserDefaults.h>
 #import <Batch/BAPropertiesCenter.h>
-#import <Batch/BATMessagePackWriter.h>
-#import <Batch/msgpack-c.h>
-#import <Batch/BATMessagePackReader.h>
 #import <Batch/BAThreading.h>
 #import <Batch/BANullHelper.h>
 #import <Batch/BARandom.h>

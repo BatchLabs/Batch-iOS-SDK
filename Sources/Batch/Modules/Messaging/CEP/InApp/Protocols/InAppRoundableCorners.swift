@@ -23,7 +23,8 @@ extension InAppRoundableCorners {
             tr: radius[edge: .topRight],
             bl: radius[edge: .bottomLeft],
             br: radius[edge: .bottomRight]
-        ).build(in: view.frame).cgPath
+        )
+        .build(in: view.frame).cgPath
         mask.path = cgPath
         view.layer.mask = mask
 
@@ -32,15 +33,15 @@ extension InAppRoundableCorners {
 }
 
 /// Ease the get of edge radius
-fileprivate extension Collection<Int> {
-    subscript(edge value: InAppRadiusIndexHelper) -> CGFloat {
+extension Collection<Int> {
+    fileprivate subscript(edge value: InAppRadiusIndexHelper) -> CGFloat {
         self.map(CGFloat.init)[edge: value]
     }
 }
 
 /// Ease the get of edge inset
-fileprivate extension Collection<CGFloat> {
-    subscript(edge value: InAppRadiusIndexHelper) -> CGFloat {
+extension Collection<CGFloat> {
+    fileprivate subscript(edge value: InAppRadiusIndexHelper) -> CGFloat {
         let index = index(startIndex, offsetBy: value.rawValue)
         return indices.contains(index) ? self[index] : 0
     }

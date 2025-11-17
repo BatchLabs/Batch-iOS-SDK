@@ -4,7 +4,7 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-fileprivate let loggerDomain = "BADomainStore"
+private let loggerDomain = "BADomainStore"
 
 public struct BADomainStore: BADomainStoreProtocol {
     // MARK: - Parameters
@@ -50,7 +50,10 @@ public struct BADomainStore: BADomainStoreProtocol {
         let newValue = errorCount + 1
         let errorUpdateDate = Date()
 
-        BALogger.debug(domain: loggerDomain, message: "Increment BAParameter key: '\(kParametersDomainErrorCountKey)' by 1, (old value: \(errorCount), new value: \(newValue), domain: \(currentDomain)). \(errorUpdateDate)")
+        BALogger.debug(
+            domain: loggerDomain,
+            message: "Increment BAParameter key: '\(kParametersDomainErrorCountKey)' by 1, (old value: \(errorCount), new value: \(newValue), domain: \(currentDomain)). \(errorUpdateDate)"
+        )
 
         // Save new the domain error values
         BAParameter.setValue(newValue, forKey: kParametersDomainErrorCountKey, saved: true)

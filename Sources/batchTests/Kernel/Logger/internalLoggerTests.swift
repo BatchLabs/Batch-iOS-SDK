@@ -48,7 +48,7 @@ class internalLoggerTests: XCTestCase {
 }
 
 @objc
-fileprivate class MockLoggerDelegate: NSObject, BatchLoggerDelegate {
+private class MockLoggerDelegate: NSObject, BatchLoggerDelegate {
     var lastMessage: String?
 
     func log(withMessage message: String) {

@@ -53,7 +53,7 @@ class InAppWebviewView: WKWebView, InAppErrorDelegate {
         clipsToBounds = true
         isOpaque = false
         backgroundColor = .clear
-        alpha = 0 // Hidden until loaded
+        alpha = 0  // Hidden until loaded
         allowsBackForwardNavigationGestures = false
         scrollView.alwaysBounceVertical = false
         scrollView.bounces = false

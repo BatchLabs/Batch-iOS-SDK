@@ -4,9 +4,10 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-@testable import Batch
 import Batch.Batch_Private
 import Foundation
+
+@testable import Batch
 
 class BAInstallDataEditorMock: BAInstallDataEditor {
     var setIdentifierCalled: Bool = false

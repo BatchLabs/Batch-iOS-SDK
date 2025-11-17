@@ -19,7 +19,9 @@ class messagingAnalyticsDeduplicatingDelegateTests: XCTestCase {
             deduplicateDelegate.messageAutomaticallyClosed(message)
             deduplicateDelegate.messageGlobalTapActionTriggered(message, action: BAMSGAction())
             deduplicateDelegate.messageWebViewClickTracked(
-                message, action: BAMSGAction(), analyticsIdentifier: "foobar"
+                message,
+                action: BAMSGAction(),
+                analyticsIdentifier: "foobar"
             )
         }
 
@@ -104,7 +106,9 @@ class TestMessagingAnalyticsDelegate: BAMessagingAnalyticsDelegate {
     }
 
     func messageWebViewClickTracked(
-        _: BAMSGMessage, action _: BAMSGAction, analyticsIdentifier _: String
+        _: BAMSGMessage,
+        action _: BAMSGAction,
+        analyticsIdentifier _: String
     ) {
         timesWebviewClickCalled = timesWebviewClickCalled + 1
     }

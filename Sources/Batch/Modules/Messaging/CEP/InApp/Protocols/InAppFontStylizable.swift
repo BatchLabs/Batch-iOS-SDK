@@ -83,19 +83,20 @@ extension InAppFontStylizable {
             return fontSize.flatMap { font.withSize(CGFloat($0)) } ?? font
         }
 
-        let computedFont = if let fontOverride {
-            // We have a custom font, work with that
-            if traits.contains(.traitBold) {
-                traits.contains(.traitItalic) ? fontItalicOverride : fontBoldOverride
-            } else if traits.contains(.traitItalic) {
-                fontBoldItalicOverride
+        let computedFont =
+            if let fontOverride {
+                // We have a custom font, work with that
+                if traits.contains(.traitBold) {
+                    traits.contains(.traitItalic) ? fontItalicOverride : fontBoldOverride
+                } else if traits.contains(.traitItalic) {
+                    fontBoldItalicOverride
+                } else {
+                    fontOverride
+                }
             } else {
-                fontOverride
+                // System font
+                font.fontDescriptor.withSymbolicTraits(traits).map { UIFont(descriptor: $0, size: font.pointSize) }
             }
-        } else {
-            // System font
-            font.fontDescriptor.withSymbolicTraits(traits).map { UIFont(descriptor: $0, size: font.pointSize) }
-        }
 
         return fontSize.map { computedFont?.withSize(CGFloat($0)) ?? font } ?? font
     }

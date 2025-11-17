@@ -62,7 +62,7 @@ public class BATBase91J: NSObject {
             }
         }
 
-        return Data(output[0 ..< n])
+        return Data(output[0..<n])
     }
 
     public func decode(_ input: Data) throws -> Data {
@@ -111,7 +111,7 @@ public class BATBase91J: NSObject {
             n += 1
         }
 
-        return Data(output[0 ..< n])
+        return Data(output[0..<n])
     }
 
     private func prepareMaps() {

@@ -4,9 +4,10 @@
 //  Copyright © Batch.com. All rights reserved.
 //
 
-@testable import Batch
 import Batch.Batch_Private
 import XCTest
+
+@testable import Batch
 
 final class profileEditorValidationTests: XCTestCase {
     func testEmailPatterns() {
@@ -42,7 +43,11 @@ final class profileEditorValidationTests: XCTestCase {
     }
 
     func testEmailIsTooLong() {
-        XCTAssertTrue(BATProfileDataValidators.isEmailTooLong("testastringtestastringtoolongtobeanemailtestastringtoolongtestastringtoolongtobeanemailtestastringtoolongtestastringtoolongtobeanemailtestastringtoolongtestastringtoolongtobeanemailtestastringtoolongtestastringtoolongtobeanemailtestastringtoolongtoolongtobeanemailtestastringtoolongtobeanemailtestastringtoolongtobeanemailtestastringtoolongtobeanemailtestastringtoo@batch.com"))
+        XCTAssertTrue(
+            BATProfileDataValidators.isEmailTooLong(
+                "testastringtestastringtoolongtobeanemailtestastringtoolongtestastringtoolongtobeanemailtestastringtoolongtestastringtoolongtobeanemailtestastringtoolongtestastringtoolongtobeanemailtestastringtoolongtestastringtoolongtobeanemailtestastringtoolongtoolongtobeanemailtestastringtoolongtobeanemailtestastringtoolongtobeanemailtestastringtoolongtobeanemailtestastringtoo@batch.com"
+            )
+        )
         XCTAssertFalse(BATProfileDataValidators.isEmailTooLong("bar@foo.batch.com"))
     }
 
@@ -57,7 +62,11 @@ final class profileEditorValidationTests: XCTestCase {
 
     func testCustomUserIDValidity() {
         XCTAssertFalse(BATProfileDataValidators.isCustomIDTooLong("customId"))
-        XCTAssertTrue(BATProfileDataValidators.isCustomIDTooLong("my_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_id_1111"))
+        XCTAssertTrue(
+            BATProfileDataValidators.isCustomIDTooLong(
+                "my_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_idmy_test_id_1111"
+            )
+        )
     }
 
     func testIsCustomIDBlocklisted() {

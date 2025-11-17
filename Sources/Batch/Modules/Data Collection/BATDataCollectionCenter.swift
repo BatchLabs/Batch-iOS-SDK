@@ -6,10 +6,10 @@
 
 import Foundation
 
-fileprivate let loggerDomain = "DataCollection"
+private let loggerDomain = "DataCollection"
 
-fileprivate let geoipUserDefaultKey = "geoip"
-fileprivate let deviceModelUserDefaultKey = "deviceModel"
+private let geoipUserDefaultKey = "geoip"
+private let deviceModelUserDefaultKey = "deviceModel"
 
 /// Data Collection module.
 @objcMembers

@@ -45,43 +45,45 @@ public class InAppColumnsView: UIStackView, InAppContainerizable, InAppClosureDe
         axis = .horizontal
         distribution = Set(configuration.ratios).count == 1 ? .fillEqually : .fillProportionally
         spacing = CGFloat(configuration.style.spacing)
-        alignment = switch configuration.style.verticalAlignment {
+        alignment =
+            switch configuration.style.verticalAlignment {
             case .top: .top
             case .center: .center
             case .bottom: .bottom
-        }
+            }
 
         // Add views
-        configuration.builders.enumerated().forEach { index, builder in
-            let ratio = CGFloat(configuration.ratios[index])
-            let child = InAppPercentedView(percent: ratio)
-            child.translatesAutoresizingMaskIntoConstraints = false
+        configuration.builders.enumerated()
+            .forEach { index, builder in
+                let ratio = CGFloat(configuration.ratios[index])
+                let child = InAppPercentedView(percent: ratio)
+                child.translatesAutoresizingMaskIntoConstraints = false
 
-            let subchild = (try? builder?.content(onClosureTap, onError)) ?? UIView()
+                let subchild = (try? builder?.content(onClosureTap, onError)) ?? UIView()
 
-            subchild.translatesAutoresizingMaskIntoConstraints = false
+                subchild.translatesAutoresizingMaskIntoConstraints = false
 
-            child.addSubview(subchild)
+                child.addSubview(subchild)
 
-            var constraints = [
-                subchild.leadingAnchor.constraint(equalTo: child.leadingAnchor),
-                subchild.trailingAnchor.constraint(equalTo: child.trailingAnchor),
-            ]
-
-            if builder?.expandable.isExpandable == true {
-                constraints += [
-                    subchild.heightAnchor.constraint(equalTo: child.heightAnchor),
-                    heightAnchor.constraint(equalTo: child.heightAnchor),
+                var constraints = [
+                    subchild.leadingAnchor.constraint(equalTo: child.leadingAnchor),
+                    subchild.trailingAnchor.constraint(equalTo: child.trailingAnchor),
                 ]
-            } else {
-                constraints += [
-                    subchild.heightAnchor.constraint(lessThanOrEqualTo: child.heightAnchor),
-                ]
+
+                if builder?.expandable.isExpandable == true {
+                    constraints += [
+                        subchild.heightAnchor.constraint(equalTo: child.heightAnchor),
+                        heightAnchor.constraint(equalTo: child.heightAnchor),
+                    ]
+                } else {
+                    constraints += [
+                        subchild.heightAnchor.constraint(lessThanOrEqualTo: child.heightAnchor)
+                    ]
+                }
+                addArrangedSubview(child)
+
+                NSLayoutConstraint.activate(constraints)
             }
-            addArrangedSubview(child)
-
-            NSLayoutConstraint.activate(constraints)
-        }
     }
 }
 

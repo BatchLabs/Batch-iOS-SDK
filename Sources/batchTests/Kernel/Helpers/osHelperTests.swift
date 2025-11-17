@@ -24,13 +24,16 @@ class osHelperTests: XCTestCase {
         XCTAssertThrowsError(try parse(version: 999_999))
 
         XCTAssertEqual(
-            OperatingSystemVersion(majorVersion: 1, minorVersion: 0, patchVersion: 0), try parse(version: 001_000_000)
+            OperatingSystemVersion(majorVersion: 1, minorVersion: 0, patchVersion: 0),
+            try parse(version: 001_000_000)
         )
         XCTAssertEqual(
-            OperatingSystemVersion(majorVersion: 14, minorVersion: 0, patchVersion: 0), try parse(version: 014_000_000)
+            OperatingSystemVersion(majorVersion: 14, minorVersion: 0, patchVersion: 0),
+            try parse(version: 014_000_000)
         )
         XCTAssertEqual(
-            OperatingSystemVersion(majorVersion: 13, minorVersion: 2, patchVersion: 0), try parse(version: 013_002_000)
+            OperatingSystemVersion(majorVersion: 13, minorVersion: 2, patchVersion: 0),
+            try parse(version: 013_002_000)
         )
         XCTAssertEqual(
             OperatingSystemVersion(majorVersion: 10, minorVersion: 12, patchVersion: 04),
@@ -47,6 +50,6 @@ class osHelperTests: XCTestCase {
     }
 }
 
-fileprivate enum osHelperTestsError: Error {
+private enum osHelperTestsError: Error {
     case parseError
 }

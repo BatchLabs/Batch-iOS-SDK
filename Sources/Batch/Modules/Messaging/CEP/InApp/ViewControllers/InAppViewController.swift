@@ -157,17 +157,19 @@ class InAppViewController: UIViewController, InAppViewCountdownClose, BatchMessa
             analyticManager.track(.cta(component: component))
         }
 
-        dismiss().then { [configuration = self.configuration] _ in
-            if let component, let action = component.action {
-                let sourceMessage = configuration.content.message.sourceMessage
-                BAMessagingCenter.instance().perform(
-                    action,
-                    source: sourceMessage,
-                    ctaIdentifier: component.analyticsIdentifier,
-                    messageIdentifier: sourceMessage.devTrackingIdentifier
-                )
+        dismiss()
+            .then { [configuration = self.configuration] _ in
+                if let component, let action = component.action {
+                    let sourceMessage = configuration.content.message.sourceMessage
+                    BAMessagingCenter.instance()
+                        .perform(
+                            action,
+                            source: sourceMessage,
+                            ctaIdentifier: component.analyticsIdentifier,
+                            messageIdentifier: sourceMessage.devTrackingIdentifier
+                        )
+                }
             }
-        }
     }
 
     // MARK: - Layout and Constraints
@@ -187,7 +189,15 @@ class InAppViewController: UIViewController, InAppViewCountdownClose, BatchMessa
 
         // This low-priority constraint helps resolve layout ambiguity, suggesting the scroll view
         // should be at least as tall as its content.
-        let scrollSizeConstraint = NSLayoutConstraint(item: scrollableViewContent, attribute: .height, relatedBy: .greaterThanOrEqual, toItem: messageContentView, attribute: .height, multiplier: 1, constant: 0)
+        let scrollSizeConstraint = NSLayoutConstraint(
+            item: scrollableViewContent,
+            attribute: .height,
+            relatedBy: .greaterThanOrEqual,
+            toItem: messageContentView,
+            attribute: .height,
+            multiplier: 1,
+            constant: 0
+        )
         scrollSizeConstraint.priority = .init(200)
         scrollableViewContent.addConstraint(scrollSizeConstraint)
 

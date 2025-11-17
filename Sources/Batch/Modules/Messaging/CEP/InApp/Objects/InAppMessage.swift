@@ -21,7 +21,17 @@ public struct InAppMessage: Codable {
 
     // MARK: -
 
-    public init(format: InAppFormat, position: InAppVerticalAlignment?, root: InAppRootContainer, closeOptions: InAppCloseOption, texts: [String: String], urls: [String: String], actions: [String: InAppAction], eventData: [String: String], trackingId: String?) {
+    public init(
+        format: InAppFormat,
+        position: InAppVerticalAlignment?,
+        root: InAppRootContainer,
+        closeOptions: InAppCloseOption,
+        texts: [String: String],
+        urls: [String: String],
+        actions: [String: InAppAction],
+        eventData: [String: String],
+        trackingId: String?
+    ) {
         self.format = format
         self.position = position
         self.root = root

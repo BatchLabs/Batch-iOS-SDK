@@ -22,8 +22,8 @@ class eventTrackerServiceTests: XCTestCase {
             date: "\(id)234",
             secureDate: "\(id)2345",
             parameters: """
-            {"foo": "bar\(id)"}
-            """,
+                {"foo": "bar\(id)"}
+                """,
             state: state,
             session: "s\(id)",
             andTick: Int64(990 + id)
@@ -84,12 +84,12 @@ class eventTrackerServiceTests: XCTestCase {
                 date: "234",
                 secureDate: "2345",
                 parameters: """
-                {"foo": "bar"}
-                """,
+                    {"foo": "bar"}
+                    """,
                 state: BAEventStateOld,
                 session: nil,
                 andTick: Int64(990)
-            ),
+            )
         ]
         let service = BAEventTrackerService(events: events as [Any])
         // The bug made "objectToSend" crash: simply calling it was enough to trigger it, no need to test any value
@@ -103,14 +103,16 @@ class eventTrackerServiceTests: XCTestCase {
         let service = makeService()
         XCTAssertTrue(
             service.response(for: BAWSQueryTracking(events: []), content: makeBasicQueryResponseDictionary())
-                is BAWSResponseTracking)
+                is BAWSResponseTracking
+        )
     }
 
     func testWebserviceFail() {
         let promises = [BAPromise(), BAPromise()]
         let service = makeServiceWithPromises(promises)
         service.webserviceClient(
-            makeQueryClient(service: service), didFailWithError: NSError(domain: "test", code: 1, userInfo: nil)
+            makeQueryClient(service: service),
+            didFailWithError: NSError(domain: "test", code: 1, userInfo: nil)
         )
         XCTAssertTrue(promises[0].status == BAPromiseStatus.rejected)
         XCTAssertTrue(promises[1].status == BAPromiseStatus.rejected)

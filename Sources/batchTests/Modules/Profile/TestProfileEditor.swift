@@ -5,8 +5,9 @@
 //
 
 import Batch
-@testable import Batch.Batch_Private
 import Foundation
+
+@testable import Batch.Batch_Private
 
 /// A test BATProfileEditor that has a controllable canSetEmail
 class TestProfileEditor: BATProfileEditor {
