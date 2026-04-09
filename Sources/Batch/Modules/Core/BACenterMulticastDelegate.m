@@ -13,9 +13,11 @@
 #import <Batch/BAEventDispatcherCenter.h>
 #import <Batch/BALocalCampaignsCenter.h>
 #import <Batch/BAMessagingCenter.h>
+#import <Batch/BAMetricRegistry.h>
 #import <Batch/BAOptOut.h>
 #import <Batch/BAPushCenter.h>
 #import <Batch/BATrackerCenter.h>
+
 #import <Batch/BAUserCenter.h>
 #import <Batch/Batch-Swift.h>
 
@@ -53,6 +55,11 @@ static NSArray *kPluginsList = nil;
         return;
     }
 
+    // Start observing sdk initialization time
+    BAObservation *_sdkInitializationMetric = [[[BAInjection injectClass:BAMetricRegistry.class] sdkInitializationTime]
+        labels:[[NSArray alloc] initWithObjects:@"iOS", nil]];
+    [_sdkInitializationMetric startTimer];
+
     for (id<BACenterProtocol> plugin in kPluginsList) {
         if ([plugin respondsToSelector:@selector(batchWillStart)]) {
             [plugin batchWillStart];
@@ -66,5 +73,7 @@ static NSArray *kPluginsList = nil;
             [plugin batchDidStart];
         }
     }
+    // Observe initialization time
+    [_sdkInitializationMetric observeDuration];
 }
 @end

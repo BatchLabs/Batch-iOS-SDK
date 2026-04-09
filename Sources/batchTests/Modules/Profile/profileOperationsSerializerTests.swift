@@ -14,7 +14,7 @@ final class profileOperationsSerializerTests: XCTestCase {
         XCTAssertTrue(serializeEditor { _ in }.isEmpty)
     }
 
-    func testLocaleSubscriptionStateSeriailization() throws {
+    func testLocaleSubscriptionStateSerialization() throws {
         let serialized = serializeEditor { editor in
             editor.setEmailMarketingSubscriptionState(.subscribed)
             editor.setSMSMarketingSubscriptionState(.subscribed)
@@ -42,6 +42,9 @@ final class profileOperationsSerializerTests: XCTestCase {
             editor.setSMSMarketingSubscriptionState(.subscribed)
             try editor.setLanguage("fr_ch")
             try editor.setRegion("FR")
+            try editor.setTopicPreferences(["news", "offers"])
+            try editor.removeFromTopicPreferences(["news"])
+            try editor.addToTopicPreferences(["new_topic"])
             try editor.setCustom(stringAttribute: "hello", forKey: "string_att")
             try editor.setCustom(int64Attribute: 3, forKey: "int_att")
             try editor.setCustom(doubleAttribute: 3.68, forKey: "double_att")
@@ -88,6 +91,7 @@ final class profileOperationsSerializerTests: XCTestCase {
         XCTAssertEqual(serialized["sms_marketing"] as? String, "subscribed")
         XCTAssertEqual(serialized["language"] as? String, "fr_ch")
         XCTAssertEqual(serialized["region"] as? String, "FR")
+        XCTAssertEqual(serialized["topic_preferences"] as? [String], ["offers", "new_topic"])
 
         guard let serializedAttributes = serialized["custom_attributes"] as? [AnyHashable: Any] else {
             XCTFail("missing 'custom_attributes'")
@@ -147,6 +151,54 @@ final class profileOperationsSerializerTests: XCTestCase {
         XCTAssertEqual(serializedAttributes["att3.a"] as? NSDictionary, ["$add": ["baz"]] as NSDictionary)
         XCTAssertEqual(serializedAttributes["att4.a"] as? NSDictionary, ["$remove": ["baz"]] as NSDictionary)
         XCTAssertEqual(serializedAttributes["att5.i"] as? Int, 5)
+    }
+
+    func testSubscriptionTest() throws {
+
+        // Test simple Set use case
+        var serialized = try serializeEditor { editor in
+            try editor.setTopicPreferences(["news", "offers"])
+
+        }
+        XCTAssertEqual(serialized["topic_preferences"] as? [String], ["news", "offers"])
+
+        // Test Set + Update use case
+        serialized = try serializeEditor { editor in
+            try editor.setTopicPreferences(["news", "offers"])
+            try editor.removeFromTopicPreferences(["news"])
+            try editor.addToTopicPreferences(["shopping"])
+        }
+        XCTAssertEqual(serialized["topic_preferences"] as? [String], ["offers", "shopping"])
+
+        // Test simple partial update use case
+        serialized = try serializeEditor { editor in
+            try editor.removeFromTopicPreferences(["news"])
+            try editor.addToTopicPreferences(["shopping"])
+
+        }
+        XCTAssertEqual(serialized["topic_preferences"] as? NSDictionary, ["$remove": ["news"], "$add": ["shopping"]] as NSDictionary)
+
+        // Test Partial Update + Set use case (should override)
+        serialized = try serializeEditor { editor in
+            try editor.removeFromTopicPreferences(["news"])
+            try editor.addToTopicPreferences(["shopping"])
+            try editor.setTopicPreferences(["news", "offers"])
+        }
+        XCTAssertEqual(serialized["topic_preferences"] as? [String], ["news", "offers"])
+
+        // Test Remove use case (should override)
+        serialized = try serializeEditor { editor in
+            try editor.setTopicPreferences(nil)
+        }
+        XCTAssertEqual(serialized["topic_preferences"] as? NSObject, NSNull())
+
+        // Test Set + Update use case
+        serialized = try serializeEditor { editor in
+            try editor.setTopicPreferences(["news", "Offers"])
+            try editor.removeFromTopicPreferences(["News"])  // should be normlaized and removed
+            try? editor.addToTopicPreferences(["shopping with friend"])  // should throw
+        }
+        XCTAssertEqual(serialized["topic_preferences"] as? [String], ["offers"])
     }
 
     /// Test that an email cannot be set and is not serialized if not allowed

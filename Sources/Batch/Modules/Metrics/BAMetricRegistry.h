@@ -32,6 +32,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// New observation for download image time
 - (BAObservation *)registerNewDownloadImageDurationMetric;
 
+/// Monitor SDK initialization duration
+- (BAObservation *)sdkInitializationTime;
+
 @end
 
 NS_ASSUME_NONNULL_END

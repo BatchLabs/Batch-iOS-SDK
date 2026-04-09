@@ -13,6 +13,7 @@ public class BATProfileDataValidators: NSObject {
 
     static let emailAddressPattern = "^[^@\\s]+@[A-z0-9\\-\\.]+\\.[A-z0-9]+$"
     static let phoneNumberPattern = "^\\+[0-9]{1,15}$"
+    static let topicPreferencePattern = "^[a-z0-9_]+$"
 
     public static let emailMaxLength = 256
     public static let customIDMaxLength = 1024
@@ -27,6 +28,10 @@ public class BATProfileDataValidators: NSObject {
     public static func isValidPhoneNumber(_ phoneNumber: String) -> Bool {
         let regexp = BATRegularExpression(pattern: phoneNumberPattern)
         return regexp.matches(phoneNumber)
+    }
+
+    public static func isValidTopicPreference(_ topic: String) -> Bool {
+        return BATRegularExpression(pattern: topicPreferencePattern).matches(topic)
     }
 
     public static func isEmailTooLong(_ email: String) -> Bool {

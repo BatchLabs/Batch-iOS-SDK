@@ -141,6 +141,41 @@ typedef NS_ENUM(NSUInteger, BatchSMSSubscriptionState) {
 ///    - state: State of the subscription
 - (void)setSMSMarketingSubscriptionState:(BatchSMSSubscriptionState)state;
 
+/// Set the profile topic preferences.
+///
+/// - Parameters:
+///   - topics: The topic preferences value. Cannot have more than 25 items. Nil to reset.
+///     Individual items should be made of letters, numbers or underscores ([a-z0-9_]) and can't be longer than 300
+///     characters.
+///   - error: Pointer to an error describing. Note that the error is only about value validation, and doesn't
+///     mean the value has been sent to the server yet.
+/// - Returns: A boolean indicating whether the attribute passed validation or not.
+- (BOOL)setTopicPreferences:(nullable NSArray<NSString *> *)topics error:(NSError *_Nullable *_Nullable)error;
+
+/// Add topics to the profile topic preferences.
+///
+/// - Parameters:
+///   - topics: The topics to add. Cannot have more than 25 items. Nil to reset.
+///     Individual items should be made of letters, numbers or underscores ([a-z0-9_]) and can't be longer than 300
+///     characters.
+///   - error: Pointer to an error describing. Note that the error is only about value validation, and doesn't
+///     mean the value has been sent to the server yet.
+/// - Returns: A boolean indicating whether the attribute passed validation or not.
+- (BOOL)addToTopicPreferences:(nonnull NSArray<NSString *> *)topics
+                        error:(NSError *_Nullable *_Nullable)error NS_SWIFT_NAME(addToTopicPreferences(_:));
+
+/// Remove topics from the profile topic preferences.
+///
+/// - Parameters:
+///   - topics: The topics to remove. Cannot have more than 25 items. Nil to reset.
+///     Individual items should be made of letters, numbers or underscores ([a-z0-9_]) and can't be longer than 300
+///     characters.
+///   - error: Pointer to an error describing. Note that the error is only about value validation, and doesn't
+///     mean the value has been sent to the server yet.
+/// - Returns: A boolean indicating whether the attribute passed validation or not.
+- (BOOL)removeFromTopicPreferences:(nonnull NSArray<NSString *> *)topics
+                             error:(NSError *_Nullable *_Nullable)error NS_SWIFT_NAME(removeFromTopicPreferences(_:));
+
 /// Set a boolean profile attribute for a key.
 ///
 /// - Parameters:

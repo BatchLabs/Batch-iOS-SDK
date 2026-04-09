@@ -8,8 +8,10 @@ import Foundation
 
 private enum Maximums {
     static let stringArrayItems = 25
+    static let topicPreferencesItems = 25
     static let stringLength = 300
     static let urlLength = 2048
+    static let topicPreferenceLength = 300
 }
 
 private enum Consts {
@@ -31,6 +33,9 @@ protocol BATSerializableProfileEditorProtocol {
     var region: (any BATProfileAttributeOperation)? { get }
 
     var customAttributes: [String: any BATProfileAttributeOperation] { get }
+
+    var topicPreferences: (any BATProfileAttributeOperation)? { get }
+
 }
 
 /// Protocol that exposes BATProfileEditor's setters that are available in the legacy install data world
@@ -80,6 +85,7 @@ public protocol BATInstallDataEditorCompatibilityProtocol {
 /// Serialization occurs in another class
 @objc
 public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, NSCopying {
+
     private let attributeNameRegexp: BATRegularExpression = .init(pattern: Consts.attributeNamePattern)
 
     private(set) var email: (any BATProfileAttributeOperation)?
@@ -95,6 +101,8 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
     private(set) var region: (any BATProfileAttributeOperation)?
 
     private(set) var customAttributes: [String: any BATProfileAttributeOperation] = [:]
+
+    private(set) var topicPreferences: (any BATProfileAttributeOperation)?
 
     // Delegate that will be informed of all operations so that it can perform them
     // on the install data.
@@ -221,32 +229,40 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
     }
 
     @objc
+    public func setTopicPreferences(_ topics: [String]?) throws {
+        try checkIfConsumed()
+        if let topics {
+            let normalizedTopics = try validateAndNormalizeTopicPreferences(topics)
+            topicPreferences = BATProfileAttributeSetOperation<[String]>(type: .array, value: normalizedTopics)
+        } else {
+            topicPreferences = BATProfileAttributeDeleteOperation()
+        }
+
+    }
+
+    @objc
+    public func addToTopicPreferences(_ topics: [String]) throws {
+        try checkIfConsumed()
+        let normalizedTopics = try validateAndNormalizeTopicPreferences(topics)
+        topicPreferences = try addToStringArray(normalizedTopics, existingOperation: topicPreferences)
+    }
+
+    @objc
+    public func removeFromTopicPreferences(_ topics: [String]) throws {
+        try checkIfConsumed()
+        let normalizedTopics = try validateAndNormalizeTopicPreferences(topics)
+        topicPreferences = try removeFromStringArray(normalizedTopics, existingOperation: topicPreferences)
+    }
+
+    @objc
     public func add(value: String, toArray attributeKey: String) throws {
         try checkIfConsumed()
 
         let targetAttributeKey = try validateAndNormalizeName(attributeKey)
         try validateStringValue(value)
 
-        // Check if we have an existing attribute for that key.
-        // If so:
-        //  - It is an array: add to it after checking that it does not go over the limit
-        //  - It is a partial array operation: append
-        //  - It is missing or something else than an array: overwrite it
         let existingOperation = customAttributes[targetAttributeKey]
-
-        if let existingOperation = existingOperation as? BATProfileAttributeSetOperation<[String]>, existingOperation.type == .array {
-            var updatedArray = existingOperation.value
-            updatedArray.append(value)
-            try validateStringArray(updatedArray)
-            customAttributes[targetAttributeKey] = BATProfileAttributeSetOperation<[String]>(type: .array, value: updatedArray)
-        } else if let existingOperation = existingOperation as? BATProfileAttributePartialArrayUpdateOperation {
-            var updatedPartialUpdate = existingOperation
-            updatedPartialUpdate.itemsToAdd.append(value)
-            try validateParialUpdate(updatedPartialUpdate)
-            customAttributes[targetAttributeKey] = updatedPartialUpdate
-        } else {
-            customAttributes[targetAttributeKey] = BATProfileAttributePartialArrayUpdateOperation(itemsToAdd: [value], itemsToRemove: [])
-        }
+        customAttributes[targetAttributeKey] = try addToStringArray([value], existingOperation: existingOperation)
 
         try? compatibilityDelegate?.add(value: value, toArray: attributeKey)
     }
@@ -258,30 +274,11 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
         let targetAttributeKey = try validateAndNormalizeName(attributeKey)
         try validateStringValue(value)
 
-        // Check if we have an existing attribute for that key.
-        // If so:
-        //  - It is an array: remove from it. If the array is empty, remove the operation.
-        //  - It is a partial array operation: add the removal to it
-        //  - It is missing or something else than an array: overwrite it
-        let existingOperation = customAttributes[targetAttributeKey]
-
-        if let existingOperation = existingOperation as? BATProfileAttributeSetOperation<[String]>, existingOperation.type == .array {
-            var updatedArray = existingOperation.value
-            updatedArray.removeAll { $0 == value }
-
-            if updatedArray.count == 0 {
-                customAttributes.removeValue(forKey: targetAttributeKey)
-            } else {
-                try validateStringArray(updatedArray)
-                customAttributes[targetAttributeKey] = BATProfileAttributeSetOperation<[String]>(type: .array, value: updatedArray)
-            }
-        } else if let existingOperation = existingOperation as? BATProfileAttributePartialArrayUpdateOperation {
-            var updatedPartialUpdate = existingOperation
-            updatedPartialUpdate.itemsToRemove.append(value)
-            try validateParialUpdate(updatedPartialUpdate)
-            customAttributes[targetAttributeKey] = updatedPartialUpdate
+        let existingOperation = try removeFromStringArray([value], existingOperation: customAttributes[targetAttributeKey])
+        if let existingOperation = existingOperation as? BATProfileAttributeSetOperation<[String]>, existingOperation.type == .array, existingOperation.value.count == 0 {
+            customAttributes.removeValue(forKey: targetAttributeKey)
         } else {
-            customAttributes[targetAttributeKey] = BATProfileAttributePartialArrayUpdateOperation(itemsToAdd: [], itemsToRemove: [value])
+            customAttributes[targetAttributeKey] = existingOperation
         }
 
         try? compatibilityDelegate?.remove(value: value, fromArray: attributeKey)
@@ -380,6 +377,54 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
         try? compatibilityDelegate?.deleteCustomAttribute(forKey: attributeKey)
     }
 
+    func removeFromStringArray(_ values: [String], existingOperation: (any BATProfileAttributeOperation)?) throws -> (any BATProfileAttributeOperation) {
+        try checkIfConsumed()
+        try validateStringArray(values)
+
+        // Check if we have an existing attribute for that key.
+        // If so:
+        //  - It is an array: remove from it. If the array is empty, remove the operation.
+        //  - It is a partial array operation: add the removal to it
+        //  - It is missing or something else than an array: overwrite it
+        if let existingOperation = existingOperation as? BATProfileAttributeSetOperation<[String]>, existingOperation.type == .array {
+            var updatedArray = existingOperation.value
+            updatedArray.removeAll(where: { values.contains($0) })
+            try validateStringArray(updatedArray)
+            return BATProfileAttributeSetOperation<[String]>(type: .array, value: updatedArray)
+        } else if let existingOperation = existingOperation as? BATProfileAttributePartialArrayUpdateOperation {
+            var updatedPartialUpdate = existingOperation
+            updatedPartialUpdate.itemsToRemove.append(contentsOf: values)
+            try validateParialUpdate(updatedPartialUpdate)
+            return updatedPartialUpdate
+        } else {
+            return BATProfileAttributePartialArrayUpdateOperation(itemsToAdd: [], itemsToRemove: values)
+        }
+    }
+
+    func addToStringArray(_ values: [String], existingOperation: (any BATProfileAttributeOperation)?) throws -> (any BATProfileAttributeOperation) {
+        try checkIfConsumed()
+        try validateStringArray(values)
+
+        // Check if we have an existing attribute for that key.
+        // If so:
+        //  - It is an array: add to it after checking that it does not go over the limit
+        //  - It is a partial array operation: append
+        //  - It is missing or something else than an array: overwrite it
+        if let existingOperation = existingOperation as? BATProfileAttributeSetOperation<[String]>, existingOperation.type == .array {
+            var updatedArray = existingOperation.value
+            updatedArray.append(contentsOf: values)
+            try validateStringArray(updatedArray)
+            return BATProfileAttributeSetOperation<[String]>(type: .array, value: updatedArray)
+        } else if let existingOperation = existingOperation as? BATProfileAttributePartialArrayUpdateOperation {
+            var updatedPartialUpdate = existingOperation
+            updatedPartialUpdate.itemsToAdd.append(contentsOf: values)
+            try validateParialUpdate(updatedPartialUpdate)
+            return updatedPartialUpdate
+        } else {
+            return BATProfileAttributePartialArrayUpdateOperation(itemsToAdd: values, itemsToRemove: [])
+        }
+    }
+
     @objc
     public func consume() {
         if consumed {
@@ -425,6 +470,31 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
         }
     }
 
+    func validateAndNormalizeTopicPreferencesValue(_ value: String) throws -> String {
+        if value.count > Maximums.topicPreferenceLength {
+            throw BatchProfileError(code: .editorInvalidValue, reason: "invalid topicPreferences value: topics cannot be longer than \(Maximums.topicPreferenceLength) characters")
+        }
+        let normalized = value.lowercased()
+        if !BATProfileDataValidators.isValidTopicPreference(normalized) {
+            throw BatchProfileError(code: .editorInvalidValue, reason: "invalid topicPreferences value: topic should be made of letters, numbers or underscores ([a-z0-9_]) ")
+        }
+        return normalized
+    }
+
+    func validateAndNormalizeTopicPreferences(_ values: [String]) throws -> [String] {
+        if values.isEmpty || values.count > Maximums.topicPreferencesItems {
+            throw BatchProfileError(
+                code: .editorInvalidValue,
+                reason: "invalid topicPreferences value: topics arrays cannot be empty or contain more than \(Maximums.topicPreferencesItems) elements"
+            )
+        }
+        var normalizedTopics = [String]()
+        for value in values {
+            normalizedTopics.append(try validateAndNormalizeTopicPreferencesValue(value))
+        }
+        return normalizedTopics
+    }
+
     func checkIfConsumed() throws {
         if consumed {
             throw BatchProfileError(code: .editorConsumed, reason: "a BatchProfileEditor instance cannot be saved more than once. Please acquire a new instance")
@@ -440,6 +510,7 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
         copy.language = self.language
         copy.region = self.region
         copy.customAttributes = self.customAttributes
+        copy.topicPreferences = self.topicPreferences
         return copy
     }
 

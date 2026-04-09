@@ -81,4 +81,12 @@ final class profileEditorValidationTests: XCTestCase {
         XCTAssertTrue(BATProfileDataValidators.isCustomIDBlocklisted("true"))
         XCTAssertTrue(BATProfileDataValidators.isCustomIDBlocklisted("false"))
     }
+
+    func testTopicPreferences() {
+        XCTAssertTrue(BATProfileDataValidators.isValidTopicPreference("news"))
+        XCTAssertTrue(BATProfileDataValidators.isValidTopicPreference("geo_politics"))
+        XCTAssertFalse(BATProfileDataValidators.isValidTopicPreference("geo-politics"))
+        XCTAssertFalse(BATProfileDataValidators.isValidTopicPreference("News"))
+        XCTAssertFalse(BATProfileDataValidators.isValidTopicPreference("no empty space"))
+    }
 }

@@ -23,6 +23,7 @@
 - (BAMetric *)newChild:(nonnull NSMutableArray<NSString *> *)labels {
     BAObservation *observation = [[BAObservation alloc] initWithName:super.name andLabelNamesList:[super labelNames]];
     observation.labelValues = labels;
+    observation->_startTime = _startTime;
     return observation;
 }
 

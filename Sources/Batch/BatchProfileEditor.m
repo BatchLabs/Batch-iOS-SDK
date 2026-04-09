@@ -111,6 +111,46 @@
     [_backingImpl setSMSMarketingSubscriptionState:swiftState];
 }
 
+- (BOOL)setTopicPreferences:(nullable NSArray<NSString *> *)topics
+                      error:(NSError *_Nullable __autoreleasing *_Nullable)error {
+    INIT_AND_BLANK_ERROR_IF_NEEDED(error)
+    ENSURE_ATTRIBUTE_VALUE_CLASS_NILABLE(topics, NSArray.class)
+
+    if (![self _areArrayElements:topics ofType:NSString.class]) {
+        *error = [self
+            _logAndMakeSaveErrorWithCode:BatchProfileErrorEditorInvalidValue
+                                  reason:@"String array attributes must only contain instances of String/NSString"];
+        return false;
+    }
+    return [_backingImpl setTopicPreferences:topics error:error];
+}
+
+- (BOOL)addToTopicPreferences:(nonnull NSArray<NSString *> *)topics
+                        error:(NSError *_Nullable __autoreleasing *_Nullable)error {
+    INIT_AND_BLANK_ERROR_IF_NEEDED(error)
+    ENSURE_ATTRIBUTE_VALUE_CLASS(topics, NSArray.class)
+
+    if (![self _areArrayElements:topics ofType:NSString.class]) {
+        *error = [self _logAndMakeSaveErrorWithCode:BatchProfileErrorEditorInvalidValue
+                                             reason:@"topicPreferences must only contain instances of String/NSString"];
+        return false;
+    }
+    return [_backingImpl addToTopicPreferences:topics error:error];
+}
+
+- (BOOL)removeFromTopicPreferences:(nonnull NSArray<NSString *> *)topics
+                             error:(NSError *_Nullable __autoreleasing *_Nullable)error {
+    INIT_AND_BLANK_ERROR_IF_NEEDED(error)
+    ENSURE_ATTRIBUTE_VALUE_CLASS(topics, NSArray.class)
+
+    if (![self _areArrayElements:topics ofType:NSString.class]) {
+        *error = [self _logAndMakeSaveErrorWithCode:BatchProfileErrorEditorInvalidValue
+                                             reason:@"topicPreferences must only contain instances of String/NSString"];
+        return false;
+    }
+    return [_backingImpl removeFromTopicPreferences:topics error:error];
+}
+
 - (BOOL)addItemToStringArrayAttribute:(NSString *)element forKey:(NSString *)key error:(NSError **)error {
     INIT_AND_BLANK_ERROR_IF_NEEDED(error)
     ENSURE_KEY_STRING(key)

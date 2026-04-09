@@ -295,6 +295,10 @@
         [self callStartWebserviceWithSilentStart:isPotentiallyInBackgroundRefresh];
     }
 
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+      [[BAOptOut instance] fireOptInEventIfNeeded];
+    });
+
     if ([self.configuration.developperKey hasPrefix:@"DEV"]) {
         [BALogger publicForDomain:nil message:@"Batch started with a DEV API key"];
     }

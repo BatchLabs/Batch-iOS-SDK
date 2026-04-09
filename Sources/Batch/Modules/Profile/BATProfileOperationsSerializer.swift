@@ -41,6 +41,13 @@ class BATProfileOperationsSerializer: NSObject {
             jsonParameters["custom_attributes"] = serializeAttributes(profileEditor: profileEditor)
         }
 
+        jsonParameters["topic_preferences"] =
+            if let topicPreferencesOperation = profileEditor.topicPreferences as? BATProfileAttributePartialArrayUpdateOperation {
+                serializePartialArrayUpdate(topicPreferencesOperation)
+            } else {
+                profileEditor.topicPreferences?.value
+            }
+
         return jsonParameters
     }
 
