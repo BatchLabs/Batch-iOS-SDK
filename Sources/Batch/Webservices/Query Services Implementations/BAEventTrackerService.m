@@ -57,7 +57,11 @@
 }
 
 - (NSArray<id<BAWSQuery>> *)queriesToSend {
-    BAWSQueryTracking *query = [[BAWSQueryTracking alloc] initWithEvents:_events];
+    // Deduplicate consecutive _PROFILE_IDENTIFY events with the same custom_id before sending.
+    // _events is kept intact so that all events (including duplicates) are correctly
+    // deleted from the database on success or reset on failure.
+    NSArray *deduplicatedEvents = [BATProfileIdentifyDeduplicator deduplicate:_events];
+    BAWSQueryTracking *query = [[BAWSQueryTracking alloc] initWithEvents:deduplicatedEvents];
     return @[ query ];
 }
 

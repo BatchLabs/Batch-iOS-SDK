@@ -103,13 +103,13 @@ final class profileOperationsSerializerTests: XCTestCase {
         XCTAssertEqual(serializedAttributes["double_att.f"] as? Double, 3.68)
         XCTAssertEqual(serializedAttributes["url_att.u"] as? String, "https://batch.com/")
         XCTAssertEqual(serializedAttributes["date_att.t"] as? Int, dateTimestamp * 1000)
-        XCTAssertEqual(serializedAttributes["string_array_att.a"] as? [String], ["foo", "bar", "foo"])
+        XCTAssertEqual(serializedAttributes["string_array_att.a"] as? [String], ["bar", "foo"])
         XCTAssertEqual(serializedAttributes["delete_att"] as? NSObject, NSNull())
 
         XCTAssertEqual(serializedAttributes["append_array_att.a"] as? NSDictionary, ["$add": ["foo", "bar"]] as NSDictionary)
         XCTAssertEqual(serializedAttributes["remove_array_att.a"] as? NSDictionary, ["$remove": ["baz"]] as NSDictionary)
 
-        XCTAssertEqual(serializedAttributes["complex_string_array_att.a"] as? [String], ["foo", "foo", "baz2"])
+        XCTAssertEqual(serializedAttributes["complex_string_array_att.a"] as? [String], ["foo", "baz2"])
 
         XCTAssertNil(serializedAttributes["absent_array_att.a"])
 
@@ -199,6 +199,117 @@ final class profileOperationsSerializerTests: XCTestCase {
             try? editor.addToTopicPreferences(["shopping with friend"])  // should throw
         }
         XCTAssertEqual(serialized["topic_preferences"] as? [String], ["offers"])
+    }
+
+    func testStringArrayAttributeDeduplication() throws {
+        // setCustom(stringArrayAttribute:) deduplicates, last occurrence wins
+        let serialized = try serializeEditor { editor in
+            try editor.setCustom(stringArrayAttribute: ["d", "e", "d", "a", "f", "a"], forKey: "arr")
+        }
+        guard let customAttrs = serialized["custom_attributes"] as? [AnyHashable: Any] else {
+            XCTFail("missing custom_attributes")
+            return
+        }
+        XCTAssertEqual(customAttrs["arr.a"] as? [String], ["e", "d", "f", "a"])
+    }
+
+    func testAddToStringArrayOnExistingSetDeduplicates() throws {
+        // Adding a value already in the set array moves it to the end (last-wins)
+        let serialized = try serializeEditor { editor in
+            try editor.setCustom(stringArrayAttribute: ["a", "b"], forKey: "arr")
+            try editor.add(value: "a", toArray: "arr")
+            try editor.add(value: "c", toArray: "arr")
+        }
+        guard let customAttrs = serialized["custom_attributes"] as? [AnyHashable: Any] else {
+            XCTFail("missing custom_attributes")
+            return
+        }
+        XCTAssertEqual(customAttrs["arr.a"] as? [String], ["b", "a", "c"])
+    }
+
+    func testPartialArrayAddDeduplicatesAcrossMultipleCalls() throws {
+        // Adding the same value twice across calls deduplicates in $add (last-wins)
+        let serialized = try serializeEditor { editor in
+            try editor.add(value: "a", toArray: "arr")
+            try editor.add(value: "b", toArray: "arr")
+            try editor.add(value: "a", toArray: "arr")
+        }
+        guard let customAttrs = serialized["custom_attributes"] as? [AnyHashable: Any] else {
+            XCTFail("missing custom_attributes")
+            return
+        }
+        XCTAssertEqual(customAttrs["arr.a"] as? NSDictionary, ["$add": ["b", "a"]] as NSDictionary)
+    }
+
+    func testPartialArrayRemoveDeduplicatesAcrossMultipleCalls() throws {
+        // Removing the same value twice across calls deduplicates in $remove (last-wins)
+        let serialized = try serializeEditor { editor in
+            try editor.remove(value: "a", fromArray: "arr")
+            try editor.remove(value: "b", fromArray: "arr")
+            try editor.remove(value: "a", fromArray: "arr")
+        }
+        guard let customAttrs = serialized["custom_attributes"] as? [AnyHashable: Any] else {
+            XCTFail("missing custom_attributes")
+            return
+        }
+        XCTAssertEqual(customAttrs["arr.a"] as? NSDictionary, ["$remove": ["b", "a"]] as NSDictionary)
+    }
+
+    func testSetStringArrayWith26ItemsOneDuplicateIsAccepted() throws {
+        // 26 inputs but the first is repeated at the end — dedup yields 25 unique items
+        let items = (1...25).map { "\($0)" } + ["1"]
+        XCTAssertNoThrow(
+            try serializeEditor { editor in
+                try editor.setCustom(stringArrayAttribute: items, forKey: "arr")
+            }
+        )
+        let serialized = try serializeEditor { editor in
+            try editor.setCustom(stringArrayAttribute: items, forKey: "arr")
+        }
+        guard let customAttrs = serialized["custom_attributes"] as? [AnyHashable: Any] else {
+            XCTFail("missing custom_attributes")
+            return
+        }
+        let expected = (2...25).map { "\($0)" } + ["1"]
+        XCTAssertEqual(customAttrs["arr.a"] as? [String], expected)
+    }
+
+    func testTopicPreferencesDeduplication() throws {
+        // Case-folding creates duplicates that dedup (last-wins)
+        var serialized = try serializeEditor { editor in
+            try editor.setTopicPreferences(["Sport", "news", "sport"])
+        }
+        XCTAssertEqual(serialized["topic_preferences"] as? [String], ["news", "sport"])
+
+        // Partial add: duplicates within a single call are deduped in $add
+        serialized = try serializeEditor { editor in
+            try editor.addToTopicPreferences(["sport", "news", "sport"])
+        }
+        XCTAssertEqual(serialized["topic_preferences"] as? NSDictionary, ["$add": ["news", "sport"]] as NSDictionary)
+
+        // Partial add: second call with "News" normalizes to "news", already in $add — moves to end
+        serialized = try serializeEditor { editor in
+            try editor.addToTopicPreferences(["sport", "news", "sport"])
+            try editor.addToTopicPreferences(["News"])
+        }
+        XCTAssertEqual(serialized["topic_preferences"] as? NSDictionary, ["$add": ["sport", "news"]] as NSDictionary)
+    }
+
+    func testSetTopicPreferencesWith26ItemsOneDuplicateIsAccepted() throws {
+        // 26 topics but topic_0 is repeated — dedup brings to 25, which is valid
+        var topics = (0..<25).map { "topic_\($0)" }
+        topics.append("topic_0")
+        XCTAssertEqual(topics.count, 26)
+
+        let serialized = try serializeEditor { editor in
+            try editor.setTopicPreferences(topics)
+        }
+        guard let prefs = serialized["topic_preferences"] as? [String] else {
+            XCTFail("missing topic_preferences")
+            return
+        }
+        XCTAssertEqual(prefs.count, 25)
+        XCTAssertEqual(prefs.last, "topic_0")
     }
 
     /// Test that an email cannot be set and is not serialized if not allowed

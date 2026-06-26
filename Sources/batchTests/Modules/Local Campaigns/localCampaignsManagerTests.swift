@@ -462,6 +462,85 @@ struct BALocalCampaignsManagerTests {
         // This is expected behavior as it tracks sync history
     }
 
+    /// Tests that a campaign marked as pending display is treated as over capping and excluded from
+    /// the eligible campaigns, preventing the duplicate-display race condition (sc-128222).
+    @Test func pendingDisplayCampaignIsExcludedFromEligibleCampaigns() {
+        // GIVEN a loaded campaign that is otherwise eligible.
+        let manager = BALocalCampaignsManager(
+            dateProvider: BASecureDateProvider(),
+            viewTracker: BALocalCampaignsSQLTracker()
+        )
+        let campaign = Self.createFakeCampaignWith(campaignID: "pending_campaign", priority: 0, jit: false)
+        manager.load([campaign], fromCache: false)
+
+        // THEN the campaign is eligible before being marked as pending.
+        #expect(manager.eligibleCampaignsSorted(byPriority: BANewSessionSignal()).count == 1)
+
+        // WHEN the campaign is marked as pending display (before the SQLite view counter is incremented).
+        manager.markCampaign(asPendingDisplay: campaign.campaignID)
+
+        // THEN it is no longer returned as eligible, so a second signal cannot elect it again.
+        #expect(manager.eligibleCampaignsSorted(byPriority: BANewSessionSignal()).isEmpty)
+    }
+
+    /// Tests that unmarking a pending campaign restores its eligibility. This guards against the
+    /// false-capping regression where a campaign that was never actually shown (display failure,
+    /// app backgrounded, superseded DnD message…) would stay pending forever.
+    @Test func unmarkingPendingDisplayRestoresEligibility() {
+        // GIVEN a campaign marked as pending display.
+        let manager = BALocalCampaignsManager(
+            dateProvider: BASecureDateProvider(),
+            viewTracker: BALocalCampaignsSQLTracker()
+        )
+        let campaign = Self.createFakeCampaignWith(campaignID: "restored_campaign", priority: 0, jit: false)
+        manager.load([campaign], fromCache: false)
+        manager.markCampaign(asPendingDisplay: campaign.campaignID)
+        #expect(manager.eligibleCampaignsSorted(byPriority: BANewSessionSignal()).isEmpty)
+
+        // WHEN the pending marker is cleared (e.g. the display attempt failed and was never shown).
+        manager.unmarkCampaign(asPendingDisplay: campaign.campaignID)
+
+        // THEN the campaign becomes eligible again for future elections.
+        #expect(manager.eligibleCampaignsSorted(byPriority: BANewSessionSignal()).count == 1)
+    }
+
+    /// Tests that the pending set only affects the marked campaign and leaves other campaigns eligible.
+    @Test func pendingDisplayOnlyAffectsMarkedCampaign() {
+        // GIVEN two eligible campaigns.
+        let manager = BALocalCampaignsManager(
+            dateProvider: BASecureDateProvider(),
+            viewTracker: BALocalCampaignsSQLTracker()
+        )
+        let pendingCampaign = Self.createFakeCampaignWith(campaignID: "pending", priority: 10, jit: false)
+        let otherCampaign = Self.createFakeCampaignWith(campaignID: "other", priority: 0, jit: false)
+        manager.load([pendingCampaign, otherCampaign], fromCache: false)
+
+        // WHEN only one of them is marked as pending display.
+        manager.markCampaign(asPendingDisplay: pendingCampaign.campaignID)
+
+        // THEN only the other campaign remains eligible.
+        let eligible = manager.eligibleCampaignsSorted(byPriority: BANewSessionSignal())
+        #expect(eligible.count == 1)
+        #expect(eligible.first?.campaignID == "other")
+    }
+
+    /// Tests that unmarking a campaign that was never pending is a safe no-op.
+    @Test func unmarkingNonPendingCampaignIsNoop() {
+        // GIVEN a loaded, eligible campaign that was never marked as pending.
+        let manager = BALocalCampaignsManager(
+            dateProvider: BASecureDateProvider(),
+            viewTracker: BALocalCampaignsSQLTracker()
+        )
+        let campaign = Self.createFakeCampaignWith(campaignID: "never_pending", priority: 0, jit: false)
+        manager.load([campaign], fromCache: false)
+
+        // WHEN we unmark a campaign that is not in the pending set.
+        manager.unmarkCampaign(asPendingDisplay: campaign.campaignID)
+
+        // THEN eligibility is unaffected.
+        #expect(manager.eligibleCampaignsSorted(byPriority: BANewSessionSignal()).count == 1)
+    }
+
     /// Helper method to create a `BALocalCampaign` instance for tests.
     /// - Parameters:
     ///   - campaignID: The campaign's unique identifier.

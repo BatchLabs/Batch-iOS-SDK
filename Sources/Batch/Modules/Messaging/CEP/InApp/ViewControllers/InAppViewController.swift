@@ -85,8 +85,42 @@ class InAppViewController: UIViewController, InAppViewCountdownClose, BatchMessa
     /// Responds to device orientation or size changes.
     override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        // Trigger a layout update to adapt to the new size.
-        view.layoutSubviews()
+
+        // Capture the corner-mask paths before the rotation so we can morph them to their new shape.
+        var maskedLayers: [(layer: CAShapeLayer, fromPath: CGPath)] = []
+        collectShapeMaskLayers(in: view, into: &maskedLayers)
+
+        coordinator.animate(alongsideTransition: { [weak self] context in
+            guard let self else { return }
+
+            // Relayout at the new size: the views rebuild their mask paths to the final dimensions.
+            view.setNeedsLayout()
+            view.layoutIfNeeded()
+
+            // Explicitly animate each mask path from its pre-rotation shape to the new one over the
+            // transition's own duration. The mask paths are otherwise set without animation, so a
+            // rotation would snap them while the bounds animate ahead, briefly squaring off the
+            // corners of resized views. Morphing them in step keeps the corners rounded throughout.
+            for masked in maskedLayers {
+                guard let toPath = masked.layer.path else { continue }
+                let animation = CABasicAnimation(keyPath: "path")
+                animation.fromValue = masked.fromPath
+                animation.toValue = toPath
+                animation.duration = context.transitionDuration
+                animation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                masked.layer.add(animation, forKey: "inAppCornerPathMorph")
+            }
+        })
+    }
+
+    /// Collects the `CAShapeLayer` corner masks in the view hierarchy along with their current path.
+    private func collectShapeMaskLayers(in view: UIView, into result: inout [(layer: CAShapeLayer, fromPath: CGPath)]) {
+        if let mask = view.layer.mask as? CAShapeLayer, let path = mask.path {
+            result.append((mask, path))
+        }
+        for subview in view.subviews {
+            collectShapeMaskLayers(in: subview, into: &result)
+        }
     }
 
     /// Responds to changes in trait collections, like dark mode or size class.

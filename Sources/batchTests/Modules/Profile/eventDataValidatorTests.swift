@@ -290,6 +290,42 @@ final class eventDataValidatorTests: XCTestCase {
         )
     }
 
+    func testPayloadSizeExceeded() {
+        // 20 string-array attributes × 25 strings × 300 chars ≈ 150 kB, well above 25 kB
+        let attrs = BatchEventAttributes()
+        let largeList = (0..<25).map { _ in String(repeating: "a", count: 300) }
+        for i in 0..<20 {
+            attrs.put(largeList, forKey: "attr_\(i)")
+        }
+        let errors = BATEventAttributesValidator(eventAttributes: attrs).computeValidationErrors()
+        XCTAssertEqual(errors.count, 1)
+        XCTAssertTrue(errors[0].contains("payload exceeds the maximum allowed size"))
+    }
+
+    func testPayloadSizeValid() {
+        // 20 string-array attributes × 25 strings × 46 chars ≈ 23 kB, under 25 kB
+        let attrs = BatchEventAttributes()
+        let list = (0..<25).map { _ in String(repeating: "a", count: 46) }
+        for i in 0..<20 {
+            attrs.put(list, forKey: "attr_\(i)")
+        }
+        let errors = BATEventAttributesValidator(eventAttributes: attrs).computeValidationErrors()
+        XCTAssertTrue(errors.isEmpty)
+    }
+
+    func testPayloadSizeNotCheckedWhenStructureInvalid() {
+        // A structurally invalid payload should report structural errors only — size check must not run
+        let attrs = BatchEventAttributes()
+        attrs.put(String(repeating: "a", count: 201), forKey: "$label")
+        let largeList = (0..<25).map { _ in String(repeating: "a", count: 300) }
+        for i in 0..<20 {
+            attrs.put(largeList, forKey: "attr_\(i)")
+        }
+        let errors = BATEventAttributesValidator(eventAttributes: attrs).computeValidationErrors()
+        XCTAssertEqual(errors.count, 1)
+        XCTAssertTrue(errors[0].contains("cannot be longer than 200 characters"))
+    }
+
     func expectEventValidationSuccess(attributes: BatchEventAttributes, file: StaticString = #filePath, line: UInt = #line) {
         let errors = BATEventAttributesValidator(eventAttributes: attributes).computeValidationErrors()
         if !errors.isEmpty {

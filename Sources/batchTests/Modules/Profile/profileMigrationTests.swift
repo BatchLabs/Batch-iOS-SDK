@@ -27,6 +27,7 @@ class profileMigrationTests: XCTestCase {
     override func tearDown() {
         // reset event tracker
         eventTracker.reset()
+        BAParameter.removeObject(forKey: kParametersProjectKey)
     }
 
     func testOnProjectChanged() throws {

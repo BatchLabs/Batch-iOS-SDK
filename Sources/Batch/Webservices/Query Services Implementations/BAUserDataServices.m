@@ -86,16 +86,6 @@
         if ([response isKindOfClass:[BAWSResponseAttributes class]]) {
             BAWSResponseAttributes *castedResponse = (BAWSResponseAttributes *)response;
             [BAUserDataManager storeTransactionID:castedResponse.transactionID forVersion:castedResponse.version];
-            if (castedResponse.projectKey != nil) {
-                NSString *oldProjectKey = [BAParameter objectForKey:kParametersProjectKey fallback:nil];
-                if (![castedResponse.projectKey isEqualToString:oldProjectKey]) {
-                    // If we are here this mean we are running on a fresh V2 install and user has
-                    // just wrote some profile data.
-                    // So we save the project key to not trigger the profile data migration from the
-                    // next ATC response otherwise we would erase the data we just sent.
-                    [BAParameter setValue:castedResponse.projectKey forKey:kParametersProjectKey saved:true];
-                }
-            }
         }
     }
 }

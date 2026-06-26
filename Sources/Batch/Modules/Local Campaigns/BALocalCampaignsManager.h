@@ -168,6 +168,23 @@ typedef NS_ENUM(NSInteger, BATSyncedJITCampaignState) {
 - (void)setNextAvailableJITTimestampWithCustomDelay:(nullable NSNumber *)delay;
 
 /**
+ * Marks a campaign as pending display.
+ * Must be called synchronously before any async dispatch (delay, main thread) to ensure
+ * the capping check in isCampaignOverCapping sees the campaign as already scheduled,
+ * preventing duplicate displays caused by the race condition between displayMessage
+ * and the SQLite view counter increment (which only happens after messageShown).
+ * @param campaignID The unique identifier of the campaign being displayed
+ */
+- (void)markCampaignAsPendingDisplay:(nonnull NSString *)campaignID;
+
+/**
+ * Removes a campaign from the pending display set.
+ * Must be called after the SQLite view counter has been incremented (i.e. after messageShown).
+ * @param campaignID The unique identifier of the campaign that was displayed
+ */
+- (void)unmarkCampaignAsPendingDisplay:(nonnull NSString *)campaignID;
+
+/**
  * Checks if the current user date and time fall within the configured quiet hours.
  * This method handles both same-day and overnight time intervals, as well as quiet days.
  * @param campaign The campaign to check for quiet hours

@@ -192,13 +192,21 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
 - (BatchMessage *_Nullable)popPendingMessage {
     BatchMessage *msg = _pendingMessage;
     _pendingMessage = nil;
+    if ([msg isKindOfClass:[BatchInAppMessage class]]) {
+        [[BALocalCampaignsCenter instance]
+            didFailToDisplayCampaignOutputWithIdentifier:((BatchInAppMessage *)msg).campaignIdentifier];
+    }
     return msg;
 }
 
 - (BOOL)showPendingMessage {
     BatchMessage *msg = [self popPendingMessage];
     if (msg) {
-        [self displayMessage:msg bypassDnD:false error:nil];
+        NSError *err = nil;
+        if (![self displayMessage:msg bypassDnD:false error:&err] && [msg isKindOfClass:[BatchInAppMessage class]]) {
+            [[BALocalCampaignsCenter instance]
+                didFailToDisplayCampaignOutputWithIdentifier:((BatchInAppMessage *)msg).campaignIdentifier];
+        }
         return true;
     }
     return false;
@@ -237,6 +245,7 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
 - (void)handleInAppMessage:(nonnull BatchInAppMessage *)message {
     [BAThreading performBlockOnMainThreadAsync:^{
       if ([self->_wrappedInAppDelegate batchInAppMessageReady:message]) {
+          [[BALocalCampaignsCenter instance] didFailToDisplayCampaignOutputWithIdentifier:message.campaignIdentifier];
           [BALogger debugForDomain:LOGGER_DOMAIN
                            message:@"Called developer's delegate with the In-App message %@", message];
       } else {
@@ -245,11 +254,15 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
               if ([self displayMessage:message bypassDnD:false error:&err]) {
                   [BALogger debugForDomain:LOGGER_DOMAIN message:@"Displayed the In-App message %@", message];
               } else {
+                  [[BALocalCampaignsCenter instance]
+                      didFailToDisplayCampaignOutputWithIdentifier:message.campaignIdentifier];
                   [BALogger publicForDomain:LOGGER_DOMAIN
                                     message:@"Batch tried to display an In-App message, but failed. Error: %@",
                                             err ? err.localizedDescription : @"Unknown"];
               }
           } else {
+              [[BALocalCampaignsCenter instance]
+                  didFailToDisplayCampaignOutputWithIdentifier:message.campaignIdentifier];
               [BALogger debugForDomain:LOGGER_DOMAIN
                                message:@"An In-App message should have been shown, but the app is in the "
                                        @"UIApplicationStateBackground state"];
@@ -826,6 +839,10 @@ NSString *const kBATMessagingMessageDidDisappear = @"batch.messaging.messageDidD
         [BALogger
             publicForDomain:LOGGER_DOMAIN
                     message:@"A BatchMessage was attempted to be displayed, but Do Not Disturb is enabled. Enqueing."];
+        if ([_pendingMessage isKindOfClass:[BatchInAppMessage class]]) {
+            [[BALocalCampaignsCenter instance]
+                didFailToDisplayCampaignOutputWithIdentifier:((BatchInAppMessage *)_pendingMessage).campaignIdentifier];
+        }
         _pendingMessage = message;
         return true;
     }

@@ -241,11 +241,13 @@
             [BALogger publicForDomain:PUBLIC_DOMAIN message:@"Cannot save editor: save has already been called once"];
             return;
         }
-        [_backingImpl consume];
+        _backingImpl.consumed = YES;
         // Copy the editor to make sure that it's not modified while we work with it
         BATProfileEditor *editorCopy = [_backingImpl copy];
-
-        [[BAInjection injectProtocol:@protocol(BAProfileCenterProtocol)] applyEditor:editorCopy];
+        BOOL cepEventApplied = [[BAInjection injectProtocol:@protocol(BAProfileCenterProtocol)] applyEditor:editorCopy];
+        if (cepEventApplied) {
+            [_backingImpl commitInstallDataChanges];
+        }
     }
 }
 

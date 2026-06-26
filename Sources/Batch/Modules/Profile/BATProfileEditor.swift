@@ -289,8 +289,9 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
         try checkIfConsumed()
 
         let targetAttributeKey = try validateAndNormalizeName(attributeKey)
-        try validateStringArray(stringArrayAttribute)
-        customAttributes[targetAttributeKey] = BATProfileAttributeSetOperation<[String]>(type: .array, value: stringArrayAttribute)
+        let deduped = deduplicateKeepLast(stringArrayAttribute)
+        try validateStringArray(deduped)
+        customAttributes[targetAttributeKey] = BATProfileAttributeSetOperation<[String]>(type: .array, value: deduped)
 
         try? compatibilityDelegate?.setCustom(stringArrayAttribute: stringArrayAttribute, forKey: attributeKey)
     }
@@ -394,10 +395,11 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
         } else if let existingOperation = existingOperation as? BATProfileAttributePartialArrayUpdateOperation {
             var updatedPartialUpdate = existingOperation
             updatedPartialUpdate.itemsToRemove.append(contentsOf: values)
+            updatedPartialUpdate.itemsToRemove = deduplicateKeepLast(updatedPartialUpdate.itemsToRemove)
             try validateParialUpdate(updatedPartialUpdate)
             return updatedPartialUpdate
         } else {
-            return BATProfileAttributePartialArrayUpdateOperation(itemsToAdd: [], itemsToRemove: values)
+            return BATProfileAttributePartialArrayUpdateOperation(itemsToAdd: [], itemsToRemove: deduplicateKeepLast(values))
         }
     }
 
@@ -413,15 +415,17 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
         if let existingOperation = existingOperation as? BATProfileAttributeSetOperation<[String]>, existingOperation.type == .array {
             var updatedArray = existingOperation.value
             updatedArray.append(contentsOf: values)
-            try validateStringArray(updatedArray)
-            return BATProfileAttributeSetOperation<[String]>(type: .array, value: updatedArray)
+            let deduped = deduplicateKeepLast(updatedArray)
+            try validateStringArray(deduped)
+            return BATProfileAttributeSetOperation<[String]>(type: .array, value: deduped)
         } else if let existingOperation = existingOperation as? BATProfileAttributePartialArrayUpdateOperation {
             var updatedPartialUpdate = existingOperation
             updatedPartialUpdate.itemsToAdd.append(contentsOf: values)
+            updatedPartialUpdate.itemsToAdd = deduplicateKeepLast(updatedPartialUpdate.itemsToAdd)
             try validateParialUpdate(updatedPartialUpdate)
             return updatedPartialUpdate
         } else {
-            return BATProfileAttributePartialArrayUpdateOperation(itemsToAdd: values, itemsToRemove: [])
+            return BATProfileAttributePartialArrayUpdateOperation(itemsToAdd: deduplicateKeepLast(values), itemsToRemove: [])
         }
     }
 
@@ -431,6 +435,11 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
             return
         }
         consumed = true
+        compatibilityDelegate?.consume()
+    }
+
+    @objc
+    public func commitInstallDataChanges() {
         compatibilityDelegate?.consume()
     }
 
@@ -482,17 +491,15 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
     }
 
     func validateAndNormalizeTopicPreferences(_ values: [String]) throws -> [String] {
-        if values.isEmpty || values.count > Maximums.topicPreferencesItems {
+        let normalizedTopics = try values.map { try validateAndNormalizeTopicPreferencesValue($0) }
+        let deduped = deduplicateKeepLast(normalizedTopics)
+        if deduped.isEmpty || deduped.count > Maximums.topicPreferencesItems {
             throw BatchProfileError(
                 code: .editorInvalidValue,
                 reason: "invalid topicPreferences value: topics arrays cannot be empty or contain more than \(Maximums.topicPreferencesItems) elements"
             )
         }
-        var normalizedTopics = [String]()
-        for value in values {
-            normalizedTopics.append(try validateAndNormalizeTopicPreferencesValue(value))
-        }
-        return normalizedTopics
+        return deduped
     }
 
     func checkIfConsumed() throws {
@@ -584,6 +591,19 @@ public struct BATProfileAttributePartialArrayUpdateOperation: BATProfileAttribut
 
     var itemsToAdd: [String] = []
     var itemsToRemove: [String] = []
+}
+
+// Deduplicates an array keeping the last occurrence of each value (last-wins).
+// Example: ["d","e","d","a","f","a"] → ["e","d","f","a"]
+private func deduplicateKeepLast(_ values: [String]) -> [String] {
+    var result: [String] = []
+    var seen = Set<String>()
+    for value in values.reversed() {
+        if seen.insert(value).inserted {
+            result.append(value)
+        }
+    }
+    return result.reversed()
 }
 
 /// Email subscription state. This is already defined in BatchProfile.h, but we cannot reexpose

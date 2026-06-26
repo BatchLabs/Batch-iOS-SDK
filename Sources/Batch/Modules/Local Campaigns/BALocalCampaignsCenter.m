@@ -282,6 +282,10 @@
 - (void)displayInAppMessage:(nonnull BALocalCampaign *)campaign {
     //[BALogger debugForDomain:LOGGER_DOMAIN message:@"Campaign %@ found for signal %@", campaign, signal];
     if (campaign.output) {
+        // Mark the campaign as pending display BEFORE any async dispatch (main thread + optional
+        // displayDelay). This prevents subsequent signals from electing the same campaign again
+        // while the view is being scheduled but the SQLite counter hasn't been incremented yet.
+        [_campaignManager markCampaignAsPendingDisplay:campaign.campaignID];
         [campaign generateOccurrenceIdentifier];
         [campaign.output performForCampaign:campaign];
     } else {
@@ -317,6 +321,9 @@
                                                                                kind:BALocalCampaignTrackerEventKindView
                                                                             version:self->_campaignManager.version
                                                                        customUserID:customUserID];
+      // SQLite counter is now incremented — remove from the pending set so the campaign
+      // can be displayed again if its capping allows it (e.g. capping > 1).
+      [self->_campaignManager unmarkCampaignAsPendingDisplay:identifier];
       if (ev != nil) {
           [BATrackerCenter trackPrivateEvent:@"_LC_VIEW"
                                   parameters:@{
@@ -331,6 +338,13 @@
                                    @"view to the server."];
       }
     });
+}
+
+- (void)didFailToDisplayCampaignOutputWithIdentifier:(nullable NSString *)identifier {
+    if (identifier == nil) {
+        return;
+    }
+    [_campaignManager unmarkCampaignAsPendingDisplay:identifier];
 }
 
 /**

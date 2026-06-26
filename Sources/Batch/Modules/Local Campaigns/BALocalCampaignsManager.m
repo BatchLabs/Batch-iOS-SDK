@@ -62,6 +62,16 @@
 
     /// Cached list of synced JIT campaigns
     NSMutableDictionary *_syncedJITCampaigns;
+
+    // Set of campaign IDs that have been elected for display but whose SQLite view counter
+    // has not yet been incremented (i.e. messageShown has not fired yet).
+    // This covers the race condition where displayMessage dispatches asynchronously
+    // (main thread + optional display delay) so subsequent signals would see count=0
+    // and elect the same campaign again before the first display is tracked.
+    NSMutableSet<NSString *> *_pendingDisplayCampaignIds;
+
+    // Lock for _pendingDisplayCampaignIds
+    NSObject *_pendingDisplayLock;
 }
 
 @end
@@ -96,6 +106,8 @@
     _watchedEventsLock = [NSObject new];
     _nextAvailableJITTimestampLock = [NSObject new];
     _syncedJITCampaigns = [NSMutableDictionary dictionary];
+    _pendingDisplayCampaignIds = [NSMutableSet new];
+    _pendingDisplayLock = [NSObject new];
 }
 
 #pragma mark Public methods
@@ -416,6 +428,17 @@
  * @return YES if campaign is over capping, NO otherwise
  */
 - (BOOL)isCampaignOverCapping:(BALocalCampaign *)campaign ignoreMinInterval:(BOOL)ignoreMinInterval {
+    // Check the in-memory pending set first — a campaign already scheduled for display
+    // (but whose SQLite counter hasn't been incremented yet) must be treated as over capping
+    // to prevent duplicate displays caused by displayDelay or main-thread dispatch latency.
+    @synchronized(_pendingDisplayLock) {
+        if ([_pendingDisplayCampaignIds containsObject:campaign.campaignID]) {
+            [BALogger debugForDomain:LOG_DOMAIN
+                             message:@"Campaign %@ is pending display, treating as over capping", campaign.campaignID];
+            return true;
+        }
+    }
+
     NSString *customUserID = [BAParameter objectForKey:kParametersCustomUserIDKey fallback:nil];
 
     BALocalCampaignCountedEvent *eventData =
@@ -586,6 +609,18 @@
 
     @synchronized(_watchedEventsLock) {
         _watchedEventNames = updatedEventNames;
+    }
+}
+
+- (void)markCampaignAsPendingDisplay:(nonnull NSString *)campaignID {
+    @synchronized(_pendingDisplayLock) {
+        [_pendingDisplayCampaignIds addObject:campaignID];
+    }
+}
+
+- (void)unmarkCampaignAsPendingDisplay:(nonnull NSString *)campaignID {
+    @synchronized(_pendingDisplayLock) {
+        [_pendingDisplayCampaignIds removeObject:campaignID];
     }
 }
 

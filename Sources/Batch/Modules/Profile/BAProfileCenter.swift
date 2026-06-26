@@ -24,8 +24,10 @@ public protocol BAProfileCenterProtocol {
     /// Returns an array of human readable errors. If empty, the event validated successfully.
     func validateEventAttributes(_ attributes: BatchEventAttributes) -> [String]
 
-    /// Send a profile edition operation
-    func applyEditor(_ profileEditor: BATProfileEditor)
+    /// Send a profile edition operation.
+    /// Returns false if the payload was rejected (e.g. exceeds the size limit), true otherwise.
+    @discardableResult
+    func applyEditor(_ profileEditor: BATProfileEditor) -> Bool
 
     /// Callback when a project has changed
     @objc(onProjectChanged:withNewKey:)
@@ -113,15 +115,25 @@ public class BAProfileCenter: NSObject, BAProfileCenterProtocol {
         return BATEventAttributesValidator(eventAttributes: attributes).computeValidationErrors()
     }
 
-    public func applyEditor(_ profileEditor: BATProfileEditor) {
+    @discardableResult
+    public func applyEditor(_ profileEditor: BATProfileEditor) -> Bool {
         let serializedEditOperations = BATProfileOperationsSerializer.serialize(profileEditor: profileEditor)
 
         guard !serializedEditOperations.isEmpty else {
             BALogger.debug(domain: loggerDomain, message: "Trying to send an empty profile data changed event, aborting.")
-            return
+            return true
+        }
+
+        if BATEventAttributesValidator.exceedsMaxPayloadSize(serializedEditOperations) {
+            BALogger.public(
+                domain: loggerDomain,
+                message: "BatchProfileEditor.save() rejected: payload exceeds the maximum allowed size (\(BATEventAttributesValidator.maxPayloadSizeBytes / 1024) kB). No changes were applied."
+            )
+            return false
         }
 
         BAInjection.inject(BATEventTracker.self)?.trackPrivateEvent(event: .profileDataChanged, parameters: serializedEditOperations, collapsable: false)
+        return true
     }
 
     /// Callback method when the project key has changed.
@@ -141,6 +153,8 @@ public class BAProfileCenter: NSObject, BAProfileCenterProtocol {
                     sendIdentifyEvent(customID: customUserId)
                 }
             }
+            // Native data migration (_NATIVE_DATA_CHANGED)
+            BATDataCollectionCenter.sharedInstance.forceSendingNativeDataChanged()
             // Custom data migration
             guard !BACoreCenter.instance().configuration.isMigrationDisabled(for: .customData) else {
                 BALogger.debug(domain: loggerDomain, message: "Automatic custom data migration has been explicitly disabled.")

@@ -46,18 +46,22 @@ class InAppButtonView: UIButton, InAppClosureDelegate {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
-        setNeedsDisplay()
+        setNeedsLayout()
     }
 
     // MARK: -
 
-    var _lastKnownFrame: CGRect = CGRectZero
+    var _lastKnownBounds: CGRect = CGRectZero
 
-    override public func draw(_ rect: CGRect) {
-        super.draw(rect)
+    // The rounded-corner mask and borders are laid out here rather than in draw(_:) because
+    // UIKit does not reliably re-invoke draw(_:) on a bounds change (e.g. a device rotation that
+    // resizes the button), which would leave the CAShapeLayer mask stale and clip the corners.
+    // layoutSubviews() is always called when the bounds change, so the mask follows the new size.
+    override func layoutSubviews() {
+        super.layoutSubviews()
 
-        if _lastKnownFrame != rect {
-            _lastKnownFrame = rect
+        if _lastKnownBounds != bounds {
+            _lastKnownBounds = bounds
 
             // Corners
             let path = baConfiguration.style.layoutRoundedCorners(on: self)

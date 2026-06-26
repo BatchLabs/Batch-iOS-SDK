@@ -36,21 +36,41 @@ public class BATDataCollectionCenter: NSObject {
     /// Check if some system parameters has changed
     /// Method visible for testing
     public func systemParametersMayHaveChanged() {
+        var anyChanged = false
+        for param in SystemParameterRegistry.all where param.watched {
+            if param.hasChanged {
+                anyChanged = true
+            }
+        }
+        guard anyChanged else {
+            BALogger.debug(domain: loggerDomain, message: "Native data has not changed.")
+            return
+        }
+        BALogger.debug(domain: loggerDomain, message: "Some native data has changed, sending all native data.")
+        sendNativeDataChangedEvent(buildAllNativeData())
+    }
+
+    /// Force sending a _NATIVE_DATA_CHANGED event with all parameters, regardless of changes.
+    /// Used during profile migration to ensure native data is up-to-date on the backend.
+    public func forceSendingNativeDataChanged() {
+        for param in SystemParameterRegistry.all where param.watched {
+            _ = param.hasChanged
+        }
+        BALogger.debug(domain: loggerDomain, message: "Forcing native data send.")
+        sendNativeDataChangedEvent(buildAllNativeData())
+    }
+
+    /// Build the full native data payload with all watched parameters.
+    /// Sends the current value for allowed parameters, or NSNull for not-allowed ones.
+    private func buildAllNativeData() -> [AnyHashable: Any] {
         var data: [AnyHashable: Any] = [:]
         for param in SystemParameterRegistry.all where param.watched {
             guard let key = param.shortname.serializedName else {
                 continue
             }
-            if param.hasChanged, param.allowed {
-                data[key] = param.lastValue ?? NSNull()
-            }
+            data[key] = param.allowed ? (param.lastValue ?? NSNull()) : NSNull()
         }
-        guard !data.isEmpty else {
-            BALogger.debug(domain: loggerDomain, message: "Native data has not changed.")
-            return
-        }
-        // Sending native data changed event
-        sendNativeDataChangedEvent(data)
+        return data
     }
 
     /// Build identifiers for query webservices

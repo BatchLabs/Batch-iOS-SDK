@@ -11,6 +11,7 @@
 #import <Batch/BACoreCenter.h>
 #import <Batch/BAInjection.h>
 #import <Batch/BALogger.h>
+#import <Batch/BANullHelper.h>
 #import <Batch/BAOptOut.h>
 #import <Batch/BAParameter.h>
 #import <Batch/BAQueryWebserviceClient.h>
@@ -27,6 +28,9 @@
 
 /// Waiting time before operations are submitted (in ms)
 #define DISPATCH_QUEUE_TIMER 500
+
+/// Specific changeset value to workaround profile migration when real changeset is 0.
+static const long long BAATCChangesetForMigrations = -99LL;
 
 @implementation BAUserDataManager
 
@@ -104,12 +108,24 @@ static NSMutableArray<NSArray<BOOL (^)(void)> *> *operationsQueues;
           NSNumber *changeset = [BAParameter objectForKey:kParametersUserProfileDataVersionKey fallback:@(0)];
 
           NSString *trid = [BAParameter objectForKey:kParametersUserProfileTransactionIDKey fallback:nil];
-          if (![trid isKindOfClass:[NSString class]] || [trid length] == 0) {
+          if ([BANullHelper isStringEmpty:trid]) {
               // No need to send a check if we don't have a transaction ID.
               // If we do have a valid data version though, send the data.
 
               if ([changeset isKindOfClass:[NSNumber class]] && [changeset longLongValue] > 0) {
                   [BAUserDataManager startAttributesSendWSWithDelay:0];
+              } else if ([changeset isKindOfClass:[NSNumber class]] && [changeset longLongValue] == 0) {
+                  // Force calling ATC to check for profile migration when we got a project key
+                  NSString *currentProjectKey = [BAParameter objectForKey:kParametersProjectKey fallback:nil];
+                  if ([BANullHelper isStringEmpty:currentProjectKey]) {
+                      BAUserDataCheckServiceDatasource *migrationDatasource =
+                          [[BAUserDataCheckServiceDatasource alloc] initWithVersion:BAATCChangesetForMigrations
+                                                                      transactionID:@""];
+                      BAQueryWebserviceClient *migrationWS =
+                          [[BAQueryWebserviceClient alloc] initWithDatasource:migrationDatasource
+                                                                     delegate:[BAUserDataCheckServiceDelegate new]];
+                      [BAWebserviceClientExecutor.sharedInstance addClient:migrationWS];
+                  }
               }
 
               return;

@@ -17,7 +17,6 @@ extension InAppRoundableCorners {
     @discardableResult
     func layoutRoundedCorners(on view: UIView) -> CGPath {
         // Corners
-        let mask = CAShapeLayer()
         let cgPath = InAppRoundedCornersPathBuilder(
             tl: radius[edge: .topLeft],
             tr: radius[edge: .topRight],
@@ -25,8 +24,20 @@ extension InAppRoundableCorners {
             br: radius[edge: .bottomRight]
         )
         .build(in: view.frame).cgPath
+
+        // Reuse the existing mask layer and only update its path, instead of swapping in a brand new
+        // layer. Keeping the same layer lets a rotation explicitly animate its `path` from the old to
+        // the new shape (see InAppViewController.viewWillTransition), so the corners track the animated
+        // bounds change. The model path itself is set without an implicit animation so it stays in sync
+        // outside of that explicit morph.
+        let mask = (view.layer.mask as? CAShapeLayer) ?? CAShapeLayer()
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
         mask.path = cgPath
-        view.layer.mask = mask
+        if view.layer.mask !== mask {
+            view.layer.mask = mask
+        }
+        CATransaction.commit()
 
         return cgPath
     }

@@ -307,8 +307,6 @@
     if (![BANullHelper isStringEmpty:installID]) {
         [BALogger publicForDomain:nil message:@"Installation ID: %@", installID];
     }
-
-    [self checkForIncompatibilities];
 }
 
 - (void)callStartWebserviceWithSilentStart:(BOOL)isSilentStart {
@@ -472,22 +470,6 @@
     }
 
     return NO;
-}
-
-// Check for potential incompatibilities/misconfigurations, and warn the developer
-- (void)checkForIncompatibilities {
-    // This is tightly coupled with BAPushCenter, but unfortunately putting the "disableAutomaticIntegration" there
-    // was a mistake. It should have been on Batch.
-    if (NSClassFromString(@"FIRApp") != nil && [BAPushCenter instance].shouldSwizzle) {
-        [BALogger publicForDomain:nil
-                          message:@"⚠️ Firebase has been detected in your application, but Batch's manual "
-                                  @"integration has NOT been enabled."];
-        [BALogger publicForDomain:nil message:@"⚠️ This can cause issues with Batch's handling of notifications:"];
-        [BALogger publicForDomain:nil message:@"⚠️ Direct Opens, Mobile Landings and Deeplinks might not work"];
-        [BALogger publicForDomain:nil
-                          message:@"⚠️ More info about the manual integration here: "
-                                  @"https://batch.com/doc/ios/advanced/manual-integration.html"];
-    }
 }
 
 - (id<BatchLoggerDelegate>)loggerDelegate {

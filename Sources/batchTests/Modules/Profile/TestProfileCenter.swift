@@ -23,7 +23,8 @@ class TestProfileCenter: BAProfileCenterProtocol {
         return []
     }
 
-    func applyEditor(_: BATProfileEditor) {}
+    @discardableResult
+    func applyEditor(_: BATProfileEditor) -> Bool { return true }
 
     func onProjectChanged(oldProjectKey _: String?, newProjectKey _: String?) {
         onProjectChangedHasBeenCalled = true

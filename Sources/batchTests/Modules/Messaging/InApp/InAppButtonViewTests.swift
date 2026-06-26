@@ -109,4 +109,60 @@ struct InAppButtonViewTests {
             buttonView.onTap()
         }
     }
+
+    // Regression test for the in-app rendering issue where a CTA button's rounded-corner mask was
+    // applied in draw(_:) and not refreshed when the button was resized (e.g. a device rotation that
+    // widens a percentage-width button), leaving the right corners clipped. The mask is now rebuilt in
+    // layoutSubviews(), which is reliably called on a bounds change, so it follows the new size.
+    @MainActor
+    @Test func testRoundedCornerMaskFollowsBoundsChange() throws {
+        let buttonView = InAppButtonView(
+            configuration: InAppButtonView.Configuration(
+                content: InAppButtonView.Configuration.Content(
+                    text: text
+                ),
+                fontStyle: InAppButtonView.Configuration.FontStyle(
+                    fontSize: fontSize,
+                    fontDecoration: fontDecoration
+                ),
+                style: InAppButtonView.Configuration.Style(
+                    backgroundColor: backgroundColor,
+                    radius: [50, 50, 50, 50],
+                    borderWidth: nil,
+                    borderColor: nil,
+                    textAlign: textAlign,
+                    textColor: textColor,
+                    maxLines: maxLines
+                ),
+                placement: InAppButtonView.Configuration.Placement(
+                    margins: margins,
+                    widthType: .auto,
+                    paddings: paddings,
+                    horizontalAlignment: textAlign
+                ),
+                action: nil
+            ),
+            onClosureTap: { _, _ in }
+        )
+
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 400, height: 800))
+        window.addSubview(buttonView)
+
+        // Initial (portrait) layout: a narrow button.
+        buttonView.frame = CGRect(x: 0, y: 0, width: 120, height: 48)
+        buttonView.setNeedsLayout()
+        buttonView.layoutIfNeeded()
+
+        let initialMaskWidth = try #require((buttonView.layer.mask as? CAShapeLayer)?.path?.boundingBoxOfPath.width)
+        #expect(initialMaskWidth == 120)
+
+        // Simulate a rotation that widens the button (e.g. 50% width of a wider landscape modal).
+        buttonView.frame = CGRect(x: 0, y: 0, width: 360, height: 48)
+        buttonView.setNeedsLayout()
+        buttonView.layoutIfNeeded()
+
+        // The mask must follow the new bounds, otherwise the right corners are clipped.
+        let resizedMaskWidth = try #require((buttonView.layer.mask as? CAShapeLayer)?.path?.boundingBoxOfPath.width)
+        #expect(resizedMaskWidth == 360)
+    }
 }

@@ -44,6 +44,22 @@ final class dataCollectionCenterTests: XCTestCase {
         XCTAssertNotNil(event)
         XCTAssertEqual(event?.parametersDictionary["device_language"] as? String, BAPropertiesCenter.value(forShortName: "dla"))
         XCTAssertEqual(event?.parametersDictionary["device_region"] as? String, BAPropertiesCenter.value(forShortName: "dre"))
+        // Unchanged params must also be present in the full snapshot
+        XCTAssertEqual(event?.parametersDictionary["app_bundle_id"] as? String, BAPropertiesCenter.value(forShortName: "bid"))
+    }
+
+    func testForceSendingNativeDataChanged() throws {
+        // Ensure all params are up-to-date (no pending changes)
+        dataCollectionCenter.systemParametersMayHaveChanged()
+        eventTracker.reset()
+
+        // Force send even though nothing changed
+        dataCollectionCenter.forceSendingNativeDataChanged()
+
+        let event = eventTracker.findEvent(name: .nativeDataChanged, parameters: nil)
+        XCTAssertNotNil(event)
+        XCTAssertEqual(event?.parametersDictionary["app_bundle_id"] as? String, BAPropertiesCenter.value(forShortName: "bid"))
+        XCTAssertEqual(event?.parametersDictionary["os_version"] as? String, BAPropertiesCenter.value(forShortName: "osv"))
     }
 
     public func testBuildIdsForQuery() {

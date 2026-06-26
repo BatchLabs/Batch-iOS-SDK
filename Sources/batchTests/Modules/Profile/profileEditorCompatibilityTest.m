@@ -20,7 +20,8 @@
     id installDataEditorMock = OCMClassMock([BAInstallDataEditor class]);
     [installDataEditorMock setExpectationOrderMatters:YES];
 
-    [BAInjection overlayClass:BAInstallDataEditor.class returnedInstance:installDataEditorMock];
+    BAOverlayedInjectable *overlay =
+        [BAInjection overlayClass:BAInstallDataEditor.class returnedInstance:installDataEditorMock];
 
     NSDate *testDate = [NSDate now];
     NSURL *testURL = [NSURL URLWithString:@"https://batch.com"];
@@ -64,6 +65,30 @@
       [editor setStringArrayAttribute:@[ @"foo", @"bar" ] forKey:@"strarray" error:nil];
       [editor addItemToStringArrayAttribute:@"baz" forKey:@"strarray2" error:nil];
       [editor removeItemFromStringArrayAttribute:@"zab" forKey:@"strarray3" error:nil];
+    }];
+
+    OCMVerifyAll(installDataEditorMock);
+}
+
+- (void)testProfileEditorSaveRejectedWhenPayloadTooLarge {
+    id installDataEditorMock = OCMClassMock([BAInstallDataEditor class]);
+    BAOverlayedInjectable *overlay =
+        [BAInjection overlayClass:BAInstallDataEditor.class returnedInstance:installDataEditorMock];
+
+    // Build a payload that exceeds 25 kB: 20 string-array attributes × 25 distinct strings × 295 chars ≈ 147 kB
+    NSString *base = [@"" stringByPaddingToLength:295 withString:@"a" startingAtIndex:0];
+    NSMutableArray<NSString *> *largeList = [NSMutableArray arrayWithCapacity:25];
+    for (int j = 0; j < 25; j++) {
+        [largeList addObject:[base stringByAppendingFormat:@"%05d", j]];
+    }
+
+    OCMReject([installDataEditorMock save]);
+
+    [BatchProfile editWithBlock:^(BatchProfileEditor *_Nonnull editor) {
+      for (int i = 0; i < 20; i++) {
+          NSString *key = [NSString stringWithFormat:@"attr_%d", i];
+          [editor setStringArrayAttribute:largeList forKey:key error:nil];
+      }
     }];
 
     OCMVerifyAll(installDataEditorMock);

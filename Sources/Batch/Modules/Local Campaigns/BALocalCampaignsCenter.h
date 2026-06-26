@@ -89,6 +89,14 @@
 - (void)didPerformCampaignOutputWithIdentifier:(nonnull NSString *)identifier eventData:(nullable NSObject *)eventData;
 
 /**
+ * Notify this module that an In-App Campaign display attempt failed (app backgrounded, no suitable
+ * view controller, or any other presentation error). Removes the campaign from the pending-display
+ * set so it remains eligible for future elections.
+ * @param identifier The unique identifier of the campaign that failed to display
+ */
+- (void)didFailToDisplayCampaignOutputWithIdentifier:(nullable NSString *)identifier;
+
+/**
  * Handle the webservice response payload:
  * - Parse and load campaigns
  * - Write to disk if valid

@@ -14,6 +14,7 @@ private enum Maximums {
     static let urlLength = 2048
     static let stringLength = 300
     static let arrayItemsCount = 25
+    static let payloadSizeBytes = 25 * 1024
 }
 
 private enum Consts {
@@ -60,14 +61,30 @@ private struct Breadcrumbs {
 
 /// Class that validates that a BatchEventAttributes object is valid
 struct BATEventAttributesValidator {
+    static let maxPayloadSizeBytes = Maximums.payloadSizeBytes
+
     private let attributeNameRegexp: BATRegularExpression = .init(pattern: Consts.attributeNamePattern)
 
     let eventAttributes: BatchEventAttributes
 
+    static func exceedsMaxPayloadSize(_ payload: [AnyHashable: Any]) -> Bool {
+        guard let data = try? JSONSerialization.data(withJSONObject: payload) else { return false }
+        return data.count > Maximums.payloadSizeBytes
+    }
+
     /// Validate the BatchEventAttributes instance and returns an array of errors
     /// If there are none, the event data is valid
     func computeValidationErrors() -> [String] {
-        return visitObject(eventAttributes: eventAttributes, breadcrumbs: Breadcrumbs(items: [])).map { $0.render() }
+        let structuralErrors = visitObject(eventAttributes: eventAttributes, breadcrumbs: Breadcrumbs(items: []))
+        if !structuralErrors.isEmpty {
+            return structuralErrors.map { $0.render() }
+        }
+        if let serialized = try? BATEventAttributesSerializer.serialize(eventAttributes: eventAttributes),
+            BATEventAttributesValidator.exceedsMaxPayloadSize(serialized)
+        {
+            return ["<attributes root>: payload exceeds the maximum allowed size (\(Maximums.payloadSizeBytes / 1024) kB)"]
+        }
+        return []
     }
 
     // MARK: Visitors
