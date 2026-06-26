@@ -111,6 +111,11 @@ public class BAProfileCenter: NSObject, BAProfileCenterProtocol {
     public func applyEditor(_ profileEditor: BATProfileEditor) {
         let serializedEditOperations = BATProfileOperationsSerializer.serialize(profileEditor: profileEditor)
 
+        guard !serializedEditOperations.isEmpty else {
+            BALogger.debug(domain: loggerDomain, message: "Trying to send an empty profile data changed event, aborting.")
+            return
+        }
+
         BAInjection.inject(BATEventTracker.self)?.trackPrivateEvent(event: .profileDataChanged, parameters: serializedEditOperations, collapsable: false)
     }
 
@@ -131,6 +136,8 @@ public class BAProfileCenter: NSObject, BAProfileCenterProtocol {
                     sendIdentifyEvent(customID: customUserId)
                 }
             }
+            // Native data migration (_NATIVE_DATA_CHANGED)
+            BATDataCollectionCenter.sharedInstance.forceSendingNativeDataChanged()
             // Custom data migration
             guard !BACoreCenter.instance().configuration.isMigrationDisabled(for: .customData) else {
                 BALogger.debug(domain: loggerDomain, message: "Automatic custom data migration has been explicitly disabled.")

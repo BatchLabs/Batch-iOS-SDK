@@ -682,6 +682,7 @@
 		62F61A982435D79C00652B29 /* BAUserEventBuiltinActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 62F61A972435D79C00652B29 /* BAUserEventBuiltinActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E01A6442BC5410100B0105B /* BatchDataCollectionConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E01A6432BC5410100B0105B /* BatchDataCollectionConfig.m */; };
 		7E01A6452BC5410100B0105B /* BatchDataCollectionConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E01A6422BC5410100B0105B /* BatchDataCollectionConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7E1A21212D07554700EB2BF9 /* profileCenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E1A21202D07554700EB2BF9 /* profileCenterTests.swift */; };
 		7E39F0142BC5904E009FC9E7 /* DataCollectionUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E39F0132BC5904E009FC9E7 /* DataCollectionUtils.swift */; };
 		7E39F01D2BC96849009FC9E7 /* profileMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E39F01C2BC96849009FC9E7 /* profileMigrationTests.swift */; };
 		7E39F0242BC97133009FC9E7 /* TestProfileCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E39F0232BC97133009FC9E7 /* TestProfileCenter.swift */; };
@@ -1353,6 +1354,7 @@
 		62F61A972435D79C00652B29 /* BAUserEventBuiltinActions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAUserEventBuiltinActions.h; sourceTree = "<group>"; };
 		7E01A6422BC5410100B0105B /* BatchDataCollectionConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BatchDataCollectionConfig.h; sourceTree = "<group>"; };
 		7E01A6432BC5410100B0105B /* BatchDataCollectionConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BatchDataCollectionConfig.m; sourceTree = "<group>"; };
+		7E1A21202D07554700EB2BF9 /* profileCenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = profileCenterTests.swift; sourceTree = "<group>"; };
 		7E39F0132BC5904E009FC9E7 /* DataCollectionUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCollectionUtils.swift; sourceTree = "<group>"; };
 		7E39F01C2BC96849009FC9E7 /* profileMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = profileMigrationTests.swift; sourceTree = "<group>"; };
 		7E39F0232BC97133009FC9E7 /* TestProfileCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestProfileCenter.swift; sourceTree = "<group>"; };
@@ -2579,6 +2581,7 @@
 				510737412BC596950033E2E8 /* profileEditorCompatibilityTest.m */,
 				1EB69D3D290C0F5A003E1EF7 /* profileEditorValidationTests.swift */,
 				51EBCF652B8CF40700CA3C6F /* profileIdentifyTests.swift */,
+				7E1A21202D07554700EB2BF9 /* profileCenterTests.swift */,
 				51AB57792BAC810700A1E72B /* profileOperationsSerializerTests.swift */,
 				7E39F01C2BC96849009FC9E7 /* profileMigrationTests.swift */,
 				514B39A72BAA095D006980EB /* eventDataSerializerTests.swift */,
@@ -3321,6 +3324,7 @@
 				02849BFD19B9FA2D0013408B /* batchCoreTests.m in Sources */,
 				518D887023560C79007BF341 /* messagingAnalyticsDeduplicatingDelegateTests.swift in Sources */,
 				514BA4A027D257F100B93FAF /* inboxFetcherTests.swift in Sources */,
+				7E1A21212D07554700EB2BF9 /* profileCenterTests.swift in Sources */,
 				939E058A222D2CC700E8D32D /* batchUserTests.m in Sources */,
 				51EBCF742B8CFD4200CA3C6F /* BatchUserDataEditorMock.swift in Sources */,
 				510D906F24C83A81005981AC /* shaTests.swift in Sources */,
