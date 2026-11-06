@@ -84,11 +84,10 @@ class InAppBaseBannerViewController: InAppViewController,
     // MARK: - View Lifecycle
 
     override func loadView() {
-        // The root view is a pannable container that allows touch passthrough by default.
-        let pannableAlertContainerView = PannableAlertContainerView()
-        pannableAlertContainerView.delegate = self
-        pannableAlertContainerView.touchPassthrough = true
-        view = pannableAlertContainerView
+        // No pan gesture on the root view: it would intercept the scroll.
+        let rootView = BAMSGBaseContainerView()
+        rootView.touchPassthrough = true
+        view = rootView
     }
 
     /// Responds to changes in trait collections to update the layout dynamically.
@@ -115,14 +114,15 @@ class InAppBaseBannerViewController: InAppViewController,
     override func setupViewContents() throws {
         view.isOpaque = false
 
-        // Inform the pannable container about its main visible content.
-        if let view = view as? BAMSGPannableAnchoredContainerView {
-            view.biggestUserVisibleView = contentView
-        }
-
         view.addSubview(contentView)
         containerizedInnerContentView = try containerizedInnerContent()
         try setupContainerView(contentView: contentView, containerView: containerizedInnerContentView!)
+
+        // Hug the content height. Low priority: on overflow the screen bounds must
+        // win so the content scrolls.
+        let contentHug = scrollableViewContent.heightAnchor.constraint(equalTo: messageContentView.heightAnchor)
+        contentHug.priority = .init(300)
+        contentHug.isActive = true
 
         // Pin the inner content to the main content view.
         NSLayoutConstraint.activate([

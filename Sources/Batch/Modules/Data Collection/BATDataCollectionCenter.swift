@@ -91,7 +91,7 @@ public class BATDataCollectionCenter: NSObject {
     }
 
     /// Update the current data collection configuration
-    public func updateDataCollectionConfig(editor: BatchDataCollectionConfigEditor) {
+    public func updateDataCollectionConfig(editor: (BatchDataCollectionConfig) -> Void) {
         let config = BatchDataCollectionConfig()
         editor(config)
         self.onDataCollectionConfigChanged(config)

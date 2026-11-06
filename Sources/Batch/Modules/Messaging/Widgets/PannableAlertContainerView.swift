@@ -75,8 +75,8 @@ class PannableAlertContainerView: BAMSGBaseContainerView, BAMSGPannableContainer
 
     @objc private func viewDragged(_ recognizer: UIPanGestureRecognizer) {
         if recognizer.state == .changed, let scrollableContentView {
-            let isAtBeginning = scrollableContentView.contentOffset.y == 0
-            let isAtEnd = scrollableContentView.contentOffset.y + scrollableContentView.bounds.size.height == scrollableContentView.contentSize.height
+            let isAtBeginning = scrollableContentView.contentOffset.y <= 0
+            let isAtEnd = scrollableContentView.contentOffset.y + scrollableContentView.bounds.size.height >= scrollableContentView.contentSize.height
 
             if lockVertically {
                 if !isAtBeginning, !isAtEnd {
@@ -236,17 +236,24 @@ class PannableAlertContainerView: BAMSGBaseContainerView, BAMSGPannableContainer
 
 extension PannableAlertContainerView: UIGestureRecognizerDelegate {
     override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        if gestureRecognizer == panGesture, let scrollableContentView {
-            let isAtBeginning = scrollableContentView.contentOffset.y == 0
-            let isAtEnd = scrollableContentView.contentOffset.y + scrollableContentView.bounds.size.height == scrollableContentView.contentSize.height
+        guard gestureRecognizer == panGesture, let scrollableContentView else {
+            return true
+        }
 
-            //  Check if the scroll view is scrolled
-            if !isAtBeginning, !isAtEnd {
-                return false  //  Don't begin pan if scrolled vertically
+        //  When the content overflows, dismiss only takes over when overscrolling past
+        //  an edge: pull down at the top, or pull up at the bottom. Otherwise it scrolls.
+        let canScrollVertically = scrollableContentView.contentSize.height > scrollableContentView.bounds.size.height
+        if canScrollVertically {
+            let velocityY = panGesture.velocity(in: self).y
+            let isAtTop = scrollableContentView.contentOffset.y <= 0
+            let isAtBottom = scrollableContentView.contentOffset.y + scrollableContentView.bounds.size.height >= scrollableContentView.contentSize.height
+            if !(isAtTop && velocityY > 0), !(isAtBottom && velocityY < 0) {
+                return false
             }
-            if !lockVertically, scrollableContentView.contentOffset.x > 0 {
-                return false  // Don't begin pan if scrolled horizontally
-            }
+        }
+
+        if !lockVertically, scrollableContentView.contentOffset.x > 0 {
+            return false  // Don't begin pan if scrolled horizontally
         }
         return true  //  Allow other gestures or pan if not the condition
     }

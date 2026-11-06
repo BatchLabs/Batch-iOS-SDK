@@ -87,9 +87,9 @@ extension InAppFontStylizable {
             if let fontOverride {
                 // We have a custom font, work with that
                 if traits.contains(.traitBold) {
-                    traits.contains(.traitItalic) ? fontItalicOverride : fontBoldOverride
+                    traits.contains(.traitItalic) ? fontBoldItalicOverride : fontBoldOverride
                 } else if traits.contains(.traitItalic) {
-                    fontBoldItalicOverride
+                    fontItalicOverride
                 } else {
                     fontOverride
                 }

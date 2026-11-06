@@ -208,42 +208,26 @@ class InAppViewController: UIViewController, InAppViewCountdownClose, BatchMessa
 
     // MARK: - Layout and Constraints
 
-    /// Sets up the scroll view and its content. This method is crucial for enabling scrolling.
+    /// Sets up the scroll view and its content.
     func setupViewContent(contentView: UIView) {
         contentView.addSubview(scrollableViewContent)
         scrollableViewContent.addSubview(messageContentView)
 
-        // Pin the scroll view to its container.
+        // Breakable so the content can grow taller than the frame and scroll.
+        let fillFrame = messageContentView.heightAnchor.constraint(greaterThanOrEqualTo: scrollableViewContent.frameLayoutGuide.heightAnchor)
+        fillFrame.priority = .init(999)
+
         NSLayoutConstraint.activate([
             contentView.leadingAnchor.constraint(equalTo: scrollableViewContent.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: scrollableViewContent.trailingAnchor),
             contentView.topAnchor.constraint(equalTo: scrollableViewContent.topAnchor),
             contentView.bottomAnchor.constraint(equalTo: scrollableViewContent.bottomAnchor),
-        ])
-
-        // This low-priority constraint helps resolve layout ambiguity, suggesting the scroll view
-        // should be at least as tall as its content.
-        let scrollSizeConstraint = NSLayoutConstraint(
-            item: scrollableViewContent,
-            attribute: .height,
-            relatedBy: .greaterThanOrEqual,
-            toItem: messageContentView,
-            attribute: .height,
-            multiplier: 1,
-            constant: 0
-        )
-        scrollSizeConstraint.priority = .init(200)
-        scrollableViewContent.addConstraint(scrollSizeConstraint)
-
-        // Set up constraints for the message content within the scroll view.
-        // Pinning to the edges and setting the width allows the content's intrinsic height
-        // to define the scrollable area.
-        NSLayoutConstraint.activate([
-            messageContentView.topAnchor.constraint(equalTo: scrollableViewContent.topAnchor),
-            messageContentView.leadingAnchor.constraint(equalTo: scrollableViewContent.leadingAnchor),
-            messageContentView.trailingAnchor.constraint(equalTo: scrollableViewContent.trailingAnchor),
-            messageContentView.bottomAnchor.constraint(greaterThanOrEqualTo: scrollableViewContent.bottomAnchor),
-            messageContentView.widthAnchor.constraint(equalTo: scrollableViewContent.widthAnchor),
+            messageContentView.topAnchor.constraint(equalTo: scrollableViewContent.contentLayoutGuide.topAnchor),
+            messageContentView.leadingAnchor.constraint(equalTo: scrollableViewContent.contentLayoutGuide.leadingAnchor),
+            messageContentView.trailingAnchor.constraint(equalTo: scrollableViewContent.contentLayoutGuide.trailingAnchor),
+            messageContentView.bottomAnchor.constraint(equalTo: scrollableViewContent.contentLayoutGuide.bottomAnchor),
+            messageContentView.widthAnchor.constraint(equalTo: scrollableViewContent.frameLayoutGuide.widthAnchor),
+            fillFrame,
         ])
     }
 
