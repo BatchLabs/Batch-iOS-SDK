@@ -86,6 +86,7 @@
         @"apc" : @"versionCode",
         @"plv" : @"pluginVersion",
         @"brv" : @"bridgeVersion",
+        @"sdv" : @"sdkVersion",
         @"nty" : @"notifType",
         @"s" : @"sessionIdentifier"
     };
@@ -247,6 +248,10 @@
     }
 
     return nil;
+}
+
+- (NSString *)sdkVersion {
+    return [BACoreCenter sdkVersion];
 }
 
 - (NSString *)bridgeVersion {

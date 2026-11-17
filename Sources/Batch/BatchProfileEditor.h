@@ -14,6 +14,12 @@ typedef NS_ENUM(NSUInteger, BatchEmailSubscriptionState) {
     BatchEmailSubscriptionStateUnsubscribed = 1,
 };
 
+/// Enum defining the user's consent to email open tracking
+typedef NS_ENUM(NSUInteger, BatchEmailOpenTrackingConsent) {
+    BatchEmailOpenTrackingConsentGranted = 0,
+    BatchEmailOpenTrackingConsentDenied = 1,
+};
+
 /// Enum defining the state of an SMS subscription
 typedef NS_ENUM(NSUInteger, BatchSMSSubscriptionState) {
     BatchSMSSubscriptionStateSubscribed = 0,
@@ -51,7 +57,7 @@ typedef NS_ENUM(NSUInteger, BatchSMSSubscriptionState) {
 /// // You need to save this in a local variable until you call save
 /// // Editor instances don't share changes, and calling save on an empty editor will do nothing
 /// let editor = BatchProfile.editor()
-/// try? editor.removeAttribute(forKey: "age") // Remove an attribute
+/// try? editor.removeAttribute(key: "age") // Remove an attribute
 /// editor.save() // Don't forget to save the changes
 /// ```
 ///
@@ -60,8 +66,8 @@ typedef NS_ENUM(NSUInteger, BatchSMSSubscriptionState) {
 /// let editor = BatchProfile.editor()
 /// try? editor.set(attribute: ["apple_pay"], forKey: "payment_methods")
 /// // Modify an existing array
-/// try? editor.addToStringArray(value: ["carte_bleue"], forKey: "payment_methods")
-/// try? editor.removeFromStringArray(value: ["carte_bleue"], forKey: "payment_methods")
+/// try? editor.addToStringArray(item: "carte_bleue", forKey: "payment_methods")
+/// try? editor.removeFromStringArray(item: "carte_bleue", forKey: "payment_methods")
 /// editor.save(); // Don't forget to save the changes
 /// ```
 ///
@@ -71,7 +77,7 @@ typedef NS_ENUM(NSUInteger, BatchSMSSubscriptionState) {
 /// returned.
 /// ```swift
 /// BatchProfile.editor { editor in
-///     try editor.set(attribute: 26, forKey: "age")
+///     try? editor.set(attribute: 26, forKey: "age")
 ///     // No need to call .save(), this is done automatically
 /// }
 /// ```
@@ -109,6 +115,13 @@ typedef NS_ENUM(NSUInteger, BatchSMSSubscriptionState) {
 /// - Parameters:
 ///    - state: Subscription state
 - (void)setEmailMarketingSubscriptionState:(BatchEmailSubscriptionState)state;
+
+/// Set the user consent to email open tracking.
+///
+/// Tells Batch whether opens of the emails sent to this profile may be tracked.
+/// - Parameters:
+///    - consent: Email open tracking consent
+- (void)setEmailOpenTrackingConsent:(BatchEmailOpenTrackingConsent)consent;
 
 /// Set the profile phone number.
 ///
@@ -155,7 +168,7 @@ typedef NS_ENUM(NSUInteger, BatchSMSSubscriptionState) {
 /// Add topics to the profile topic preferences.
 ///
 /// - Parameters:
-///   - topics: The topics to add. Cannot have more than 25 items. Nil to reset.
+///   - topics: The topics to add. Cannot have more than 25 items. Use `setTopicPreferences` with nil to reset.
 ///     Individual items should be made of letters, numbers or underscores ([a-z0-9_]) and can't be longer than 300
 ///     characters.
 ///   - error: Pointer to an error describing. Note that the error is only about value validation, and doesn't
@@ -167,7 +180,7 @@ typedef NS_ENUM(NSUInteger, BatchSMSSubscriptionState) {
 /// Remove topics from the profile topic preferences.
 ///
 /// - Parameters:
-///   - topics: The topics to remove. Cannot have more than 25 items. Nil to reset.
+///   - topics: The topics to remove. Cannot have more than 25 items. Use `setTopicPreferences` with nil to reset.
 ///     Individual items should be made of letters, numbers or underscores ([a-z0-9_]) and can't be longer than 300
 ///     characters.
 ///   - error: Pointer to an error describing. Note that the error is only about value validation, and doesn't
@@ -257,7 +270,9 @@ typedef NS_ENUM(NSUInteger, BatchSMSSubscriptionState) {
 /// Remove a value from a string array.
 /// Can be empty.
 ///
-/// If the attribute has been set to another type, it will be deleted.
+/// If the attribute has been set to another type in this editor, that change is replaced by the removal of this value.
+/// If the attribute has been set to a string array in this editor and removing the value empties it, the attribute
+/// is deleted.
 ///
 /// - Parameters:
 ///   - attribute: The attribute value. Cannot have more than 25 operations pending on an array attribute.

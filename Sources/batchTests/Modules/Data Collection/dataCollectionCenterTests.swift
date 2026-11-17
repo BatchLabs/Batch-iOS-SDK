@@ -12,6 +12,7 @@ import XCTest
 final class dataCollectionCenterTests: XCTestCase {
     // Mock event tracker
     let eventTracker = MockEventTracker()
+    var eventTrackerOverlay: BAOverlayedInjectable?
 
     // Data Collection Module
     let dataCollectionCenter = BATDataCollectionCenter.sharedInstance
@@ -24,17 +25,29 @@ final class dataCollectionCenterTests: XCTestCase {
         BAParameter.removeObject(forKey: kParametersDataCollectionConfigKey)
 
         // Register event tracker overlay
-        let _ = eventTracker.registerOverlay()
+        eventTrackerOverlay = eventTracker.registerOverlay()
         eventTracker.reset()
 
         // Reset data collection config
         dataCollectionCenter.setDefaultDataCollectionConfig()
+
+        // Reset the static device model parameter, which the config reset above doesn't touch
+        SystemParameterRegistry.deviceModel.allowed = false
+    }
+
+    override func tearDown() {
+        if let eventTrackerOverlay {
+            BAInjection.unregisterOverlay(eventTrackerOverlay)
+        }
+        eventTrackerOverlay = nil
+        super.tearDown()
     }
 
     func testSystemParametersMayHaveChanged() throws {
         // Remove initial data if necessary
         BAParameter.removeObject(forKey: SystemParameterRegistry.deviceLanguage.userDefaultKey)
         BAParameter.removeObject(forKey: SystemParameterRegistry.deviceRegion.userDefaultKey)
+        BAParameter.removeObject(forKey: SystemParameterRegistry.sdkVersion.userDefaultKey)
 
         // Start module
         dataCollectionCenter.systemParametersMayHaveChanged()
@@ -44,6 +57,7 @@ final class dataCollectionCenterTests: XCTestCase {
         XCTAssertNotNil(event)
         XCTAssertEqual(event?.parametersDictionary["device_language"] as? String, BAPropertiesCenter.value(forShortName: "dla"))
         XCTAssertEqual(event?.parametersDictionary["device_region"] as? String, BAPropertiesCenter.value(forShortName: "dre"))
+        XCTAssertEqual(event?.parametersDictionary["sdk_version"] as? String, BACoreCenter.sdkVersion)
         // Unchanged params must also be present in the full snapshot
         XCTAssertEqual(event?.parametersDictionary["app_bundle_id"] as? String, BAPropertiesCenter.value(forShortName: "bid"))
     }
@@ -60,6 +74,7 @@ final class dataCollectionCenterTests: XCTestCase {
         XCTAssertNotNil(event)
         XCTAssertEqual(event?.parametersDictionary["app_bundle_id"] as? String, BAPropertiesCenter.value(forShortName: "bid"))
         XCTAssertEqual(event?.parametersDictionary["os_version"] as? String, BAPropertiesCenter.value(forShortName: "osv"))
+        XCTAssertEqual(event?.parametersDictionary["sdk_version"] as? String, BACoreCenter.sdkVersion)
     }
 
     public func testBuildIdsForQuery() {
@@ -68,6 +83,9 @@ final class dataCollectionCenterTests: XCTestCase {
 
         // Ensure device_model is not in ids since disabled by default
         XCTAssertFalse(ids.keys.contains("dty"))
+
+        // Ensure sdk version is never in ids since it is already in the URL
+        XCTAssertFalse(ids.keys.contains("sdv"))
 
         // Ensure geoip is false by default
         XCTAssertTrue(dataCollectDict.keys.contains("geoip"))

@@ -124,13 +124,31 @@
 #pragma clang diagnostic pop
     BAEvent *event = [[_datasource eventsToSend:1] firstObject];
 
-    [_datasource deleteEvents:@[ event.identifier ]];
+    XCTAssertTrue([_datasource deleteEvents:@[ event.identifier ]]);
 
     event = [[_datasource eventsToSend:1] firstObject];
     // If event is nil, all is good
     if (event) {
         XCTAssertFalse([eventName isEqualToString:event.name], @"Event deletion failed");
     }
+}
+
+- (void)testDeleteNothing {
+    XCTAssertTrue([_datasource deleteEvents:@[]], @"Deleting nothing should succeed");
+    XCTAssertTrue([_datasource deleteEvents:nil], @"Deleting nothing should succeed");
+}
+
+- (void)testDeleteReportsFailure {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wall"
+    [_datasource addEvent:[BAEvent eventWithName:@"test"]];
+#pragma clang diagnostic pop
+    BAEvent *event = [[_datasource eventsToSend:1] firstObject];
+    XCTAssertNotNil(event);
+
+    // Once closed, the database can't be written to anymore
+    [_datasource close];
+    XCTAssertFalse([_datasource deleteEvents:@[ event.identifier ]], @"Deletion failure should be reported");
 }
 
 /// Events should be returned in the same order as they're inserted

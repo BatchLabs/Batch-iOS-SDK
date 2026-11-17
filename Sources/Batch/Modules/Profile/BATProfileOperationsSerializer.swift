@@ -21,6 +21,10 @@ class BATProfileOperationsSerializer: NSObject {
             jsonParameters["email_marketing"] = serialize(state: emailMarketingSubscription)
         }
 
+        if let emailOpenTrackingConsent = profileEditor.emailOpenTrackingConsent {
+            jsonParameters["email_open_tracking_consent"] = serialize(consent: emailOpenTrackingConsent)
+        }
+
         if let phoneNumber = profileEditor.phoneNumber {
             jsonParameters["phone_number"] = phoneNumber.value
         }
@@ -101,6 +105,13 @@ class BATProfileOperationsSerializer: NSObject {
         return switch state {
         case .subscribed: "subscribed"
         case .unsubscribed: "unsubscribed"
+        }
+    }
+
+    private static func serialize(consent: BATProfileEditorEmailOpenTrackingConsent) -> String {
+        return switch consent {
+        case .granted: "granted"
+        case .denied: "denied"
         }
     }
 }

@@ -76,7 +76,7 @@ class PannableAlertContainerView: BAMSGBaseContainerView, BAMSGPannableContainer
     @objc private func viewDragged(_ recognizer: UIPanGestureRecognizer) {
         if recognizer.state == .changed, let scrollableContentView {
             let isAtBeginning = scrollableContentView.contentOffset.y <= 0
-            let isAtEnd = scrollableContentView.contentOffset.y + scrollableContentView.bounds.size.height >= scrollableContentView.contentSize.height
+            let isAtEnd = scrollableContentView.contentOffset.y + scrollableContentView.bounds.size.height == scrollableContentView.contentSize.height
 
             if lockVertically {
                 if !isAtBeginning, !isAtEnd {
@@ -240,15 +240,15 @@ extension PannableAlertContainerView: UIGestureRecognizerDelegate {
             return true
         }
 
-        //  When the content overflows, dismiss only takes over when overscrolling past
-        //  an edge: pull down at the top, or pull up at the bottom. Otherwise it scrolls.
+        //  When the content is taller than the visible area, the scroll view owns the
+        //  vertical gesture. Pan-to-dismiss only takes over when the user is at the top
+        //  and pulling down (the standard sheet behavior); otherwise the drag scrolls.
         let canScrollVertically = scrollableContentView.contentSize.height > scrollableContentView.bounds.size.height
         if canScrollVertically {
-            let velocityY = panGesture.velocity(in: self).y
             let isAtTop = scrollableContentView.contentOffset.y <= 0
-            let isAtBottom = scrollableContentView.contentOffset.y + scrollableContentView.bounds.size.height >= scrollableContentView.contentSize.height
-            if !(isAtTop && velocityY > 0), !(isAtBottom && velocityY < 0) {
-                return false
+            let isPullingDown = panGesture.velocity(in: self).y > 0
+            if !(isAtTop && isPullingDown) {
+                return false  //  Let the scroll view handle it.
             }
         }
 

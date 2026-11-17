@@ -384,10 +384,10 @@
     }
 }
 
-- (void)deleteEvents:(NSArray *)eventIdentifiers {
+- (BOOL)deleteEvents:(NSArray *)eventIdentifiers {
     @synchronized(_lock) {
         if (!eventIdentifiers || [eventIdentifiers count] == 0) {
-            return;
+            return YES;
         }
 
         NSMutableString *deleteSQL = [[NSMutableString alloc] init];
@@ -418,12 +418,20 @@
                 }
             }
 
-            sqlite3_step(statement);
+            int stepResult = sqlite3_step(statement);
             sqlite3_finalize(statement);
+
+            if (stepResult != SQLITE_DONE) {
+                [BALogger errorForDomain:@"Event"
+                                 message:@"Error while deleting events (sqlite error %d).", stepResult];
+                return NO;
+            }
         } else {
             [BALogger errorForDomain:@"Event" message:@"Error while preparing delete query."];
+            return NO;
         }
     }
+    return YES;
 }
 
 - (BOOL)hasEventsToSend {

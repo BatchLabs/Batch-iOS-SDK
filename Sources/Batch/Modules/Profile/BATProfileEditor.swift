@@ -24,6 +24,8 @@ protocol BATSerializableProfileEditorProtocol {
 
     var emailMarketingSubscription: BATProfileEditorEmailSubscriptionState? { get }
 
+    var emailOpenTrackingConsent: BATProfileEditorEmailOpenTrackingConsent? { get }
+
     var phoneNumber: (any BATProfileAttributeOperation)? { get }
 
     var smsMarketingSubscription: BATProfileEditorSMSSubscriptionState? { get }
@@ -92,6 +94,8 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
 
     private(set) var emailMarketingSubscription: BATProfileEditorEmailSubscriptionState?
 
+    private(set) var emailOpenTrackingConsent: BATProfileEditorEmailOpenTrackingConsent?
+
     private(set) var phoneNumber: (any BATProfileAttributeOperation)?
 
     private(set) var smsMarketingSubscription: BATProfileEditorSMSSubscriptionState?
@@ -156,6 +160,16 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
         do {
             try checkIfConsumed()
             emailMarketingSubscription = value
+        } catch {
+            // Do nothing
+        }
+    }
+
+    @objc
+    public func setEmailOpenTrackingConsent(_ value: BATProfileEditorEmailOpenTrackingConsent) {
+        do {
+            try checkIfConsumed()
+            emailOpenTrackingConsent = value
         } catch {
             // Do nothing
         }
@@ -251,7 +265,13 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
     public func removeFromTopicPreferences(_ topics: [String]) throws {
         try checkIfConsumed()
         let normalizedTopics = try validateAndNormalizeTopicPreferences(topics)
-        topicPreferences = try removeFromStringArray(normalizedTopics, existingOperation: topicPreferences)
+        let updatedOperation = try removeFromStringArray(normalizedTopics, existingOperation: topicPreferences)
+        if let updatedOperation = updatedOperation as? BATProfileAttributeSetOperation<[String]>, updatedOperation.value.isEmpty {
+            // The server ignores an empty topic list: send a reset instead, or the previous topics would stay
+            topicPreferences = BATProfileAttributeDeleteOperation()
+        } else {
+            topicPreferences = updatedOperation
+        }
     }
 
     @objc
@@ -276,7 +296,8 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
 
         let existingOperation = try removeFromStringArray([value], existingOperation: customAttributes[targetAttributeKey])
         if let existingOperation = existingOperation as? BATProfileAttributeSetOperation<[String]>, existingOperation.type == .array, existingOperation.value.count == 0 {
-            customAttributes.removeValue(forKey: targetAttributeKey)
+            // The array was emptied in this editor: delete the attribute, otherwise the server keeps its previous value
+            customAttributes[targetAttributeKey] = BATProfileAttributeDeleteOperation()
         } else {
             customAttributes[targetAttributeKey] = existingOperation
         }
@@ -323,6 +344,10 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
         try checkIfConsumed()
 
         let targetAttributeKey = try validateAndNormalizeName(attributeKey)
+        // NaN and infinity can't be written as JSON: JSONSerialization raises an Objective-C exception on them
+        guard doubleAttribute.isFinite else {
+            throw BatchProfileError(code: .editorInvalidValue, reason: "invalid attribute value: doubles cannot be NaN or infinite")
+        }
         customAttributes[targetAttributeKey] = BATProfileAttributeSetOperation(type: .double, value: NSNumber(value: doubleAttribute))
 
         try? compatibilityDelegate?.setCustom(doubleAttribute: doubleAttribute, forKey: attributeKey)
@@ -384,8 +409,9 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
 
         // Check if we have an existing attribute for that key.
         // If so:
-        //  - It is an array: remove from it. If the array is empty, remove the operation.
-        //  - It is a partial array operation: add the removal to it
+        //  - It is an array: remove from it. If the array ends up empty, remove(value:fromArray:) turns it into a delete
+        //  - It is a partial array operation: add the removal to it, and cancel a pending add of the same items
+        //  - It is a delete: keep it, removing from a deleted array changes nothing
         //  - It is missing or something else than an array: overwrite it
         if let existingOperation = existingOperation as? BATProfileAttributeSetOperation<[String]>, existingOperation.type == .array {
             var updatedArray = existingOperation.value
@@ -394,10 +420,13 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
             return BATProfileAttributeSetOperation<[String]>(type: .array, value: updatedArray)
         } else if let existingOperation = existingOperation as? BATProfileAttributePartialArrayUpdateOperation {
             var updatedPartialUpdate = existingOperation
+            updatedPartialUpdate.itemsToAdd.removeAll(where: { values.contains($0) })
             updatedPartialUpdate.itemsToRemove.append(contentsOf: values)
             updatedPartialUpdate.itemsToRemove = deduplicateKeepLast(updatedPartialUpdate.itemsToRemove)
             try validateParialUpdate(updatedPartialUpdate)
             return updatedPartialUpdate
+        } else if let deleteOperation = existingOperation as? BATProfileAttributeDeleteOperation {
+            return deleteOperation
         } else {
             return BATProfileAttributePartialArrayUpdateOperation(itemsToAdd: [], itemsToRemove: deduplicateKeepLast(values))
         }
@@ -410,7 +439,9 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
         // Check if we have an existing attribute for that key.
         // If so:
         //  - It is an array: add to it after checking that it does not go over the limit
-        //  - It is a partial array operation: append
+        //  - It is a partial array operation: append, and cancel a pending removal of the same items
+        //  - It is a delete: the delete is lost on the wire if we only send a partial update, so
+        //    turn it into a full array set, which replaces the server-side value
         //  - It is missing or something else than an array: overwrite it
         if let existingOperation = existingOperation as? BATProfileAttributeSetOperation<[String]>, existingOperation.type == .array {
             var updatedArray = existingOperation.value
@@ -420,10 +451,15 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
             return BATProfileAttributeSetOperation<[String]>(type: .array, value: deduped)
         } else if let existingOperation = existingOperation as? BATProfileAttributePartialArrayUpdateOperation {
             var updatedPartialUpdate = existingOperation
+            updatedPartialUpdate.itemsToRemove.removeAll(where: { values.contains($0) })
             updatedPartialUpdate.itemsToAdd.append(contentsOf: values)
             updatedPartialUpdate.itemsToAdd = deduplicateKeepLast(updatedPartialUpdate.itemsToAdd)
             try validateParialUpdate(updatedPartialUpdate)
             return updatedPartialUpdate
+        } else if existingOperation is BATProfileAttributeDeleteOperation {
+            let deduped = deduplicateKeepLast(values)
+            try validateStringArray(deduped)
+            return BATProfileAttributeSetOperation<[String]>(type: .array, value: deduped)
         } else {
             return BATProfileAttributePartialArrayUpdateOperation(itemsToAdd: deduplicateKeepLast(values), itemsToRemove: [])
         }
@@ -512,6 +548,7 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
         let copy = BATProfileEditor()
         copy.email = self.email
         copy.emailMarketingSubscription = self.emailMarketingSubscription
+        copy.emailOpenTrackingConsent = self.emailOpenTrackingConsent
         copy.phoneNumber = self.phoneNumber
         copy.smsMarketingSubscription = self.smsMarketingSubscription
         copy.language = self.language
@@ -612,6 +649,14 @@ private func deduplicateKeepLast(_ values: [String]) -> [String] {
 public enum BATProfileEditorEmailSubscriptionState: UInt {
     case subscribed = 0
     case unsubscribed = 1
+}
+
+/// Email open tracking consent. This is already defined in BatchProfileEditor.h, but we cannot reexpose
+/// an @objc method with a parameter from a public header, as this creates an import loop.
+@objc
+public enum BATProfileEditorEmailOpenTrackingConsent: UInt {
+    case granted = 0
+    case denied = 1
 }
 
 /// SMS subscription state. This is already defined in BatchProfile.h, but we cannot reexpose

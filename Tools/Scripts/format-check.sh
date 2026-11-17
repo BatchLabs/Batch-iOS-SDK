@@ -9,10 +9,12 @@ section() { echo; echo "==> $*"; }
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 SDK_FOLDER="${REPO_ROOT}/sdk"
+SAMPLE_FOLDER="${REPO_ROOT}/Sample"
 
 section "Environment"
 log "Repo root: ${REPO_ROOT}"
 log "SDK folder: ${SDK_FOLDER}"
+log "Sample folder: ${SAMPLE_FOLDER}"
 
 # Locate clang-format
 if [ "$(uname -s)" = Linux ]; then
@@ -36,12 +38,14 @@ if echo "${CLANGFORMAT_VERSION}" | grep -q -v "${EXPECTED_CLANGFORMAT_VERSION}";
     log "Warning: clang-format version mismatch"
 fi
 
-OC_FILE_COUNT=$(find "${SDK_FOLDER}/Batch" "${SDK_FOLDER}/batchTests" -type f -name "*.[mh]" -not \( -path "${SDK_FOLDER}/Batch/Supporting Files/Versions.h" \) | wc -l | awk '{print $1}')
+# Versions.h is intentionally excluded: it uses /* */ comments because the
+# Info.plist preprocessor inlines them, and clang-format would rewrite them.
+OC_FILE_COUNT=$(find "${SDK_FOLDER}/Batch" "${SDK_FOLDER}/batchTests" "${SAMPLE_FOLDER}" -type f -name "*.[mh]" -not -path "${SDK_FOLDER}/Batch/Versions.h" | wc -l | awk '{print $1}')
 log "Checking ${OC_FILE_COUNT} Objective-C files"
 
 # Run dry-run check and capture output
 CLANG_OUT=""
-if CLANG_OUT=$(find "${SDK_FOLDER}/Batch" "${SDK_FOLDER}/batchTests" -type f -name "*.[mh]" -not \( -path "${SDK_FOLDER}/Batch/Supporting Files/Versions.h" \) -print0 | xargs -0 "${CLANGFORMAT}" --dry-run --Werror -i 2>&1); then
+if CLANG_OUT=$(find "${SDK_FOLDER}/Batch" "${SDK_FOLDER}/batchTests" "${SAMPLE_FOLDER}" -type f -name "*.[mh]" -not -path "${SDK_FOLDER}/Batch/Versions.h" -print0 | xargs -0 "${CLANGFORMAT}" --dry-run --Werror -i 2>&1); then
     log "Objective-C formatting OK"
 else
     log "Objective-C formatting issues detected"
@@ -73,12 +77,12 @@ SWIFT_FORMAT_VERSION="$(${SWIFT_FORMAT_BIN} --version 2>/dev/null || echo unknow
 
 section "Swift format check (swift-format)"
 log "swift-format: ${SWIFT_FORMAT_VERSION}"
-SWIFT_FILE_COUNT=$(find "${SDK_FOLDER}" -type f -name "*.swift" | wc -l | awk '{print $1}')
+SWIFT_FILE_COUNT=$(find "${SDK_FOLDER}" "${SAMPLE_FOLDER}" -type f -name "*.swift" | wc -l | awk '{print $1}')
 log "Checking ${SWIFT_FILE_COUNT} Swift files"
 
 # Run lint check and capture output
 SWIFT_OUT=""
-if SWIFT_OUT=$("${SWIFT_FORMAT_BIN}" lint --recursive --parallel --strict "${SDK_FOLDER}" 2>&1); then
+if SWIFT_OUT=$("${SWIFT_FORMAT_BIN}" lint --recursive --parallel --strict "${SDK_FOLDER}" "${SAMPLE_FOLDER}" 2>&1); then
     log "Swift formatting OK"
 else
     log "Swift formatting issues detected"

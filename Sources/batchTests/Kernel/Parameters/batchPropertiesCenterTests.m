@@ -9,6 +9,7 @@
 #import <XCTest/XCTest.h>
 #import "OCMock.h"
 
+#import "BACoreCenter.h"
 #import "BANotificationAuthorization.h"
 #import "BAPropertiesCenter.h"
 
@@ -49,6 +50,9 @@
     // Test shorten selector case.
     value = [BAPropertiesCenter valueForShortName:@"dla"];
     XCTAssertNotNil(value, @"Properties center failed to return the device language.");
+
+    value = [BAPropertiesCenter valueForShortName:@"sdv"];
+    XCTAssertEqualObjects(value, [BACoreCenter sdkVersion], @"Properties center failed to return the SDK version.");
 }
 
 /**

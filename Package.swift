@@ -18,8 +18,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "Batch",
-            url: "https://download.batch.com/sdk/ios/spm/BatchSDK-ios_spm-xcframework-3.4.1.zip",
-            checksum: "f6319cdc8374b9f3c5137490e05446f18055f1319a35cd6f0d2c79960fda5d42"
+            url: "https://download.batch.com/sdk/ios/spm/BatchSDK-ios_spm-xcframework-3.5.0.zip",
+            checksum: "c2a04c678dfa8284a04d406213266f8bab0b01d45a455f707fe29f7ca922c6ef"
         )
     ]
 )

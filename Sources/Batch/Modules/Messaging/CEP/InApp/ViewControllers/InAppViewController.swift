@@ -209,19 +209,34 @@ class InAppViewController: UIViewController, InAppViewCountdownClose, BatchMessa
     // MARK: - Layout and Constraints
 
     /// Sets up the scroll view and its content.
+    ///
+    /// Layout contract for the scrollable area, shared by every CEP format:
+    /// - The content is pinned to the scroll view's `contentLayoutGuide` on all four
+    ///   sides, so its natural height defines `contentSize`. This is what makes the
+    ///   message scroll once the content is taller than the visible frame.
+    /// - The content width matches the `frameLayoutGuide`, so there is never any
+    ///   horizontal scrolling.
+    /// - `content.height >= frame.height` (priority 999) keeps the content filling the
+    ///   visible area when it is shorter than the frame (fullscreen fill spacers,
+    ///   vertical centering), while still allowing it to grow taller and scroll.
+    ///
+    /// The frame height itself is decided per format: fullscreen pins it to the screen,
+    /// while banner/modal hug the content (see `InAppBaseBannerViewController`), capped
+    /// to the available height by the position constraints so any overflow scrolls.
     func setupViewContent(contentView: UIView) {
         contentView.addSubview(scrollableViewContent)
         scrollableViewContent.addSubview(messageContentView)
 
-        // Breakable so the content can grow taller than the frame and scroll.
         let fillFrame = messageContentView.heightAnchor.constraint(greaterThanOrEqualTo: scrollableViewContent.frameLayoutGuide.heightAnchor)
         fillFrame.priority = .init(999)
 
         NSLayoutConstraint.activate([
+            // The scroll view fills its container.
             contentView.leadingAnchor.constraint(equalTo: scrollableViewContent.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: scrollableViewContent.trailingAnchor),
             contentView.topAnchor.constraint(equalTo: scrollableViewContent.topAnchor),
             contentView.bottomAnchor.constraint(equalTo: scrollableViewContent.bottomAnchor),
+            // The content defines `contentSize` (vertical scroll) and matches the frame width.
             messageContentView.topAnchor.constraint(equalTo: scrollableViewContent.contentLayoutGuide.topAnchor),
             messageContentView.leadingAnchor.constraint(equalTo: scrollableViewContent.contentLayoutGuide.leadingAnchor),
             messageContentView.trailingAnchor.constraint(equalTo: scrollableViewContent.contentLayoutGuide.trailingAnchor),

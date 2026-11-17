@@ -44,6 +44,9 @@ NSString *const kBATPushOpenedNotificationOriginatesFromAppDelegate = @"is_from_
 
 @property BatchNotificationType notificationType;
 
+// Identifies the last UNNotificationResponse handled, so that a duplicate one can be dropped
+@property (nullable) NSString *lastHandledNotificationResponseKey;
+
 @end
 
 @implementation BAPushCenter
@@ -542,6 +545,13 @@ NSString *const kBATPushOpenedNotificationOriginatesFromAppDelegate = @"is_from_
         return;
     }
 
+    if ([[BAPushCenter instance] isDuplicateNotificationResponse:response]) {
+        [BALogger debugForDomain:@"Push"
+                         message:@"Ignoring duplicate notification response for request '%@'",
+                                 response.notification.request.identifier];
+        return;
+    }
+
     if ([UNNotificationDefaultActionIdentifier isEqualToString:response.actionIdentifier]) {
         [[BAPushCenter instance] parseNotification:response.notification.request.content.userInfo
                             fetchCompletionHandler:nil
@@ -549,6 +559,22 @@ NSString *const kBATPushOpenedNotificationOriginatesFromAppDelegate = @"is_from_
     } else if (![UNNotificationDismissActionIdentifier isEqualToString:response.actionIdentifier]) {
         [[BAPushCenter instance] internalHandleNotification:response.notification.request.content.userInfo
                                            actionIdentifier:response.actionIdentifier];
+    }
+}
+
+// iOS can deliver the same response twice when the user quickly taps a notification twice (seen on iOS 27).
+// Both responses carry the same delivered notification, so they share its request identifier and delivery date: a
+// notification replaced through apns-collapse-id keeps the identifier but gets a new date, and is not a duplicate.
+- (BOOL)isDuplicateNotificationResponse:(UNNotificationResponse *)response {
+    UNNotification *notification = response.notification;
+    NSString *key = [NSString stringWithFormat:@"%@|%@|%f", notification.request.identifier, response.actionIdentifier,
+                                               notification.date.timeIntervalSince1970];
+    @synchronized(self) {
+        if ([key isEqualToString:self.lastHandledNotificationResponseKey]) {
+            return true;
+        }
+        self.lastHandledNotificationResponseKey = key;
+        return false;
     }
 }
 

@@ -12,12 +12,19 @@ import Testing
 /// Test suite for profile identification functionality, covering identity changes and JIT campaign cache management.
 @Suite(.serialized)
 struct ProfileIdentifyTests {
+    init() {
+        // The custom ID is persisted, so it leaks from previous tests and iterations. The JIT cache
+        // is only reset when the identity changes, so every test has to start logged out.
+        BAUserProfile.default().customIdentifier = nil
+    }
+
     /// Tests that a valid custom ID triggers an identify event.
     @Test func validIdentification() throws {
         let expectedCustomID = "identifier12345678"
 
         let eventTracker = MockEventTracker()
-        _ = eventTracker.registerOverlay()
+        let eventTrackerOverlay = eventTracker.registerOverlay()
+        defer { BAInjection.unregisterOverlay(eventTrackerOverlay) }
         // Reinstanciate it as the shared instance did not get our event tracker mock
         let profileModule = BAProfileCenter()
 
@@ -60,7 +67,8 @@ struct ProfileIdentifyTests {
         ]
 
         let eventTracker = MockEventTracker()
-        _ = eventTracker.registerOverlay()
+        let eventTrackerOverlay = eventTracker.registerOverlay()
+        defer { BAInjection.unregisterOverlay(eventTrackerOverlay) }
         let profileModule = BAProfileCenter()
 
         for customID in invalidCustomIDs {
@@ -86,11 +94,13 @@ struct ProfileIdentifyTests {
         let expectedCustomID = "identifier12345678"
 
         let eventTracker = MockEventTracker()
-        _ = eventTracker.registerOverlay()
+        let eventTrackerOverlay = eventTracker.registerOverlay()
+        defer { BAInjection.unregisterOverlay(eventTrackerOverlay) }
         let profileModule = BAProfileCenter()
 
         let installDataEditor = BAInstallDataEditorMock()
-        _ = BAInjection.overlayClass(BAInstallDataEditor.self, returnedInstance: installDataEditor)
+        let installDataEditorOverlay = BAInjection.overlayClass(BAInstallDataEditor.self, returnedInstance: installDataEditor)
+        defer { BAInjection.unregisterOverlay(installDataEditorOverlay) }
 
         profileModule.identify(expectedCustomID)
 
@@ -120,12 +130,14 @@ struct ProfileIdentifyTests {
         let newCustomID = "new_identifier"
 
         let eventTracker = MockEventTracker()
-        _ = eventTracker.registerOverlay()
+        let eventTrackerOverlay = eventTracker.registerOverlay()
+        defer { BAInjection.unregisterOverlay(eventTrackerOverlay) }
         let profileModule = BAProfileCenter()
 
         // Mock BALocalCampaignsManager to track resetJITCampaingsCaches calls
         let mockCampaignsManager = MockBALocalCampaignsManager()
-        _ = BAInjection.overlayClass(BALocalCampaignsManager.self, returnedInstance: mockCampaignsManager)
+        let campaignsManagerOverlay = BAInjection.overlayClass(BALocalCampaignsManager.self, returnedInstance: mockCampaignsManager)
+        defer { BAInjection.unregisterOverlay(campaignsManagerOverlay) }
 
         // Set initial identifier
         profileModule.identify(originalCustomID)
@@ -158,12 +170,14 @@ struct ProfileIdentifyTests {
         let customID = "user_identifier"
 
         let eventTracker = MockEventTracker()
-        _ = eventTracker.registerOverlay()
+        let eventTrackerOverlay = eventTracker.registerOverlay()
+        defer { BAInjection.unregisterOverlay(eventTrackerOverlay) }
         let profileModule = BAProfileCenter()
 
         // Mock BALocalCampaignsManager to track resetJITCampaingsCaches calls
         let mockCampaignsManager = MockBALocalCampaignsManager()
-        _ = BAInjection.overlayClass(BALocalCampaignsManager.self, returnedInstance: mockCampaignsManager)
+        let campaignsManagerOverlay = BAInjection.overlayClass(BALocalCampaignsManager.self, returnedInstance: mockCampaignsManager)
+        defer { BAInjection.unregisterOverlay(campaignsManagerOverlay) }
 
         // Set identifier
         profileModule.identify(customID)
@@ -186,12 +200,14 @@ struct ProfileIdentifyTests {
         let invalidCustomID = String(repeating: "invalid", count: 1000)
 
         let eventTracker = MockEventTracker()
-        _ = eventTracker.registerOverlay()
+        let eventTrackerOverlay = eventTracker.registerOverlay()
+        defer { BAInjection.unregisterOverlay(eventTrackerOverlay) }
         let profileModule = BAProfileCenter()
 
         // Mock BALocalCampaignsManager to track resetJITCampaingsCaches calls
         let mockCampaignsManager = MockBALocalCampaignsManager()
-        _ = BAInjection.overlayClass(BALocalCampaignsManager.self, returnedInstance: mockCampaignsManager)
+        let campaignsManagerOverlay = BAInjection.overlayClass(BALocalCampaignsManager.self, returnedInstance: mockCampaignsManager)
+        defer { BAInjection.unregisterOverlay(campaignsManagerOverlay) }
 
         // Set valid identifier
         profileModule.identify(validCustomID)

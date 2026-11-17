@@ -12,6 +12,7 @@ import XCTest
 class profileMigrationTests: XCTestCase {
     // Mock event tracker
     let eventTracker = MockEventTracker()
+    var eventTrackerOverlay: BAOverlayedInjectable?
 
     override func setUp() {
         super.setUp()
@@ -21,18 +22,30 @@ class profileMigrationTests: XCTestCase {
         BAParameter.removeObject(forKey: kParametersProjectKey)
 
         // Register event tracker overlay
-        let _ = eventTracker.registerOverlay()
+        eventTrackerOverlay = eventTracker.registerOverlay()
     }
 
     override func tearDown() {
+        // The custom data migration tracks its event from the user data queue: let it land on our
+        // tracker before unregistering it
+        waitForQueueLoop(queue: BAUserDataManager.sharedQueue())
         // reset event tracker
         eventTracker.reset()
+        if let eventTrackerOverlay {
+            BAInjection.unregisterOverlay(eventTrackerOverlay)
+        }
+        eventTrackerOverlay = nil
         BAParameter.removeObject(forKey: kParametersProjectKey)
+        // Migrations settings and the compat custom ID are process-wide, don't leak them into other tests
+        BatchSDK.setDisabledMigrations([])
+        BAUserProfile.default().customIdentifier = nil
+        super.tearDown()
     }
 
     func testOnProjectChanged() throws {
         let profileCenterMock = TestProfileCenter()
-        BAInjection.overlayProtocol(BAProfileCenterProtocol.self, returnedInstance: profileCenterMock)
+        let profileCenterOverlay = BAInjection.overlayProtocol(BAProfileCenterProtocol.self, returnedInstance: profileCenterMock)
+        defer { BAInjection.unregisterOverlay(profileCenterOverlay) }
         XCTAssertFalse(profileCenterMock.onProjectChangedHasBeenCalled)
 
         triggerMigrationsFromUserDataService()
@@ -94,7 +107,8 @@ class profileMigrationTests: XCTestCase {
         datasource?.commitTransaction()
 
         // Force real data source
-        BAInjection.overlayProtocol(BAUserDatasourceProtocol.self, returnedInstance: datasource)
+        let datasourceOverlay = BAInjection.overlayProtocol(BAUserDatasourceProtocol.self, returnedInstance: datasource)
+        defer { BAInjection.unregisterOverlay(datasourceOverlay) }
 
         // trigger fake project changed
         triggerMigrationsFromUserDataService()
@@ -117,7 +131,8 @@ class profileMigrationTests: XCTestCase {
 
     func testCustomDataMigrationDisabled() throws {
         let eventTracker = MockEventTracker()
-        let _ = eventTracker.registerOverlay()
+        let eventTrackerOverlay = eventTracker.registerOverlay()
+        defer { BAInjection.unregisterOverlay(eventTrackerOverlay) }
 
         // Add custom id from compat
         BAUserProfile.default().language = "fr"

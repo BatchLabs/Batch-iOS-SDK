@@ -15,7 +15,8 @@ class UserDataEditorTests: XCTestCase {
         let datasource = MockUserDatasource()
         let url = URL(string: "https://batch.com")
 
-        let _ = BAInjection.overlayProtocol(BAUserDatasourceProtocol.self, returnedInstance: datasource)
+        let datasourceOverlay = BAInjection.overlayProtocol(BAUserDatasourceProtocol.self, returnedInstance: datasource)
+        defer { BAInjection.unregisterOverlay(datasourceOverlay) }
 
         datasource.expect()
             .call(
@@ -67,7 +68,8 @@ class UserDataEditorTests: XCTestCase {
 
     func testNSNumbers() throws {
         let datasource = MockUserDatasource()
-        let _ = BAInjection.overlayProtocol(BAUserDatasourceProtocol.self, returnedInstance: datasource)
+        let datasourceOverlay = BAInjection.overlayProtocol(BAUserDatasourceProtocol.self, returnedInstance: datasource)
+        defer { BAInjection.unregisterOverlay(datasourceOverlay) }
 
         datasource.expect()
             .call(
@@ -103,7 +105,8 @@ class UserDataEditorTests: XCTestCase {
 
     func testDeletion() throws {
         let datasource = MockUserDatasource()
-        let _ = BAInjection.overlayProtocol(BAUserDatasourceProtocol.self, returnedInstance: datasource)
+        let datasourceOverlay = BAInjection.overlayProtocol(BAUserDatasourceProtocol.self, returnedInstance: datasource)
+        defer { BAInjection.unregisterOverlay(datasourceOverlay) }
 
         datasource.expect()
             .call(
@@ -145,7 +148,8 @@ class UserDataEditorTests: XCTestCase {
         let url = URL(string: "https://batch.com")
 
         let datasource = MockUserDatasource()
-        let _ = BAInjection.overlayProtocol(BAUserDatasourceProtocol.self, returnedInstance: datasource)
+        let datasourceOverlay = BAInjection.overlayProtocol(BAUserDatasourceProtocol.self, returnedInstance: datasource)
+        defer { BAInjection.unregisterOverlay(datasourceOverlay) }
 
         datasource.expect()
             .call(
@@ -217,7 +221,8 @@ class UserDataEditorTests: XCTestCase {
 
     func testErrors() {
         let datasource = MockUserDatasource()
-        let _ = BAInjection.overlayProtocol(BAUserDatasourceProtocol.self, returnedInstance: datasource)
+        let datasourceOverlay = BAInjection.overlayProtocol(BAUserDatasourceProtocol.self, returnedInstance: datasource)
+        defer { BAInjection.unregisterOverlay(datasourceOverlay) }
 
         datasource.expect()
             .call(
@@ -244,7 +249,8 @@ class UserDataEditorTests: XCTestCase {
 
     func testClear() {
         let datasource = MockUserDatasource()
-        let _ = BAInjection.overlayProtocol(BAUserDatasourceProtocol.self, returnedInstance: datasource)
+        let datasourceOverlay = BAInjection.overlayProtocol(BAUserDatasourceProtocol.self, returnedInstance: datasource)
+        defer { BAInjection.unregisterOverlay(datasourceOverlay) }
 
         datasource.expect()
             .call(

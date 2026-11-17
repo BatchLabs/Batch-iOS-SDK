@@ -313,6 +313,37 @@ final class eventDataValidatorTests: XCTestCase {
         XCTAssertTrue(errors.isEmpty)
     }
 
+    func testNonFiniteDoubleAttribute() throws {
+        // NaN and infinity can't be serialized: the event would be sent without its parameters
+        for value in [Double.nan, .infinity, -.infinity] {
+            let attrs = BatchEventAttributes()
+            attrs.put(value, forKey: "double_attr")
+            let errors = BATEventAttributesValidator(eventAttributes: attrs).computeValidationErrors()
+            XCTAssertEqual(errors.count, 1)
+            XCTAssertTrue(errors.first?.contains("numbers cannot be NaN or infinite") ?? false)
+        }
+
+        // Also in a nested object
+        let nested = BatchEventAttributes()
+        nested.put(Double.nan, forKey: "double_attr")
+        let attrs = BatchEventAttributes()
+        attrs.put(nested, forKey: "object_attr")
+        let errors = BATEventAttributesValidator(eventAttributes: attrs).computeValidationErrors()
+        XCTAssertEqual(errors.count, 1)
+        XCTAssertTrue(errors.first?.contains("numbers cannot be NaN or infinite") ?? false)
+
+        // A finite double is still valid
+        let valid = BatchEventAttributes()
+        valid.put(3.5, forKey: "double_attr")
+        XCTAssertTrue(BATEventAttributesValidator(eventAttributes: valid).computeValidationErrors().isEmpty)
+    }
+
+    func testPayloadSizeCheckDoesNotCrashOnNonJSONNumbers() {
+        // JSONSerialization raises an uncatchable exception on NaN and infinity: the check must not reach it
+        XCTAssertFalse(BATEventAttributesValidator.exceedsMaxPayloadSize(["a": NSNumber(value: Double.nan)]))
+        XCTAssertFalse(BATEventAttributesValidator.exceedsMaxPayloadSize(["a": NSNumber(value: Double.infinity)]))
+    }
+
     func testPayloadSizeNotCheckedWhenStructureInvalid() {
         // A structurally invalid payload should report structural errors only — size check must not run
         let attrs = BatchEventAttributes()

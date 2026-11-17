@@ -124,6 +124,14 @@ public class BAProfileCenter: NSObject, BAProfileCenterProtocol {
             return true
         }
 
+        guard JSONSerialization.isValidJSONObject(serializedEditOperations) else {
+            BALogger.public(
+                domain: loggerDomain,
+                message: "BatchProfileEditor.save() rejected: the changes cannot be serialized to JSON. No changes were applied."
+            )
+            return false
+        }
+
         if BATEventAttributesValidator.exceedsMaxPayloadSize(serializedEditOperations) {
             BALogger.public(
                 domain: loggerDomain,

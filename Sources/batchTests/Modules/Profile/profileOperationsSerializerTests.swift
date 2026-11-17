@@ -32,12 +32,62 @@ final class profileOperationsSerializerTests: XCTestCase {
         XCTAssertEqual(unsubscribedSerialized["sms_marketing"] as? String, "unsubscribed")
     }
 
+    func testEmailOpenTrackingConsentSerialization() throws {
+        let grantedSerialized = serializeEditor { editor in
+            editor.setEmailOpenTrackingConsent(.granted)
+        }
+        XCTAssertEqual(grantedSerialized["email_open_tracking_consent"] as? String, "granted")
+
+        let deniedSerialized = serializeEditor { editor in
+            editor.setEmailOpenTrackingConsent(.denied)
+        }
+        XCTAssertEqual(deniedSerialized["email_open_tracking_consent"] as? String, "denied")
+
+        // Last call wins
+        let overriddenSerialized = serializeEditor { editor in
+            editor.setEmailOpenTrackingConsent(.granted)
+            editor.setEmailOpenTrackingConsent(.denied)
+        }
+        XCTAssertEqual(overriddenSerialized["email_open_tracking_consent"] as? String, "denied")
+
+        // Key is absent when the consent has not been set
+        let notSetSerialized = serializeEditor { editor in
+            editor.setEmailMarketingSubscriptionState(.subscribed)
+        }
+        XCTAssertFalse(notSetSerialized.keys.contains("email_open_tracking_consent"))
+    }
+
+    /// Test that the email open tracking consent can be set on a profile that has not been identified
+    func testCanSetEmailOpenTrackingConsentWithoutIdentification() throws {
+        let editor = TestProfileEditor()
+        editor.test_isProfileIdentified = false
+
+        editor.setEmailOpenTrackingConsent(.granted)
+
+        let serialized = BATProfileOperationsSerializer.serialize(profileEditor: editor)
+        XCTAssertEqual(serialized["email_open_tracking_consent"] as? String, "granted")
+    }
+
+    /// Test that the email open tracking consent is ignored once the editor has been consumed, and kept by copies
+    func testEmailOpenTrackingConsentConsumedAndCopy() throws {
+        let editor = TestProfileEditor()
+        editor.setEmailOpenTrackingConsent(.granted)
+
+        let copy = try XCTUnwrap(editor.copy() as? BATProfileEditor)
+        XCTAssertEqual(BATProfileOperationsSerializer.serialize(profileEditor: copy)["email_open_tracking_consent"] as? String, "granted")
+
+        editor.consume()
+        editor.setEmailOpenTrackingConsent(.denied)
+        XCTAssertEqual(BATProfileOperationsSerializer.serialize(profileEditor: editor)["email_open_tracking_consent"] as? String, "granted")
+    }
+
     func testComplexSerialization() throws {
         let dateTimestamp = 1_596_975_143
 
         let serialized = try serializeEditor { editor in
             try editor.setEmail("test@batch.com")
             editor.setEmailMarketingSubscriptionState(.subscribed)
+            editor.setEmailOpenTrackingConsent(.granted)
             try editor.setPhoneNumber("+33123456789")
             editor.setSMSMarketingSubscriptionState(.subscribed)
             try editor.setLanguage("fr_ch")
@@ -87,6 +137,7 @@ final class profileOperationsSerializerTests: XCTestCase {
 
         XCTAssertEqual(serialized["email"] as? String, "test@batch.com")
         XCTAssertEqual(serialized["email_marketing"] as? String, "subscribed")
+        XCTAssertEqual(serialized["email_open_tracking_consent"] as? String, "granted")
         XCTAssertEqual(serialized["phone_number"] as? String, "+33123456789")
         XCTAssertEqual(serialized["sms_marketing"] as? String, "subscribed")
         XCTAssertEqual(serialized["language"] as? String, "fr_ch")
@@ -112,6 +163,7 @@ final class profileOperationsSerializerTests: XCTestCase {
         XCTAssertEqual(serializedAttributes["complex_string_array_att.a"] as? [String], ["foo", "baz2"])
 
         XCTAssertNil(serializedAttributes["absent_array_att.a"])
+        XCTAssertEqual(serializedAttributes["absent_array_att"] as? NSObject, NSNull())
 
         XCTAssertNotNil(serializedAttributes["string_not_too_long.s"])
         XCTAssertNil(serializedAttributes["string_too_long.s"])
@@ -139,6 +191,7 @@ final class profileOperationsSerializerTests: XCTestCase {
 
         XCTAssertNil(serialized["email"])
         XCTAssertNil(serialized["email_marketing"])
+        XCTAssertNil(serialized["email_open_tracking_consent"])
         XCTAssertNil(serialized["language"])
         XCTAssertNil(serialized["region"])
         guard let serializedAttributes = serialized["custom_attributes"] as? [AnyHashable: Any] else {
@@ -272,6 +325,194 @@ final class profileOperationsSerializerTests: XCTestCase {
         }
         let expected = (2...25).map { "\($0)" } + ["1"]
         XCTAssertEqual(customAttrs["arr.a"] as? [String], expected)
+    }
+
+    func testAddToArrayAfterRemoveAttributeSendsFullArray() throws {
+        // Deleting the attribute then adding to it must replace the server-side array, not
+        // send a partial $add that would keep the old items. Mirrors Android and Web.
+        let serialized = try serializeEditor { editor in
+            try editor.deleteCustomAttribute(forKey: "arr")
+            try editor.add(value: "a", toArray: "arr")
+            try editor.add(value: "b", toArray: "arr")
+            try editor.add(value: "a", toArray: "arr")
+        }
+        guard let customAttrs = serialized["custom_attributes"] as? [AnyHashable: Any] else {
+            XCTFail("missing custom_attributes")
+            return
+        }
+        XCTAssertEqual(customAttrs["arr.a"] as? [String], ["b", "a"])
+        XCTAssertNil(customAttrs["arr"])
+    }
+
+    func testRemoveFromArrayAfterRemoveAttributeKeepsDelete() throws {
+        // Removing from a deleted array changes nothing: the delete must survive
+        let serialized = try serializeEditor { editor in
+            try editor.deleteCustomAttribute(forKey: "arr")
+            try editor.remove(value: "a", fromArray: "arr")
+        }
+        guard let customAttrs = serialized["custom_attributes"] as? [AnyHashable: Any] else {
+            XCTFail("missing custom_attributes")
+            return
+        }
+        XCTAssertEqual(customAttrs["arr"] as? NSObject, NSNull())
+        XCTAssertNil(customAttrs["arr.a"])
+    }
+
+    func testRemoveAttributeAfterAddToArrayKeepsDelete() throws {
+        // The reverse order: the delete is the last word
+        let serialized = try serializeEditor { editor in
+            try editor.add(value: "a", toArray: "arr")
+            try editor.deleteCustomAttribute(forKey: "arr")
+        }
+        guard let customAttrs = serialized["custom_attributes"] as? [AnyHashable: Any] else {
+            XCTFail("missing custom_attributes")
+            return
+        }
+        XCTAssertEqual(customAttrs["arr"] as? NSObject, NSNull())
+        XCTAssertNil(customAttrs["arr.a"])
+    }
+
+    func testAddToArrayAfterRemoveAttributeWith26ItemsOneDuplicateIsAccepted() throws {
+        // 26 adds but "1" is repeated at the end — dedup yields 25 unique items, which is valid
+        let items = (1...25).map { "\($0)" } + ["1"]
+        let serialized = try serializeEditor { editor in
+            try editor.deleteCustomAttribute(forKey: "arr")
+            for item in items {
+                try editor.add(value: item, toArray: "arr")
+            }
+        }
+        guard let customAttrs = serialized["custom_attributes"] as? [AnyHashable: Any] else {
+            XCTFail("missing custom_attributes")
+            return
+        }
+        let expected = (2...25).map { "\($0)" } + ["1"]
+        XCTAssertEqual(customAttrs["arr.a"] as? [String], expected)
+    }
+
+    func testTopicPreferencesUpdateAfterReset() throws {
+        // Resetting the topic preferences then adding to them must send the full list
+        var serialized = try serializeEditor { editor in
+            try editor.setTopicPreferences(nil)
+            try editor.addToTopicPreferences(["sport"])
+        }
+        XCTAssertEqual(serialized["topic_preferences"] as? [String], ["sport"])
+
+        // Resetting then removing keeps the reset
+        serialized = try serializeEditor { editor in
+            try editor.setTopicPreferences(nil)
+            try editor.removeFromTopicPreferences(["sport"])
+        }
+        XCTAssertEqual(serialized["topic_preferences"] as? NSObject, NSNull())
+    }
+
+    func testRemovingLastItemOfArraySetDeletesAttribute() throws {
+        // Emptying an array set in the editor must delete the attribute, otherwise the server keeps its previous value
+        let serialized = try serializeEditor { editor in
+            try editor.setCustom(stringArrayAttribute: ["a"], forKey: "arr")
+            try editor.remove(value: "a", fromArray: "arr")
+        }
+        guard let customAttrs = serialized["custom_attributes"] as? [AnyHashable: Any] else {
+            XCTFail("missing custom_attributes")
+            return
+        }
+        XCTAssertEqual(customAttrs["arr"] as? NSObject, NSNull())
+        XCTAssertNil(customAttrs["arr.a"])
+    }
+
+    func testDeleteThenAddThenRemoveKeepsDelete() throws {
+        // The add turns the delete into an array set, emptying it must bring the delete back
+        let serialized = try serializeEditor { editor in
+            try editor.deleteCustomAttribute(forKey: "arr")
+            try editor.add(value: "a", toArray: "arr")
+            try editor.remove(value: "a", fromArray: "arr")
+        }
+        guard let customAttrs = serialized["custom_attributes"] as? [AnyHashable: Any] else {
+            XCTFail("missing custom_attributes")
+            return
+        }
+        XCTAssertEqual(customAttrs["arr"] as? NSObject, NSNull())
+        XCTAssertNil(customAttrs["arr.a"])
+    }
+
+    func testAddThenRemoveSameItemKeepsOnlyRemove() throws {
+        // Opposite partial updates on the same item: the last call wins
+        let serialized = try serializeEditor { editor in
+            try editor.add(value: "a", toArray: "arr")
+            try editor.remove(value: "a", fromArray: "arr")
+        }
+        guard let customAttrs = serialized["custom_attributes"] as? [AnyHashable: Any] else {
+            XCTFail("missing custom_attributes")
+            return
+        }
+        XCTAssertEqual(customAttrs["arr.a"] as? NSDictionary, ["$remove": ["a"]] as NSDictionary)
+    }
+
+    func testRemoveThenAddSameItemKeepsOnlyAdd() throws {
+        let serialized = try serializeEditor { editor in
+            try editor.remove(value: "a", fromArray: "arr")
+            try editor.add(value: "a", toArray: "arr")
+        }
+        guard let customAttrs = serialized["custom_attributes"] as? [AnyHashable: Any] else {
+            XCTFail("missing custom_attributes")
+            return
+        }
+        XCTAssertEqual(customAttrs["arr.a"] as? NSDictionary, ["$add": ["a"]] as NSDictionary)
+    }
+
+    func testRemoveCancelsOnlyTheMatchingPendingAdd() throws {
+        let serialized = try serializeEditor { editor in
+            try editor.add(value: "a", toArray: "arr")
+            try editor.add(value: "b", toArray: "arr")
+            try editor.remove(value: "a", fromArray: "arr")
+        }
+        guard let customAttrs = serialized["custom_attributes"] as? [AnyHashable: Any] else {
+            XCTFail("missing custom_attributes")
+            return
+        }
+        XCTAssertEqual(customAttrs["arr.a"] as? NSDictionary, ["$add": ["b"], "$remove": ["a"]] as NSDictionary)
+    }
+
+    func testTopicPreferencesOppositePartialUpdatesCancel() throws {
+        let serialized = try serializeEditor { editor in
+            try editor.addToTopicPreferences(["sport", "news"])
+            try editor.removeFromTopicPreferences(["sport"])
+        }
+        XCTAssertEqual(serialized["topic_preferences"] as? NSDictionary, ["$add": ["news"], "$remove": ["sport"]] as NSDictionary)
+    }
+
+    func testTopicPreferencesEmptiedSetResetsThem() throws {
+        // The server ignores an empty topic list, so emptying the set must send a reset
+        var serialized = try serializeEditor { editor in
+            try editor.setTopicPreferences(["sport"])
+            try editor.removeFromTopicPreferences(["sport"])
+        }
+        XCTAssertEqual(serialized["topic_preferences"] as? NSObject, NSNull())
+
+        // Same when the set comes from an add after a reset
+        serialized = try serializeEditor { editor in
+            try editor.setTopicPreferences(nil)
+            try editor.addToTopicPreferences(["sport"])
+            try editor.removeFromTopicPreferences(["sport"])
+        }
+        XCTAssertEqual(serialized["topic_preferences"] as? NSObject, NSNull())
+    }
+
+    func testDoubleAttributeRejectsNaNAndInfinity() throws {
+        // NaN and infinity can't be written as JSON, so they must be rejected when set
+        let serialized = try serializeEditor { editor in
+            for value in [Double.nan, .infinity, -.infinity] {
+                XCTAssertThrowsError(try editor.setCustom(doubleAttribute: value, forKey: "rejected")) { error in
+                    XCTAssertEqual((error as NSError).code, BatchProfileError.Code.editorInvalidValue.rawValue)
+                }
+            }
+            try editor.setCustom(doubleAttribute: 3.5, forKey: "accepted")
+        }
+        guard let customAttrs = serialized["custom_attributes"] as? [AnyHashable: Any] else {
+            XCTFail("missing custom_attributes")
+            return
+        }
+        XCTAssertNil(customAttrs["rejected.f"])
+        XCTAssertEqual(customAttrs["accepted.f"] as? Double, 3.5)
     }
 
     func testTopicPreferencesDeduplication() throws {

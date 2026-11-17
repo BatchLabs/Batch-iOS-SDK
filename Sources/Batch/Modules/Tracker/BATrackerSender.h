@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Batch SDK. All rights reserved.
 //
 
+#import <Batch/BAEventDatasourceProtocol.h>
 #import <Foundation/Foundation.h>
 
 /*!
@@ -15,6 +16,14 @@
  state.
  */
 @interface BATrackerSender : NSObject
+
+/*!
+ @method initWithDatasource:
+ @abstract Create a sender backed by a specific datasource
+ @param datasource  :   Datasource to read and update events from. Mostly useful for tests: the default initializer
+ uses the tracker center's datasource.
+ */
+- (instancetype)initWithDatasource:(id<BAEventDatasourceProtocol>)datasource;
 
 /*!
  @method send

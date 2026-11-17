@@ -9,10 +9,10 @@
 @interface BAMetric : NSObject <BAMetricProtocol, NSCopying>
 
 /// Metric name
-@property (atomic, assign, readonly, nonnull) NSString *name;
+@property (atomic, copy, readonly, nonnull) NSString *name;
 
 /// Metric type (observation | counter )
-@property (atomic, assign, readonly, nonnull) NSString *type;
+@property (atomic, copy, readonly, nonnull) NSString *type;
 
 /// Metric values
 @property (atomic, strong, readonly, nullable) NSMutableArray<NSNumber *> *values;

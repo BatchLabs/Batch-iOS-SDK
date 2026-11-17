@@ -93,6 +93,18 @@
     [_backingImpl setEmailMarketingSubscriptionState:swiftState];
 }
 
+- (void)setEmailOpenTrackingConsent:(BatchEmailOpenTrackingConsent)consent {
+    BATProfileEditorEmailOpenTrackingConsent swiftConsent;
+    switch (consent) {
+        case BatchEmailOpenTrackingConsentGranted:
+            swiftConsent = BATProfileEditorEmailOpenTrackingConsentGranted;
+            break;
+        case BatchEmailOpenTrackingConsentDenied:
+            swiftConsent = BATProfileEditorEmailOpenTrackingConsentDenied;
+    }
+    [_backingImpl setEmailOpenTrackingConsent:swiftConsent];
+}
+
 - (BOOL)setPhoneNumber:(nullable NSString *)phoneNumber error:(NSError **)error {
     INIT_AND_BLANK_ERROR_IF_NEEDED(error)
     ENSURE_ATTRIBUTE_VALUE_CLASS_NILABLE(phoneNumber, NSString.class)
@@ -154,12 +166,14 @@
 - (BOOL)addItemToStringArrayAttribute:(NSString *)element forKey:(NSString *)key error:(NSError **)error {
     INIT_AND_BLANK_ERROR_IF_NEEDED(error)
     ENSURE_KEY_STRING(key)
+    ENSURE_ATTRIBUTE_VALUE_CLASS(element, NSString.class)
     return [_backingImpl addWithValue:element toArray:key error:error];
 }
 
 - (BOOL)removeItemFromStringArrayAttribute:(NSString *)element forKey:(NSString *)key error:(NSError **)error {
     INIT_AND_BLANK_ERROR_IF_NEEDED(error)
     ENSURE_KEY_STRING(key)
+    ENSURE_ATTRIBUTE_VALUE_CLASS(element, NSString.class)
     return [_backingImpl removeWithValue:element fromArray:key error:error];
 }
 

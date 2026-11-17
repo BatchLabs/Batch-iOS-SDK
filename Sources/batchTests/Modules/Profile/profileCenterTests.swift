@@ -11,14 +11,20 @@ import XCTest
 
 final class profileCenterTests: XCTestCase {
     let eventTracker = MockEventTracker()
+    var eventTrackerOverlay: BAOverlayedInjectable?
 
     override func setUp() {
         super.setUp()
-        let _ = eventTracker.registerOverlay()
+        eventTrackerOverlay = eventTracker.registerOverlay()
     }
 
     override func tearDown() {
         eventTracker.reset()
+        if let eventTrackerOverlay {
+            BAInjection.unregisterOverlay(eventTrackerOverlay)
+        }
+        eventTrackerOverlay = nil
+        super.tearDown()
     }
 
     func testApplyEditor() throws {

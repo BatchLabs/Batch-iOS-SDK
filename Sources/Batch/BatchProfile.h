@@ -85,7 +85,7 @@ typedef NS_ERROR_ENUM(BatchProfileErrorDomain, BatchProfileError){
 /// Making the instance escape the closure is not supported: you might lose changes if you set data once the closure has
 /// returned.
 /// ```swift
-/// BatchProfile.edit { editor in
+/// BatchProfile.editor { editor in
 ///     try? editor.set(attribute: 26, forKey: "age")
 ///     // No need to call .save(), this is done automatically
 /// }
@@ -121,7 +121,7 @@ typedef NS_ERROR_ENUM(BatchProfileErrorDomain, BatchProfileError){
 /// Making the instance escape the closure is not supported: you might lose changes if you set data once the closure has
 /// returned.
 /// ```swift
-/// BatchProfile.edit { editor in
+/// BatchProfile.editor { editor in
 ///     try? editor.set(attribute: 26, forKey: "age")
 ///     // No need to call .save(), this is done automatically
 /// }

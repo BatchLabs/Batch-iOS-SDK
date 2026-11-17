@@ -70,6 +70,34 @@
     OCMVerifyAll(installDataEditorMock);
 }
 
+- (void)testArrayItemMethodsRejectNilAndNonStringValues {
+    BatchProfileEditor *editor = [BatchProfile editor];
+    // Go through variables: the compiler rejects a nil literal for a nonnull parameter
+    NSString *nilItem = nil;
+    NSString *numberItem = (NSString *)@42;
+    NSError *error = nil;
+
+    XCTAssertFalse([editor addItemToStringArrayAttribute:nilItem forKey:@"arr" error:&error]);
+    XCTAssertEqual(error.code, BatchProfileErrorEditorInvalidValue);
+
+    error = nil;
+    XCTAssertFalse([editor addItemToStringArrayAttribute:numberItem forKey:@"arr" error:&error]);
+    XCTAssertEqual(error.code, BatchProfileErrorEditorInvalidValue);
+
+    error = nil;
+    XCTAssertFalse([editor removeItemFromStringArrayAttribute:nilItem forKey:@"arr" error:&error]);
+    XCTAssertEqual(error.code, BatchProfileErrorEditorInvalidValue);
+
+    error = nil;
+    XCTAssertFalse([editor removeItemFromStringArrayAttribute:numberItem forKey:@"arr" error:&error]);
+    XCTAssertEqual(error.code, BatchProfileErrorEditorInvalidValue);
+
+    // A valid item still goes through
+    error = nil;
+    XCTAssertTrue([editor addItemToStringArrayAttribute:@"foo" forKey:@"arr" error:&error]);
+    XCTAssertNil(error);
+}
+
 - (void)testProfileEditorSaveRejectedWhenPayloadTooLarge {
     id installDataEditorMock = OCMClassMock([BAInstallDataEditor class]);
     BAOverlayedInjectable *overlay =

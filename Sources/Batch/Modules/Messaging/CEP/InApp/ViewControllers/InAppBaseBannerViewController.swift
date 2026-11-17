@@ -84,7 +84,11 @@ class InAppBaseBannerViewController: InAppViewController,
     // MARK: - View Lifecycle
 
     override func loadView() {
-        // No pan gesture on the root view: it would intercept the scroll.
+        // The root view is a plain passthrough container with no pan gesture: the
+        // swipe-to-dismiss lives on `contentView` (the only pannable). Touches outside
+        // the visible content pass through. This mirrors the MEP banner controller; an
+        // earlier port used a pannable here, whose stray pan gesture intercepted the
+        // scroll and duplicated the dismiss handling.
         let rootView = BAMSGBaseContainerView()
         rootView.touchPassthrough = true
         view = rootView
@@ -118,8 +122,15 @@ class InAppBaseBannerViewController: InAppViewController,
         containerizedInnerContentView = try containerizedInnerContent()
         try setupContainerView(contentView: contentView, containerView: containerizedInnerContentView!)
 
-        // Hug the content height. Low priority: on overflow the screen bounds must
-        // win so the content scrolls.
+        // Make the scroll view hug its content so a banner/modal sizes to its content
+        // height. Without this the height is only geometrically pinned for `.center`;
+        // for `.top`/`.bottom` it is under-determined and stretches to fill the screen
+        // when the content grows (e.g. a form revealing error labels on submit). The
+        // constraint is breakable so the screen-bound guide constraints still win when
+        // the content is taller than the available space, which re-enables scrolling.
+        // Priority must stay below the content's vertical compression resistance
+        // (labels default to 750) so that when the content overflows it keeps its
+        // natural height and scrolls, instead of being squeezed to fit the frame.
         let contentHug = scrollableViewContent.heightAnchor.constraint(equalTo: messageContentView.heightAnchor)
         contentHug.priority = .init(300)
         contentHug.isActive = true

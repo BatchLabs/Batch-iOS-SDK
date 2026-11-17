@@ -62,8 +62,9 @@
  @method deleteEvents:
  @abstract Delete the specified events
  @param eventIdentifiers    :   Array containing the IDs of the events to delete
+ @return YES if the events have been deleted, NO if the datasource could not perform the deletion
  */
-- (void)deleteEvents:(NSArray *)eventIdentifiers;
+- (BOOL)deleteEvents:(NSArray *)eventIdentifiers;
 
 /*!
  @method hasEventsToSend

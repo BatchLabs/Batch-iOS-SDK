@@ -26,6 +26,7 @@ enum SystemParameterShortname: String {
     case versionCode = "apc"
     case pluginVersion = "plv"
     case bridgeVersion = "brv"
+    case sdkVersion = "sdv"
     case sessionIdentifier = "s"
 
     /// Event serialized name computed property
@@ -69,6 +70,8 @@ enum SystemParameterShortname: String {
             return "plugin_version"
         case .bridgeVersion:
             return "bridge_version"
+        case .sdkVersion:
+            return "sdk_version"
         }
     }
 }
@@ -140,10 +143,13 @@ enum SystemParameterRegistry {
     // Bridge version
     public static let bridgeVersion = BATSystemParameter(shortname: .bridgeVersion, watched: true, allowed: true)
 
+    // SDK version
+    public static let sdkVersion = BATSystemParameter(shortname: .sdkVersion, watched: true, allowed: true)
+
     /// All registred system parameters
     public static let all = [
         installationID, customUserID, sessionID, deviceDate, deviceRegion, deviceLanguage, deviceTimezone, sdkInstallDate, deviceModel, deviceOSVersion, bundleID, applicationID, platform, apiLevel,
-        messagingAPILevel, appVersion, versionCode, pluginVersion, bridgeVersion,
+        messagingAPILevel, appVersion, versionCode, pluginVersion, bridgeVersion, sdkVersion,
     ]
 }
 

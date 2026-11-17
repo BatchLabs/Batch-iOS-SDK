@@ -9,10 +9,12 @@ section() { echo; echo "==> $*"; }
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 SDK_FOLDER="${REPO_ROOT}/sdk"
+SAMPLE_FOLDER="${REPO_ROOT}/Sample"
 
 section "Environment"
 log "Repo root: ${REPO_ROOT}"
 log "SDK folder: ${SDK_FOLDER}"
+log "Sample folder: ${SAMPLE_FOLDER}"
 
 # Locate clang-format
 if [ "$(uname -s)" = Linux ]; then
@@ -36,9 +38,11 @@ if echo "${CLANGFORMAT_VERSION}" | grep -q -v "${EXPECTED_CLANGFORMAT_VERSION}";
     log "Warning: clang-format version mismatch"
 fi
 
-OC_FILE_COUNT=$(find "${SDK_FOLDER}/Batch" "${SDK_FOLDER}/batchTests" -type f -name "*.[mh]" -not \( -path "${SDK_FOLDER}/Batch/Supporting Files/Versions.h" \) | wc -l | awk '{print $1}')
+# Versions.h is intentionally excluded: it uses /* */ comments because the
+# Info.plist preprocessor inlines them, and clang-format would rewrite them.
+OC_FILE_COUNT=$(find "${SDK_FOLDER}/Batch" "${SDK_FOLDER}/batchTests" "${SAMPLE_FOLDER}" -type f -name "*.[mh]" -not -path "${SDK_FOLDER}/Batch/Versions.h" | wc -l | awk '{print $1}')
 log "Formatting ${OC_FILE_COUNT} Objective-C files"
-find "${SDK_FOLDER}/Batch" "${SDK_FOLDER}/batchTests" -type f -name "*.[mh]" -not \( -path "${SDK_FOLDER}/Batch/Supporting Files/Versions.h" \) -print0 | xargs -0 "${CLANGFORMAT}" -i
+find "${SDK_FOLDER}/Batch" "${SDK_FOLDER}/batchTests" "${SAMPLE_FOLDER}" -type f -name "*.[mh]" -not -path "${SDK_FOLDER}/Batch/Versions.h" -print0 | xargs -0 "${CLANGFORMAT}" -i
 log "Objective-C formatting done"
 
 # Locate swift-format from Swift toolchain first
@@ -65,9 +69,9 @@ SWIFT_FORMAT_VERSION="$(${SWIFT_FORMAT_BIN} --version 2>/dev/null || echo unknow
 
 section "Swift formatting (swift-format)"
 log "swift-format: ${SWIFT_FORMAT_VERSION}"
-SWIFT_FILE_COUNT=$(find "${SDK_FOLDER}" -type f -name "*.swift" | wc -l | awk '{print $1}')
+SWIFT_FILE_COUNT=$(find "${SDK_FOLDER}" "${SAMPLE_FOLDER}" -type f -name "*.swift" | wc -l | awk '{print $1}')
 log "Formatting ${SWIFT_FILE_COUNT} Swift files"
-"${SWIFT_FORMAT_BIN}" --recursive --parallel --in-place "${SDK_FOLDER}"
+"${SWIFT_FORMAT_BIN}" --recursive --parallel --in-place "${SDK_FOLDER}" "${SAMPLE_FOLDER}"
 log "Swift formatting done"
 
 section "Summary"

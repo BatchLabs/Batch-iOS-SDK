@@ -80,7 +80,7 @@ public class Generator {
         var bridgingHeaderContents: [String: String] = [:]
         
         do {
-            for bridgingHeaderName in headersToGenerate.keys {
+            for bridgingHeaderName in headersToGenerate.keys.sorted() {
                 if let generatorConfig = headersToGenerate[bridgingHeaderName] {
                     print("Generating \(bridgingHeaderName)...")
                     guard let path = absolutePath(for: generatorConfig.path, withBasePath: baseSearchPath) else {
@@ -97,7 +97,7 @@ public class Generator {
         }
         
         // Write the output files
-        for bridgingHeader in bridgingHeaderContents.keys {
+        for bridgingHeader in bridgingHeaderContents.keys.sorted() {
             print("Writing \(bridgingHeader)")
             if let content = bridgingHeaderContents[bridgingHeader] {
                 do {
@@ -173,7 +173,18 @@ public class Generator {
             results.append(filename)
         }
         
-        return results
+        // FileManager enumeration order depends on the filesystem, so sort to
+        // make the generated headers byte-identical across machines.
+        return results.sorted { lhs, rhs in
+            switch lhs.caseInsensitiveCompare(rhs) {
+            case .orderedAscending:
+                return true
+            case .orderedDescending:
+                return false
+            case .orderedSame:
+                return lhs < rhs
+            }
+        }
     }
     
     func makeBridgingHeaderContent(name: String, frameworkName: String?, headers: [String]) -> String {

@@ -68,7 +68,11 @@ struct BATEventAttributesValidator {
     let eventAttributes: BatchEventAttributes
 
     static func exceedsMaxPayloadSize(_ payload: [AnyHashable: Any]) -> Bool {
-        guard let data = try? JSONSerialization.data(withJSONObject: payload) else { return false }
+        // JSONSerialization raises an Objective-C exception, which `try?` can't catch, on a payload it can't write
+        // (NaN or infinite numbers, for example): check it first
+        guard JSONSerialization.isValidJSONObject(payload),
+            let data = try? JSONSerialization.data(withJSONObject: payload)
+        else { return false }
         return data.count > Maximums.payloadSizeBytes
     }
 
@@ -190,7 +194,12 @@ struct BATEventAttributesValidator {
                 errors.append(genericTypecastError)
             }
         case .double, .integer, .bool, .date:
-            if !(attribute.value is NSNumber) {
+            if let numberValue = attribute.value as? NSNumber {
+                // NaN and infinity can't be written as JSON: the event would be sent without any parameter
+                if !numberValue.doubleValue.isFinite {
+                    errors.append(ValidationError(message: "numbers cannot be NaN or infinite", breadcrumbs: breadcrumbs))
+                }
+            } else {
                 errors.append(genericTypecastError)
             }
         case .objectArray, .stringArray:

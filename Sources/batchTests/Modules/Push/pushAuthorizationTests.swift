@@ -12,7 +12,8 @@ import XCTest
 final class pushAuthorizationTests: XCTestCase {
     func testRegister() async throws {
         let pushSystemHelper = MockPushSystemHelper()
-        let _ = BAInjection.overlayProtocol(BAPushSystemHelperProtocol.self, returnedInstance: pushSystemHelper)
+        let pushSystemHelperOverlay = BAInjection.overlayProtocol(BAPushSystemHelperProtocol.self, returnedInstance: pushSystemHelper)
+        defer { BAInjection.unregisterOverlay(pushSystemHelperOverlay) }
 
         var result = try await BatchPush.requestNotificationAuthorization()
         XCTAssertTrue(result)
@@ -22,7 +23,8 @@ final class pushAuthorizationTests: XCTestCase {
 
     func testRegisterSync() {
         let pushSystemHelper = MockPushSystemHelper()
-        let _ = BAInjection.overlayProtocol(BAPushSystemHelperProtocol.self, returnedInstance: pushSystemHelper)
+        let pushSystemHelperOverlay = BAInjection.overlayProtocol(BAPushSystemHelperProtocol.self, returnedInstance: pushSystemHelper)
+        defer { BAInjection.unregisterOverlay(pushSystemHelperOverlay) }
 
         BatchPush.requestNotificationAuthorization()
         XCTAssertTrue(pushSystemHelper.calledRegister)

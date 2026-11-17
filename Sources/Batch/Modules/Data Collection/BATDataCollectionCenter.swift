@@ -77,8 +77,8 @@ public class BATDataCollectionCenter: NSObject {
     public func buildIdsForQuery() -> [AnyHashable: Any] {
         var ids: [AnyHashable: Any] = [:]
 
-        // Adding system parameters
-        for param in SystemParameterRegistry.all where param.allowed {
+        // Adding system parameters (SDK version is already in the webservices URL)
+        for param in SystemParameterRegistry.all where param.allowed && param.shortname != .sdkVersion {
             guard let value = param.value, !value.isEmpty else {
                 continue
             }
