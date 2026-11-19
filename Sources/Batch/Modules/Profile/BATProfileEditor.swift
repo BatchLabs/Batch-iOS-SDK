@@ -225,6 +225,8 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
         // If so:
         //  - It is an array: add to it after checking that it does not go over the limit
         //  - It is a partial array operation: append
+        //  - It is a delete: the delete is lost on the wire if we only send a partial update, so
+        //    turn it into a full array set, which replaces the server-side value
         //  - It is missing or something else than an array: overwrite it
         let existingOperation = customAttributes[targetAttributeKey]
 
@@ -238,6 +240,8 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
             updatedPartialUpdate.itemsToAdd.append(value)
             try validateParialUpdate(updatedPartialUpdate)
             customAttributes[targetAttributeKey] = updatedPartialUpdate
+        } else if existingOperation is BATProfileAttributeDeleteOperation {
+            customAttributes[targetAttributeKey] = BATProfileAttributeSetOperation<[String]>(type: .array, value: [value])
         } else {
             customAttributes[targetAttributeKey] = BATProfileAttributePartialArrayUpdateOperation(itemsToAdd: [value], itemsToRemove: [])
         }
@@ -256,6 +260,7 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
         // If so:
         //  - It is an array: remove from it. If the array is empty, remove the operation.
         //  - It is a partial array operation: add the removal to it
+        //  - It is a delete: keep it, removing from a deleted array changes nothing
         //  - It is missing or something else than an array: overwrite it
         let existingOperation = customAttributes[targetAttributeKey]
 
@@ -274,6 +279,8 @@ public class BATProfileEditor: NSObject, BATSerializableProfileEditorProtocol, N
             updatedPartialUpdate.itemsToRemove.append(value)
             try validateParialUpdate(updatedPartialUpdate)
             customAttributes[targetAttributeKey] = updatedPartialUpdate
+        } else if existingOperation is BATProfileAttributeDeleteOperation {
+            // Keep the delete as is
         } else {
             customAttributes[targetAttributeKey] = BATProfileAttributePartialArrayUpdateOperation(itemsToAdd: [], itemsToRemove: [value])
         }

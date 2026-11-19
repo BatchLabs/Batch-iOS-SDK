@@ -120,6 +120,61 @@ final class profileOperationsSerializerTests: XCTestCase {
         XCTAssertEqual(serializedAttributes["att5.i"] as? Int, 5)
     }
 
+    func testAddToArrayAfterRemoveAttributeSendsFullArray() throws {
+        // Deleting the attribute then adding to it must replace the server-side array, not
+        // send a partial $add that would keep the old items. Mirrors Android and Web.
+        let serialized = try serializeEditor { editor in
+            try editor.deleteCustomAttribute(forKey: "arr")
+            try editor.add(value: "a", toArray: "arr")
+            try editor.add(value: "b", toArray: "arr")
+        }
+        guard let customAttrs = serialized["custom_attributes"] as? [AnyHashable: Any] else {
+            XCTFail("missing custom_attributes")
+            return
+        }
+        XCTAssertEqual(customAttrs["arr.a"] as? [String], ["a", "b"])
+        XCTAssertNil(customAttrs["arr"])
+    }
+
+    func testRemoveFromArrayAfterRemoveAttributeKeepsDelete() throws {
+        // Removing from a deleted array changes nothing: the delete must survive
+        let serialized = try serializeEditor { editor in
+            try editor.deleteCustomAttribute(forKey: "arr")
+            try editor.remove(value: "a", fromArray: "arr")
+        }
+        guard let customAttrs = serialized["custom_attributes"] as? [AnyHashable: Any] else {
+            XCTFail("missing custom_attributes")
+            return
+        }
+        XCTAssertEqual(customAttrs["arr"] as? NSObject, NSNull())
+        XCTAssertNil(customAttrs["arr.a"])
+    }
+
+    func testRemoveAttributeAfterAddToArrayKeepsDelete() throws {
+        // The reverse order: the delete is the last word
+        let serialized = try serializeEditor { editor in
+            try editor.add(value: "a", toArray: "arr")
+            try editor.deleteCustomAttribute(forKey: "arr")
+        }
+        guard let customAttrs = serialized["custom_attributes"] as? [AnyHashable: Any] else {
+            XCTFail("missing custom_attributes")
+            return
+        }
+        XCTAssertEqual(customAttrs["arr"] as? NSObject, NSNull())
+        XCTAssertNil(customAttrs["arr.a"])
+    }
+
+    func testAddToArrayAfterRemoveAttributeEnforcesItemLimit() throws {
+        // The delete turns into a full array set, so the full array item limit applies
+        let editor = TestProfileEditor()
+        editor.test_isProfileIdentified = true
+        try editor.deleteCustomAttribute(forKey: "arr")
+        for item in 1 ... 25 {
+            try editor.add(value: "\(item)", toArray: "arr")
+        }
+        XCTAssertThrowsError(try editor.add(value: "26", toArray: "arr"))
+    }
+
     /// Test that an email cannot be set and is not serialized if not allowed
     func testCantSetEmail() throws {
         let editor = TestProfileEditor()

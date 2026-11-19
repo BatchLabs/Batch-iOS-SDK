@@ -41,6 +41,7 @@
 		02849C1A19B9FA2D0013408B /* batchPushMessageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 02849BE119B9FA2D0013408B /* batchPushMessageTests.m */; };
 		02849C1B19B9FA2D0013408B /* batchEventSQLiteDatasourceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 02849BE319B9FA2D0013408B /* batchEventSQLiteDatasourceTests.m */; };
 		02849C1C19B9FA2D0013408B /* batchTrackerCenterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 02849BE419B9FA2D0013408B /* batchTrackerCenterTests.m */; };
+		B47C5E1B2F00A1B2C3D4E5F6 /* batchTrackerSenderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B47C5E1A2F00A1B2C3D4E5F6 /* batchTrackerSenderTests.m */; };
 		02849C2C19B9FA2D0013408B /* batchWebserviceResponseTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 02849BF719B9FA2D0013408B /* batchWebserviceResponseTests.m */; };
 		02849C2E19B9FA2D0013408B /* batchResponseHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 02849BFA19B9FA2D0013408B /* batchResponseHelperTests.m */; };
 		029B335A1A39A1F7006B9DC6 /* batchNSURLREquest+BAHeadersTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 029B33481A39A1F7006B9DC6 /* batchNSURLREquest+BAHeadersTests.m */; };
@@ -792,6 +793,7 @@
 		02849BE119B9FA2D0013408B /* batchPushMessageTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = batchPushMessageTests.m; sourceTree = "<group>"; };
 		02849BE319B9FA2D0013408B /* batchEventSQLiteDatasourceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = batchEventSQLiteDatasourceTests.m; sourceTree = "<group>"; };
 		02849BE419B9FA2D0013408B /* batchTrackerCenterTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = batchTrackerCenterTests.m; sourceTree = "<group>"; };
+		B47C5E1A2F00A1B2C3D4E5F6 /* batchTrackerSenderTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = batchTrackerSenderTests.m; sourceTree = "<group>"; };
 		02849BF719B9FA2D0013408B /* batchWebserviceResponseTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = batchWebserviceResponseTests.m; sourceTree = "<group>"; };
 		02849BFA19B9FA2D0013408B /* batchResponseHelperTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = batchResponseHelperTests.m; sourceTree = "<group>"; };
 		029B33481A39A1F7006B9DC6 /* batchNSURLREquest+BAHeadersTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "batchNSURLREquest+BAHeadersTests.m"; sourceTree = "<group>"; };
@@ -1714,6 +1716,7 @@
 			children = (
 				02849BE319B9FA2D0013408B /* batchEventSQLiteDatasourceTests.m */,
 				02849BE419B9FA2D0013408B /* batchTrackerCenterTests.m */,
+				B47C5E1A2F00A1B2C3D4E5F6 /* batchTrackerSenderTests.m */,
 			);
 			path = Tracker;
 			sourceTree = "<group>";
@@ -3354,6 +3357,7 @@
 				5161B0A824C71195003F36E7 /* webserviceHMACTests.swift in Sources */,
 				9323C51E2225A1960097645F /* htmlParserTests.m in Sources */,
 				02849C1C19B9FA2D0013408B /* batchTrackerCenterTests.m in Sources */,
+				B47C5E1B2F00A1B2C3D4E5F6 /* batchTrackerSenderTests.m in Sources */,
 				029B335E1A39A1F7006B9DC6 /* batchParametersTests.m in Sources */,
 				512EA4E523BE37F300B7DBB1 /* pushTokenServiceTests.swift in Sources */,
 				02849C1919B9FA2D0013408B /* batchPushCenterTests.m in Sources */,
